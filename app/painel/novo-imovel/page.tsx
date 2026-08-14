@@ -49,12 +49,12 @@ const ETAPAS = [
 ]
 
 const TIPOS = [
-  { valor: "apartamento", icone: "??", label: "Apartamento" },
-  { valor: "casa", icone: "??", label: "Casa" },
-  { valor: "terreno", icone: "??", label: "Terreno" },
-  { valor: "comercial", icone: "??", label: "Comercial" },
-  { valor: "rural", icone: "??", label: "Rural" },
-  { valor: "cobertura", icone: "???", label: "Cobertura" },
+  { valor: "apartamento", icone: "\uD83C\uDFE2", label: "Apartamento" },
+  { valor: "casa", icone: "\uD83C\uDFE0", label: "Casa" },
+  { valor: "terreno", icone: "\uD83C\uDF33", label: "Terreno" },
+  { valor: "comercial", icone: "\uD83C\uDFEA", label: "Comercial" },
+  { valor: "rural", icone: "\uD83C\uDF3E", label: "Rural" },
+  { valor: "cobertura", icone: "\uD83C\uDFD9\uFE0F", label: "Cobertura" },
 ]
 
 export default function NovoImovelPage() {
@@ -499,11 +499,11 @@ export default function NovoImovelPage() {
               <div className={styles.checkboxGrupo}>
                 <label className={styles.checkboxItem}>
                   <input type="checkbox" checked={dados.aceita_pets} onChange={(e) => atualizar("aceita_pets", e.target.checked)} />
-                  <span>?? Aceita pets</span>
+                  <span>{"\uD83D\uDC3E"} Aceita pets</span>
                 </label>
                 <label className={styles.checkboxItem}>
                   <input type="checkbox" checked={dados.mobiliado} onChange={(e) => atualizar("mobiliado", e.target.checked)} />
-                  <span>??? Mobiliado</span>
+                  <span>{"\uD83D\uDECB\uFE0F"} Mobiliado</span>
                 </label>
               </div>
             </div>
@@ -524,7 +524,7 @@ export default function NovoImovelPage() {
                   adicionarFotos(e.dataTransfer.files)
                 }}
               >
-                <span className={styles.dropzoneIcone}>??</span>
+                <span className={styles.dropzoneIcone}>{"\uD83D\uDCF7"}</span>
                 <p>Clique ou arraste fotos aqui</p>
                 <span className={styles.dropzoneHint}>JPG, PNG ou WEBP — Maximo 10MB cada</span>
                 <input
@@ -655,7 +655,7 @@ export default function NovoImovelPage() {
                 onClick={salvar}
                 disabled={salvando}
               >
-                {salvando ? "Publicando..." : "?? Publicar imóvel"}
+                {salvando ? "Publicando..." : "\uD83C\uDFE0 Publicar imóvel"}
               </button>
             )}
           </div>
