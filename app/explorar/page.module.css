@@ -1,27 +1,25 @@
-﻿.layout {
+.layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
 }
 
 /* Barra de filtros */
 .barraTopo {
-  position: fixed;
-  top: var(--altura-header);
-  left: 0;
-  right: 0;
-  z-index: var(--z-dropdown);
+  flex-shrink: 0;
   background: white;
   border-bottom: 1px solid var(--cor-borda);
   box-shadow: var(--sombra-xs);
+  z-index: 20;
 }
 
 .barraTopoInner {
   display: flex;
   align-items: center;
   gap: var(--espaco-4);
-  padding: var(--espaco-3) var(--espaco-6);
+  padding: 10px 24px;
   max-width: var(--largura-max);
   margin: 0 auto;
 }
@@ -54,30 +52,44 @@
   box-shadow: var(--sombra-xs);
 }
 
-/* Conteúdo principal */
+/* Conteudo principal split */
 .conteudo {
   display: grid;
-  grid-template-columns: 480px 1fr;
+  grid-template-columns: 520px 1fr;
   flex: 1;
+  min-height: 0;
+  height: 100%;
   overflow: hidden;
-  margin-top: calc(var(--altura-header) + 60px); /* header + filtros */
 }
 
-/* Lista */
+/* Coluna Lista (scroll independente) */
 .lista {
+  height: 100%;
   overflow-y: auto;
-  padding: var(--espaco-5) var(--espaco-5);
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: var(--espaco-4);
+  gap: 16px;
   border-right: 1px solid var(--cor-borda);
   background: var(--cor-fundo);
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.lista::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 
 .listaHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-bottom: 4px;
 }
 
 .resultados {
@@ -98,15 +110,15 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--espaco-4);
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 /* Skeleton */
 .gridSkeleton {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--espaco-4);
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .skeletonCard {
@@ -139,11 +151,13 @@
   color: var(--cor-texto-terciario);
 }
 
-/* Mapa */
+/* Coluna Mapa (fixa, 100% da altura) */
 .mapaWrapper {
   position: relative;
-  overflow: hidden;
+  width: 100%;
   height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .mapaLoading {
@@ -157,18 +171,10 @@
   color: var(--cor-texto-terciario);
 }
 
-/* ── RESPONSIVIDADE ──────────────────────────────── */
-@media (max-width: 1024px) {
+/* Responsividade */
+@media (max-width: 1100px) {
   .conteudo {
-    grid-template-columns: 360px 1fr;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .gridSkeleton {
-    grid-template-columns: 1fr;
+    grid-template-columns: 420px 1fr;
   }
 }
 
@@ -195,18 +201,11 @@
 
   .mapaWrapper {
     flex: 1;
+    height: 100%;
   }
 
   .mapaOcultoMobile {
     display: none;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .gridSkeleton {
-    grid-template-columns: 1fr;
   }
 
   .barraTopoInner {

@@ -1,8 +1,7 @@
 .wrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - 130px);
-  border-radius: var(--raio-xl);
+  height: 100%;
   overflow: hidden;
 }
 
@@ -72,7 +71,7 @@
 /* Botao pesquisar na area */
 .btnPesquisarArea {
   position: absolute;
-  top: var(--espaco-4);
+  top: 16px;
   left: 50%;
   transform: translateX(-50%);
   background: white;
