@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -21,6 +21,7 @@ function ExplorarConteudo() {
   const [imoveis, setImoveis] = useState<Imovel[]>([])
   const [carregando, setCarregando] = useState(true)
   const [imovelHover, setImovelHover] = useState<string | null>(null)
+  const [imovelSelecionado, setImovelSelecionado] = useState<string | null>(null)
   const [totalResultados, setTotalResultados] = useState(0)
   const [vistaAtiva, setVistaAtiva] = useState<'lista' | 'mapa'>('lista')
   const [filtros, setFiltros] = useState<TFiltros>({
@@ -67,7 +68,6 @@ function ExplorarConteudo() {
 
       if (error) throw error
 
-      // Mapear fotos
       const imoveisComFotos = (data ?? []).map((i: Record<string, unknown>) => ({
         ...i,
         fotos: (i.fotos_imovel as Record<string, unknown>[]) ?? [],
@@ -90,6 +90,18 @@ function ExplorarConteudo() {
     setFiltros(novosFiltros)
   }
 
+  // Seleção vinda do mapa ou da lista
+  const handleSelecionarImovel = useCallback((id: string) => {
+    setImovelSelecionado(id)
+    // Rola a lista suavemente para o card
+    setTimeout(() => {
+      const el = document.getElementById(`card-imovel-${id}`)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    }, 50)
+  }, [])
+
   return (
     <div className={styles.layout}>
       <Header />
@@ -105,7 +117,7 @@ function ExplorarConteudo() {
               className={`${styles.btnVista} ${vistaAtiva === 'lista' ? styles.vistaAtiva : ''}`}
               onClick={() => setVistaAtiva('lista')}
             >
-              ☰ Lista
+              📋 Lista
             </button>
             <button
               className={`${styles.btnVista} ${vistaAtiva === 'mapa' ? styles.vistaAtiva : ''}`}
@@ -151,7 +163,9 @@ function ExplorarConteudo() {
                   key={imovel.id}
                   imovel={imovel}
                   destacado={imovelHover === imovel.id}
+                  selecionado={imovelSelecionado === imovel.id}
                   onHover={setImovelHover}
+                  onSelecionar={handleSelecionarImovel}
                 />
               ))}
             </div>
@@ -163,6 +177,8 @@ function ExplorarConteudo() {
           <MapaExplorar
             imoveis={imoveis}
             imovelHover={imovelHover}
+            imovelSelecionado={imovelSelecionado}
+            onSelecionarImovel={handleSelecionarImovel}
           />
         </div>
       </div>

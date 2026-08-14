@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import Link from 'next/link'
 import { useState } from 'react'
@@ -9,21 +9,25 @@ import styles from './CardImovel.module.css'
 interface Props {
   imovel: Imovel
   destacado?: boolean
+  selecionado?: boolean
   onHover?: (id: string | null) => void
+  onSelecionar?: (id: string) => void
 }
 
-export default function CardImovel({ imovel, destacado, onHover }: Props) {
+export default function CardImovel({ imovel, destacado, selecionado, onHover, onSelecionar }: Props) {
   const [favoritado, setFavoritado] = useState(false)
   const foto = fotoPrincipal(imovel)
 
   return (
     <div
-      className={`${styles.card} ${destacado ? styles.destacado : ''}`}
+      id={`card-imovel-${imovel.id}`}
+      className={`${styles.card} ${destacado ? styles.destacado : ''} ${selecionado ? styles.selecionado : ''}`}
       onMouseEnter={() => onHover?.(imovel.id)}
       onMouseLeave={() => onHover?.(null)}
+      onClick={() => onSelecionar?.(imovel.id)}
     >
       {/* Foto */}
-      <Link href={`/imoveis/${imovel.id}`} className={styles.fotoWrapper}>
+      <div className={styles.fotoWrapper}>
         <div
           className={styles.foto}
           style={{ backgroundImage: `url(${foto})` }}
@@ -40,9 +44,10 @@ export default function CardImovel({ imovel, destacado, onHover }: Props) {
 
           {/* Botão Favoritar */}
           <button
+            type="button"
             className={`${styles.btnFavoritar} ${favoritado ? styles.favoritado : ''}`}
             onClick={(e) => {
-              e.preventDefault()
+              e.stopPropagation()
               setFavoritado(!favoritado)
             }}
             aria-label={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
@@ -50,10 +55,10 @@ export default function CardImovel({ imovel, destacado, onHover }: Props) {
             {favoritado ? '❤️' : '🤍'}
           </button>
         </div>
-      </Link>
+      </div>
 
       {/* Informações */}
-      <Link href={`/imoveis/${imovel.id}`} className={styles.info}>
+      <div className={styles.info}>
         {/* Preço */}
         <div className={styles.preco}>
           {formatarPreco(imovel.preco, imovel.negociacao)}
@@ -85,9 +90,9 @@ export default function CardImovel({ imovel, destacado, onHover }: Props) {
               🚗 {imovel.vagas}
             </span>
           )}
-          {imovel.area_construida && (
+          {(imovel.area || imovel.area_construida) && (
             <span className={styles.car}>
-              📐 {formatarArea(imovel.area_construida)}
+              📐 {formatarArea((imovel.area || imovel.area_construida)!)}
             </span>
           )}
         </div>
@@ -96,7 +101,18 @@ export default function CardImovel({ imovel, destacado, onHover }: Props) {
         <div className={styles.localizacao}>
           📍 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade}
         </div>
-      </Link>
+
+        {/* Rodapé com Botão Visualizar */}
+        <div className={styles.rodapeCard}>
+          <Link
+            href={`/imovel/${imovel.id}`}
+            className={styles.btnVisualizar}
+            onClick={(e) => e.stopPropagation()}
+          >
+            Visualizar Imóvel →
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }

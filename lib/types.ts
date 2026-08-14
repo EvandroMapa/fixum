@@ -76,6 +76,7 @@ export interface Imovel {
   tipo: TipoImovel
   negociacao: TipoNegociacao
   preco: number
+  area?: number
   area_construida?: number
   area_terreno?: number
   quartos?: number

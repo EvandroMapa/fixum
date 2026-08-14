@@ -6,6 +6,8 @@
   border: 1.5px solid var(--cor-borda);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  position: relative;
 }
 
 .card:hover {
@@ -16,7 +18,13 @@
 
 .destacado {
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 2px rgba(var(--cor-primaria-rgb), 0.15), var(--sombra-card-hover);
+  box-shadow: 0 0 0 2px rgba(var(--cor-primaria-rgb), 0.2), var(--sombra-card-hover);
+}
+
+.selecionado {
+  border-color: #1565c0 !important;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.3), var(--sombra-card-hover) !important;
+  transform: translateY(-2px);
 }
 
 /* Foto */
@@ -24,10 +32,12 @@
   display: block;
   text-decoration: none;
   flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
 }
 
 .foto {
-  height: 200px;
+  height: 190px;
   background-size: cover;
   background-position: center;
   background-color: var(--cor-fundo-alt);
@@ -36,11 +46,7 @@
 }
 
 .card:hover .foto {
-  transform: scale(1.02);
-}
-
-.fotoWrapper {
-  overflow: hidden;
+  transform: scale(1.03);
 }
 
 .selos {
@@ -50,6 +56,7 @@
   display: flex;
   gap: var(--espaco-2);
   flex-wrap: wrap;
+  z-index: 2;
 }
 
 .btnFavoritar {
@@ -69,6 +76,7 @@
   border: none;
   box-shadow: var(--sombra-sm);
   transition: all var(--transicao);
+  z-index: 3;
 }
 
 .btnFavoritar:hover {
@@ -86,7 +94,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--espaco-2);
-  text-decoration: none;
   flex: 1;
 }
 
@@ -151,4 +158,38 @@
   display: flex;
   align-items: center;
   gap: var(--espaco-1);
+}
+
+/* Rodape com Botao Visualizar */
+.rodapeCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--espaco-2);
+  margin-top: auto;
+}
+
+.btnVisualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #1565c0;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+  margin-left: auto;
+}
+
+.btnVisualizar:hover {
+  background: #1565c0;
+  color: white;
+  border-color: #1565c0;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
+  transform: translateY(-1px);
 }
