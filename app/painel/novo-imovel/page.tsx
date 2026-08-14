@@ -45,7 +45,7 @@ const ETAPAS = [
   { numero: 2, label: "Dados" },
   { numero: 3, label: "Detalhes" },
   { numero: 4, label: "Fotos" },
-  { numero: 5, label: "Revis„o" },
+  { numero: 5, label: "Revis√£o" },
 ]
 
 const TIPOS = [
@@ -68,7 +68,7 @@ export default function NovoImovelPage() {
     if (cep.length !== 8) return
     setBuscandoCep(true)
     try {
-      // 1. ViaCEP -> endereÁo
+      // 1. ViaCEP -> endere√ßo
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
       const data = await res.json()
       if (!data.erro) {
@@ -183,9 +183,9 @@ export default function NovoImovelPage() {
     setErro("")
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error("N„o autenticado")
+      if (!user) throw new Error("N√£o autenticado")
 
-      // Inserir imÛvel
+      // Inserir im√≥vel
       const { data: imovel, error: erroImovel } = await supabase
         .from("imoveis")
         .insert({
@@ -244,7 +244,7 @@ export default function NovoImovelPage() {
 
       router.push("/painel?novo=1")
     } catch (e: unknown) {
-      setErro(e instanceof Error ? e.message : "Erro ao salvar imÛvel")
+      setErro(e instanceof Error ? e.message : "Erro ao salvar im√≥vel")
     } finally {
       setSalvando(false)
     }
@@ -267,7 +267,7 @@ export default function NovoImovelPage() {
         <Link href="/painel" className={styles.btnVoltar}>
           ? Painel
         </Link>
-        <h1 className={styles.headerTitulo}>Novo ImÛvel</h1>
+        <h1 className={styles.headerTitulo}>Novo Im√≥vel</h1>
         <div />
       </header>
 
@@ -283,15 +283,15 @@ export default function NovoImovelPage() {
         ))}
       </div>
 
-      {/* Conte˙do */}
+      {/* Conte√∫do */}
       <main className={styles.main}>
         <div className={styles.card}>
 
-          {/* -- Etapa 1: Tipo e NegociaÁ„o -- */}
+          {/* -- Etapa 1: Tipo e Negocia√ß√£o -- */}
           {etapa === 1 && (
             <div className={styles.etapaConteudo}>
-              <h2 className={styles.etapaTitulo}>Que tipo de imÛvel È?</h2>
-              <p className={styles.etapaSubtitulo}>Selecione o tipo e a modalidade de negociaÁ„o</p>
+              <h2 className={styles.etapaTitulo}>Que tipo de im√≥vel √©?</h2>
+              <p className={styles.etapaSubtitulo}>Selecione o tipo e a modalidade de negocia√ß√£o</p>
 
               <div className={styles.gridTipos}>
                 {TIPOS.map((t) => (
@@ -307,7 +307,7 @@ export default function NovoImovelPage() {
               </div>
 
               <div className={styles.grupo}>
-                <label className={styles.label}>NegociaÁ„o</label>
+                <label className={styles.label}>Negocia√ß√£o</label>
                 <div className={styles.btnGroup}>
                   {["venda", "aluguel", "temporada"].map((neg) => (
                     <button
@@ -323,17 +323,17 @@ export default function NovoImovelPage() {
             </div>
           )}
 
-          {/* -- Etapa 2: Dados B·sicos -- */}
+          {/* -- Etapa 2: Dados B√°sicos -- */}
           {etapa === 2 && (
             <div className={styles.etapaConteudo}>
-              <h2 className={styles.etapaTitulo}>Dados do imÛvel</h2>
-              <p className={styles.etapaSubtitulo}>InformaÁıes principais e localizaÁ„o</p>
+              <h2 className={styles.etapaTitulo}>Dados do im√≥vel</h2>
+              <p className={styles.etapaSubtitulo}>Informa√ß√µes principais e localiza√ß√£o</p>
 
               <div className={styles.grupo}>
-                <label className={styles.label}>TÌtulo do an˙ncio *</label>
+                <label className={styles.label}>T√≠tulo do an√∫ncio *</label>
                 <input
                   className={styles.input}
-                  placeholder="TÌtulo do an˙ncio"
+                  placeholder="T√≠tulo do an√∫ncio"
                   value={dados.titulo}
                   onChange={(e) => atualizar("titulo", e.target.value)}
                   maxLength={100}
@@ -342,7 +342,7 @@ export default function NovoImovelPage() {
               </div>
 
               <div className={styles.grupo}>
-                <label className={styles.label}>PreÁo *</label>
+                <label className={styles.label}>Pre√ßo *</label>
                 <input
                   className={styles.input}
                   placeholder="Valor"
@@ -463,13 +463,13 @@ export default function NovoImovelPage() {
           {/* -- Etapa 3: Detalhes -- */}
           {etapa === 3 && (
             <div className={styles.etapaConteudo}>
-              <h2 className={styles.etapaTitulo}>Detalhes e caracterÌsticas</h2>
-              <p className={styles.etapaSubtitulo}>Quanto mais detalhes, mais f·cil de encontrar</p>
+              <h2 className={styles.etapaTitulo}>Detalhes e caracter√≠sticas</h2>
+              <p className={styles.etapaSubtitulo}>Quanto mais detalhes, mais f√°cil de encontrar</p>
 
               <div className={styles.linha3}>
                 <div className={styles.grupo}>
-                  <label className={styles.label}>¡rea (m≤) *</label>
-                  <input className={styles.input} type="number" placeholder="m≤" value={dados.area} onChange={(e) => atualizar("area", e.target.value)} />
+                  <label className={styles.label}>√Årea (m¬≤) *</label>
+                  <input className={styles.input} type="number" placeholder="m¬≤" value={dados.area} onChange={(e) => atualizar("area", e.target.value)} />
                 </div>
                 <div className={styles.grupo}>
                   <label className={styles.label}>Quartos</label>
@@ -487,7 +487,7 @@ export default function NovoImovelPage() {
                   <input className={styles.input} type="number" placeholder="Qtd" min="0" max="20" value={dados.vagas} onChange={(e) => atualizar("vagas", e.target.value)} />
                 </div>
                 <div className={styles.grupo}>
-                  <label className={styles.label}>CondomÌnio (R$)</label>
+                  <label className={styles.label}>Condom√≠nio (R$)</label>
                   <input className={styles.input} type="number" placeholder="R$" value={dados.condominio} onChange={(e) => atualizar("condominio", e.target.value)} />
                 </div>
                 <div className={styles.grupo}>
@@ -526,7 +526,7 @@ export default function NovoImovelPage() {
               >
                 <span className={styles.dropzoneIcone}>??</span>
                 <p>Clique ou arraste fotos aqui</p>
-                <span className={styles.dropzoneHint}>JPG, PNG ou WEBP ó Maximo 10MB cada</span>
+                <span className={styles.dropzoneHint}>JPG, PNG ou WEBP ‚Äî Maximo 10MB cada</span>
                 <input
                   ref={inputFotoRef}
                   type="file"
@@ -540,7 +540,7 @@ export default function NovoImovelPage() {
               {fotos.length > 0 && (
                 <>
                   <p style={{ fontSize: 12, color: "#64748b", margin: "12px 0 8px" }}>
-                    {fotos.length} foto{fotos.length !== 1 ? "s" : ""} adicionada{fotos.length !== 1 ? "s" : ""} ó clique para definir a capa
+                    {fotos.length} foto{fotos.length !== 1 ? "s" : ""} adicionada{fotos.length !== 1 ? "s" : ""} ‚Äî clique para definir a capa
                   </p>
                   <div className={styles.gridFotos}>
                     {fotos.map((foto, idx) => (
@@ -596,7 +596,7 @@ export default function NovoImovelPage() {
               <div className={styles.revisaoCard}>
                 <div className={styles.revisaoLinha}>
                   <span>Tipo</span>
-                  <strong>{dados.tipo} ∑ {dados.negociacao}</strong>
+                  <strong>{dados.tipo} ¬∑ {dados.negociacao}</strong>
                 </div>
                 <div className={styles.revisaoLinha}>
                   <span>Titulo</span>
@@ -612,7 +612,7 @@ export default function NovoImovelPage() {
                 </div>
                 <div className={styles.revisaoLinha}>
                   <span>Area</span>
-                  <strong>{dados.area} m≤</strong>
+                  <strong>{dados.area} m¬≤</strong>
                 </div>
                 {dados.quartos && (
                   <div className={styles.revisaoLinha}>
@@ -631,7 +631,7 @@ export default function NovoImovelPage() {
           )}
 
 
-          {/* -- NavegaÁ„o -- */}
+          {/* -- Navega√ß√£o -- */}
           <div className={styles.navegacao}>
             {etapa > 1 ? (
               <button className={styles.btnVoltar2} onClick={voltar}>
@@ -647,7 +647,7 @@ export default function NovoImovelPage() {
                 onClick={avancar}
                 disabled={!podeAvancar()}
               >
-                AvanÁar ?
+                Avan√ßar ?
               </button>
             ) : (
               <button
@@ -655,7 +655,7 @@ export default function NovoImovelPage() {
                 onClick={salvar}
                 disabled={salvando}
               >
-                {salvando ? "Publicando..." : "?? Publicar imÛvel"}
+                {salvando ? "Publicando..." : "?? Publicar im√≥vel"}
               </button>
             )}
           </div>
