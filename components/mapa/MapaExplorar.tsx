@@ -63,15 +63,15 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
         paint: {
           'circle-color': [
             'step', ['get', 'point_count'],
-            '#1565c0',  // ate 5: azul
-            5, '#0d47a1',  // 5-15: azul escuro
-            15, '#0a3d91', // 15+: azul mais escuro
+            '#1565c0',
+            5, '#0d47a1',
+            15, '#0a3d91',
           ],
           'circle-radius': [
             'step', ['get', 'point_count'],
-            22,   // ate 5: raio 22
-            5, 28,  // 5-15: raio 28
-            15, 34, // 15+: raio 34
+            22,
+            5, 28,
+            15, 34,
           ],
           'circle-stroke-width': 3,
           'circle-stroke-color': 'rgba(255,255,255,0.7)',
@@ -99,14 +99,13 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
       mapa.on('click', 'clusters', (e) => {
         const features = mapa.queryRenderedFeatures(e.point, { layers: ['clusters'] })
         if (!features.length) return
-        const clusterId = features[0].properties?.cluster_id
+        const feat = features[0] as unknown as { properties: Record<string, unknown>; geometry: { type: string; coordinates: [number, number] } }
+        const clusterId = feat.properties?.cluster_id as number
         const source = mapa.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource
-        source.getClusterExpansionZoom(clusterId, (err: Error | null, zoom: number) => {
-          if (err) return
-          const geometry = features[0].geometry as GeoJSON.Point
+        source.getClusterExpansionZoom(clusterId).then((zoom: number) => {
           mapa.easeTo({
-            center: geometry.coordinates as [number, number],
-            zoom: zoom,
+            center: feat.geometry.coordinates,
+            zoom,
           })
         })
       })
@@ -140,8 +139,8 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
     if (!source) return
 
     // Montar GeoJSON
-    const features: GeoJSON.Feature[] = imoveis
-      .filter(i => i.latitude && i.longitude)
+    const features = imoveis
+      .filter(i => i.lat && i.lng)
       .map(i => ({
         type: 'Feature' as const,
         properties: {
@@ -154,7 +153,7 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
         },
         geometry: {
           type: 'Point' as const,
-          coordinates: [i.longitude!, i.latitude!],
+          coordinates: [i.lng, i.lat] as [number, number],
         },
       }))
 
@@ -162,48 +161,40 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
 
     // Funcao para atualizar marcadores HTML nos pontos nao-clusterizados
     function atualizarMarcadores() {
-      // Limpar anteriores
       marcadoresRef.current.forEach(m => m.remove())
       marcadoresRef.current = []
 
       if (!mapa.isStyleLoaded()) return
-
-      const rendered = mapa.queryRenderedFeatures(undefined, {
-        layers: ['clusters'],
-      })
-      const clusterIds = new Set(rendered.map(f => f.id))
 
       // Pegar pontos individuais (nao clusterizados)
       const pontos = mapa.querySourceFeatures(SOURCE_ID, {
         filter: ['!', ['has', 'point_count']],
       })
 
-      // Deduplicar (querySourceFeatures pode retornar duplicatas)
+      // Deduplicar
       const vistos = new Set<string>()
       pontos.forEach(f => {
-        const id = f.properties?.id
+        const props = (f as unknown as { properties: Record<string, string> }).properties
+        const geom = (f as unknown as { geometry: { coordinates: [number, number] } }).geometry
+        const id = props?.id
         if (!id || vistos.has(id)) return
         vistos.add(id)
 
-        const geom = f.geometry as GeoJSON.Point
-        const coords = geom.coordinates as [number, number]
-
         const el = document.createElement('div')
         el.className = styles.marcador
-        el.textContent = f.properties?.precoLabel || ''
+        el.textContent = props?.precoLabel || ''
         el.dataset.id = id
 
-        // Popup
         const popup = new mapboxgl.Popup({ offset: 25, closeButton: false, maxWidth: '240px' })
           .setHTML(
             '<a href="/imoveis/' + id + '" style="text-decoration:none;color:inherit;display:block;padding:4px 0">'
-            + '<strong style="font-size:15px;color:#1565c0;display:block;margin-bottom:2px">' + (f.properties?.precoLabel || '') + '</strong>'
-            + '<span style="font-size:12px;color:#0f172a;display:block">' + (f.properties?.titulo || '') + '</span>'
-            + '<span style="font-size:11px;color:#64748b">' + (f.properties?.bairro || f.properties?.cidade || '') + '</span></a>'
+            + '<strong style="font-size:15px;color:#1565c0;display:block;margin-bottom:2px">' + (props?.precoLabel || '') + '</strong>'
+            + '<span style="font-size:12px;color:#0f172a;display:block">' + (props?.titulo || '') + '</span>'
+            + '<span style="font-size:11px;color:#64748b">' + (props?.bairro || props?.cidade || '') + '</span></a>'
           )
 
         const marcador = new mapboxgl.Marker({ element: el })
-          .setLngLat(coords)
+          .setLngLat(geom.coordinates)
           .setPopup(popup)
           .addTo(mapa)
 
@@ -211,19 +202,18 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
       })
     }
 
-    // Atualizar marcadores quando o mapa muda (zoom, pan)
-    mapa.on('moveend', atualizarMarcadores)
-    mapa.on('sourcedata', (e: mapboxgl.MapSourceDataEvent) => {
-      if (e.sourceId === SOURCE_ID && e.isSourceLoaded) {
-        atualizarMarcadores()
-      }
-    })
-
-    // Inicial
+    // Atualizar marcadores quando o mapa muda
+    const onMove = () => atualizarMarcadores()
+    const onSource = (e: mapboxgl.MapSourceDataEvent) => {
+      if (e.sourceId === SOURCE_ID && e.isSourceLoaded) atualizarMarcadores()
+    }
+    mapa.on('moveend', onMove)
+    mapa.on('sourcedata', onSource)
     setTimeout(atualizarMarcadores, 300)
 
     return () => {
-      mapa.off('moveend', atualizarMarcadores)
+      mapa.off('moveend', onMove)
+      mapa.off('sourcedata', onSource)
       marcadoresRef.current.forEach(m => m.remove())
       marcadoresRef.current = []
     }
