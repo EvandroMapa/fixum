@@ -7,8 +7,8 @@
 
 /* SIDEBAR */
 .sidebar {
-  background: white;
-  border-right: 1px solid var(--cor-borda);
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  border-right: none;
   display: flex;
   flex-direction: column;
   padding: var(--espaco-6);
@@ -22,7 +22,7 @@
   font-family: var(--fonte-display);
   font-size: var(--texto-xl);
   font-weight: 800;
-  color: var(--cor-primaria);
+  color: white;
   text-decoration: none;
 }
 
@@ -96,6 +96,7 @@
 .conteudo {
   padding: var(--espaco-8);
   overflow-y: auto;
+  background: #f1f5f9;
 }
 
 .secao {
