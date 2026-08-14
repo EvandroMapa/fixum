@@ -15,7 +15,11 @@ function PainelConteudo() {
   const router = useRouter()
   const abaParam = searchParams.get('aba') as Aba | null
 
-  const [abaAtiva, setAbaAtiva] = useState<Aba>('dashboard')
+  const abaInicial: Aba = (abaParam && ['dashboard', 'imoveis', 'leads'].includes(abaParam))
+    ? abaParam
+    : (typeof window !== 'undefined' && (localStorage.getItem('fixum_painel_aba') as Aba)) || 'imoveis'
+
+  const [abaAtiva, setAbaAtiva] = useState<Aba>(abaInicial)
   const [imoveis, setImoveis] = useState<Imovel[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
   const [carregando, setCarregando] = useState(true)
@@ -26,11 +30,6 @@ function PainelConteudo() {
   useEffect(() => {
     if (abaParam && ['dashboard', 'imoveis', 'leads'].includes(abaParam)) {
       setAbaAtiva(abaParam)
-    } else {
-      const salva = localStorage.getItem('fixum_painel_aba') as Aba | null
-      if (salva && ['dashboard', 'imoveis', 'leads'].includes(salva)) {
-        setAbaAtiva(salva)
-      }
     }
   }, [abaParam])
 
