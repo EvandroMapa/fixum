@@ -264,8 +264,8 @@ export default function NovoImovelPage() {
     <div className={styles.pagina}>
       {/* Header */}
       <header className={styles.header}>
-        <Link href="/painel" className={styles.btnVoltar}>
-          ? Painel
+        <Link href="/painel?aba=imoveis" className={styles.btnVoltar}>
+          {"\u2190"} Painel
         </Link>
         <h1 className={styles.headerTitulo}>Novo Imóvel</h1>
         <div />
@@ -635,7 +635,7 @@ export default function NovoImovelPage() {
           <div className={styles.navegacao}>
             {etapa > 1 ? (
               <button className={styles.btnVoltar2} onClick={voltar}>
-                ? Voltar
+                {"\u2190"} Voltar
               </button>
             ) : (
               <div />
