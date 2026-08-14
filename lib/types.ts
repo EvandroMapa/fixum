@@ -16,6 +16,7 @@ export type StatusImovel =
   | 'rascunho'
   | 'em_analise'
   | 'publicado'
+  | 'ativo'
   | 'pausado'
   | 'reservado'
   | 'vendido'

@@ -208,11 +208,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   }
 
   function handleVoltar() {
-    if (window.history.length > 1) {
-      router.back()
-    } else {
-      router.push("/painel")
-    }
+    router.push("/painel?aba=imoveis")
   }
 
   function definirPrincipal(idx: number) {

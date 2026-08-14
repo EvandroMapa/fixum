@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { type Imovel, type Lead } from '@/lib/types'
 import { formatarPreco, labelTipoImovel, fotoPrincipal } from '@/lib/utils'
@@ -9,7 +10,11 @@ import styles from './page.module.css'
 
 type Aba = 'dashboard' | 'imoveis' | 'leads'
 
-export default function PainelPage() {
+function PainelConteudo() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const abaParam = searchParams.get('aba') as Aba | null
+
   const [abaAtiva, setAbaAtiva] = useState<Aba>('dashboard')
   const [imoveis, setImoveis] = useState<Imovel[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
@@ -19,13 +24,29 @@ export default function PainelPage() {
   const supabase = createClient()
 
   useEffect(() => {
+    if (abaParam && ['dashboard', 'imoveis', 'leads'].includes(abaParam)) {
+      setAbaAtiva(abaParam)
+    } else {
+      const salva = localStorage.getItem('fixum_painel_aba') as Aba | null
+      if (salva && ['dashboard', 'imoveis', 'leads'].includes(salva)) {
+        setAbaAtiva(salva)
+      }
+    }
+  }, [abaParam])
+
+  function trocarAba(novaAba: Aba) {
+    setAbaAtiva(novaAba)
+    localStorage.setItem('fixum_painel_aba', novaAba)
+    router.replace(`/painel?aba=${novaAba}`)
+  }
+
+  useEffect(() => {
     async function carregar() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
 
       const { data: perfil } = await supabase.from('perfis').select('nome, tipo').eq('id', user.id).single()
 
-      // Redirecionar para completar perfil se nao tiver tipo definido
       if (!perfil || !perfil.tipo) {
         window.location.href = '/completar-perfil'
         return
@@ -60,7 +81,7 @@ export default function PainelPage() {
 
   const stats = {
     total: imoveis.length,
-    publicados: imoveis.filter((i) => i.status === 'publicado').length,
+    publicados: imoveis.filter((i) => i.status === 'publicado' || i.status === 'ativo').length,
     pausados: imoveis.filter((i) => i.status === 'pausado').length,
     leadsNovos: leads.filter((l) => l.status === 'novo').length,
   }
@@ -92,13 +113,13 @@ export default function PainelPage() {
         <nav className={styles.sidebarNav}>
           {[
             { id: 'dashboard', icone: '📊', label: 'Dashboard' },
-            { id: 'imoveis', icone: '🏠', label: 'Meus Imóveis' },
-            { id: 'leads', icone: '💬', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}` },
+            { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis' },
+            { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}` },
           ].map((item) => (
             <button
               key={item.id}
               className={`${styles.sidebarItem} ${abaAtiva === item.id ? styles.sidebarItemAtivo : ''}`}
-              onClick={() => setAbaAtiva(item.id as Aba)}
+              onClick={() => trocarAba(item.id as Aba)}
             >
               <span>{item.icone}</span>
               <span>{item.label}</span>
@@ -134,10 +155,10 @@ export default function PainelPage() {
 
             <div className={styles.gridStats}>
               {[
-                { label: 'Total de imóveis', valor: stats.total, icone: '🏠', cor: '#0f4c81' },
+                { label: 'Total de imóveis', valor: stats.total, icone: '🏢', cor: '#0f4c81' },
                 { label: 'Publicados', valor: stats.publicados, icone: '✅', cor: '#22c55e' },
                 { label: 'Pausados', valor: stats.pausados, icone: '⏸️', cor: '#f59e0b' },
-                { label: 'Leads novos', valor: stats.leadsNovos, icone: '💬', cor: '#ef4444' },
+                { label: 'Leads novos', valor: stats.leadsNovos, icone: '👥', cor: '#ef4444' },
               ].map((s) => (
                 <div key={s.label} className={styles.statCard} style={{ borderTopColor: s.cor }}>
                   <span className={styles.statIcone}>{s.icone}</span>
@@ -149,7 +170,7 @@ export default function PainelPage() {
 
             {imoveis.length === 0 && (
               <div className={styles.vazio}>
-                <span>🏠</span>
+                <span>🏡</span>
                 <h3>Você ainda não tem imóveis cadastrados</h3>
                 <p>Comece anunciando seu primeiro imóvel. É rápido e gratuito!</p>
                 <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
@@ -172,7 +193,7 @@ export default function PainelPage() {
 
             {imoveis.length === 0 ? (
               <div className={styles.vazio}>
-                <span>🏠</span>
+                <span>🏢</span>
                 <h3>Nenhum imóvel cadastrado</h3>
                 <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">Cadastrar imóvel</Link>
               </div>
@@ -188,7 +209,7 @@ export default function PainelPage() {
                     </div>
                     <div className={styles.imovelInfo}>
                       <strong>{imovel.titulo}</strong>
-                      <span>{labelTipoImovel(imovel.tipo)} · {imovel.cidade}</span>
+                      <span>{labelTipoImovel(imovel.tipo)} • {imovel.cidade}</span>
                       <span className={styles.imovelPreco}>{formatarPreco(imovel.preco, imovel.negociacao)}</span>
                     </div>
                     <div className={styles.imovelStatus}>
@@ -199,7 +220,7 @@ export default function PainelPage() {
                     <div className={styles.imovelAcoes}>
                       <Link href={`/imovel/${imovel.id}`} className="btn btn-ghost btn-sm">Ver</Link>
                       <Link href={`/painel/editar-imovel/${imovel.id}`} className="btn btn-outline btn-sm">Editar</Link>
-                      {imovel.status === 'publicado' ? (
+                      {imovel.status === 'publicado' || imovel.status === 'ativo' ? (
                         <button className="btn btn-outline btn-sm" onClick={() => alterarStatus(imovel.id, 'pausado')}>Pausar</button>
                       ) : imovel.status === 'pausado' ? (
                         <button className="btn btn-primario btn-sm" onClick={() => alterarStatus(imovel.id, 'publicado')}>Publicar</button>
@@ -220,7 +241,7 @@ export default function PainelPage() {
 
             {leads.length === 0 ? (
               <div className={styles.vazio}>
-                <span>💬</span>
+                <span>👥</span>
                 <h3>Nenhum lead ainda</h3>
                 <p>Quando alguém entrar em contato pelos seus imóveis, aparecerá aqui</p>
               </div>
@@ -270,5 +291,13 @@ export default function PainelPage() {
         )}
       </main>
     </div>
+  )
+}
+
+export default function PainelPage() {
+  return (
+    <Suspense fallback={<div>Carregando painel...</div>}>
+      <PainelConteudo />
+    </Suspense>
   )
 }
