@@ -75,9 +75,9 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 28px;
-  background: rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 28px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .etapa {
@@ -86,44 +86,44 @@
   gap: 8px;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.45);
+  color: #94a3b8;
   transition: all 0.2s;
 }
 
 .etapaAtiva {
-  color: white;
+  color: #1565c0;
 }
 
 .etapaCompleta {
-  color: rgba(255, 255, 255, 0.65);
+  color: #22c55e;
 }
 
 .etapaNum {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: #94a3b8;
 }
 
 .etapaAtiva .etapaNum {
   background: #1565c0;
-  border-color: #3b82f6;
+  border-color: #1565c0;
   color: white;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
 }
 
 .etapaCompleta .etapaNum {
-  background: rgba(34, 197, 94, 0.25);
+  background: #f0fdf4;
   border-color: #22c55e;
-  color: #86efac;
+  color: #22c55e;
 }
 
 .etapaLabel {
@@ -132,8 +132,9 @@
 
 .etapaSep {
   width: 32px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.15);
+  height: 1.5px;
+  background: #e2e8f0;
+  border-radius: 2px;
 }
 
 /* ── Wrapper central ── */
