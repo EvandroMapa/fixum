@@ -107,7 +107,7 @@ function PainelConteudo() {
     <div className={styles.painel}>
       {/* Sidebar */}
       <aside className={styles.sidebar}>
-        <Link href="/" className={styles.sidebarLogo}>🏠 FIXUM</Link>
+        <Link href="/" className={styles.sidebarLogo}>{"\uD83C\uDFE0"} FIXUM</Link>
 
         <nav className={styles.sidebarNav}>
           {[
