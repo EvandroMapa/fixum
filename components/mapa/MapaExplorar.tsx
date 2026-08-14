@@ -102,7 +102,8 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
         const feat = features[0] as unknown as { properties: Record<string, unknown>; geometry: { type: string; coordinates: [number, number] } }
         const clusterId = feat.properties?.cluster_id as number
         const source = mapa.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource
-        source.getClusterExpansionZoom(clusterId).then((zoom: number) => {
+        source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err) return
           mapa.easeTo({
             center: feat.geometry.coordinates,
             zoom,
