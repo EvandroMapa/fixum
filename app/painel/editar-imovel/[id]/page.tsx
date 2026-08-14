@@ -136,7 +136,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
         .single()
 
       if (!imovel || error) {
-        router.push("/painel")
+        // mantem na tela
         return
       }
 
@@ -205,6 +205,14 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       if (nova.length > 0 && !nova.some((f) => f.principal)) nova[0].principal = true
       return nova
     })
+  }
+
+  function handleVoltar() {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push("/painel")
+    }
   }
 
   function definirPrincipal(idx: number) {
@@ -282,7 +290,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
 
       setSucesso(true)
       setFotosRemovidas([])
-      router.push("/painel")
+      // mantem na tela
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : "Erro ao salvar imóvel")
     } finally {
@@ -303,9 +311,9 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   return (
     <div className={styles.pagina}>
       <header className={styles.header}>
-        <Link href="/painel" className={styles.voltar}>
+        <button type="button" onClick={handleVoltar} className={styles.voltar}>
           {"\u2190"} Voltar
-        </Link>
+        </button>
         <h1 className={styles.headerTitulo}>Editar Imóvel</h1>
         <div style={{ width: 60 }} />
       </header>
@@ -605,9 +613,9 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       {/* Barra Fixa Inferior */}
       <footer className={styles.barraInferior}>
         <div className={styles.barraConteudo}>
-          <Link href="/painel" className={styles.btnCancelar}>
+          <button type="button" onClick={handleVoltar} className={styles.btnCancelar}>
             Cancelar
-          </Link>
+          </button>
           <button
             type="button"
             className={styles.btnSalvar}
