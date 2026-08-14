@@ -1,0 +1,244 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  flex: 1;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.wrapper::-webkit-scrollbar {
+  height: 0;
+}
+
+/* Campo cidade */
+.campoCidade {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  background: var(--cor-fundo-alt);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+  padding: 7px 12px;
+  min-width: 200px;
+  transition: all var(--transicao);
+}
+
+.campoCidade:focus-within {
+  border-color: var(--cor-primaria);
+  background: white;
+}
+
+.inputCidade {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--texto-sm);
+  color: var(--cor-texto);
+  width: 100%;
+}
+
+.inputCidade::placeholder {
+  color: var(--cor-texto-placeholder);
+}
+
+/* Botões de filtro */
+.grupoFiltro {
+  display: flex;
+  gap: 2px;
+  background: var(--cor-fundo-alt);
+  border-radius: var(--raio-sm);
+  padding: 3px;
+  flex-shrink: 0;
+  border: 1px solid var(--cor-borda);
+}
+
+.btnFiltro {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-1);
+  padding: 6px 14px;
+  border-radius: var(--raio-xs);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-texto-secundario);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transicao);
+  border: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btnFiltro:hover {
+  background: white;
+  color: var(--cor-texto);
+}
+
+.ativo {
+  background: var(--cor-primaria) !important;
+  color: white !important;
+  box-shadow: var(--sombra-xs);
+}
+
+.setinha {
+  font-size: 0.6rem;
+  opacity: 0.6;
+}
+
+/* Filtro relativo (dropdown) */
+.filtroRelativo {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.filtroRelativo > .btnFiltro {
+  background: var(--cor-fundo-alt);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+  padding: 7px 14px;
+}
+
+.filtroRelativo > .btnFiltro:hover {
+  border-color: var(--cor-primaria);
+  background: var(--cor-primaria-claro);
+  color: var(--cor-primaria);
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: white;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-xl);
+  padding: var(--espaco-4);
+  min-width: 260px;
+  z-index: var(--z-dropdown);
+  animation: fadeIn 0.15s ease;
+}
+
+.dropdownGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espaco-2);
+  margin-bottom: var(--espaco-4);
+}
+
+.chipTipo {
+  padding: 8px 12px;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: all var(--transicao);
+  background: transparent;
+  text-align: left;
+}
+
+.chipTipo:hover {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+  background: var(--cor-primaria-claro);
+}
+
+.chipAtivo {
+  background: var(--cor-primaria) !important;
+  border-color: var(--cor-primaria) !important;
+  color: white !important;
+}
+
+/* Preço */
+.dropdownPreco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+  margin-bottom: var(--espaco-4);
+}
+
+.campoPreco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+}
+
+.campoPreco label {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-texto-terciario);
+}
+
+/* Quartos */
+.dropdownQuartos {
+  display: flex;
+  gap: var(--espaco-2);
+  margin-bottom: var(--espaco-4);
+}
+
+.chipQuarto {
+  flex: 1;
+  padding: 10px 0;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: all var(--transicao);
+  background: transparent;
+  text-align: center;
+}
+
+.chipQuarto:hover {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+}
+
+/* Botão aplicar */
+.btnAplicar {
+  width: 100%;
+  padding: 10px;
+  background: var(--cor-primaria);
+  color: white;
+  border: none;
+  border-radius: var(--raio-sm);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transicao);
+}
+
+.btnAplicar:hover {
+  background: var(--cor-primaria-hover);
+}
+
+/* Limpar */
+.btnLimpar {
+  padding: 7px 14px;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-erro);
+  cursor: pointer;
+  transition: all var(--transicao);
+  background: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btnLimpar:hover {
+  background: var(--cor-erro-claro);
+  border-color: var(--cor-erro);
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-dropdown) - 1);
+}

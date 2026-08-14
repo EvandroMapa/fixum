@@ -1,0 +1,215 @@
+﻿.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Barra de filtros */
+.barraTopo {
+  position: fixed;
+  top: var(--altura-header);
+  left: 0;
+  right: 0;
+  z-index: var(--z-dropdown);
+  background: white;
+  border-bottom: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra-xs);
+}
+
+.barraTopoInner {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-4);
+  padding: var(--espaco-3) var(--espaco-6);
+  max-width: var(--largura-max);
+  margin: 0 auto;
+}
+
+/* Toggle lista/mapa (mobile) */
+.toggleVista {
+  display: none;
+  background: var(--cor-fundo-alt);
+  border-radius: var(--raio-sm);
+  padding: 3px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.btnVista {
+  padding: 6px 14px;
+  border-radius: var(--raio-xs);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  color: var(--cor-texto-terciario);
+  cursor: pointer;
+  transition: all var(--transicao);
+  border: none;
+  background: transparent;
+}
+
+.vistaAtiva {
+  background: white;
+  color: var(--cor-texto);
+  box-shadow: var(--sombra-xs);
+}
+
+/* Conteúdo principal */
+.conteudo {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  flex: 1;
+  overflow: hidden;
+  margin-top: calc(var(--altura-header) + 60px); /* header + filtros */
+}
+
+/* Lista */
+.lista {
+  overflow-y: auto;
+  padding: var(--espaco-5) var(--espaco-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-4);
+  border-right: 1px solid var(--cor-borda);
+  background: var(--cor-fundo);
+}
+
+.listaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.resultados {
+  font-size: var(--texto-sm);
+  color: var(--cor-texto-secundario);
+}
+
+.resultados strong {
+  color: var(--cor-texto);
+  font-weight: 700;
+}
+
+.carregando {
+  font-size: var(--texto-sm);
+  color: var(--cor-texto-terciario);
+  animation: pulsar 1.5s ease-in-out infinite;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espaco-4);
+}
+
+/* Skeleton */
+.gridSkeleton {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espaco-4);
+}
+
+.skeletonCard {
+  height: 320px;
+  border-radius: var(--raio-xl);
+}
+
+/* Sem resultados */
+.semResultados {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-3);
+  padding: var(--espaco-16) var(--espaco-6);
+  text-align: center;
+}
+
+.semResultados span {
+  font-size: 3rem;
+}
+
+.semResultados h3 {
+  font-size: var(--texto-xl);
+  color: var(--cor-texto);
+}
+
+.semResultados p {
+  font-size: var(--texto-sm);
+  color: var(--cor-texto-terciario);
+}
+
+/* Mapa */
+.mapaWrapper {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.mapaLoading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-fundo-alt);
+  font-size: var(--texto-sm);
+  color: var(--cor-texto-terciario);
+}
+
+/* ── RESPONSIVIDADE ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .conteudo {
+    grid-template-columns: 360px 1fr;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gridSkeleton {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .conteudo {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .toggleVista {
+    display: flex;
+  }
+
+  .lista {
+    flex: 1;
+    border-right: none;
+    overflow-y: auto;
+  }
+
+  .listaOculta {
+    display: none;
+  }
+
+  .mapaWrapper {
+    flex: 1;
+  }
+
+  .mapaOcultoMobile {
+    display: none;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gridSkeleton {
+    grid-template-columns: 1fr;
+  }
+
+  .barraTopoInner {
+    padding: var(--espaco-3) var(--espaco-4);
+  }
+}

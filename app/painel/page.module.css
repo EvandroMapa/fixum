@@ -1,0 +1,424 @@
+.painel {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+  background: var(--cor-fundo);
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: white;
+  border-right: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  padding: var(--espaco-6);
+  gap: var(--espaco-6);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebarLogo {
+  font-family: var(--fonte-display);
+  font-size: var(--texto-xl);
+  font-weight: 800;
+  color: var(--cor-primaria);
+  text-decoration: none;
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-1);
+  flex: 1;
+}
+
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-3);
+  padding: 10px 14px;
+  border-radius: var(--raio-md);
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: all var(--transicao);
+  border: none;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+}
+
+.sidebarItem:hover {
+  background: var(--cor-fundo-alt);
+  color: var(--cor-texto);
+}
+
+.sidebarItemAtivo {
+  background: var(--cor-primaria-claro);
+  color: var(--cor-primaria);
+  font-weight: 600;
+}
+
+.sidebarBottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+  border-top: 1px solid var(--cor-borda);
+  padding-top: var(--espaco-4);
+}
+
+.sidebarUsuario {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-3);
+  font-size: var(--texto-sm);
+  color: var(--cor-texto-secundario);
+}
+
+.btnSair {
+  font-size: var(--texto-xs);
+  color: var(--cor-texto-terciario);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 4px 0;
+  transition: color var(--transicao);
+}
+
+.btnSair:hover {
+  color: var(--cor-erro);
+}
+
+/* CONTEÚDO */
+.conteudo {
+  padding: var(--espaco-8);
+  overflow-y: auto;
+}
+
+.secao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-6);
+  max-width: 900px;
+}
+
+.secao h1 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.subtitulo {
+  color: var(--cor-texto-terciario);
+  font-size: var(--texto-sm);
+  margin-top: -16px;
+}
+
+.secaoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Stats */
+.gridStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espaco-4);
+}
+
+.statCard {
+  background: white;
+  border-radius: var(--raio-xl);
+  padding: var(--espaco-5);
+  border: 1px solid var(--cor-borda);
+  border-top: 3px solid;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  box-shadow: var(--sombra-sm);
+  transition: all var(--transicao);
+}
+
+.statCard:hover {
+  box-shadow: var(--sombra-md);
+  transform: translateY(-2px);
+}
+
+.statIcone {
+  font-size: 1.5rem;
+}
+
+.statValor {
+  font-family: var(--fonte-display);
+  font-size: var(--texto-3xl);
+  font-weight: 900;
+  color: var(--cor-texto);
+}
+
+.statLabel {
+  font-size: var(--texto-xs);
+  color: var(--cor-texto-terciario);
+}
+
+/* Vazio */
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-4);
+  padding: var(--espaco-20) var(--espaco-6);
+  text-align: center;
+  background: white;
+  border-radius: var(--raio-2xl);
+  border: 2px dashed var(--cor-borda);
+}
+
+.vazio span {
+  font-size: 3rem;
+}
+
+.vazio h3 {
+  font-size: var(--texto-xl);
+  color: var(--cor-texto);
+}
+
+.vazio p {
+  font-size: var(--texto-sm);
+  color: var(--cor-texto-terciario);
+}
+
+/* Lista de imóveis */
+.listaImoveis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+}
+
+.imovelRow {
+  display: grid;
+  grid-template-columns: 80px 1fr auto auto;
+  align-items: center;
+  gap: var(--espaco-4);
+  padding: var(--espaco-4);
+  background: white;
+  border-radius: var(--raio-xl);
+  border: 1px solid var(--cor-borda);
+  transition: all var(--transicao);
+}
+
+.imovelRow:hover {
+  box-shadow: var(--sombra-sm);
+  border-color: var(--cor-primaria-claro);
+}
+
+.imovelFoto {
+  width: 80px;
+  height: 60px;
+  border-radius: var(--raio-md);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--cor-fundo-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.imovelInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.imovelInfo strong {
+  font-size: var(--texto-sm);
+  color: var(--cor-texto);
+  font-weight: 600;
+}
+
+.imovelInfo span {
+  font-size: var(--texto-xs);
+  color: var(--cor-texto-terciario);
+}
+
+.imovelPreco {
+  font-weight: 700 !important;
+  color: var(--cor-primaria) !important;
+  font-size: var(--texto-sm) !important;
+}
+
+.imovelStatus {
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: var(--raio-full);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status_publicado { background: var(--cor-sucesso-claro); color: var(--cor-sucesso); }
+.status_pausado { background: var(--cor-aviso-claro); color: var(--cor-aviso); }
+.status_rascunho { background: var(--cor-fundo-alt); color: var(--cor-texto-terciario); }
+.status_em_analise { background: #eff6ff; color: #3b82f6; }
+.status_vendido,
+.status_alugado { background: #f0fdf4; color: #16a34a; }
+
+.imovelAcoes {
+  display: flex;
+  gap: var(--espaco-2);
+  flex-shrink: 0;
+}
+
+/* Lista de leads */
+.listaLeads {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+}
+
+.leadCard {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: var(--espaco-4);
+  padding: var(--espaco-5);
+  background: white;
+  border-radius: var(--raio-xl);
+  border: 1px solid var(--cor-borda);
+  transition: all var(--transicao);
+}
+
+.leadCard:hover {
+  box-shadow: var(--sombra-sm);
+}
+
+.leadAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--cor-primaria-claro);
+  color: var(--cor-primaria);
+  font-weight: 800;
+  font-size: var(--texto-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.leadInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.leadInfo strong {
+  font-size: var(--texto-sm);
+  color: var(--cor-texto);
+}
+
+.leadInfo span {
+  font-size: var(--texto-xs);
+  color: var(--cor-texto-terciario);
+}
+
+.leadMensagem {
+  font-size: var(--texto-xs) !important;
+  color: var(--cor-texto-secundario) !important;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.leadData {
+  font-size: var(--texto-xs);
+  color: var(--cor-texto-placeholder);
+}
+
+.leadAcoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+/* ── RESPONSIVIDADE ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .gridStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .painel {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--espaco-3) var(--espaco-4);
+    z-index: var(--z-header);
+    border-top: 1px solid var(--cor-borda);
+    border-right: none;
+  }
+
+  .sidebarLogo,
+  .sidebarBottom {
+    display: none;
+  }
+
+  .sidebarNav {
+    flex-direction: row;
+    flex: 1;
+    justify-content: space-around;
+  }
+
+  .sidebarItem {
+    flex-direction: column;
+    font-size: var(--texto-xs);
+    gap: var(--espaco-1);
+    padding: var(--espaco-2);
+    min-width: 60px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .conteudo {
+    padding: var(--espaco-5) var(--espaco-4);
+    padding-bottom: 80px;
+  }
+
+  .imovelRow {
+    grid-template-columns: 1fr auto;
+    gap: var(--espaco-3);
+  }
+
+  .imovelFoto {
+    display: none;
+  }
+
+  .imovelStatus {
+    display: none;
+  }
+
+  .leadCard {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .leadAcoes {
+    display: none;
+  }
+}
