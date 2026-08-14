@@ -282,6 +282,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
 
       setSucesso(true)
       setFotosRemovidas([])
+      router.push("/painel")
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : "Erro ao salvar imóvel")
     } finally {
