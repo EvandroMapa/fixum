@@ -86,8 +86,8 @@ export interface Imovel {
   endereco: string
   cidade: string
   bairro?: string
-  lat: number
-  lng: number
+  latitude: number
+  longitude: number
   endereco_publico: boolean
   status: StatusImovel
   anunciante_id: string

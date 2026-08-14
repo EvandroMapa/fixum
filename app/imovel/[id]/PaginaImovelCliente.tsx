@@ -234,8 +234,8 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
               </p>
               <div className={styles.mapaImovelWrapper}>
                 <MapaImovel
-                  lat={imovel.lat}
-                  lng={imovel.lng}
+                  lat={imovel.latitude}
+                  lng={imovel.longitude}
                   titulo={imovel.titulo}
                   publico={imovel.endereco_publico}
                 />

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -198,7 +198,7 @@ export default function PainelPage() {
                     </div>
                     <div className={styles.imovelAcoes}>
                       <Link href={`/imovel/${imovel.id}`} className="btn btn-ghost btn-sm">Ver</Link>
-                      <Link href={`/painel/editar/${imovel.id}`} className="btn btn-outline btn-sm">Editar</Link>
+                      <Link href={`/painel/editar-imovel/${imovel.id}`} className="btn btn-outline btn-sm">Editar</Link>
                       {imovel.status === 'publicado' ? (
                         <button className="btn btn-outline btn-sm" onClick={() => alterarStatus(imovel.id, 'pausado')}>Pausar</button>
                       ) : imovel.status === 'pausado' ? (

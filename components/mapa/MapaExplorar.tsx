@@ -141,7 +141,7 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
 
     // Montar GeoJSON
     const features = imoveis
-      .filter(i => i.lat && i.lng)
+      .filter(i => i.latitude && i.longitude)
       .map(i => ({
         type: 'Feature' as const,
         properties: {
@@ -154,7 +154,7 @@ export default function MapaExplorar({ imoveis, imovelHover, onMapaMoveu, centro
         },
         geometry: {
           type: 'Point' as const,
-          coordinates: [i.lng, i.lat] as [number, number],
+          coordinates: [i.longitude, i.latitude] as [number, number],
         },
       }))
 
