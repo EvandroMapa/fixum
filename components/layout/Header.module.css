@@ -3,28 +3,41 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: var(--z-header);
+  z-index: 1000;
   height: var(--altura-header);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  /* Default: transparente (home com hero escuro) */
   background: transparent;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-.header.scrolled {
+/* Solido: em outras paginas ou apos scroll na home */
+.header.solido {
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.header.scrolled .logoMarca { color: #1565c0; }
-.header.scrolled .logoTexto { color: #0f172a; }
-.header.scrolled .navLink   { color: #475569; }
-.header.scrolled .navLink:hover { color: #1565c0; }
-.header.scrolled .btnAnunciar {
-  border-color: #1565c0;
-  color: #1565c0;
-}
+/* Cores do logo/nav quando transparente (home hero) */
+.logoMarca { color: white; transition: color 0.25s; }
+.logoTexto { color: white; transition: color 0.25s; }
+.navLink   { color: rgba(255,255,255,0.85); }
+.navLink:hover { color: white; background: rgba(255,255,255,0.12); }
+.btnAnunciar { border-color: rgba(255,255,255,0.45); color: white; }
+.burger, .burger::before, .burger::after { background: white; }
 
+/* Cores quando solido */
+.solido .logoMarca { color: #1565c0; }
+.solido .logoTexto { color: #0f172a; }
+.solido .navLink   { color: #475569; }
+.solido .navLink:hover { color: #1565c0; background: #eff6ff; }
+.solido .btnAnunciar { border-color: #cbd5e1; color: #334155; }
+.solido .btnAnunciar:hover { border-color: #1565c0; color: #1565c0; background: #eff6ff; }
+.solido .burger,
+.solido .burger::before,
+.solido .burger::after { background: #334155; }
+
+/* ---- Layout interno ---- */
 .inner {
   display: flex;
   align-items: center;
@@ -46,20 +59,14 @@
   white-space: nowrap;
 }
 
-.logoMarca {
-  color: white;
-  flex-shrink: 0;
-  transition: color 0.3s ease;
-}
+.logoMarca { flex-shrink: 0; }
 
 .logoTexto {
   font-family: var(--fonte-display);
   font-size: 1.25rem;
   font-weight: 900;
-  color: white;
   letter-spacing: -0.04em;
   line-height: 1;
-  transition: color 0.3s ease;
 }
 
 /* Nav */
@@ -74,15 +81,9 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: rgba(255,255,255,0.85);
   text-decoration: none;
   transition: all 0.2s;
   white-space: nowrap;
-}
-
-.navLink:hover {
-  color: white;
-  background: rgba(255,255,255,0.12);
 }
 
 /* Acoes */
@@ -94,13 +95,14 @@
 }
 
 .btnAnunciar {
-  border-color: rgba(255,255,255,0.5) !important;
-  color: white !important;
-  transition: all 0.2s !important;
-}
-.btnAnunciar:hover {
-  border-color: white !important;
-  background: rgba(255,255,255,0.1) !important;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1.5px solid;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
 /* Burger */
@@ -111,9 +113,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: rgba(255,255,255,0.12);
   cursor: pointer;
   border: none;
+  background: transparent;
   flex-shrink: 0;
 }
 
@@ -121,26 +123,21 @@
   display: block;
   width: 18px;
   height: 2px;
-  background: white;
   border-radius: 2px;
   position: relative;
   transition: all 0.2s;
 }
-
-.burger::before,
-.burger::after {
+.burger::before, .burger::after {
   content: '';
   position: absolute;
   width: 100%;
   height: 2px;
-  background: white;
   border-radius: 2px;
   transition: all 0.2s;
 }
 .burger::before { top: -6px; }
 .burger::after  { top: 6px; }
-
-.burgerAberto { background: transparent; }
+.burgerAberto { background: transparent !important; }
 .burgerAberto::before { top: 0; transform: rotate(45deg); }
 .burgerAberto::after  { top: 0; transform: rotate(-45deg); }
 
@@ -157,8 +154,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  z-index: 999;
 }
-
 .menuMobile a {
   padding: 12px 16px;
   border-radius: 10px;
@@ -168,10 +165,7 @@
   transition: all 0.15s;
   text-decoration: none;
 }
-.menuMobile a:hover {
-  background: #eff6ff;
-  color: #1565c0;
-}
+.menuMobile a:hover { background: #eff6ff; color: #1565c0; }
 
 @media (max-width: 768px) {
   .nav { display: none; }

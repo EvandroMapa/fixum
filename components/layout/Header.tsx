@@ -2,26 +2,33 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import styles from './Header.module.css'
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [menuAberto, setMenuAberto] = useState(false)
+  const pathname = usePathname()
+
+  // Na home page: header transparente ate rolar
+  // Em outras paginas: sempre solido
+  const naHome = pathname === '/'
+  const solido = !naHome || scrolled
 
   useEffect(() => {
+    if (!naHome) return
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [naHome])
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.header} ${solido ? styles.solido : ''}`}>
       <div className={styles.inner}>
         {/* Logo */}
         <Link href="/" className={styles.logo}>
-          <svg className={styles.logoMarca} width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M14 2L3 11V26H10V17H18V26H25V11L14 2Z" fill="currentColor" opacity="0.9"/>
-            <rect x="11" y="17" width="6" height="9" rx="1" fill="currentColor"/>
+          <svg className={styles.logoMarca} width="26" height="26" viewBox="0 0 28 28" fill="none">
+            <path d="M14 2L3 11V26H10V17H18V26H25V11L14 2Z" fill="currentColor"/>
           </svg>
           <span className={styles.logoTexto}>FIXUM</span>
         </Link>
@@ -35,7 +42,7 @@ export default function Header() {
 
         {/* Acoes */}
         <div className={styles.acoes}>
-          <Link href="/painel/novo-imovel" className={`btn btn-outline btn-sm ${styles.btnAnunciar}`}>Anunciar</Link>
+          <Link href="/painel/novo-imovel" className={styles.btnAnunciar}>Anunciar</Link>
           <Link href="/login" className="btn btn-primario btn-sm">Entrar</Link>
           <button className={styles.menuBurger} onClick={() => setMenuAberto(!menuAberto)} aria-label="Menu">
             <span className={`${styles.burger} ${menuAberto ? styles.burgerAberto : ''}`} />
