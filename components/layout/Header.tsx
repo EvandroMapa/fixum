@@ -13,7 +13,9 @@ export default function Header() {
   // Na home page: header transparente ate rolar
   // Em outras paginas: sempre solido
   const naHome = pathname === '/'
+  const noExplorar = pathname === '/explorar' || pathname.startsWith('/explorar?') || pathname.startsWith('/explorar/')
   const solido = !naHome || scrolled
+  const ocultarNav = noExplorar
 
   useEffect(() => {
     if (!naHome) return
@@ -33,12 +35,14 @@ export default function Header() {
           <span className={styles.logoTexto}>FIXUM</span>
         </Link>
 
-        {/* Nav Desktop */}
-        <nav className={styles.nav}>
-          <Link href="/explorar?negociacao=venda" className={styles.navLink}>Comprar</Link>
-          <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>Alugar</Link>
-          <Link href="/explorar" className={styles.navLink}>Explorar</Link>
-        </nav>
+        {/* Nav Desktop - oculto no explorar pois os filtros ja tem Comprar/Alugar */}
+        {!ocultarNav && (
+          <nav className={styles.nav}>
+            <Link href="/explorar?negociacao=venda" className={styles.navLink}>Comprar</Link>
+            <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>Alugar</Link>
+            <Link href="/explorar" className={styles.navLink}>Explorar</Link>
+          </nav>
+        )}
 
         {/* Acoes */}
         <div className={styles.acoes}>
