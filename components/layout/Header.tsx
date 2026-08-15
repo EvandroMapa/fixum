@@ -19,7 +19,6 @@ export default function Header() {
       <div className={styles.inner}>
         {/* Logo */}
         <Link href="/" className={styles.logo}>
-          <span className={styles.logoIcone}>{"\uD83C\uDFE0"}</span>
           <span className={styles.logoTexto}>
             <strong>FIXUM</strong>
           </span>
@@ -27,25 +26,15 @@ export default function Header() {
 
         {/* Nav Desktop */}
         <nav className={styles.nav}>
-          <Link href="/explorar?negociacao=venda" className={styles.navLink}>
-            Comprar
-          </Link>
-          <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>
-            Alugar
-          </Link>
-          <Link href="/explorar" className={styles.navLink}>
-            Explorar
-          </Link>
+          <Link href="/explorar?negociacao=venda" className={styles.navLink}>Comprar</Link>
+          <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>Alugar</Link>
+          <Link href="/explorar" className={styles.navLink}>Explorar</Link>
         </nav>
 
-        {/* Ações */}
+        {/* Acoes */}
         <div className={styles.acoes}>
-          <Link href="/painel/novo-imovel" className="btn btn-outline btn-sm">
-            Anunciar
-          </Link>
-          <Link href="/login" className="btn btn-primario btn-sm">
-            Entrar
-          </Link>
+          <Link href="/painel/novo-imovel" className="btn btn-outline btn-sm">Anunciar</Link>
+          <Link href="/login" className="btn btn-primario btn-sm">Entrar</Link>
           <button
             className={styles.menuBurger}
             onClick={() => setMenuAberto(!menuAberto)}
@@ -62,7 +51,7 @@ export default function Header() {
           <Link href="/explorar?negociacao=venda" onClick={() => setMenuAberto(false)}>Comprar</Link>
           <Link href="/explorar?negociacao=aluguel" onClick={() => setMenuAberto(false)}>Alugar</Link>
           <Link href="/explorar" onClick={() => setMenuAberto(false)}>Explorar pelo Mapa</Link>
-          <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imóvel</Link>
+          <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imovel</Link>
           <Link href="/login" onClick={() => setMenuAberto(false)}>Entrar</Link>
           <Link href="/cadastro" onClick={() => setMenuAberto(false)}>Criar Conta</Link>
         </div>
