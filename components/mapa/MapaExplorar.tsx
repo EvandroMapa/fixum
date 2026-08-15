@@ -24,8 +24,6 @@ function precoLabel(preco: number): string {
   return 'R$' + preco
 }
 
-const SOURCE_ID = 'imoveis-source'
-
 export default function MapaExplorar({
   imoveis,
   imovelHover,
@@ -34,15 +32,16 @@ export default function MapaExplorar({
   onMapaMoveu,
   centroInicial,
 }: Props) {
-  const mapaRef = useRef<mapboxgl.Map | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const mapaRef = useRef<mapboxgl.Map | null>(null)
   const marcadoresMapRef = useRef<Map<string, { marcador: mapboxgl.Marker; popup: mapboxgl.Popup }>>(new Map())
-  const [pesquisarNaArea, setPesquisarNaArea] = useState(false)
   const [mapaPronto, setMapaPronto] = useState(false)
+  const [pesquisarNaArea, setPesquisarNaArea] = useState(false)
 
   // Inicializar mapa
   useEffect(() => {
     if (!containerRef.current || mapaRef.current) return
+
     const mapa = new mapboxgl.Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
@@ -50,18 +49,11 @@ export default function MapaExplorar({
       zoom: 13,
       attributionControl: false,
     })
+
     mapa.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right')
     mapa.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right')
 
-    mapa.on('load', () => {
-      // Source com clustering
-      mapa.addSource(SOURCE_ID, {
-        type: 'geojson',
-        data: { type: 'FeatureCollection', features: [] },
-      })
-
-      setMapaPronto(true)
-    })
+    mapa.on('load', () => setMapaPronto(true))
 
     mapa.on('moveend', () => {
       setPesquisarNaArea(true)
@@ -73,143 +65,78 @@ export default function MapaExplorar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Atualizar dados do source + marcadores individuais
+  // Recriar marcadores sempre que a lista de imoveis mudar
   useEffect(() => {
     if (!mapaPronto || !mapaRef.current) return
     const mapa = mapaRef.current
-    const source = mapa.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource
-    if (!source) return
 
-    // Montar GeoJSON
-    const features = imoveis
+    // Limpar marcadores anteriores
+    marcadoresMapRef.current.forEach(({ marcador }) => marcador.remove())
+    marcadoresMapRef.current.clear()
+
+    // Criar marcador por imovel diretamente do array (sem querySourceFeatures)
+    imoveis
       .filter((i) => i.latitude && i.longitude)
-      .map((i) => ({
-        type: 'Feature' as const,
-        properties: {
-          id: i.id,
-          preco: i.preco || 0,
-          precoLabel: precoLabel(i.preco || 0),
-          titulo: i.titulo || '',
-          bairro: i.bairro || '',
-          cidade: i.cidade || '',
-        },
-        geometry: {
-          type: 'Point' as const,
-          coordinates: [i.longitude, i.latitude] as [number, number],
-        },
-      }))
-
-    source.setData({ type: 'FeatureCollection', features })
-
-    function atualizarMarcadores() {
-      marcadoresMapRef.current.forEach(({ marcador }) => marcador.remove())
-      marcadoresMapRef.current.clear()
-
-      if (!mapa.isStyleLoaded()) return
-
-      const pontos = mapa.querySourceFeatures(SOURCE_ID)
-
-      const vistos = new Set<string>()
-      pontos.forEach((f) => {
-        const props = (f as unknown as { properties: Record<string, string> }).properties
-        const geom = (f as unknown as { geometry: { coordinates: [number, number] } }).geometry
-        const id = props?.id
-        if (!id || vistos.has(id)) return
-        vistos.add(id)
+      .forEach((i) => {
+        const label = precoLabel(i.preco || 0)
 
         const el = document.createElement('div')
         el.className = styles.marcador
-        el.textContent = props?.precoLabel || ''
-        el.dataset.id = id
+        el.textContent = label
+        el.dataset.id = i.id
 
-        // Clique no marcador seleciona o imóvel e notifica a lista
         el.addEventListener('click', (e) => {
           e.stopPropagation()
-          onSelecionarImovel?.(id)
+          onSelecionarImovel?.(i.id)
         })
 
+        const localidade = (i.bairro ? i.bairro + ', ' : '') + (i.cidade || '')
         const popup = new mapboxgl.Popup({ offset: 25, closeButton: true, maxWidth: '260px' })
           .setHTML(
-            '<div style="padding: 6px 4px;">'
-            + '<strong style="font-size:16px;font-weight:800;color:#1565c0;display:block;margin-bottom:4px">' + (props?.precoLabel || '') + '</strong>'
-            + '<div style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:4px;line-height:1.3">' + (props?.titulo || '') + '</div>'
-            + '<div style="font-size:12px;color:#64748b;margin-bottom:10px">📍 ' + (props?.bairro ? props.bairro + ', ' : '') + (props?.cidade || '') + '</div>'
-            + '<a href="/imovel/' + id + '" style="display:inline-block;width:100%;text-align:center;padding:8px 12px;background:#1565c0;color:white;text-decoration:none;border-radius:8px;font-size:12px;font-weight:700;box-sizing:border-box;">Visualizar Imóvel →</a>'
+            '<div style="padding:6px 4px">'
+            + '<strong style="font-size:16px;font-weight:800;color:#1565c0;display:block;margin-bottom:4px">' + label + '</strong>'
+            + '<div style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:4px;line-height:1.3">' + (i.titulo || '') + '</div>'
+            + '<div style="font-size:12px;color:#64748b;margin-bottom:10px">' + localidade + '</div>'
+            + '<a href="/imovel/' + i.id + '" style="display:inline-block;width:100%;text-align:center;padding:8px 12px;background:#1565c0;color:white;text-decoration:none;border-radius:8px;font-size:12px;font-weight:700;box-sizing:border-box;">Visualizar Imovel</a>'
             + '</div>'
           )
 
         const marcador = new mapboxgl.Marker({ element: el })
-          .setLngLat(geom.coordinates)
+          .setLngLat([i.longitude!, i.latitude!])
           .setPopup(popup)
           .addTo(mapa)
 
-        marcadoresMapRef.current.set(id, { marcador, popup })
+        marcadoresMapRef.current.set(i.id, { marcador, popup })
       })
-    }
-
-    const onMove = () => atualizarMarcadores()
-    const onSource = (e: mapboxgl.MapSourceDataEvent) => {
-      if (e.sourceId === SOURCE_ID && e.isSourceLoaded) atualizarMarcadores()
-    }
-    mapa.on('moveend', onMove)
-    mapa.on('sourcedata', onSource)
-    setTimeout(atualizarMarcadores, 300)
 
     return () => {
-      mapa.off('moveend', onMove)
-      mapa.off('sourcedata', onSource)
       marcadoresMapRef.current.forEach(({ marcador }) => marcador.remove())
       marcadoresMapRef.current.clear()
     }
   }, [imoveis, mapaPronto, onSelecionarImovel])
 
-  // Centralizar no mapa e destacar quando o imóvel for selecionado
+  // Centralizar e abrir popup quando imovel selecionado pela lista
   useEffect(() => {
     if (!mapaPronto || !mapaRef.current || !imovelSelecionado) return
     const mapa = mapaRef.current
-
     const imovel = imoveis.find((i) => i.id === imovelSelecionado)
     if (imovel?.latitude && imovel?.longitude) {
-      mapa.flyTo({
-        center: [imovel.longitude, imovel.latitude],
-        zoom: Math.max(mapa.getZoom(), 15),
-        duration: 1200,
-        essential: true,
-      })
-
-      // Abrir o popup correspondente
+      mapa.flyTo({ center: [imovel.longitude, imovel.latitude], zoom: Math.max(mapa.getZoom(), 15), duration: 1200, essential: true })
       const item = marcadoresMapRef.current.get(imovelSelecionado)
-      if (item) {
-        item.marcador.togglePopup()
-      }
+      if (item) setTimeout(() => item.marcador.togglePopup(), 1300)
     }
   }, [imovelSelecionado, imoveis, mapaPronto])
 
-  // Hover e Seleção destaque nos marcadores
+  // Hover/selecao - destacar marcadores
   useEffect(() => {
     marcadoresMapRef.current.forEach(({ marcador }, id) => {
       const el = marcador.getElement()
       if (id === imovelSelecionado) {
-        el.style.borderColor = '#1565c0'
-        el.style.backgroundColor = '#1565c0'
-        el.style.color = '#ffffff'
-        el.style.transform = 'scale(1.2)'
-        el.style.zIndex = '20'
-        el.style.boxShadow = '0 0 0 4px rgba(21, 101, 192, 0.35)'
+        el.style.cssText = 'border-color:#1565c0;background-color:#1565c0;color:#fff;transform:scale(1.2);z-index:20;box-shadow:0 0 0 4px rgba(21,101,192,0.35)'
       } else if (id === imovelHover) {
-        el.style.borderColor = '#ff6b35'
-        el.style.color = '#ff6b35'
-        el.style.backgroundColor = '#ffffff'
-        el.style.transform = 'scale(1.1)'
-        el.style.zIndex = '15'
-        el.style.boxShadow = '0 2px 10px rgba(255, 107, 53, 0.3)'
+        el.style.cssText = 'border-color:#ff6b35;background-color:#fff7ed;color:#ea580c;transform:scale(1.1);z-index:10;box-shadow:0 0 0 3px rgba(255,107,53,0.3)'
       } else {
-        el.style.borderColor = ''
-        el.style.backgroundColor = ''
-        el.style.color = ''
-        el.style.transform = ''
-        el.style.zIndex = ''
-        el.style.boxShadow = ''
+        el.style.cssText = ''
       }
     })
   }, [imovelHover, imovelSelecionado])
@@ -225,7 +152,7 @@ export default function MapaExplorar({
       <div ref={containerRef} className={styles.mapa} />
       {pesquisarNaArea && (
         <button className={styles.btnPesquisarArea} onClick={handlePesquisarNaArea}>
-          Pesquisar nesta área
+          Pesquisar nesta area
         </button>
       )}
       {!mapaPronto && (
