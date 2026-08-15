@@ -20,9 +20,11 @@ interface Props {
 
 function precoLabel(preco: number): string {
   if (!preco) return ''
-  if (preco >= 1_000_000) return 'R$' + (preco / 1_000_000).toFixed(1) + 'M'
-  if (preco >= 1_000) return 'R$' + Math.round(preco / 1_000) + 'k'
-  return 'R$' + preco
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(preco)
 }
 
 export default function MapaExplorar({

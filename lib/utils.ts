@@ -7,7 +7,7 @@ export function formatarPreco(preco: number, negociacao?: string): string {
     maximumFractionDigits: 0,
   }).format(preco)
 
-  if (negociacao === 'aluguel') return `${formatado}/mês`
+  if (negociacao === 'aluguel') return `${formatado}/m\u00EAs`
   return formatado
 }
 
