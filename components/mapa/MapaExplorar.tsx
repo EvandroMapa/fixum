@@ -36,7 +36,8 @@ export default function MapaExplorar({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapaRef = useRef<mapboxgl.Map | null>(null)
-  const marcadoresMapRef = useRef<Map<string, { marcador: mapboxgl.Marker; popup: mapboxgl.Popup }>>(new Map())
+  // Armazena { marcador, popup, inner } - inner e o filho visual (nao o elemento root do Mapbox)
+  const marcadoresMapRef = useRef<Map<string, { marcador: mapboxgl.Marker; popup: mapboxgl.Popup; inner: HTMLElement }>>(new Map())
   const [mapaPronto, setMapaPronto] = useState(false)
   const [pesquisarNaArea, setPesquisarNaArea] = useState(false)
 
@@ -80,13 +81,25 @@ export default function MapaExplorar({
       .forEach((i) => {
         const label = precoLabel(i.preco || 0)
 
-        const el = document.createElement('div')
-        el.className = styles.marcador
-        el.textContent = label
-        el.dataset.id = i.id
+        // wrapper transparente — o Mapbox aplica o transform nele para posicionar
+        const wrapper = document.createElement('div')
+        wrapper.style.cssText = 'cursor:pointer;'
 
-        el.addEventListener('click', (e) => {
+        // inner e o elemento visual — estilos de hover vao aqui, nunca no wrapper
+        const inner = document.createElement('div')
+        inner.className = styles.marcador
+        inner.textContent = label
+        inner.dataset.id = i.id
+        wrapper.appendChild(inner)
+
+        wrapper.addEventListener('click', (e) => {
           e.stopPropagation()
+          // Fechar todos os outros popups antes de abrir este
+          marcadoresMapRef.current.forEach(({ popup, marcador }, otherId) => {
+            if (otherId !== i.id && popup.isOpen()) {
+              marcador.togglePopup()
+            }
+          })
           onSelecionarImovel?.(i.id)
         })
 
@@ -101,12 +114,12 @@ export default function MapaExplorar({
             + '</div>'
           )
 
-        const marcador = new mapboxgl.Marker({ element: el })
+        const marcador = new mapboxgl.Marker({ element: wrapper })
           .setLngLat([i.longitude!, i.latitude!])
           .setPopup(popup)
           .addTo(mapa)
 
-        marcadoresMapRef.current.set(i.id, { marcador, popup })
+        marcadoresMapRef.current.set(i.id, { marcador, popup, inner })
       })
 
     return () => {
@@ -122,41 +135,42 @@ export default function MapaExplorar({
     const imovel = imoveis.find((i) => i.id === imovelSelecionado)
     if (imovel?.latitude && imovel?.longitude) {
       mapa.flyTo({ center: [imovel.longitude, imovel.latitude], zoom: Math.max(mapa.getZoom(), 15), duration: 1200, essential: true })
-      const item = marcadoresMapRef.current.get(imovelSelecionado)
-      if (item) setTimeout(() => item.marcador.togglePopup(), 1300)
+      setTimeout(() => {
+        // Fechar outros popups abertos
+        marcadoresMapRef.current.forEach(({ popup, marcador }, otherId) => {
+          if (otherId !== imovelSelecionado && popup.isOpen()) marcador.togglePopup()
+        })
+        const item = marcadoresMapRef.current.get(imovelSelecionado)
+        if (item && !item.popup.isOpen()) item.marcador.togglePopup()
+      }, 1300)
     }
   }, [imovelSelecionado, imoveis, mapaPronto])
 
-  // Hover/selecao - destacar marcadores (so propriedades individuais, nunca cssText)
+  // Hover/selecao — estilizar apenas o .inner, nunca o wrapper (que o Mapbox controla)
   useEffect(() => {
-    marcadoresMapRef.current.forEach(({ marcador }, id) => {
-      const el = marcador.getElement()
+    marcadoresMapRef.current.forEach(({ inner }, id) => {
       if (id === imovelSelecionado) {
-        el.style.borderColor = '#1565c0'
-        el.style.backgroundColor = '#1565c0'
-        el.style.color = '#fff'
-        el.style.transform = 'scale(1.2)'
-        el.style.zIndex = '20'
-        el.style.boxShadow = '0 0 0 4px rgba(21,101,192,0.35)'
+        inner.style.borderColor = '#1565c0'
+        inner.style.backgroundColor = '#1565c0'
+        inner.style.color = '#fff'
+        inner.style.boxShadow = '0 0 0 4px rgba(21,101,192,0.35)'
+        inner.style.zIndex = '20'
       } else if (id === imovelHover) {
-        el.style.borderColor = '#ff6b35'
-        el.style.backgroundColor = '#fff7ed'
-        el.style.color = '#ea580c'
-        el.style.transform = 'scale(1.1)'
-        el.style.zIndex = '10'
-        el.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.3)'
+        inner.style.borderColor = '#ff6b35'
+        inner.style.backgroundColor = '#fff7ed'
+        inner.style.color = '#ea580c'
+        inner.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.3)'
+        inner.style.zIndex = '10'
       } else {
-        el.style.borderColor = ''
-        el.style.backgroundColor = ''
-        el.style.color = ''
-        el.style.transform = ''
-        el.style.zIndex = ''
-        el.style.boxShadow = ''
+        inner.style.borderColor = ''
+        inner.style.backgroundColor = ''
+        inner.style.color = ''
+        inner.style.boxShadow = ''
+        inner.style.zIndex = ''
       }
     })
   }, [imovelHover, imovelSelecionado])
 
-  // Botao "Pesquisar nesta area" - dispara busca com bounds atuais
   const handlePesquisarNaArea = useCallback(() => {
     if (!mapaRef.current) return
     const bounds = mapaRef.current.getBounds()!
