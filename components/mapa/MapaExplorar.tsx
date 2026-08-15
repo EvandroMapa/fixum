@@ -127,16 +127,31 @@ export default function MapaExplorar({
     }
   }, [imovelSelecionado, imoveis, mapaPronto])
 
-  // Hover/selecao - destacar marcadores
+  // Hover/selecao - destacar marcadores (so propriedades individuais, nunca cssText)
   useEffect(() => {
     marcadoresMapRef.current.forEach(({ marcador }, id) => {
       const el = marcador.getElement()
       if (id === imovelSelecionado) {
-        el.style.cssText = 'border-color:#1565c0;background-color:#1565c0;color:#fff;transform:scale(1.2);z-index:20;box-shadow:0 0 0 4px rgba(21,101,192,0.35)'
+        el.style.borderColor = '#1565c0'
+        el.style.backgroundColor = '#1565c0'
+        el.style.color = '#fff'
+        el.style.transform = 'scale(1.2)'
+        el.style.zIndex = '20'
+        el.style.boxShadow = '0 0 0 4px rgba(21,101,192,0.35)'
       } else if (id === imovelHover) {
-        el.style.cssText = 'border-color:#ff6b35;background-color:#fff7ed;color:#ea580c;transform:scale(1.1);z-index:10;box-shadow:0 0 0 3px rgba(255,107,53,0.3)'
+        el.style.borderColor = '#ff6b35'
+        el.style.backgroundColor = '#fff7ed'
+        el.style.color = '#ea580c'
+        el.style.transform = 'scale(1.1)'
+        el.style.zIndex = '10'
+        el.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.3)'
       } else {
-        el.style.cssText = ''
+        el.style.borderColor = ''
+        el.style.backgroundColor = ''
+        el.style.color = ''
+        el.style.transform = ''
+        el.style.zIndex = ''
+        el.style.boxShadow = ''
       }
     })
   }, [imovelHover, imovelSelecionado])
