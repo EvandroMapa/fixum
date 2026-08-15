@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
@@ -9,8 +9,8 @@ import FiltrosBusca from '@/components/imovel/FiltrosBusca'
 import { type Imovel, type FiltrosBusca as TFiltros } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import styles from './page.module.css'
+import mapboxgl from 'mapbox-gl'
 
-// Importação dinâmica do mapa (evita SSR)
 const MapaExplorar = dynamic(() => import('@/components/mapa/MapaExplorar'), {
   ssr: false,
   loading: () => <div className={styles.mapaLoading}><span>Carregando mapa...</span></div>,
@@ -28,44 +28,40 @@ function ExplorarConteudo() {
     negociacao: (searchParams.get('negociacao') as TFiltros['negociacao']) ?? undefined,
     cidade: searchParams.get('q') ?? undefined,
   })
+  const boundsRef = useRef<mapboxgl.LngLatBounds | null>(null)
 
   const supabase = createClient()
 
-  const buscarImoveis = useCallback(async (filtrosAtivos: TFiltros) => {
+  const buscarImoveis = useCallback(async (filtrosAtivos: TFiltros, bounds?: mapboxgl.LngLatBounds | null) => {
     setCarregando(true)
     try {
       let query = supabase
         .from('imoveis')
-        .select(`
-          *,
-          fotos_imovel (id, url, principal, ordem)
-        `)
+        .select(`*, fotos_imovel (id, url, principal, ordem)`)
         .in('status', ['publicado', 'ativo'])
         .order('destaque', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(50)
 
-      if (filtrosAtivos.negociacao) {
-        query = query.eq('negociacao', filtrosAtivos.negociacao)
-      }
-      if (filtrosAtivos.tipo && filtrosAtivos.tipo.length > 0) {
-        query = query.in('tipo', filtrosAtivos.tipo)
-      }
-      if (filtrosAtivos.preco_min) {
-        query = query.gte('preco', filtrosAtivos.preco_min)
-      }
-      if (filtrosAtivos.preco_max) {
-        query = query.lte('preco', filtrosAtivos.preco_max)
-      }
-      if (filtrosAtivos.quartos_min) {
-        query = query.gte('quartos', filtrosAtivos.quartos_min)
-      }
-      if (filtrosAtivos.cidade) {
-        query = query.ilike('cidade', `%${filtrosAtivos.cidade}%`)
+      if (filtrosAtivos.negociacao) query = query.eq('negociacao', filtrosAtivos.negociacao)
+      if (filtrosAtivos.tipo && filtrosAtivos.tipo.length > 0) query = query.in('tipo', filtrosAtivos.tipo)
+      if (filtrosAtivos.preco_min) query = query.gte('preco', filtrosAtivos.preco_min)
+      if (filtrosAtivos.preco_max) query = query.lte('preco', filtrosAtivos.preco_max)
+      if (filtrosAtivos.quartos_min) query = query.gte('quartos', filtrosAtivos.quartos_min)
+      if (filtrosAtivos.cidade) query = query.ilike('cidade', `%${filtrosAtivos.cidade}%`)
+
+      // Filtro por bounds do mapa (pesquisar nesta area)
+      if (bounds) {
+        const sw = bounds.getSouthWest()
+        const ne = bounds.getNorthEast()
+        query = query
+          .gte('latitude', sw.lat)
+          .lte('latitude', ne.lat)
+          .gte('longitude', sw.lng)
+          .lte('longitude', ne.lng)
       }
 
-      const { data, error, count } = await query
-
+      const { data, error } = await query
       if (error) throw error
 
       const imoveisComFotos = (data ?? []).map((i: Record<string, unknown>) => ({
@@ -74,31 +70,39 @@ function ExplorarConteudo() {
       })) as unknown as Imovel[]
 
       setImoveis(imoveisComFotos)
-      setTotalResultados(count ?? imoveisComFotos.length)
+      setTotalResultados(imoveisComFotos.length)
     } catch (err) {
-      console.error('Erro ao buscar imóveis:', err)
+      console.error('Erro ao buscar imoveis:', err)
     } finally {
       setCarregando(false)
     }
   }, [supabase])
 
+  // Carga inicial sem bounds
   useEffect(() => {
-    buscarImoveis(filtros)
+    buscarImoveis(filtros, null)
+  }, [filtros, buscarImoveis])
+
+  // Quando o mapa emite os bounds (botao pesquisar nesta area clicado)
+  const handleMapaMoveu = useCallback((bounds: mapboxgl.LngLatBounds) => {
+    boundsRef.current = bounds
+  }, [])
+
+  // Chamado pelo MapaExplorar quando usuario clica "Pesquisar nesta area"
+  const handlePesquisarNaArea = useCallback((bounds: mapboxgl.LngLatBounds) => {
+    buscarImoveis(filtros, bounds)
   }, [filtros, buscarImoveis])
 
   function handleFiltrosChange(novosFiltros: TFiltros) {
+    boundsRef.current = null // limpar filtro de area ao mudar filtros
     setFiltros(novosFiltros)
   }
 
-  // Seleção vinda do mapa ou da lista
   const handleSelecionarImovel = useCallback((id: string) => {
     setImovelSelecionado(id)
-    // Rola a lista suavemente para o card
     setTimeout(() => {
       const el = document.getElementById(`card-imovel-${id}`)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-      }
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }, 50)
   }, [])
 
@@ -106,39 +110,35 @@ function ExplorarConteudo() {
     <div className={styles.layout}>
       <Header />
 
-      {/* Barra de filtros */}
       <div className={styles.barraTopo}>
         <div className={styles.barraTopoInner}>
           <FiltrosBusca filtros={filtros} onChange={handleFiltrosChange} />
-
-          {/* Toggle Vista Mobile */}
           <div className={styles.toggleVista}>
             <button
               className={`${styles.btnVista} ${vistaAtiva === 'lista' ? styles.vistaAtiva : ''}`}
               onClick={() => setVistaAtiva('lista')}
             >
-              📋 Lista
+              {"\uD83D\uDCCB"} Lista
             </button>
             <button
               className={`${styles.btnVista} ${vistaAtiva === 'mapa' ? styles.vistaAtiva : ''}`}
               onClick={() => setVistaAtiva('mapa')}
             >
-              🗺️ Mapa
+              {"\uD83D\uDDFA\uFE0F"} Mapa
             </button>
           </div>
         </div>
       </div>
 
-      {/* Conteúdo principal */}
       <div className={styles.conteudo}>
         {/* Lista */}
         <div className={`${styles.lista} ${vistaAtiva === 'mapa' ? styles.listaOculta : ''}`}>
           <div className={styles.listaHeader}>
             {carregando ? (
-              <span className={styles.carregando}>Buscando imóveis...</span>
+              <span className={styles.carregando}>Buscando imoveis...</span>
             ) : (
               <span className={styles.resultados}>
-                <strong>{totalResultados}</strong> imóvel{totalResultados !== 1 ? 'is' : ''} encontrado{totalResultados !== 1 ? 's' : ''}
+                <strong>{totalResultados}</strong> imovel{totalResultados !== 1 ? 'is' : ''} encontrado{totalResultados !== 1 ? 's' : ''}
                 {filtros.cidade && ` em ${filtros.cidade}`}
               </span>
             )}
@@ -152,9 +152,9 @@ function ExplorarConteudo() {
             </div>
           ) : imoveis.length === 0 ? (
             <div className={styles.semResultados}>
-              <span>🔍</span>
-              <h3>Nenhum imóvel encontrado</h3>
-              <p>Tente ajustar os filtros ou explorar outra região</p>
+              <span>{"\uD83D\uDDFA\uFE0F"}</span>
+              <h3>Nenhum imovel encontrado</h3>
+              <p>Tente ajustar os filtros ou clique em "Pesquisar nesta area" no mapa</p>
             </div>
           ) : (
             <div className={styles.grid}>
@@ -179,6 +179,8 @@ function ExplorarConteudo() {
             imovelHover={imovelHover}
             imovelSelecionado={imovelSelecionado}
             onSelecionarImovel={handleSelecionarImovel}
+            onMapaMoveu={handleMapaMoveu}
+            onPesquisarNaArea={handlePesquisarNaArea}
           />
         </div>
       </div>

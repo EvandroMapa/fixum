@@ -14,6 +14,7 @@ interface Props {
   imovelSelecionado?: string | null
   onSelecionarImovel?: (id: string) => void
   onMapaMoveu?: (bounds: mapboxgl.LngLatBounds) => void
+  onPesquisarNaArea?: (bounds: mapboxgl.LngLatBounds) => void
   centroInicial?: [number, number]
 }
 
@@ -30,6 +31,7 @@ export default function MapaExplorar({
   imovelSelecionado,
   onSelecionarImovel,
   onMapaMoveu,
+  onPesquisarNaArea,
   centroInicial,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -65,16 +67,14 @@ export default function MapaExplorar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Recriar marcadores sempre que a lista de imoveis mudar
+  // Recriar marcadores quando lista de imoveis mudar
   useEffect(() => {
     if (!mapaPronto || !mapaRef.current) return
     const mapa = mapaRef.current
 
-    // Limpar marcadores anteriores
     marcadoresMapRef.current.forEach(({ marcador }) => marcador.remove())
     marcadoresMapRef.current.clear()
 
-    // Criar marcador por imovel diretamente do array (sem querySourceFeatures)
     imoveis
       .filter((i) => i.latitude && i.longitude)
       .forEach((i) => {
@@ -97,7 +97,7 @@ export default function MapaExplorar({
             + '<strong style="font-size:16px;font-weight:800;color:#1565c0;display:block;margin-bottom:4px">' + label + '</strong>'
             + '<div style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:4px;line-height:1.3">' + (i.titulo || '') + '</div>'
             + '<div style="font-size:12px;color:#64748b;margin-bottom:10px">' + localidade + '</div>'
-            + '<a href="/imovel/' + i.id + '" style="display:inline-block;width:100%;text-align:center;padding:8px 12px;background:#1565c0;color:white;text-decoration:none;border-radius:8px;font-size:12px;font-weight:700;box-sizing:border-box;">Visualizar Imovel</a>'
+            + '<a href="/imovel/' + i.id + '" style="display:inline-block;width:100%;text-align:center;padding:8px 12px;background:#1565c0;color:white;text-decoration:none;border-radius:8px;font-size:12px;font-weight:700;box-sizing:border-box;">Visualizar Im\u00F3vel \u2192</a>'
             + '</div>'
           )
 
@@ -141,18 +141,21 @@ export default function MapaExplorar({
     })
   }, [imovelHover, imovelSelecionado])
 
+  // Botao "Pesquisar nesta area" - dispara busca com bounds atuais
   const handlePesquisarNaArea = useCallback(() => {
     if (!mapaRef.current) return
-    onMapaMoveu?.(mapaRef.current.getBounds()!)
+    const bounds = mapaRef.current.getBounds()!
+    onPesquisarNaArea?.(bounds)
+    onMapaMoveu?.(bounds)
     setPesquisarNaArea(false)
-  }, [onMapaMoveu])
+  }, [onPesquisarNaArea, onMapaMoveu])
 
   return (
     <div className={styles.wrapper}>
       <div ref={containerRef} className={styles.mapa} />
       {pesquisarNaArea && (
         <button className={styles.btnPesquisarArea} onClick={handlePesquisarNaArea}>
-          Pesquisar nesta area
+          {"\uD83D\uDD0D"} Pesquisar nesta area
         </button>
       )}
       {!mapaPronto && (
