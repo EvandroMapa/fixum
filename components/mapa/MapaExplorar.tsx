@@ -58,74 +58,6 @@ export default function MapaExplorar({
       mapa.addSource(SOURCE_ID, {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
-        cluster: true,
-        clusterMaxZoom: 16,
-        clusterRadius: 55,
-      })
-
-      // Layer: circulos dos clusters
-      mapa.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: SOURCE_ID,
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': [
-            'step', ['get', 'point_count'],
-            '#1565c0',
-            5, '#0d47a1',
-            15, '#0a3d91',
-          ],
-          'circle-radius': [
-            'step', ['get', 'point_count'],
-            22,
-            5, 28,
-            15, 34,
-          ],
-          'circle-stroke-width': 3,
-          'circle-stroke-color': 'rgba(255,255,255,0.7)',
-        },
-      })
-
-      // Layer: texto do count nos clusters
-      mapa.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: SOURCE_ID,
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': ['DIN Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 14,
-          'text-allow-overlap': true,
-        },
-        paint: {
-          'text-color': '#ffffff',
-        },
-      })
-
-      // Click no cluster -> zoom
-      mapa.on('click', 'clusters', (e) => {
-        const features = mapa.queryRenderedFeatures(e.point, { layers: ['clusters'] })
-        if (!features.length) return
-        const feat = features[0] as unknown as { properties: Record<string, unknown>; geometry: { type: string; coordinates: [number, number] } }
-        const clusterId = feat.properties?.cluster_id as number
-        const source = mapa.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource
-        source.getClusterExpansionZoom(clusterId, (err, zoom) => {
-          if (err || zoom == null) return
-          mapa.easeTo({
-            center: feat.geometry.coordinates,
-            zoom,
-          })
-        })
-      })
-
-      // Cursor pointer sobre clusters
-      mapa.on('mouseenter', 'clusters', () => {
-        mapa.getCanvas().style.cursor = 'pointer'
-      })
-      mapa.on('mouseleave', 'clusters', () => {
-        mapa.getCanvas().style.cursor = ''
       })
 
       setMapaPronto(true)
@@ -175,9 +107,7 @@ export default function MapaExplorar({
 
       if (!mapa.isStyleLoaded()) return
 
-      const pontos = mapa.querySourceFeatures(SOURCE_ID, {
-        filter: ['!', ['has', 'point_count']],
-      })
+      const pontos = mapa.querySourceFeatures(SOURCE_ID)
 
       const vistos = new Set<string>()
       pontos.forEach((f) => {
