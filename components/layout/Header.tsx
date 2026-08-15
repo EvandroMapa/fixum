@@ -19,7 +19,7 @@ export default function Header() {
       <div className={styles.inner}>
         {/* Logo */}
         <Link href="/" className={styles.logo}>
-          <span className={styles.logoIcone}>🏠</span>
+          <span className={styles.logoIcone}>{"\uD83C\uDFE0"}</span>
           <span className={styles.logoTexto}>
             <strong>FIXUM</strong>
           </span>
