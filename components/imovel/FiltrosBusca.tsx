@@ -107,8 +107,8 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
   function toggleCategoria(grupo: typeof GRUPOS_TIPO[0]) {
     const valoresGrupo = grupo.tipos.map((t) => t.valor)
     const atual = filtros.tipo ?? []
-    const algumAtivo = valoresGrupo.some((v) => atual.includes(v as never))
-    if (algumAtivo) {
+    const todosAtivos = valoresGrupo.every((v) => atual.includes(v as never))
+    if (todosAtivos) {
       // Deseleciona todos do grupo
       const novo = atual.filter((t) => !valoresGrupo.includes(t as string))
       onChange({ ...filtros, tipo: novo.length ? novo : undefined })
@@ -119,8 +119,12 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
     }
   }
 
-  function categoriaTemAtivo(grupo: typeof GRUPOS_TIPO[0]) {
-    return grupo.tipos.some((t) => filtros.tipo?.includes(t.valor as never))
+  function getCategoriaStatus(grupo: typeof GRUPOS_TIPO[0]) {
+    const valoresGrupo = grupo.tipos.map((t) => t.valor)
+    const atual = filtros.tipo ?? []
+    const ativosCount = valoresGrupo.filter((v) => atual.includes(v as never)).length
+    const todosAtivos = ativosCount === valoresGrupo.length && valoresGrupo.length > 0
+    return { ativosCount, todosAtivos, algumAtivo: ativosCount > 0 }
   }
 
   function handleQuartos(q: number) {
@@ -200,11 +204,22 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                 : g.grupo === 'Comercial'
                   ? styles.grupoComercial
                   : styles.grupoRural
+              const status = getCategoriaStatus(g)
               return (
                 <div key={g.grupo} style={{ display: 'contents' }}>
                   {gi > 0 && <div className={styles.divisorVertical} />}
                   <div className={`${styles.colunaGrupo} ${classeGrupo}`}>
-                    <p className={styles.labelGrupo}>{g.icone} {g.grupo}</p>
+                    <div className={styles.headerGrupo}>
+                      <span className={styles.labelGrupo}>{g.icone} {g.grupo}</span>
+                      <button
+                        type="button"
+                        className={`${styles.btnToggleTodos} ${status.todosAtivos ? styles.todosAtivos : ''}`}
+                        onClick={() => toggleCategoria(g)}
+                        title={status.todosAtivos ? `Desmarcar todos de ${g.grupo}` : `Marcar todos de ${g.grupo}`}
+                      >
+                        {status.todosAtivos ? '✓ Todos' : '+ Marcar todos'}
+                      </button>
+                    </div>
                     <div className={styles.dropdownGrid}>
                       {g.tipos.map((t) => (
                         <button

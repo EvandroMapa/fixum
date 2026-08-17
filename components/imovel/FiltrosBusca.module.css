@@ -290,6 +290,15 @@
   grid-template-columns: 1fr;
 }
 
+/* Cabeçalho do grupo com título e botão 'Marcar todos' */
+.headerGrupo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
 /* Tarja de grupo de tipos */
 .labelGrupo {
   display: inline-block;
@@ -299,10 +308,30 @@
   text-transform: uppercase;
   padding: 3px 10px;
   border-radius: 99px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   /* cor default — sobrescrita por variante */
   background: #eff6ff;
   color: #1d4ed8;
+}
+
+/* Botão toggle 'Marcar todos' por categoria */
+.btnToggleTodos {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--cor-borda);
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnToggleTodos:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
 
 /* Residencial — azul */
@@ -311,16 +340,34 @@
   color: #1d4ed8;
 }
 
+.grupoResidencial .todosAtivos {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+
 /* Comercial — laranja */
 .grupoComercial .labelGrupo {
   background: #fff7ed;
   color: #c2410c;
 }
 
+.grupoComercial .todosAtivos {
+  background: #ffedd5;
+  color: #c2410c;
+  border-color: #fdba74;
+}
+
 /* Rural — verde */
 .grupoRural .labelGrupo {
   background: #f0fdf4;
   color: #15803d;
+}
+
+.grupoRural .todosAtivos {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
 }
 
 /* Divisor entre grupos */
