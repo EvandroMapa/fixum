@@ -57,16 +57,16 @@ const TIPOS = [
   { valor: 'cobertura',        icone: '🌇', label: 'Cobertura' },
   { valor: 'kitnet',           icone: '🛏️', label: 'Kitnet / Studio' },
   { valor: 'flat',             icone: '🏨', label: 'Flat' },
-  { valor: 'loft',             icone: '🏗️', label: 'Loft' },
+  { valor: 'lote',             icone: '📐', label: 'Lote' },
   // Comercial
   { valor: 'sala_comercial',   icone: '🗂️', label: 'Sala Comercial' },
   { valor: 'loja',             icone: '🏪', label: 'Loja / Ponto Comercial' },
   { valor: 'galpao',           icone: '🏭', label: 'Galpão' },
   { valor: 'predio',           icone: '🏬', label: 'Prédio Comercial' },
   { valor: 'garagem',          icone: '🚗', label: 'Garagem' },
+  { valor: 'terreno_comercial',icone: '🏗️', label: 'Terreno / Lote' },
   // Terreno
-  { valor: 'terreno',          icone: '📐', label: 'Terreno' },
-  { valor: 'terreno_comercial',icone: '🏗️', label: 'Terreno Comercial' },
+  { valor: 'terreno',          icone: '🌿', label: 'Terreno' },
   // Rural
   { valor: 'sitio',            icone: '🌿', label: 'Sítio' },
   { valor: 'chacara',          icone: '🌳', label: 'Chácara' },

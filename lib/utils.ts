@@ -26,16 +26,16 @@ export function labelTipoImovel(tipo: string): string {
     kitnet:         'Kitnet / Studio',
     flat:           'Flat',
     casa_condominio:'Casa em Condomínio',
-    loft:           'Loft',
+    lote:           'Lote',
     // Comercial
     sala_comercial: 'Sala Comercial',
     loja:           'Loja / Ponto Comercial',
     galpao:         'Galpão',
     predio:         'Prédio Comercial',
     garagem:        'Garagem',
+    terreno_comercial: 'Terreno / Lote',
     // Terreno
     terreno:        'Terreno',
-    terreno_comercial: 'Terreno Comercial',
     // Rural
     sitio:          'Sítio',
     chacara:        'Chácara',

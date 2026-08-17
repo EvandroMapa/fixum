@@ -7,7 +7,7 @@ export type TipoImovel =
   | 'kitnet'
   | 'flat'
   | 'casa_condominio'
-  | 'loft'
+  | 'lote'
   // Comercial
   | 'sala_comercial'
   | 'loja'

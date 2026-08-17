@@ -20,16 +20,16 @@ const TIPOS = [
   { valor: 'cobertura',       label: 'Cobertura' },
   { valor: 'kitnet',          label: 'Kitnet / Studio' },
   { valor: 'flat',            label: 'Flat' },
-  { valor: 'loft',            label: 'Loft' },
+  { valor: 'lote',            label: 'Lote' },
   // Comercial
   { valor: 'sala_comercial',  label: 'Sala Comercial' },
   { valor: 'loja',            label: 'Loja / Ponto Comercial' },
   { valor: 'galpao',          label: 'Galpão' },
   { valor: 'predio',          label: 'Prédio Comercial' },
   { valor: 'garagem',         label: 'Garagem' },
+  { valor: 'terreno_comercial', label: 'Terreno / Lote' },
   // Terreno
   { valor: 'terreno',         label: 'Terreno' },
-  { valor: 'terreno_comercial', label: 'Terreno Comercial' },
   // Rural
   { valor: 'sitio',           label: 'Sítio' },
   { valor: 'chacara',         label: 'Chácara' },
