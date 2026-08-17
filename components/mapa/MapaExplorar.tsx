@@ -13,6 +13,7 @@ interface Props {
   imovelHover?: string | null
   imovelSelecionado?: string | null
   onSelecionarImovel?: (id: string) => void
+  onMapaMoveu?: (bounds: mapboxgl.LngLatBounds) => void
   onPesquisarNaArea?: (bounds: mapboxgl.LngLatBounds) => void
   centroInicial?: [number, number]
   voarPara?: [number, number] | null // [lng, lat] — recebido do autocomplete
