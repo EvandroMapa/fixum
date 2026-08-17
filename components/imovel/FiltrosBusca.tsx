@@ -28,8 +28,6 @@ const TIPOS = [
   { valor: 'predio',          label: 'Prédio Comercial' },
   { valor: 'garagem',         label: 'Garagem' },
   { valor: 'terreno_comercial', label: 'Terreno / Lote' },
-  // Terreno
-  { valor: 'terreno',         label: 'Terreno' },
   // Rural
   { valor: 'sitio',           label: 'Sítio' },
   { valor: 'chacara',         label: 'Chácara' },
