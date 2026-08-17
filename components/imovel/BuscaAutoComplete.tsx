@@ -16,6 +16,7 @@ interface Props {
   onSelecionada: (sugestao: Sugestao) => void
   onLimpar?: () => void
   valorInicial?: string
+  autoFocus?: boolean
 }
 
 export default function BuscaAutoComplete({
@@ -23,6 +24,7 @@ export default function BuscaAutoComplete({
   onSelecionada,
   onLimpar,
   valorInicial,
+  autoFocus,
 }: Props) {
   const [texto, setTexto] = useState(valorInicial ?? '')
   const [sugestoes, setSugestoes] = useState<Sugestao[]>([])
@@ -107,7 +109,7 @@ export default function BuscaAutoComplete({
   }, [aberto, atualizarPosicao])
 
   const dropdown = aberto && sugestoes.length > 0 && (
-    <ul className={styles.dropdown} role="listbox" style={{ position: 'fixed', top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 9999 }}>
+    <ul className={styles.dropdown} role="listbox" style={{ position: 'fixed', top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 10001 }}>
       {sugestoes.map((s, idx) => (
         <li key={s.id} className={`${styles.item} ${idx === indiceAtivo ? styles.itemAtivo : ''}`}
           onMouseDown={() => handleSelecionar(s)} onMouseEnter={() => setIndiceAtivo(idx)}
@@ -137,7 +139,7 @@ export default function BuscaAutoComplete({
         <input ref={inputRef} type="text" className={styles.input} placeholder={placeholder}
           value={texto} onChange={handleChange} onKeyDown={handleKeyDown}
           onFocus={() => { if (sugestoes.length > 0) { atualizarPosicao(); setAberto(true) } }}
-          autoComplete="off" spellCheck={false} />
+          autoComplete="off" spellCheck={false} autoFocus={autoFocus} />
         {carregando && <span className={styles.spinner} />}
         {texto && !carregando && (
           <button className={styles.btnLimpar} onClick={handleLimpar} type="button" aria-label="Limpar busca">

@@ -55,8 +55,8 @@ export default function MapaExplorar({
     const mapa = new mapboxgl.Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: centroInicial ?? [-43.7867, -20.6603],
-      zoom: 13,
+      center: centroInicial ?? [-47.9292, -15.7801], // Brasil (Brasília) como fallback
+      zoom: centroInicial ? 13 : 4,                  // Cidade → zoom 13 | Brasil → zoom 4
       attributionControl: false,
     })
 

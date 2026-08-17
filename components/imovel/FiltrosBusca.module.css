@@ -65,6 +65,38 @@
   color: var(--cor-texto-placeholder);
 }
 
+/* Badge de modo (Compra / Aluguel) */
+.badgeModo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: opacity 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.badgeModo:hover {
+  opacity: 0.8;
+}
+
+.badgeCompra {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1.5px solid #93c5fd;
+}
+
+.badgeAluguel {
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1.5px solid #fdba74;
+}
+
 /* Botões de filtro */
 .grupoFiltro {
   display: flex;

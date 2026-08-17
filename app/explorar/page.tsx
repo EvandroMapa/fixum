@@ -28,8 +28,16 @@ function ExplorarConteudo() {
   const [voarPara, setVoarPara] = useState<[number, number] | null>(null)
   const [filtros, setFiltros] = useState<TFiltros>({
     negociacao: (searchParams.get('negociacao') as TFiltros['negociacao']) ?? 'venda',
-    cidade: searchParams.get('q') ?? undefined,
+    cidade: searchParams.get('cidade') ?? searchParams.get('q') ?? undefined,
   })
+
+  // Centro inicial do mapa: vem da URL (lat/lng do modal de busca) ou fallback fixo
+  const centroInicial = (() => {
+    const lat = parseFloat(searchParams.get('lat') ?? '')
+    const lng = parseFloat(searchParams.get('lng') ?? '')
+    if (!isNaN(lat) && !isNaN(lng)) return [lng, lat] as [number, number]
+    return undefined
+  })()
   // Guarda os bounds atuais do mapa — ao mudar filtros, mantém a área visível
   const boundsAtualRef = useRef<mapboxgl.LngLatBounds | null>(null)
 
@@ -188,6 +196,7 @@ function ExplorarConteudo() {
             onSelecionarImovel={handleSelecionarImovel}
             onPesquisarNaArea={handlePesquisarNaArea}
             voarPara={voarPara}
+            centroInicial={centroInicial}
           />
         </div>
       </div>

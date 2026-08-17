@@ -159,6 +159,15 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
         ←
       </Link>
 
+      {/* Badge de modo: Compra ou Aluguel */}
+      <Link
+        href="/"
+        className={`${styles.badgeModo} ${filtros.negociacao === 'aluguel' ? styles.badgeAluguel : styles.badgeCompra}`}
+        title="Clique para voltar e trocar o modo"
+      >
+        {filtros.negociacao === 'aluguel' ? '🔑 Aluguel' : '🏠 Compra'}
+      </Link>
+
       {/* Autocomplete por cidade/bairro via Mapbox Geocoding */}
       <BuscaAutoComplete
         placeholder="Cidade, bairro ou região..."
@@ -192,9 +201,9 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                   ? styles.grupoComercial
                   : styles.grupoRural
               return (
-                <>
-                  {gi > 0 && <div key={`div-${gi}`} className={styles.divisorVertical} />}
-                  <div key={g.grupo} className={`${styles.colunaGrupo} ${classeGrupo}`}>
+                <div key={g.grupo} style={{ display: 'contents' }}>
+                  {gi > 0 && <div className={styles.divisorVertical} />}
+                  <div className={`${styles.colunaGrupo} ${classeGrupo}`}>
                     <p className={styles.labelGrupo}>{g.icone} {g.grupo}</p>
                     <div className={styles.dropdownGrid}>
                       {g.tipos.map((t) => (
@@ -208,7 +217,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                       ))}
                     </div>
                   </div>
-                </>
+                </div>
               )
             })}
           </div>
