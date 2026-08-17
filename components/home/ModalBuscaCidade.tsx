@@ -42,7 +42,6 @@ export default function ModalBuscaCidade({ negociacao, onFechar }: Props) {
     const [lng, lat] = sugestao.coords
     const params = new URLSearchParams({
       negociacao,
-      cidade: sugestao.nome,
       lat: lat.toFixed(6),
       lng: lng.toFixed(6),
     })
