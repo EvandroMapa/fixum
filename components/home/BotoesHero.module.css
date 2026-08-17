@@ -1,0 +1,140 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btnPrimario {
+  gap: 8px;
+}
+
+.btnSecundario {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  color: white !important;
+  backdrop-filter: blur(8px);
+  gap: 8px;
+}
+
+.btnSecundario:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+.btnMapa {
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  gap: 8px;
+}
+
+.btnMapa:hover,
+.mapaAtivo {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  color: white !important;
+}
+
+/* Container relativo para o dropdown */
+.mapaContainer {
+  position: relative;
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  min-width: 240px;
+  z-index: 500;
+  animation: slideDown 0.18s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Seta do dropdown */
+.dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: white;
+  box-shadow: -2px -2px 4px rgba(0,0,0,0.06);
+}
+
+.dropdownLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.dropdownOpcao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.dropdownOpcao:hover {
+  background: #f1f5f9;
+}
+
+.dropdownOpcao strong {
+  display: block;
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.dropdownOpcao small {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+.dropdownIcone {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Responsivo mobile */
+@media (max-width: 600px) {
+  .wrapper {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .wrapper > * {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dropdown {
+    left: 0;
+    transform: none;
+    min-width: 100%;
+  }
+
+  .dropdown::before {
+    display: none;
+  }
+}

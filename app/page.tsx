@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import LogoGota from '@/components/ui/LogoGota'
+import BotoesHero from '@/components/home/BotoesHero'
 import styles from './page.module.css'
 
 const COMO_FUNCIONA = [
@@ -40,12 +41,7 @@ export default function HomePage() {
             Visualize tudo no mapa, filtre pelo que importa e fale direto com o anunciante.
           </p>
           <div className={styles.heroBotoes}>
-            <Link href="/explorar" className={`btn btn-acento btn-lg ${styles.btnHeroPrincipal}`}>
-              Explorar no mapa
-            </Link>
-            <Link href="/explorar?negociacao=venda" className={`btn btn-lg ${styles.btnHeroSecundario}`}>
-              Ver imóveis à venda
-            </Link>
+            <BotoesHero />
           </div>
 
           <div className={styles.heroStats}>

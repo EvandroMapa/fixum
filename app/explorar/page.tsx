@@ -27,7 +27,7 @@ function ExplorarConteudo() {
   const [vistaAtiva, setVistaAtiva] = useState<'lista' | 'mapa'>('lista')
   const [voarPara, setVoarPara] = useState<[number, number] | null>(null)
   const [filtros, setFiltros] = useState<TFiltros>({
-    negociacao: (searchParams.get('negociacao') as TFiltros['negociacao']) ?? undefined,
+    negociacao: (searchParams.get('negociacao') as TFiltros['negociacao']) ?? 'venda',
     cidade: searchParams.get('q') ?? undefined,
   })
   // Guarda os bounds atuais do mapa — ao mudar filtros, mantém a área visível

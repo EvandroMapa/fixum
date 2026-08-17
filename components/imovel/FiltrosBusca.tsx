@@ -42,8 +42,11 @@ const QUARTOS = [1, 2, 3, 4, 5]
 export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: Props) {
   const [modalAberto, setModalAberto] = useState<string | null>(null)
 
-  function handleNegociacao(neg: TipoNegociacao | undefined) {
-    onChange({ ...filtros, negociacao: neg })
+  function handleNegociacao(neg: TipoNegociacao) {
+    // Radio: sempre seleciona, nunca deseleciona
+    if (filtros.negociacao !== neg) {
+      onChange({ ...filtros, negociacao: neg })
+    }
   }
 
   function toggleTipo(tipo: string) {
@@ -92,17 +95,17 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
         onLimpar={handleLocalLimpar}
       />
 
-      {/* Filtro: Negociação */}
+      {/* Filtro: Negociação — radio exclusivo */}
       <div className={styles.grupoFiltro}>
         <button
           className={`${styles.btnFiltro} ${filtros.negociacao === 'venda' ? styles.ativo : ''}`}
-          onClick={() => handleNegociacao(filtros.negociacao === 'venda' ? undefined : 'venda')}
+          onClick={() => handleNegociacao('venda')}
         >
           Comprar
         </button>
         <button
           className={`${styles.btnFiltro} ${filtros.negociacao === 'aluguel' ? styles.ativo : ''}`}
-          onClick={() => handleNegociacao(filtros.negociacao === 'aluguel' ? undefined : 'aluguel')}
+          onClick={() => handleNegociacao('aluguel')}
         >
           Alugar
         </button>
