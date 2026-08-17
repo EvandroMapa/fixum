@@ -14,7 +14,7 @@ interface Props {
   imovelSelecionado?: string | null
   onSelecionarImovel?: (id: string) => void
   onMapaMoveu?: (bounds: mapboxgl.LngLatBounds) => void
-  onPesquisarNaArea?: (bounds: mapboxgl.LngLatBounds) => void
+  onPesquisarNaArea?: (bounds: mapboxgl.LngLatBounds, isInteracaoUsuario?: boolean) => void
   centroInicial?: [number, number]
   voarPara?: [number, number] | null // [lng, lat] — recebido do autocomplete
 }
@@ -65,13 +65,14 @@ export default function MapaExplorar({
 
     mapa.on('load', () => setMapaPronto(true))
 
-    mapa.on('moveend', () => {
+    mapa.on('moveend', (e) => {
       if (!primeiroMovimentoRef.current) {
         primeiroMovimentoRef.current = true
         return // pula o primeiro moveend (posicionamento inicial)
       }
+      const isInteracaoUsuario = Boolean((e as unknown as { originalEvent?: unknown }).originalEvent)
       // Usa ref para garantir sempre o callback mais recente (evita stale closure)
-      onPesquisarRef.current?.(mapa.getBounds()!)
+      onPesquisarRef.current?.(mapa.getBounds()!, isInteracaoUsuario)
     })
 
     mapaRef.current = mapa

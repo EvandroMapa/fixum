@@ -89,15 +89,41 @@ function ExplorarConteudo() {
     }
   }, [supabase])
 
+  // Sincroniza estado de filtros com os parâmetros da URL
+  useEffect(() => {
+    const negociacaoUrl = (searchParams.get('negociacao') as TFiltros['negociacao']) ?? 'venda'
+    const cidadeUrl = searchParams.get('cidade') ?? searchParams.get('q') ?? undefined
+    setFiltros((f) => ({
+      ...f,
+      negociacao: negociacaoUrl,
+      cidade: cidadeUrl,
+    }))
+  }, [searchParams])
+
   // Ao mudar filtros: reutiliza os bounds atuais do mapa (mantém área visível)
   useEffect(() => {
     buscarImoveis(filtros, boundsAtualRef.current)
   }, [filtros, buscarImoveis])
 
   // Chamado pelo mapa automaticamente ao mover/zoom
-  const handlePesquisarNaArea = useCallback((bounds: mapboxgl.LngLatBounds) => {
+  const handlePesquisarNaArea = useCallback((bounds: mapboxgl.LngLatBounds, isInteracaoUsuario?: boolean) => {
     boundsAtualRef.current = bounds // salva para reusar ao trocar filtros
-    buscarImoveis(filtros, bounds)
+
+    if (isInteracaoUsuario) {
+      // Quando o usuário arrasta/move o mapa manualmente, limpamos o filtro de cidade
+      // para que a busca seja geográfica (por limites visíveis) e o input seja desobstruído
+      setFiltros((f) => {
+        if (f.cidade) {
+          const novos = { ...f, cidade: undefined }
+          buscarImoveis(novos, bounds)
+          return novos
+        }
+        buscarImoveis(f, bounds)
+        return f
+      })
+    } else {
+      buscarImoveis(filtros, bounds)
+    }
   }, [filtros, buscarImoveis])
 
   function handleFiltrosChange(novosFiltros: TFiltros) {

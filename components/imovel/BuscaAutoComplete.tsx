@@ -39,6 +39,11 @@ export default function BuscaAutoComplete({
 
   useEffect(() => { setMontado(true) }, [])
 
+  // Sincroniza o texto do input caso valorInicial mude externamente (ou seja limpo)
+  useEffect(() => {
+    setTexto(valorInicial ?? '')
+  }, [valorInicial])
+
   const atualizarPosicao = useCallback(() => {
     if (!wrapperRef.current) return
     const rect = wrapperRef.current.getBoundingClientRect()
