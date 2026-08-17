@@ -1,0 +1,180 @@
+.wrapper {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 1;
+}
+
+.tab {
+  padding: 10px 22px;
+  border-radius: 12px 12px 0 0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-bottom: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+  font-family: var(--fonte-principal);
+}
+
+.tab:hover {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.tabAtiva {
+  background: white;
+  color: var(--cor-primaria);
+  border-color: white;
+}
+
+/* Formulário */
+.form {
+  display: flex;
+  align-items: stretch;
+  background: white;
+  border-radius: 0 16px 16px 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.inputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+}
+
+.iconBusca {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: var(--cor-texto);
+  font-family: var(--fonte-principal);
+  background: transparent;
+  padding: 18px 0;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.btnLimpar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 50%;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.btnLimpar:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Separador vertical */
+.inputWrap::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 28px;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
+.btnBuscar {
+  padding: 0 28px;
+  background: var(--cor-acento);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: var(--fonte-display);
+  letter-spacing: -0.02em;
+  transition: background 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btnBuscar:hover {
+  background: var(--cor-acento-hover);
+}
+
+/* Sugestões rápidas */
+.rapidas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.rapidasLabel {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.55);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  backdrop-filter: blur(6px);
+}
+
+.chip:hover {
+  background: rgba(255,255,255,0.22);
+  color: white;
+  border-color: rgba(255,255,255,0.35);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .form {
+    flex-direction: column;
+    border-radius: 0 12px 12px 12px;
+  }
+
+  .inputWrap::after {
+    display: none;
+  }
+
+  .btnBuscar {
+    padding: 14px;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .tab {
+    padding: 8px 14px;
+    font-size: 0.8125rem;
+  }
+}

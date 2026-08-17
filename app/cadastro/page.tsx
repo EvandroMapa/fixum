@@ -1,9 +1,10 @@
-﻿"use client"
+"use client"
 
 import { useState, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import LogoGota from "@/components/ui/LogoGota"
 import styles from "../login/page.module.css"
 
 const TIPOS = [
@@ -78,7 +79,10 @@ function CadastroConteudo() {
     <div className={styles.pagina}>
       <div className={styles.lado}>
         <div className={styles.ladoConteudo}>
-          <Link href="/" className={styles.logo}>🏠 FIXUM</Link>
+          <Link href="/" className={styles.logo}>
+            <LogoGota size={30} />
+            <span>FIXUM</span>
+          </Link>
           <h1>Criar conta gratis</h1>
           <p>Junte-se a pessoas encontrando o imovel ideal</p>
 

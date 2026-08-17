@@ -13,7 +13,9 @@
   background: white;
   border-bottom: 1px solid var(--cor-borda);
   box-shadow: var(--sombra-xs);
-  z-index: 20;
+  z-index: 200;
+  position: relative;
+  overflow: visible;
 }
 
 .barraTopoInner {
@@ -211,5 +213,8 @@
 
   .barraTopoInner {
     padding: var(--espaco-3) var(--espaco-4);
+    overflow-x: auto;
+    gap: var(--espaco-2);
   }
+  .barraTopoInner::-webkit-scrollbar { height: 0; }
 }

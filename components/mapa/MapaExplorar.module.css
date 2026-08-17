@@ -25,6 +25,9 @@
   white-space: nowrap;
   font-family: var(--fonte-display);
   user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .marcador:hover,

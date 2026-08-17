@@ -34,19 +34,99 @@
   flex-shrink: 0;
   overflow: hidden;
   position: relative;
+  border-radius: var(--raio-xl) var(--raio-xl) 0 0;
 }
 
 .foto {
-  height: 190px;
-  background-size: cover;
-  background-position: center;
-  background-color: var(--cor-fundo-alt);
+  height: 200px;
   position: relative;
-  transition: transform var(--transicao-suave);
+  background-color: var(--cor-fundo-alt);
+  overflow: hidden;
 }
 
-.card:hover .foto {
-  transform: scale(1.03);
+.fotoPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #e0eaff 0%, #c7d7f7 100%);
+}
+
+.fotoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.card:hover .fotoImg {
+  transform: scale(1.04);
+}
+
+/* Setas do carrossel */
+.setaCarrossel {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(6px);
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: all 0.15s;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-50%) scale(0.8); }
+  to   { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+.setaCarrossel:hover {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.setaEsq { left: 8px; }
+.setaDir { right: 8px; }
+
+/* Pontos indicadores */
+.pontos {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 4;
+}
+
+.ponto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.55);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.pontoAtivo {
+  background: white;
+  width: 18px;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 .selos {

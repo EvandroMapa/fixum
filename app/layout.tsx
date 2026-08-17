@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { ModalLoginProvider } from '@/contexts/ModalLoginContext'
 
 export const metadata: Metadata = {
-  title: 'FIXUM — Explore onde você quer viver',
+  title: 'FIXUM — Encontre seu lugar.',
   description: 'FIXUM — Plataforma imobiliária centrada em mapas. Explore bairros, descubra imóveis e encontre o lugar onde você quer viver.',
   keywords: 'imóveis, venda, aluguel, mapa, casas, apartamentos',
   openGraph: {
-    title: 'FIXUM',
-    description: 'Explore onde você quer viver',
+    title: 'FIXUM — Encontre seu lugar.',
+    description: 'Plataforma imobiliária centrada em mapas. Explore bairros e encontre o lugar onde você quer viver.',
     type: 'website',
   },
 }
@@ -19,7 +20,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body>
+        <ModalLoginProvider>
+          {children}
+        </ModalLoginProvider>
+      </body>
     </html>
   )
 }

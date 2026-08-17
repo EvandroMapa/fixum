@@ -94,6 +94,12 @@
   margin: 0 auto 40px;
 }
 
+.heroBusca {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 48px;
+}
+
 .heroBotoes {
   display: flex;
   gap: 14px;
@@ -296,10 +302,31 @@
 /* Mockup mapa */
 .mapaMockup {
   position: relative;
-  height: 300px;
+  height: 340px;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* Imagem estática real do Mapbox */
+.mapaStaticImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay gradiente nas bordas — blend suave com o fundo escuro */
+.mapaOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(to right, rgba(6,15,30,0.35) 0%, transparent 20%, transparent 80%, rgba(6,15,30,0.35) 100%),
+    linear-gradient(to bottom, rgba(6,15,30,0.2) 0%, transparent 15%, transparent 85%, rgba(6,15,30,0.5) 100%);
+  pointer-events: none;
 }
 
 .mapaMockupFundo {
@@ -514,13 +541,19 @@
   margin-bottom: 48px;
 }
 
+.footerLogoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  margin-bottom: 12px;
+}
+
 .footerLogo {
   font-size: 1.375rem;
   font-weight: 900;
   color: white;
   letter-spacing: -0.04em;
-  display: block;
-  margin-bottom: 12px;
   font-family: var(--fonte-display);
 }
 

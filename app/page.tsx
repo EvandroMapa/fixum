@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Header from '@/components/layout/Header'
+import LogoGota from '@/components/ui/LogoGota'
 import styles from './page.module.css'
 
 const COMO_FUNCIONA = [
@@ -9,10 +11,10 @@ const COMO_FUNCIONA = [
 ]
 
 const STATS = [
-  { valor: '9+', label: 'Imoveis ativos' },
-  { valor: '3', label: 'Bairros cobertos' },
+  { valor: '9+', label: 'Imóveis ativos' },
   { valor: '100%', label: 'Gratuito para buscar' },
   { valor: '5min', label: 'Para anunciar' },
+  { valor: '24h', label: 'Suporte online' },
 ]
 
 export default function HomePage() {
@@ -34,7 +36,7 @@ export default function HomePage() {
             <span className={styles.heroDestaque}>perfeito para voce</span>
           </h1>
           <p className={styles.heroSubtitulo}>
-            Explore imoveis a venda e para alugar em Conselheiro Lafaiete e regiao.
+            Explore imóveis à venda e para alugar onde você quiser.
             Visualize tudo no mapa, filtre pelo que importa e fale direto com o anunciante.
           </p>
           <div className={styles.heroBotoes}>
@@ -42,9 +44,10 @@ export default function HomePage() {
               Explorar no mapa
             </Link>
             <Link href="/explorar?negociacao=venda" className={`btn btn-lg ${styles.btnHeroSecundario}`}>
-              Ver imoveis a venda
+              Ver imóveis à venda
             </Link>
           </div>
+
           <div className={styles.heroStats}>
             {STATS.map((s) => (
               <div key={s.label} className={styles.heroStat}>
@@ -88,7 +91,7 @@ export default function HomePage() {
           <div className={styles.ctaConteudo}>
             <div className={styles.ctaTexto}>
               <h2>Pronto para explorar?</h2>
-              <p>Abra o mapa, navegue pelos bairros de Conselheiro Lafaiete e encontre imoveis com tudo que voce precisa.</p>
+              <p>Abra o mapa, navegue pelos bairros da sua cidade e encontre imóveis com tudo que você precisa.</p>
               <div className={styles.ctaBotoes}>
                 <Link href="/explorar" className="btn btn-acento btn-lg">Ver imoveis no mapa</Link>
                 <Link href="/explorar?negociacao=aluguel" className={`btn btn-lg ${styles.btnCtaOutline}`}>Quero alugar</Link>
@@ -96,16 +99,27 @@ export default function HomePage() {
             </div>
             <div className={styles.ctaVisual}>
               <div className={styles.mapaMockup}>
-                <div className={styles.mapaMockupFundo} />
-                <div className={styles.mapaPin} style={{top:'35%',left:'42%'}}>
+                {/* Mapa estático real do Mapbox — Conselheiro Lafaiete */}
+                <Image
+                  src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/-43.7867,-20.6603,14,0/640x400?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`}
+                  alt="Mapa interativo de imóveis"
+                  width={640}
+                  height={400}
+                  className={styles.mapaStaticImg}
+                  unoptimized
+                />
+                {/* Marcadores de preço sobrepostos */}
+                <div className={styles.mapaPin} style={{top:'35%',left:'38%'}}>
                   <div className={styles.mapaPinLabel}>R$ 420.000</div>
                 </div>
-                <div className={styles.mapaPin} style={{top:'55%',left:'60%'}}>
-                  <div className={styles.mapaPinLabel}>R$ 850/mes</div>
+                <div className={styles.mapaPin} style={{top:'55%',left:'58%'}}>
+                  <div className={styles.mapaPinLabel}>R$ 850/mês</div>
                 </div>
-                <div className={styles.mapaPin} style={{top:'28%',left:'68%'}}>
+                <div className={styles.mapaPin} style={{top:'22%',left:'62%'}}>
                   <div className={styles.mapaPinLabel}>R$ 280.000</div>
                 </div>
+                {/* Overlay gradiente nas bordas para blend suave */}
+                <div className={styles.mapaOverlay} />
               </div>
             </div>
           </div>
@@ -135,7 +149,7 @@ export default function HomePage() {
               <div className={styles.anuncieCardHeader}>
                 <div className={styles.anuncieCardFoto} />
                 <div>
-                  <strong>Casa em Conselheiro Lafaiete</strong>
+                  <strong>Casa residencial — 3 quartos</strong>
                   <span>R$ 420.000 - 3 quartos - 145 m2</span>
                 </div>
               </div>
@@ -158,7 +172,10 @@ export default function HomePage() {
         <div className="container">
           <div className={styles.footerGrid}>
             <div className={styles.footerMarca}>
-              <span className={styles.footerLogo}>FIXUM</span>
+              <Link href="/" className={styles.footerLogoLink}>
+                <LogoGota size={32} />
+                <span className={styles.footerLogo}>FIXUM</span>
+              </Link>
               <p>A plataforma imobiliaria centrada no mapa. Explore onde voce quer viver.</p>
             </div>
             <div className={styles.footerCol}>

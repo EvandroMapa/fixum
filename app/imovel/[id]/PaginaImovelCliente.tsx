@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
 import { type Imovel } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel } from '@/lib/utils'
+import { useFavorito } from '@/hooks/useFavorito'
 import styles from './page.module.css'
 
 const MapaImovel = dynamic(() => import('@/components/mapa/MapaImovel'), { ssr: false })
@@ -47,7 +48,7 @@ interface Props {
 
 export default function PaginaImovelCliente({ imovel, historico }: Props) {
   const [fotoAtiva, setFotoAtiva] = useState(0)
-  const [favoritado, setFavoritado] = useState(false)
+  const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
   const [modalFoto, setModalFoto] = useState(false)
 
   const fotos = imovel.fotos_imovel ?? []
@@ -131,7 +132,8 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                 <div className={styles.acoesTopo}>
                   <button
                     className={`${styles.btnAcao} ${favoritado ? styles.favoritado : ''}`}
-                    onClick={() => setFavoritado(!favoritado)}
+                    onClick={toggleFavorito}
+                    disabled={carregando}
                   >
                     {favoritado ? '❤️' : '🤍'} Favoritar
                   </button>

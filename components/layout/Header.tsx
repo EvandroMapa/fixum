@@ -1,14 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import type { User } from '@supabase/supabase-js'
+import LogoGota from '@/components/ui/LogoGota'
 import styles from './Header.module.css'
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [menuAberto, setMenuAberto] = useState(false)
+  const [dropdownAberto, setDropdownAberto] = useState(false)
+  const [usuario, setUsuario] = useState<User | null>(null)
   const pathname = usePathname()
+  const router = useRouter()
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Na home page: header transparente ate rolar
   // Em outras paginas: sempre solido
@@ -24,15 +31,44 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [naHome])
 
+  // Carregar usuário logado
+  useEffect(() => {
+    const sb = createClient()
+    sb.auth.getSession().then(({ data: { session } }) => setUsuario(session?.user ?? null))
+    const { data: { subscription } } = sb.auth.onAuthStateChange((_e, session) => {
+      setUsuario(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownAberto(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  async function handleSair() {
+    const sb = createClient()
+    await sb.auth.signOut()
+    setDropdownAberto(false)
+    router.push('/')
+  }
+
   return (
     <header className={`${styles.header} ${solido ? styles.solido : ''}`}>
       <div className={styles.inner}>
         {/* Logo */}
         <Link href="/" className={styles.logo}>
-          <svg className={styles.logoMarca} width="26" height="26" viewBox="0 0 28 28" fill="none">
-            <path d="M14 2L3 11V26H10V17H18V26H25V11L14 2Z" fill="currentColor"/>
-          </svg>
-          <span className={styles.logoTexto}>FIXUM</span>
+          <LogoGota size={32} className={styles.logoMarca} />
+          <div className={styles.logoTextos}>
+            <span className={styles.logoTexto}>FIXUM</span>
+            <span className={styles.logoSlogan}>Encontre seu lugar.</span>
+          </div>
         </Link>
 
         {/* Nav Desktop - oculto no explorar pois os filtros ja tem Comprar/Alugar */}
@@ -46,8 +82,44 @@ export default function Header() {
 
         {/* Acoes */}
         <div className={styles.acoes}>
-          <Link href="/painel/novo-imovel" className={styles.btnAnunciar}>Anunciar</Link>
-          <Link href="/login" className="btn btn-primario btn-sm">Entrar</Link>
+          <Link
+            href={usuario ? '/painel/novo-imovel' : '/login?next=/painel/novo-imovel'}
+            className={styles.btnAnunciar}
+          >
+            Anunciar
+          </Link>
+
+          {usuario ? (
+            // Avatar + Dropdown do usuário logado
+            <div className={styles.avatarWrap} ref={dropdownRef}>
+              <button
+                className={styles.avatar}
+                onClick={() => setDropdownAberto(!dropdownAberto)}
+                aria-label="Menu do usuário"
+                title={usuario.email ?? 'Usuário'}
+              >
+                {(usuario.user_metadata?.nome || usuario.email || 'U')[0].toUpperCase()}
+              </button>
+              {dropdownAberto && (
+                <div className={styles.dropdown}>
+                  <div className={styles.dropdownEmail}>{usuario.email}</div>
+                  <Link href="/painel" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
+                    🏠 Meu Painel
+                  </Link>
+                  <Link href="/painel/favoritos" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
+                    ❤️ Favoritos
+                  </Link>
+                  <hr className={styles.dropdownDivider} />
+                  <button className={styles.dropdownSair} onClick={handleSair}>
+                    Sair
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/login" className="btn btn-primario btn-sm">Entrar</Link>
+          )}
+
           <button className={styles.menuBurger} onClick={() => setMenuAberto(!menuAberto)} aria-label="Menu">
             <span className={`${styles.burger} ${menuAberto ? styles.burgerAberto : ''}`} />
           </button>

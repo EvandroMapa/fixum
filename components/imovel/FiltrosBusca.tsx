@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { type FiltrosBusca, type TipoNegociacao } from '@/lib/types'
+import BuscaAutoComplete, { type Sugestao } from './BuscaAutoComplete'
 import styles from './FiltrosBusca.module.css'
 
 interface Props {
   filtros: FiltrosBusca
   onChange: (filtros: FiltrosBusca) => void
+  onLocalSelecionado?: (sugestao: Sugestao) => void
 }
 
 const TIPOS = [
@@ -22,7 +24,7 @@ const TIPOS = [
 
 const QUARTOS = [1, 2, 3, 4, 5]
 
-export default function FiltrosBusca({ filtros, onChange }: Props) {
+export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: Props) {
   const [modalAberto, setModalAberto] = useState<string | null>(null)
 
   function handleNegociacao(neg: TipoNegociacao | undefined) {
@@ -54,19 +56,26 @@ export default function FiltrosBusca({ filtros, onChange }: Props) {
     filtros.quartos_min
   )
 
+  function handleLocalSelecionado(s: Sugestao) {
+    // Atualiza o filtro de cidade com o nome selecionado
+    onChange({ ...filtros, cidade: s.nome })
+    // Passa as coordenadas para o mapa voar até lá
+    onLocalSelecionado?.(s)
+  }
+
+  function handleLocalLimpar() {
+    onChange({ ...filtros, cidade: undefined })
+  }
+
   return (
     <div className={styles.wrapper}>
-      {/* Busca por cidade */}
-      <div className={styles.campoCidade}>
-        <span>📍</span>
-        <input
-          type="text"
-          placeholder="Cidade ou bairro..."
-          value={filtros.cidade ?? ''}
-          onChange={(e) => onChange({ ...filtros, cidade: e.target.value || undefined })}
-          className={styles.inputCidade}
-        />
-      </div>
+      {/* Autocomplete por cidade/bairro via Mapbox Geocoding */}
+      <BuscaAutoComplete
+        placeholder="Cidade, bairro ou região..."
+        valorInicial={filtros.cidade}
+        onSelecionada={handleLocalSelecionado}
+        onLimpar={handleLocalLimpar}
+      />
 
       {/* Filtro: Negociação */}
       <div className={styles.grupoFiltro}>

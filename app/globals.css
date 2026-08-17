@@ -502,8 +502,46 @@ p {
   h2 { font-size: 1.5rem; }
 }
 
+
 @media (max-width: 480px) {
   .container, .container-wide {
     padding: 0 var(--espaco-3);
   }
+}
+
+/* ============================================
+   POPUP DO MAPA (Mapbox) — estilo Airbnb
+   ============================================ */
+.fixum-popup .mapboxgl-popup-content {
+  padding: 0 !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10) !important;
+  border: none !important;
+}
+
+.fixum-popup .mapboxgl-popup-close-button {
+  top: 8px !important;
+  right: 8px !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.92) !important;
+  backdrop-filter: blur(8px) !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  color: #374151 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+  transition: background 0.15s !important;
+}
+
+.fixum-popup .mapboxgl-popup-close-button:hover {
+  background: white !important;
+}
+
+.fixum-popup .mapboxgl-popup-tip {
+  border-top-color: white !important;
 }

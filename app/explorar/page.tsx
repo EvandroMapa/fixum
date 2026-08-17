@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
 import CardImovel from '@/components/imovel/CardImovel'
 import FiltrosBusca from '@/components/imovel/FiltrosBusca'
+import { type Sugestao } from '@/components/imovel/BuscaAutoComplete'
 import { type Imovel, type FiltrosBusca as TFiltros } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import styles from './page.module.css'
@@ -24,11 +25,13 @@ function ExplorarConteudo() {
   const [imovelSelecionado, setImovelSelecionado] = useState<string | null>(null)
   const [totalResultados, setTotalResultados] = useState(0)
   const [vistaAtiva, setVistaAtiva] = useState<'lista' | 'mapa'>('lista')
+  const [voarPara, setVoarPara] = useState<[number, number] | null>(null)
   const [filtros, setFiltros] = useState<TFiltros>({
     negociacao: (searchParams.get('negociacao') as TFiltros['negociacao']) ?? undefined,
     cidade: searchParams.get('q') ?? undefined,
   })
-  const boundsRef = useRef<mapboxgl.LngLatBounds | null>(null)
+  // Guarda os bounds atuais do mapa — ao mudar filtros, mantém a área visível
+  const boundsAtualRef = useRef<mapboxgl.LngLatBounds | null>(null)
 
   const supabase = createClient()
 
@@ -78,25 +81,25 @@ function ExplorarConteudo() {
     }
   }, [supabase])
 
-  // Carga inicial sem bounds
+  // Ao mudar filtros: reutiliza os bounds atuais do mapa (mantém área visível)
   useEffect(() => {
-    buscarImoveis(filtros, null)
+    buscarImoveis(filtros, boundsAtualRef.current)
   }, [filtros, buscarImoveis])
 
-  // Quando o mapa emite os bounds (botao pesquisar nesta area clicado)
-  const handleMapaMoveu = useCallback((bounds: mapboxgl.LngLatBounds) => {
-    boundsRef.current = bounds
-  }, [])
-
-  // Chamado pelo MapaExplorar quando usuario clica "Pesquisar nesta area"
+  // Chamado pelo mapa automaticamente ao mover/zoom
   const handlePesquisarNaArea = useCallback((bounds: mapboxgl.LngLatBounds) => {
+    boundsAtualRef.current = bounds // salva para reusar ao trocar filtros
     buscarImoveis(filtros, bounds)
   }, [filtros, buscarImoveis])
 
   function handleFiltrosChange(novosFiltros: TFiltros) {
-    boundsRef.current = null // limpar filtro de area ao mudar filtros
     setFiltros(novosFiltros)
   }
+
+  const handleLocalSelecionado = useCallback((sugestao: Sugestao) => {
+    // Voa para as coordenadas do local selecionado no autocomplete
+    setVoarPara(sugestao.coords)
+  }, [])
 
   const handleSelecionarImovel = useCallback((id: string) => {
     setImovelSelecionado(id)
@@ -112,7 +115,11 @@ function ExplorarConteudo() {
 
       <div className={styles.barraTopo}>
         <div className={styles.barraTopoInner}>
-          <FiltrosBusca filtros={filtros} onChange={handleFiltrosChange} />
+          <FiltrosBusca
+              filtros={filtros}
+              onChange={handleFiltrosChange}
+              onLocalSelecionado={handleLocalSelecionado}
+            />
           <div className={styles.toggleVista}>
             <button
               className={`${styles.btnVista} ${vistaAtiva === 'lista' ? styles.vistaAtiva : ''}`}
@@ -179,8 +186,8 @@ function ExplorarConteudo() {
             imovelHover={imovelHover}
             imovelSelecionado={imovelSelecionado}
             onSelecionarImovel={handleSelecionarImovel}
-            onMapaMoveu={handleMapaMoveu}
             onPesquisarNaArea={handlePesquisarNaArea}
+            voarPara={voarPara}
           />
         </div>
       </div>

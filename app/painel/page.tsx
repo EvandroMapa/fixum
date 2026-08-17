@@ -6,6 +6,8 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { type Imovel, type Lead } from '@/lib/types'
 import { formatarPreco, labelTipoImovel, fotoPrincipal } from '@/lib/utils'
+import Header from '@/components/layout/Header'
+import LogoGota from '@/components/ui/LogoGota'
 import styles from './page.module.css'
 
 type Aba = 'dashboard' | 'imoveis' | 'leads'
@@ -104,10 +106,15 @@ function PainelConteudo() {
   }
 
   return (
-    <div className={styles.painel}>
+    <>
+      <Header />
+      <div className={styles.painel}>
       {/* Sidebar */}
       <aside className={styles.sidebar}>
-        <Link href="/" className={styles.sidebarLogo}>{"\uD83C\uDFE0"} FIXUM</Link>
+        <Link href="/" className={styles.sidebarLogo}>
+          <LogoGota size={36} />
+          <span>FIXUM</span>
+        </Link>
 
         <nav className={styles.sidebarNav}>
           {[
@@ -125,22 +132,6 @@ function PainelConteudo() {
             </button>
           ))}
         </nav>
-
-        <div className={styles.sidebarBottom}>
-          <Link href="/painel/novo-imovel" className="btn btn-primario btn-sm">
-            + Anunciar imóvel
-          </Link>
-          <div className={styles.sidebarUsuario}>
-            <span>👤</span>
-            <span>{usuarioNome}</span>
-          </div>
-          <button
-            onClick={async () => { await supabase.auth.signOut(); window.location.href = '/' }}
-            className={styles.btnSair}
-          >
-            Sair
-          </button>
-        </div>
       </aside>
 
       {/* Conteúdo */}
@@ -290,6 +281,7 @@ function PainelConteudo() {
         )}
       </main>
     </div>
+    </>
   )
 }
 

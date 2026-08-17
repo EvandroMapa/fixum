@@ -1,7 +1,8 @@
 .painel {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--altura-header));
+  margin-top: var(--altura-header);
   background: var(--cor-fundo);
 }
 
@@ -14,16 +15,21 @@
   padding: var(--espaco-6);
   gap: var(--espaco-6);
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: var(--altura-header);
+  height: calc(100vh - var(--altura-header));
+  overflow-y: auto;
 }
 
 .sidebarLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
   font-family: var(--fonte-display);
   font-size: var(--texto-xl);
   font-weight: 800;
   color: white;
-  text-decoration: none;
+  letter-spacing: -0.03em;
 }
 
 .sidebarNav {

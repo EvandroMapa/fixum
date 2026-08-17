@@ -1,9 +1,10 @@
-﻿"use client"
+"use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import LogoGota from "@/components/ui/LogoGota"
 import styles from "./page.module.css"
 
 function traduzirErro(msg: string): string {
@@ -17,8 +18,10 @@ function traduzirErro(msg: string): string {
   return "E-mail ou senha incorretos."
 }
 
-export default function LoginPage() {
+function LoginConteudo() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const destino = searchParams.get('next') || '/painel'
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
   const [carregando, setCarregando] = useState(false)
@@ -33,7 +36,7 @@ export default function LoginPage() {
       const supabase = createClient()
       const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
       if (error) throw error
-      router.push("/painel")
+      router.push(destino)
     } catch (err: unknown) {
       setErro(traduzirErro(err instanceof Error ? err.message : ""))
     } finally {
@@ -49,7 +52,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/painel`,
+          redirectTo: `${window.location.origin}${destino}`,
         },
       })
       if (error) throw error
@@ -63,7 +66,10 @@ export default function LoginPage() {
     <div className={styles.pagina}>
       <div className={styles.lado}>
         <div className={styles.ladoConteudo}>
-          <Link href="/" className={styles.logo}>🏠 FIXUM</Link>
+          <Link href="/" className={styles.logo}>
+            <LogoGota size={30} />
+            <span>FIXUM</span>
+          </Link>
           <h1>Bem-vindo de volta</h1>
           <p>Entre na sua conta para acessar seus imoveis e leads</p>
 
@@ -130,5 +136,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginConteudo />
+    </Suspense>
   )
 }

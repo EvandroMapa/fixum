@@ -1,9 +1,10 @@
 'use client'
 
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
-import { useState } from 'react'
 import { type Imovel } from '@/lib/types'
-import { formatarPreco, formatarArea, labelTipoImovel, fotoPrincipal } from '@/lib/utils'
+import { formatarPreco, formatarArea, labelTipoImovel } from '@/lib/utils'
+import { useFavorito } from '@/hooks/useFavorito'
 import styles from './CardImovel.module.css'
 
 interface Props {
@@ -15,23 +16,62 @@ interface Props {
 }
 
 export default function CardImovel({ imovel, destacado, selecionado, onHover, onSelecionar }: Props) {
-  const [favoritado, setFavoritado] = useState(false)
-  const foto = fotoPrincipal(imovel)
+  const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
+  const fotos = imovel.fotos ?? []
+  const [fotoAtiva, setFotoAtiva] = useState(0)
+  const [hovering, setHovering] = useState(false)
+
+  const fotoAtual = fotos[fotoAtiva]?.url ?? null
+
+  const irAnterior = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setFotoAtiva(i => (i - 1 + fotos.length) % fotos.length)
+  }, [fotos.length])
+
+  const irProxima = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setFotoAtiva(i => (i + 1) % fotos.length)
+  }, [fotos.length])
+
+  const irPara = useCallback((e: React.MouseEvent, idx: number) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setFotoAtiva(idx)
+  }, [])
+
+  const handleMouseEnter = () => {
+    setHovering(true)
+    onHover?.(imovel.id)
+  }
+  const handleMouseLeave = () => {
+    setHovering(false)
+    onHover?.(null)
+  }
 
   return (
     <div
       id={`card-imovel-${imovel.id}`}
       className={`${styles.card} ${destacado ? styles.destacado : ''} ${selecionado ? styles.selecionado : ''}`}
-      onMouseEnter={() => onHover?.(imovel.id)}
-      onMouseLeave={() => onHover?.(null)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={() => onSelecionar?.(imovel.id)}
     >
-      {/* Foto */}
+      {/* ── CARROSSEL DE FOTOS ── */}
       <div className={styles.fotoWrapper}>
-        <div
-          className={styles.foto}
-          style={{ backgroundImage: `url(${foto})` }}
-        >
+        <div className={styles.foto}>
+          {fotoAtual ? (
+            <img
+              src={fotoAtual}
+              alt={imovel.titulo}
+              className={styles.fotoImg}
+              loading="lazy"
+            />
+          ) : (
+            <div className={styles.fotoPlaceholder} />
+          )}
+
           {/* Selos */}
           <div className={styles.selos}>
             {imovel.destaque && (
@@ -46,18 +86,55 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
           <button
             type="button"
             className={`${styles.btnFavoritar} ${favoritado ? styles.favoritado : ''}`}
-            onClick={(e) => {
-              e.stopPropagation()
-              setFavoritado(!favoritado)
-            }}
+            onClick={(e) => { e.stopPropagation(); toggleFavorito() }}
+            disabled={carregando}
             aria-label={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
           >
-            {favoritado ? '❤️' : '🤍'}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill={favoritado ? '#e53e3e' : 'none'} stroke={favoritado ? '#e53e3e' : 'white'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
           </button>
+
+          {/* Setas de navegação — aparecem no hover */}
+          {fotos.length > 1 && hovering && (
+            <>
+              <button
+                type="button"
+                className={`${styles.setaCarrossel} ${styles.setaEsq}`}
+                onClick={irAnterior}
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                className={`${styles.setaCarrossel} ${styles.setaDir}`}
+                onClick={irProxima}
+                aria-label="Próxima foto"
+              >
+                ›
+              </button>
+            </>
+          )}
+
+          {/* Pontos indicadores */}
+          {fotos.length > 1 && (
+            <div className={styles.pontos}>
+              {fotos.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`${styles.ponto} ${idx === fotoAtiva ? styles.pontoAtivo : ''}`}
+                  onClick={(e) => irPara(e, idx)}
+                  aria-label={`Foto ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Informações */}
+      {/* ── INFORMAÇÕES ── */}
       <div className={styles.info}>
         {/* Preço */}
         <div className={styles.preco}>
@@ -81,14 +158,10 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
             </span>
           )}
           {imovel.banheiros !== undefined && imovel.banheiros > 0 && (
-            <span className={styles.car}>
-              🚿 {imovel.banheiros}
-            </span>
+            <span className={styles.car}>🚿 {imovel.banheiros}</span>
           )}
           {imovel.vagas !== undefined && imovel.vagas > 0 && (
-            <span className={styles.car}>
-              🚗 {imovel.vagas}
-            </span>
+            <span className={styles.car}>🚗 {imovel.vagas}</span>
           )}
           {(imovel.area || imovel.area_construida) && (
             <span className={styles.car}>
@@ -102,11 +175,13 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
           📍 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade}
         </div>
 
-        {/* Rodapé com Botão Visualizar */}
+        {/* Rodapé */}
         <div className={styles.rodapeCard}>
           <Link
             href={`/imovel/${imovel.id}`}
             className={styles.btnVisualizar}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
           >
             Visualizar Imóvel →
