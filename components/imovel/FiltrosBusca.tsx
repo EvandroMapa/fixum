@@ -12,14 +12,31 @@ interface Props {
 }
 
 const TIPOS = [
-  { valor: 'casa', label: 'Casa' },
-  { valor: 'apartamento', label: 'Apartamento' },
-  { valor: 'terreno', label: 'Terreno' },
-  { valor: 'sala_comercial', label: 'Comercial' },
-  { valor: 'sitio', label: 'Sítio' },
-  { valor: 'chacara', label: 'Chácara' },
-  { valor: 'fazenda', label: 'Fazenda' },
-  { valor: 'outro', label: 'Outro' },
+  // Residencial
+  { valor: 'apartamento',     label: 'Apartamento' },
+  { valor: 'casa',            label: 'Casa' },
+  { valor: 'sobrado',         label: 'Sobrado' },
+  { valor: 'casa_condominio', label: 'Casa em Condomínio' },
+  { valor: 'cobertura',       label: 'Cobertura' },
+  { valor: 'kitnet',          label: 'Kitnet / Studio' },
+  { valor: 'flat',            label: 'Flat' },
+  { valor: 'loft',            label: 'Loft' },
+  // Comercial
+  { valor: 'sala_comercial',  label: 'Sala Comercial' },
+  { valor: 'loja',            label: 'Loja / Ponto Comercial' },
+  { valor: 'galpao',          label: 'Galpão' },
+  { valor: 'predio',          label: 'Prédio Comercial' },
+  { valor: 'garagem',         label: 'Garagem' },
+  // Terreno
+  { valor: 'terreno',         label: 'Terreno' },
+  { valor: 'terreno_comercial', label: 'Terreno Comercial' },
+  // Rural
+  { valor: 'sitio',           label: 'Sítio' },
+  { valor: 'chacara',         label: 'Chácara' },
+  { valor: 'fazenda',         label: 'Fazenda' },
+  { valor: 'rancho',          label: 'Rancho' },
+  // Geral
+  { valor: 'outro',           label: 'Outro' },
 ]
 
 const QUARTOS = [1, 2, 3, 4, 5]

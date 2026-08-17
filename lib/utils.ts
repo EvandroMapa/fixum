@@ -18,16 +18,31 @@ export function formatarArea(area?: number): string {
 
 export function labelTipoImovel(tipo: string): string {
   const labels: Record<string, string> = {
-    casa: 'Casa',
-    apartamento: 'Apartamento',
-    terreno: 'Terreno',
+    // Residencial
+    apartamento:    'Apartamento',
+    casa:           'Casa',
+    sobrado:        'Sobrado',
+    cobertura:      'Cobertura',
+    kitnet:         'Kitnet / Studio',
+    flat:           'Flat',
+    casa_condominio:'Casa em Condomínio',
+    loft:           'Loft',
+    // Comercial
     sala_comercial: 'Sala Comercial',
-    loja: 'Loja',
-    galpao: 'Galpão',
-    sitio: 'Sítio',
-    chacara: 'Chácara',
-    fazenda: 'Fazenda',
-    outro: 'Outro',
+    loja:           'Loja / Ponto Comercial',
+    galpao:         'Galpão',
+    predio:         'Prédio Comercial',
+    garagem:        'Garagem',
+    // Terreno
+    terreno:        'Terreno',
+    terreno_comercial: 'Terreno Comercial',
+    // Rural
+    sitio:          'Sítio',
+    chacara:        'Chácara',
+    fazenda:        'Fazenda',
+    rancho:         'Rancho',
+    // Geral
+    outro:          'Outro',
   }
   return labels[tipo] || tipo
 }

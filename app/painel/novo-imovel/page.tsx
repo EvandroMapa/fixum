@@ -49,12 +49,31 @@ const ETAPAS = [
 ]
 
 const TIPOS = [
-  { valor: "apartamento", icone: "\uD83C\uDFE2", label: "Apartamento" },
-  { valor: "casa", icone: "\uD83C\uDFE0", label: "Casa" },
-  { valor: "terreno", icone: "\uD83C\uDF33", label: "Terreno" },
-  { valor: "comercial", icone: "\uD83C\uDFEA", label: "Comercial" },
-  { valor: "rural", icone: "\uD83C\uDF3E", label: "Rural" },
-  { valor: "cobertura", icone: "\uD83C\uDFD9\uFE0F", label: "Cobertura" },
+  // Residencial
+  { valor: 'apartamento',      icone: '🏢', label: 'Apartamento' },
+  { valor: 'casa',             icone: '🏠', label: 'Casa' },
+  { valor: 'sobrado',          icone: '🏡', label: 'Sobrado' },
+  { valor: 'casa_condominio',  icone: '🏘️', label: 'Casa em Condomínio' },
+  { valor: 'cobertura',        icone: '🌇', label: 'Cobertura' },
+  { valor: 'kitnet',           icone: '🛏️', label: 'Kitnet / Studio' },
+  { valor: 'flat',             icone: '🏨', label: 'Flat' },
+  { valor: 'loft',             icone: '🏗️', label: 'Loft' },
+  // Comercial
+  { valor: 'sala_comercial',   icone: '🗂️', label: 'Sala Comercial' },
+  { valor: 'loja',             icone: '🏪', label: 'Loja / Ponto Comercial' },
+  { valor: 'galpao',           icone: '🏭', label: 'Galpão' },
+  { valor: 'predio',           icone: '🏬', label: 'Prédio Comercial' },
+  { valor: 'garagem',          icone: '🚗', label: 'Garagem' },
+  // Terreno
+  { valor: 'terreno',          icone: '📐', label: 'Terreno' },
+  { valor: 'terreno_comercial',icone: '🏗️', label: 'Terreno Comercial' },
+  // Rural
+  { valor: 'sitio',            icone: '🌿', label: 'Sítio' },
+  { valor: 'chacara',          icone: '🌳', label: 'Chácara' },
+  { valor: 'fazenda',          icone: '🌾', label: 'Fazenda' },
+  { valor: 'rancho',           icone: '🐄', label: 'Rancho' },
+  // Geral
+  { valor: 'outro',            icone: '🏷️', label: 'Outro' },
 ]
 
 export default function NovoImovelPage() {

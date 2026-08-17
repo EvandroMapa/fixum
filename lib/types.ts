@@ -1,13 +1,28 @@
 export type TipoImovel =
-  | 'casa'
+  // Residencial
   | 'apartamento'
-  | 'terreno'
+  | 'casa'
+  | 'sobrado'
+  | 'cobertura'
+  | 'kitnet'
+  | 'flat'
+  | 'casa_condominio'
+  | 'loft'
+  // Comercial
   | 'sala_comercial'
   | 'loja'
   | 'galpao'
+  | 'predio'
+  | 'garagem'
+  // Terreno
+  | 'terreno'
+  | 'terreno_comercial'
+  // Rural
   | 'sitio'
   | 'chacara'
   | 'fazenda'
+  | 'rancho'
+  // Geral
   | 'outro'
 
 export type TipoNegociacao = 'venda' | 'aluguel'
