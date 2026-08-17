@@ -38,7 +38,7 @@
 }
 
 .foto {
-  height: 200px;
+  height: 160px;
   position: relative;
   background-color: var(--cor-fundo-alt);
   overflow: hidden;
@@ -170,16 +170,16 @@
 
 /* Info */
 .info {
-  padding: var(--espaco-4);
+  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
-  gap: var(--espaco-2);
+  gap: 6px;
   flex: 1;
 }
 
 .preco {
   font-family: var(--fonte-display);
-  font-size: var(--texto-xl);
+  font-size: var(--texto-lg);
   font-weight: 800;
   color: var(--cor-primaria);
   display: flex;
