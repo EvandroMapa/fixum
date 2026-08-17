@@ -6,6 +6,30 @@
   min-width: 0;
 }
 
+/* Botão Voltar ao início */
+.btnVoltar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cor-fundo-alt);
+  border: 1.5px solid var(--cor-borda);
+  color: var(--cor-texto-secundario);
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btnVoltar:hover {
+  background: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+  color: white;
+  transform: translateX(-2px);
+}
+
 .wrapper::-webkit-scrollbar {
   height: 0;
 }
@@ -50,6 +74,78 @@
   padding: 3px;
   flex-shrink: 0;
   border: 1px solid var(--cor-borda);
+}
+
+/* Divisor visual na barra */
+.divisorPill {
+  display: block;
+  width: 1px;
+  height: 20px;
+  background: var(--cor-borda);
+  flex-shrink: 0;
+}
+
+/* Pills de categoria */
+.pillCategoria {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1.5px solid var(--cor-borda);
+  background: transparent;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pillCategoria:hover {
+  background: var(--cor-fundo-alt);
+  color: var(--cor-texto);
+}
+
+/* Pill ativo — base */
+.pillAtivo {
+  border-width: 1.5px;
+}
+
+/* Residencial ativo — azul */
+.pillResidencial {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+/* Comercial ativo — laranja */
+.pillComercial {
+  background: #fff7ed;
+  border-color: #f97316;
+  color: #c2410c;
+}
+
+/* Rural ativo — verde */
+.pillRural {
+  background: #f0fdf4;
+  border-color: #22c55e;
+  color: #15803d;
+}
+
+/* Pill com dropdown aberto */
+.pillAberta {
+  background: var(--cor-fundo-alt);
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+}
+
+/* × de remoção dentro da pill */
+.pillX {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  line-height: 1;
 }
 
 .btnFiltro {
@@ -106,30 +202,108 @@
 
 /* Dropdown */
 .dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
+  position: fixed;
   background: white;
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-lg);
-  box-shadow: var(--sombra-xl);
-  padding: var(--espaco-4);
-  min-width: 260px;
-  z-index: var(--z-dropdown);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.1);
+  min-width: 560px;
+  z-index: 9999;
   animation: fadeIn 0.15s ease;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Rodapé fixo com botão Aplicar */
+.dropdownFooter {
+  padding: var(--espaco-3) var(--espaco-4);
+  border-top: 1px solid var(--cor-borda);
+  background: white;
+  flex-shrink: 0;
+}
+
+/* Layout 3 colunas: uma por categoria */
+.dropdownTresColunas {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: var(--espaco-4);
+}
+
+/* Coluna individual de grupo */
+.colunaGrupo {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Divisor vertical entre colunas */
+.divisorVertical {
+  width: 1px;
+  background: var(--cor-borda);
+  align-self: stretch;
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+/* Grid dentro de cada coluna — 2 sub-colunas */
 .dropdownGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--espaco-2);
-  margin-bottom: var(--espaco-4);
+  gap: 6px;
+  margin-bottom: 0;
+}
+
+/* Rural — 1 coluna só */
+.dropdownGridUma {
+  grid-template-columns: 1fr;
+}
+
+/* Tarja de grupo de tipos */
+.labelGrupo {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+  margin-bottom: 10px;
+  /* cor default — sobrescrita por variante */
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+/* Residencial — azul */
+.grupoResidencial .labelGrupo {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+/* Comercial — laranja */
+.grupoComercial .labelGrupo {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+/* Rural — verde */
+.grupoRural .labelGrupo {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+/* Divisor entre grupos */
+.divisorGrupo {
+  border: none;
+  border-top: 1px solid var(--cor-borda);
+  margin: 12px 0 10px;
 }
 
 .chipTipo {
-  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  padding: 7px 12px;
   border: 1.5px solid var(--cor-borda);
-  border-radius: var(--raio-sm);
+  border-radius: 999px;
   font-size: var(--texto-xs);
   font-weight: 600;
   color: var(--cor-texto-secundario);
@@ -137,6 +311,7 @@
   transition: all var(--transicao);
   background: transparent;
   text-align: left;
+  white-space: nowrap;
 }
 
 .chipTipo:hover {
@@ -197,7 +372,7 @@
   color: var(--cor-primaria);
 }
 
-/* Botão aplicar */
+/* Botão Fechar */
 .btnAplicar {
   width: 100%;
   padding: 10px;

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { type FiltrosBusca, type TipoNegociacao } from '@/lib/types'
 import BuscaAutoComplete, { type Sugestao } from './BuscaAutoComplete'
 import styles from './FiltrosBusca.module.css'
@@ -11,36 +12,81 @@ interface Props {
   onLocalSelecionado?: (sugestao: Sugestao) => void
 }
 
-const TIPOS = [
-  // Residencial
-  { valor: 'apartamento',     label: 'Apartamento' },
-  { valor: 'casa',            label: 'Casa' },
-  { valor: 'sobrado',         label: 'Sobrado' },
-  { valor: 'casa_condominio', label: 'Casa em Condomínio' },
-  { valor: 'cobertura',       label: 'Cobertura' },
-  { valor: 'kitnet',          label: 'Kitnet / Studio' },
-  { valor: 'flat',            label: 'Flat' },
-  { valor: 'lote',            label: 'Lote' },
-  // Comercial
-  { valor: 'sala_comercial',  label: 'Sala Comercial' },
-  { valor: 'loja',            label: 'Loja / Ponto Comercial' },
-  { valor: 'galpao',          label: 'Galpão' },
-  { valor: 'predio',          label: 'Prédio Comercial' },
-  { valor: 'garagem',         label: 'Garagem' },
-  { valor: 'terreno_comercial', label: 'Terreno / Lote' },
-  // Rural
-  { valor: 'sitio',           label: 'Sítio' },
-  { valor: 'chacara',         label: 'Chácara' },
-  { valor: 'fazenda',         label: 'Fazenda' },
-  { valor: 'rancho',          label: 'Rancho' },
-  // Geral
-  { valor: 'outro',           label: 'Outro' },
+const GRUPOS_TIPO = [
+  {
+    grupo: 'Residencial',
+    icone: '🏠',
+    tipos: [
+      { valor: 'apartamento',     label: 'Apartamento' },
+      { valor: 'casa',            label: 'Casa' },
+      { valor: 'sobrado',         label: 'Sobrado' },
+      { valor: 'casa_condominio', label: 'Casa em Condomínio' },
+      { valor: 'cobertura',       label: 'Cobertura' },
+      { valor: 'kitnet',          label: 'Kitnet / Studio' },
+      { valor: 'flat',            label: 'Flat' },
+      { valor: 'lote',            label: 'Lote' },
+    ],
+  },
+  {
+    grupo: 'Comercial',
+    icone: '🏢',
+    tipos: [
+      { valor: 'sala_comercial',    label: 'Sala Comercial' },
+      { valor: 'loja',              label: 'Loja / Ponto Comercial' },
+      { valor: 'galpao',            label: 'Galpão' },
+      { valor: 'predio',            label: 'Prédio Comercial' },
+      { valor: 'garagem',           label: 'Garagem' },
+      { valor: 'terreno_comercial', label: 'Terreno / Lote' },
+    ],
+  },
+  {
+    grupo: 'Rural',
+    icone: '🌾',
+    tipos: [
+      { valor: 'sitio',   label: 'Sítio' },
+      { valor: 'chacara', label: 'Chácara' },
+      { valor: 'fazenda', label: 'Fazenda' },
+      { valor: 'rancho',  label: 'Rancho' },
+      { valor: 'outro',   label: 'Outro' },
+    ],
+  },
 ]
+
+// Lista flat para uso em outros contextos
+const TIPOS = GRUPOS_TIPO.flatMap((g) => g.tipos)
 
 const QUARTOS = [1, 2, 3, 4, 5]
 
 export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: Props) {
   const [modalAberto, setModalAberto] = useState<string | null>(null)
+  const [dropPos, setDropPos] = useState({ top: 0, left: 0 })
+  const btnTipoRef = useRef<HTMLButtonElement>(null)
+  const dropTipoRef = useRef<HTMLDivElement>(null)
+
+  // Fecha dropdown ao clicar fora
+  useEffect(() => {
+    function fechar(e: MouseEvent) {
+      if (
+        dropTipoRef.current && !dropTipoRef.current.contains(e.target as Node) &&
+        btnTipoRef.current && !btnTipoRef.current.contains(e.target as Node)
+      ) {
+        setModalAberto(null)
+      }
+    }
+    document.addEventListener('mousedown', fechar)
+    return () => document.removeEventListener('mousedown', fechar)
+  }, [])
+
+  function abrirTipo() {
+    if (btnTipoRef.current) {
+      const rect = btnTipoRef.current.getBoundingClientRect()
+      const dropW = 560
+      // Garante que não sai pela direita
+      const left = Math.min(rect.left, window.innerWidth - dropW - 8)
+      setDropPos({ top: rect.bottom + 8, left: Math.max(8, left) })
+    }
+    setModalAberto((v) => v === 'tipo' ? null : 'tipo')
+  }
 
   function handleNegociacao(neg: TipoNegociacao) {
     // Radio: sempre seleciona, nunca deseleciona
@@ -55,6 +101,26 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
       ? atual.filter((t) => t !== tipo)
       : [...atual, tipo as never]
     onChange({ ...filtros, tipo: novo.length ? novo : undefined })
+  }
+
+  // Pill de categoria: toggle todos os tipos do grupo
+  function toggleCategoria(grupo: typeof GRUPOS_TIPO[0]) {
+    const valoresGrupo = grupo.tipos.map((t) => t.valor)
+    const atual = filtros.tipo ?? []
+    const algumAtivo = valoresGrupo.some((v) => atual.includes(v as never))
+    if (algumAtivo) {
+      // Deseleciona todos do grupo
+      const novo = atual.filter((t) => !valoresGrupo.includes(t as string))
+      onChange({ ...filtros, tipo: novo.length ? novo : undefined })
+    } else {
+      // Seleciona todos do grupo
+      const novo = [...new Set([...atual, ...valoresGrupo])] as never[]
+      onChange({ ...filtros, tipo: novo })
+    }
+  }
+
+  function categoriaTemAtivo(grupo: typeof GRUPOS_TIPO[0]) {
+    return grupo.tipos.some((t) => filtros.tipo?.includes(t.valor as never))
   }
 
   function handleQuartos(q: number) {
@@ -87,6 +153,12 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
 
   return (
     <div className={styles.wrapper}>
+
+      {/* Botão voltar à home */}
+      <Link href="/" className={styles.btnVoltar} title="Voltar ao início">
+        ←
+      </Link>
+
       {/* Autocomplete por cidade/bairro via Mapbox Geocoding */}
       <BuscaAutoComplete
         placeholder="Cidade, bairro ou região..."
@@ -95,51 +167,58 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
         onLimpar={handleLocalLimpar}
       />
 
-      {/* Filtro: Negociação — radio exclusivo */}
-      <div className={styles.grupoFiltro}>
-        <button
-          className={`${styles.btnFiltro} ${filtros.negociacao === 'venda' ? styles.ativo : ''}`}
-          onClick={() => handleNegociacao('venda')}
-        >
-          Comprar
-        </button>
-        <button
-          className={`${styles.btnFiltro} ${filtros.negociacao === 'aluguel' ? styles.ativo : ''}`}
-          onClick={() => handleNegociacao('aluguel')}
-        >
-          Alugar
-        </button>
-      </div>
+      {/* Filtro: Tipo — botão único abre dropdown 3 colunas */}
+      <button
+        ref={btnTipoRef}
+        className={`${styles.btnFiltro} ${filtros.tipo?.length ? styles.ativo : ''}`}
+        onClick={abrirTipo}
+      >
+        Tipo {filtros.tipo?.length ? `(${filtros.tipo.length})` : ''}
+        <span className={styles.setinha}>▾</span>
+      </button>
 
-      {/* Filtro: Tipo */}
-      <div className={styles.filtroRelativo}>
-        <button
-          className={`${styles.btnFiltro} ${filtros.tipo?.length ? styles.ativo : ''}`}
-          onClick={() => setModalAberto(modalAberto === 'tipo' ? null : 'tipo')}
+      {/* Dropdown de tipos — 3 colunas, fixed */}
+      {modalAberto === 'tipo' && (
+        <div
+          ref={dropTipoRef}
+          className={styles.dropdown}
+          style={{ top: dropPos.top, left: dropPos.left }}
         >
-          Tipo {filtros.tipo?.length ? `(${filtros.tipo.length})` : ''}
-          <span className={styles.setinha}>▾</span>
-        </button>
-
-        {modalAberto === 'tipo' && (
-          <div className={styles.dropdown}>
-            <div className={styles.dropdownGrid}>
-              {TIPOS.map((t) => (
-                <button
-                  key={t.valor}
-                  className={`${styles.chipTipo} ${filtros.tipo?.includes(t.valor as never) ? styles.chipAtivo : ''}`}
-                  onClick={() => toggleTipo(t.valor)}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+          <div className={styles.dropdownTresColunas}>
+            {GRUPOS_TIPO.map((g, gi) => {
+              const classeGrupo = g.grupo === 'Residencial'
+                ? styles.grupoResidencial
+                : g.grupo === 'Comercial'
+                  ? styles.grupoComercial
+                  : styles.grupoRural
+              return (
+                <>
+                  {gi > 0 && <div key={`div-${gi}`} className={styles.divisorVertical} />}
+                  <div key={g.grupo} className={`${styles.colunaGrupo} ${classeGrupo}`}>
+                    <p className={styles.labelGrupo}>{g.icone} {g.grupo}</p>
+                    <div className={styles.dropdownGrid}>
+                      {g.tipos.map((t) => (
+                        <button
+                          key={t.valor}
+                          className={`${styles.chipTipo} ${filtros.tipo?.includes(t.valor as never) ? styles.chipAtivo : ''}`}
+                          onClick={() => toggleTipo(t.valor)}
+                        >
+                          {t.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )
+            })}
+          </div>
+          <div className={styles.dropdownFooter}>
             <button className={styles.btnAplicar} onClick={() => setModalAberto(null)}>
-              Aplicar
+              ✕ Fechar
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Filtro: Preço */}
       <div className={styles.filtroRelativo}>
@@ -176,7 +255,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               </div>
             </div>
             <button className={styles.btnAplicar} onClick={() => setModalAberto(null)}>
-              Aplicar
+              ? Fechar
             </button>
           </div>
         )}
@@ -206,7 +285,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               ))}
             </div>
             <button className={styles.btnAplicar} onClick={() => setModalAberto(null)}>
-              Aplicar
+              ? Fechar
             </button>
           </div>
         )}

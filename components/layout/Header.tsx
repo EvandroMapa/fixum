@@ -74,9 +74,9 @@ export default function Header() {
         {/* Nav Desktop - oculto no explorar pois os filtros ja tem Comprar/Alugar */}
         {!ocultarNav && (
           <nav className={styles.nav}>
-            <Link href="/explorar?negociacao=venda" className={styles.navLink}>Comprar</Link>
-            <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>Alugar</Link>
-            <Link href="/explorar" className={styles.navLink}>Explorar</Link>
+            <Link href="/explorar?negociacao=venda" className={styles.navLink}>🏠 Comprar</Link>
+            <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>🔑 Alugar</Link>
+            <Link href="/explorar" className={styles.navLink}>🗺️ Explorar</Link>
           </nav>
         )}
 

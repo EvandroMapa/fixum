@@ -1,6 +1,7 @@
 .wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -42,16 +43,11 @@
 
 /* Dropdown */
 .dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
   background: white;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.1);
   padding: 16px;
   min-width: 240px;
-  z-index: 500;
   animation: slideDown 0.18s ease;
 }
 

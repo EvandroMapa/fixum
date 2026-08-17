@@ -43,6 +43,7 @@
 .solido .logoTexto { color: #0f172a; }
 .solido .navLink   { color: #475569; }
 .solido .navLink:hover { color: #1a56db; background: #eff6ff; }
+.solido .navLink:hover::after { opacity: 1; }
 .solido .btnAnunciar {
   background: linear-gradient(135deg, #1a56db, #2563eb);
   color: white;
@@ -117,17 +118,50 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0;
+}
+
+/* Separador entre links */
+.nav .navLink + .navLink::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  background: currentColor;
+  opacity: 0.2;
+  margin-right: 2px;
+  vertical-align: middle;
 }
 
 .navLink {
-  padding: 8px 14px;
+  position: relative;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   transition: all 0.2s;
   white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+/* Linha underline animada */
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+  opacity: 0.6;
+}
+
+.navLink:hover::after {
+  transform: scaleX(1);
 }
 
 /* Acoes */
