@@ -78,6 +78,17 @@ const TIPOS = [
   { valor: 'outro',            icone: '🏷️', label: 'Outro' },
 ]
 
+function normalizarTipoParaBanco(tipo: string): string {
+  const t = (tipo || '').toLowerCase().trim()
+  if (['apartamento', 'flat', 'kitnet', 'studio'].includes(t)) return 'apartamento'
+  if (['casa', 'sobrado', 'casa_condominio'].includes(t)) return 'casa'
+  if (['cobertura'].includes(t)) return 'cobertura'
+  if (['terreno', 'lote', 'terreno_comercial'].includes(t)) return 'terreno'
+  if (['comercial', 'sala_comercial', 'loja', 'galpao', 'predio', 'predio_comercial', 'garagem', 'ponto_comercial'].includes(t)) return 'comercial'
+  if (['rural', 'sitio', 'chacara', 'fazenda', 'rancho'].includes(t)) return 'rural'
+  return 'outro'
+}
+
 export default function NovoImovelPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -325,7 +336,7 @@ export default function NovoImovelPage() {
         .from("imoveis")
         .insert({
           anunciante_id: user.id,
-          tipo: dados.tipo,
+          tipo: normalizarTipoParaBanco(dados.tipo),
           negociacao: dados.negociacao,
           titulo: dados.titulo,
           descricao: dados.descricao || null,
