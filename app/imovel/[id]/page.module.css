@@ -497,20 +497,230 @@
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-lg);
   padding: var(--espaco-4);
+/* Barra de navegação / Voltar */
+.barraNavegacao {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  margin-bottom: var(--espaco-6);
 }
 
-.cardRef span {
-  font-size: var(--texto-xs);
-  color: var(--cor-texto-terciario);
+.btnVoltarMobile {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  color: var(--cor-primaria);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--cor-fundo-alt);
+  border: 1px solid var(--cor-borda);
+  transition: all 0.15s;
 }
 
-.cardRef strong {
-  font-family: monospace;
-  font-size: var(--texto-sm);
-  color: var(--cor-texto);
+.btnVoltarMobile:hover {
+  background: var(--cor-primaria-claro);
+}
+
+.breadcrumbTitulo {
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+/* Badge de quantidade de fotos na galeria */
+.badgeQtdFotos {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  z-index: 3;
+}
+
+/* Setas do carrossel principal */
+.setaGaleria {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s;
+}
+
+.setaGaleria:hover {
+  background: white;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.setaGaleriaEsq { left: 14px; }
+.setaGaleriaDir { right: 14px; }
+
+/* ── BARRA FIXA DE CONTATO MOBILE (BOTTOM BAR) ── */
+.barraContatoMobile {
+  display: none;
+}
+
+/* ── LIGHTBOX / MODAL DE FOTOS EM TELA CHEIA ── */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  backdrop-filter: blur(10px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.lightboxContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.lightboxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  color: white;
+  z-index: 10;
+}
+
+.lightboxContador {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.lightboxBtnFechar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lightboxBtnFechar:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.lightboxCorpo {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.lightboxImg {
+  max-width: 92vw;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 8px;
+  user-select: none;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  animation: fadeIn 0.2s ease;
+}
+
+.lightboxSeta {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.15s;
+}
+
+.lightboxSeta:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.lightboxSetaEsq { left: 16px; }
+.lightboxSetaDir { right: 16px; }
+
+.lightboxMiniaturas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lightboxMiniaturas::-webkit-scrollbar {
+  display: none;
+}
+
+.lightboxThumb {
+  width: 60px;
+  height: 44px;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid transparent;
+  opacity: 0.5;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.lightboxThumb:hover,
+.lightboxThumbAtiva {
+  opacity: 1;
+  border-color: var(--cor-primaria);
+  transform: scale(1.08);
 }
 
 /* ── RESPONSIVIDADE ──────────────────────────────── */
@@ -534,31 +744,216 @@
 
 @media (max-width: 768px) {
   .pagina {
-    padding: calc(var(--altura-header) + var(--espaco-4)) var(--espaco-4) var(--espaco-10);
+    padding: calc(var(--altura-header) + 12px) 14px 100px;
+  }
+
+  .barraNavegacao {
+    margin-bottom: 12px;
+  }
+
+  .btnVoltarMobile {
+    display: inline-flex;
+  }
+
+  .breadcrumb {
+    display: none;
   }
 
   .fotoGrande {
-    height: 280px;
+    height: 260px;
+    border-radius: 16px;
+  }
+
+  .setaGaleria {
+    display: none;
   }
 
   .miniaturas {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
   }
 
-  .dadosPrincipais {
-    gap: var(--espaco-3);
-    padding: var(--espaco-4);
-  }
-
-  .gridCaracteristicas {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .gridPontos {
-    grid-template-columns: repeat(4, 1fr);
+  .miniatura {
+    height: 52px;
+    border-radius: 6px;
   }
 
   .cabecalhoTop {
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .titulo {
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+
+  .acoesTopo {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .btnAcao {
+    justify-content: center;
+    height: 40px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .precoGrande {
+    font-size: 1.65rem;
+    gap: 6px;
+  }
+
+  .dadosPrincipais {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .dado {
+    min-width: 0;
+    padding: 6px 4px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--cor-borda);
+  }
+
+  .dadoIcone {
+    font-size: 1.25rem;
+  }
+
+  .dado strong {
+    font-size: 1rem;
+  }
+
+  .gridCaracteristicas {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .caracteristica {
+    padding: 10px;
+    font-size: 12.5px;
+    border-radius: 10px;
+  }
+
+  .gridPontos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .ponto {
+    padding: 10px 8px;
+    border-radius: 12px;
+  }
+
+  .custos {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .colunaPrincipal {
+    gap: 20px;
+  }
+
+  /* BARRA FIXA DE CONTATO MOBILE */
+  .barraContatoMobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--cor-borda);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .precoMobileInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .precoMobileValor {
+    font-family: var(--fonte-display);
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--cor-primaria);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .condominioMobile {
+    font-size: 11px;
+    color: var(--cor-texto-terciario);
+    white-space: nowrap;
+  }
+
+  .botoesMobileAcao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .btnTelefoneMobile {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    border: 1.5px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .btnTelefoneMobile:active {
+    background: #e2e8f0;
+    transform: scale(0.95);
+  }
+
+  .btnWhatsAppMobile {
+    padding: 11px 18px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 3px 10px rgba(37, 211, 102, 0.35);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btnWhatsAppMobile:active {
+    background: #1da851;
+    transform: scale(0.96);
+  }
+
+  .lightboxSeta {
+    display: none;
   }
 }
+

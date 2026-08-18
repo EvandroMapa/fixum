@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
@@ -50,6 +50,12 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
   const [fotoAtiva, setFotoAtiva] = useState(0)
   const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
   const [modalFoto, setModalFoto] = useState(false)
+  const [linkCopiado, setLinkCopiado] = useState(false)
+
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
+  const modalTouchStartX = useRef<number | null>(null)
+  const modalTouchEndX = useRef<number | null>(null)
 
   const fotos = imovel.fotos_imovel ?? []
   const caracteristicas = imovel.caracteristicas_imovel?.map((c) => c.caracteristica) ?? []
@@ -57,10 +63,82 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
 
   const fotoAtual = fotos[fotoAtiva]?.url ?? '/placeholder-imovel.jpg'
 
+  const irAnterior = useCallback(() => {
+    if (fotos.length <= 1) return
+    setFotoAtiva((i) => (i - 1 + fotos.length) % fotos.length)
+  }, [fotos.length])
+
+  const irProxima = useCallback(() => {
+    if (fotos.length <= 1) return
+    setFotoAtiva((i) => (i + 1) % fotos.length)
+  }, [fotos.length])
+
+  // Gestos de swipe no carrossel principal
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX
+    touchEndX.current = null
+  }
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX
+  }
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return
+    const diff = touchStartX.current - touchEndX.current
+    if (diff > 40) irProxima()
+    else if (diff < -40) irAnterior()
+    touchStartX.current = null
+    touchEndX.current = null
+  }
+
+  // Gestos de swipe no modal de fotos
+  const handleModalTouchStart = (e: React.TouchEvent) => {
+    modalTouchStartX.current = e.targetTouches[0].clientX
+    modalTouchEndX.current = null
+  }
+  const handleModalTouchMove = (e: React.TouchEvent) => {
+    modalTouchEndX.current = e.targetTouches[0].clientX
+  }
+  const handleModalTouchEnd = () => {
+    if (modalTouchStartX.current === null || modalTouchEndX.current === null) return
+    const diff = modalTouchStartX.current - modalTouchEndX.current
+    if (diff > 40) irProxima()
+    else if (diff < -40) irAnterior()
+    modalTouchStartX.current = null
+    modalTouchEndX.current = null
+  }
+
+  // Trava scroll quando o modal de fotos estiver aberto
+  useEffect(() => {
+    if (modalFoto) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [modalFoto])
+
   function handleWhatsApp() {
     const msg = encodeURIComponent(`Olá! Tenho interesse no imóvel: ${imovel.titulo}. Vi no FIXUM.`)
     const tel = anunciante?.whatsapp ?? anunciante?.telefone ?? ''
     window.open(`https://wa.me/55${tel.replace(/\D/g, '')}?text=${msg}`, '_blank')
+  }
+
+  async function handleCompartilhar() {
+    if (typeof window !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: imovel.titulo,
+          text: `Confira este imóvel no FIXUM: ${imovel.titulo}`,
+          url: window.location.href,
+        })
+      } catch {
+        /* cancelado */
+      }
+    } else if (typeof window !== 'undefined') {
+      await navigator.clipboard.writeText(window.location.href)
+      setLinkCopiado(true)
+      setTimeout(() => setLinkCopiado(false), 2500)
+    }
   }
 
   return (
@@ -68,13 +146,22 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
       <Header />
 
       <div className={styles.pagina}>
-        {/* Breadcrumb */}
-        <div className={styles.breadcrumb}>
-          <Link href="/">Início</Link>
-          <span>›</span>
-          <Link href="/explorar">Explorar</Link>
-          <span>›</span>
-          <span>{imovel.titulo}</span>
+        {/* Breadcrumb / Botão Voltar */}
+        <div className={styles.barraNavegacao}>
+          <Link href="/explorar" className={styles.btnVoltarMobile}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+            <span>Voltar ao Explorar</span>
+          </Link>
+
+          <div className={styles.breadcrumb}>
+            <Link href="/">Início</Link>
+            <span>›</span>
+            <Link href="/explorar">Explorar</Link>
+            <span>›</span>
+            <span className={styles.breadcrumbTitulo}>{imovel.titulo}</span>
+          </div>
         </div>
 
         <div className={styles.layout}>
@@ -87,12 +174,45 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                 className={styles.fotoGrande}
                 style={{ backgroundImage: `url(${fotoAtual})` }}
                 onClick={() => setModalFoto(true)}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               >
                 {fotos.length === 0 && (
                   <div className={styles.semFoto}>🏠</div>
                 )}
+
+                {/* Badge de contador de fotos */}
+                {fotos.length > 0 && (
+                  <div className={styles.badgeQtdFotos}>
+                    📷 {fotoAtiva + 1} / {fotos.length}
+                  </div>
+                )}
+
+                {/* Setas de navegação no desktop */}
+                {fotos.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className={`${styles.setaGaleria} ${styles.setaGaleriaEsq}`}
+                      onClick={(e) => { e.stopPropagation(); irAnterior() }}
+                      aria-label="Foto anterior"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.setaGaleria} ${styles.setaGaleriaDir}`}
+                      onClick={(e) => { e.stopPropagation(); irProxima() }}
+                      aria-label="Próxima foto"
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
+
                 <div className={styles.galeriaOverlay}>
-                  <button className={styles.btnVerFotos}>
+                  <button type="button" className={styles.btnVerFotos}>
                     📷 Ver todas as fotos ({fotos.length || 1})
                   </button>
                 </div>
@@ -100,7 +220,7 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
 
               {fotos.length > 1 && (
                 <div className={styles.miniaturas}>
-                  {fotos.slice(0, 5).map((foto, i) => (
+                  {fotos.slice(0, 6).map((foto, i) => (
                     <div
                       key={foto.id}
                       className={`${styles.miniatura} ${i === fotoAtiva ? styles.miniaturaAtiva : ''}`}
@@ -131,14 +251,19 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
 
                 <div className={styles.acoesTopo}>
                   <button
+                    type="button"
                     className={`${styles.btnAcao} ${favoritado ? styles.favoritado : ''}`}
                     onClick={toggleFavorito}
                     disabled={carregando}
                   >
-                    {favoritado ? '❤️' : '🤍'} Favoritar
+                    {favoritado ? '❤️' : '🤍'} <span>{favoritado ? 'Salvo' : 'Favoritar'}</span>
                   </button>
-                  <button className={styles.btnAcao}>
-                    🔗 Compartilhar
+                  <button
+                    type="button"
+                    className={styles.btnAcao}
+                    onClick={handleCompartilhar}
+                  >
+                    🔗 <span>{linkCopiado ? 'Link Copiado!' : 'Compartilhar'}</span>
                   </button>
                 </div>
               </div>
@@ -282,7 +407,7 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
             )}
           </div>
 
-          {/* COLUNA LATERAL — Contato */}
+          {/* COLUNA LATERAL — Contato Desktop */}
           <div className={styles.colunaLateral}>
             <div className={styles.cardContato}>
               {/* Anunciante */}
@@ -312,18 +437,21 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
               {/* Botões de contato */}
               <div className={styles.botoesContato}>
                 <button
+                  type="button"
                   className={`btn btn-sucesso btn-lg ${styles.btnWhatsApp}`}
                   onClick={handleWhatsApp}
                 >
                   <span>💬</span> WhatsApp
                 </button>
 
-                <a
-                  href={`tel:${anunciante?.telefone ?? ''}`}
-                  className={`btn btn-outline btn-lg ${styles.btnTelefone}`}
-                >
-                  <span>📞</span> Ligar
-                </a>
+                {anunciante?.telefone && (
+                  <a
+                    href={`tel:${anunciante.telefone}`}
+                    className={`btn btn-outline btn-lg ${styles.btnTelefone}`}
+                  >
+                    <span>📞</span> Ligar
+                  </a>
+                )}
               </div>
 
               {/* Formulário de mensagem */}
@@ -346,7 +474,7 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                   placeholder="Seu WhatsApp"
                   style={{ marginTop: '8px' }}
                 />
-                <button className="btn btn-primario btn-lg" style={{ marginTop: '12px', width: '100%' }}>
+                <button type="button" className="btn btn-primario btn-lg" style={{ marginTop: '12px', width: '100%' }}>
                   Enviar mensagem
                 </button>
               </div>
@@ -364,6 +492,108 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
           </div>
         </div>
       </div>
+
+      {/* ── BARRA FIXA DE CONTATO MOBILE (BOTTOM BAR) ── */}
+      <div className={styles.barraContatoMobile}>
+        <div className={styles.precoMobileInfo}>
+          <span className={styles.precoMobileValor}>
+            {formatarPreco(imovel.preco, imovel.negociacao)}
+          </span>
+          {imovel.condominio && (
+            <span className={styles.condominioMobile}>
+              + R$ {imovel.condominio.toLocaleString('pt-BR')} cond.
+            </span>
+          )}
+        </div>
+
+        <div className={styles.botoesMobileAcao}>
+          {anunciante?.telefone && (
+            <a
+              href={`tel:${anunciante.telefone}`}
+              className={styles.btnTelefoneMobile}
+              title="Ligar"
+            >
+              📞
+            </a>
+          )}
+          <button
+            type="button"
+            className={styles.btnWhatsAppMobile}
+            onClick={handleWhatsApp}
+          >
+            <span>💬</span> Conversar no WhatsApp
+          </button>
+        </div>
+      </div>
+
+      {/* ── MODAL / LIGHTBOX DE FOTOS EM TELA CHEIA ── */}
+      {modalFoto && (
+        <div className={styles.lightboxOverlay} onClick={() => setModalFoto(false)}>
+          <div className={styles.lightboxContainer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.lightboxHeader}>
+              <span className={styles.lightboxContador}>
+                Foto {fotoAtiva + 1} de {fotos.length || 1}
+              </span>
+              <button
+                type="button"
+                className={styles.lightboxBtnFechar}
+                onClick={() => setModalFoto(false)}
+                aria-label="Fechar galeria"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div
+              className={styles.lightboxCorpo}
+              onTouchStart={handleModalTouchStart}
+              onTouchMove={handleModalTouchMove}
+              onTouchEnd={handleModalTouchEnd}
+            >
+              <img
+                src={fotoAtual}
+                alt={imovel.titulo}
+                className={styles.lightboxImg}
+              />
+
+              {fotos.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className={`${styles.lightboxSeta} ${styles.lightboxSetaEsq}`}
+                    onClick={irAnterior}
+                    aria-label="Foto anterior"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.lightboxSeta} ${styles.lightboxSetaDir}`}
+                    onClick={irProxima}
+                    aria-label="Próxima foto"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
+
+            {fotos.length > 1 && (
+              <div className={styles.lightboxMiniaturas}>
+                {fotos.map((f, i) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    className={`${styles.lightboxThumb} ${i === fotoAtiva ? styles.lightboxThumbAtiva : ''}`}
+                    onClick={() => setFotoAtiva(i)}
+                    style={{ backgroundImage: `url(${f.url})` }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   )
 }
