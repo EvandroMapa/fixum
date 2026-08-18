@@ -1,26 +1,98 @@
 .pagina {
   max-width: var(--largura-conteudo);
   margin: 0 auto;
-  padding: calc(var(--altura-header) + var(--espaco-8)) var(--espaco-6) var(--espaco-16);
+  padding: calc(var(--altura-header) + var(--espaco-6)) var(--espaco-6) var(--espaco-16);
 }
 
-/* Breadcrumb */
-.breadcrumb {
+/* Barra superior de navegação / Topo */
+.barraTopoImovel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: var(--espaco-6);
+}
+
+.btnVoltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cor-primaria);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--cor-fundo-alt);
+  border: 1.5px solid var(--cor-borda);
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.btnVoltar:hover {
+  background: var(--cor-primaria-claro);
+  border-color: var(--cor-primaria);
+}
+
+.breadcrumbDesktop {
   display: flex;
   align-items: center;
   gap: var(--espaco-2);
   font-size: var(--texto-sm);
   color: var(--cor-texto-terciario);
-  margin-bottom: var(--espaco-6);
+  flex: 1;
+  min-width: 0;
 }
 
-.breadcrumb a {
+.breadcrumbDesktop a {
   color: var(--cor-primaria);
   text-decoration: none;
+  font-weight: 500;
 }
 
-.breadcrumb a:hover {
+.breadcrumbDesktop a:hover {
   text-decoration: underline;
+}
+
+.breadcrumbTitulo {
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.acoesTopoRapidas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btnAcaoTopo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 10px;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: all var(--transicao);
+  background: white;
+}
+
+.btnAcaoTopo:hover {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+  background: var(--cor-primaria-claro);
+}
+
+.favoritado {
+  background: #fff0f0 !important;
+  border-color: var(--cor-erro) !important;
+  color: var(--cor-erro) !important;
 }
 
 /* Layout split */
@@ -36,6 +108,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--espaco-8);
+  min-width: 0;
 }
 
 /* Galeria */
@@ -59,6 +132,52 @@
   transition: transform var(--transicao-suave);
 }
 
+.badgeQtdFotos {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.setaGaleria {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s;
+}
+
+.setaGaleria:hover {
+  background: white;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.setaGaleriaEsq { left: 14px; }
+.setaGaleriaDir { right: 14px; }
+
 .fotoGrande:hover .galeriaOverlay {
   opacity: 1;
 }
@@ -69,7 +188,7 @@
   background: rgba(0,0,0,0.3);
   display: flex;
   align-items: flex-end;
-  justify-content: flex-end;
+  justify-content: flex-start;
   padding: var(--espaco-5);
   opacity: 0;
   transition: opacity var(--transicao);
@@ -81,9 +200,10 @@
   border-radius: var(--raio-md);
   padding: 10px 20px;
   font-size: var(--texto-sm);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   backdrop-filter: blur(4px);
+  color: #0f172a;
 }
 
 .semFoto {
@@ -96,7 +216,7 @@
 
 .miniaturas {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: var(--espaco-2);
 }
 
@@ -124,7 +244,7 @@
 .cabecalho {
   display: flex;
   flex-direction: column;
-  gap: var(--espaco-4);
+  gap: var(--espaco-3);
 }
 
 .cabecalhoTop {
@@ -137,53 +257,21 @@
 .selos {
   display: flex;
   gap: var(--espaco-2);
-  margin-bottom: var(--espaco-3);
+  margin-bottom: var(--espaco-2);
   flex-wrap: wrap;
 }
 
 .titulo {
   font-size: clamp(1.5rem, 3vw, 2rem);
   color: var(--cor-texto);
-  line-height: 1.2;
+  line-height: 1.25;
   margin-bottom: var(--espaco-2);
+  font-weight: 800;
 }
 
 .endereco {
   font-size: var(--texto-sm);
   color: var(--cor-texto-terciario);
-}
-
-.acoesTopo {
-  display: flex;
-  gap: var(--espaco-2);
-  flex-shrink: 0;
-}
-
-.btnAcao {
-  display: flex;
-  align-items: center;
-  gap: var(--espaco-2);
-  padding: 8px 16px;
-  border: 1.5px solid var(--cor-borda);
-  border-radius: var(--raio-sm);
-  font-size: var(--texto-xs);
-  font-weight: 600;
-  color: var(--cor-texto-secundario);
-  cursor: pointer;
-  transition: all var(--transicao);
-  background: transparent;
-}
-
-.btnAcao:hover {
-  border-color: var(--cor-primaria);
-  color: var(--cor-primaria);
-  background: var(--cor-primaria-claro);
-}
-
-.favoritado {
-  background: #fff0f0;
-  border-color: var(--cor-erro);
-  color: var(--cor-erro);
 }
 
 .precoGrande {
@@ -256,7 +344,7 @@
 .secao {
   display: flex;
   flex-direction: column;
-  gap: var(--espaco-5);
+  gap: var(--espaco-4);
   padding-bottom: var(--espaco-8);
   border-bottom: 1px solid var(--cor-borda);
 }
@@ -264,6 +352,7 @@
 .secao h2 {
   font-size: var(--texto-xl);
   color: var(--cor-texto);
+  font-weight: 800;
 }
 
 .descricao {
@@ -497,87 +586,21 @@
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-lg);
   padding: var(--espaco-4);
-/* Barra de navegação / Voltar */
-.barraNavegacao {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--espaco-6);
 }
 
-.btnVoltarMobile {
-  display: none;
-  align-items: center;
-  gap: 6px;
-  color: var(--cor-primaria);
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: var(--cor-fundo-alt);
-  border: 1px solid var(--cor-borda);
-  transition: all 0.15s;
+.cardRef span {
+  font-size: var(--texto-xs);
+  color: var(--cor-texto-terciario);
 }
 
-.btnVoltarMobile:hover {
-  background: var(--cor-primaria-claro);
+.cardRef strong {
+  font-family: monospace;
+  font-size: var(--texto-sm);
+  color: var(--cor-texto);
 }
-
-.breadcrumbTitulo {
-  max-width: 400px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: inline-block;
-  vertical-align: bottom;
-}
-
-/* Badge de quantidade de fotos na galeria */
-.badgeQtdFotos {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(6px);
-  color: white;
-  padding: 5px 12px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  z-index: 3;
-}
-
-/* Setas do carrossel principal */
-.setaGaleria {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 4;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  border: none;
-  cursor: pointer;
-  font-size: 24px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0f172a;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: all 0.15s;
-}
-
-.setaGaleria:hover {
-  background: white;
-  transform: translateY(-50%) scale(1.08);
-}
-
-.setaGaleriaEsq { left: 14px; }
-.setaGaleriaDir { right: 14px; }
 
 /* ── BARRA FIXA DE CONTATO MOBILE (BOTTOM BAR) ── */
 .barraContatoMobile {
@@ -747,21 +770,34 @@
     padding: calc(var(--altura-header) + 12px) 14px 100px;
   }
 
-  .barraNavegacao {
+  .barraTopoImovel {
     margin-bottom: 12px;
   }
 
-  .btnVoltarMobile {
-    display: inline-flex;
-  }
-
-  .breadcrumb {
+  .breadcrumbDesktop {
     display: none;
   }
 
+  .btnVoltar {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+
+  .btnAcaoTopo {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+
   .fotoGrande {
-    height: 260px;
+    height: 250px;
     border-radius: 16px;
+  }
+
+  .badgeQtdFotos {
+    bottom: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
   .setaGaleria {
@@ -774,36 +810,17 @@
   }
 
   .miniatura {
-    height: 52px;
+    height: 48px;
     border-radius: 6px;
   }
 
-  .cabecalhoTop {
-    flex-direction: column;
-    gap: 12px;
-  }
-
   .titulo {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     line-height: 1.25;
   }
 
-  .acoesTopo {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .btnAcao {
-    justify-content: center;
-    height: 40px;
-    font-size: 13px;
-    border-radius: 10px;
-  }
-
   .precoGrande {
-    font-size: 1.65rem;
+    font-size: 1.6rem;
     gap: 6px;
   }
 
@@ -824,11 +841,11 @@
   }
 
   .dadoIcone {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
   .dado strong {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .gridCaracteristicas {
@@ -838,7 +855,7 @@
 
   .caracteristica {
     padding: 10px;
-    font-size: 12.5px;
+    font-size: 12px;
     border-radius: 10px;
   }
 
@@ -858,7 +875,7 @@
   }
 
   .colunaPrincipal {
-    gap: 20px;
+    gap: 18px;
   }
 
   /* BARRA FIXA DE CONTATO MOBILE */
@@ -911,8 +928,8 @@
   }
 
   .btnTelefoneMobile {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 12px;
     background: #f1f5f9;
     border: 1.5px solid #e2e8f0;

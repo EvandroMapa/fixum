@@ -146,21 +146,45 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
       <Header />
 
       <div className={styles.pagina}>
-        {/* Breadcrumb / Botão Voltar */}
-        <div className={styles.barraNavegacao}>
-          <Link href="/explorar" className={styles.btnVoltarMobile}>
+        {/* Barra superior de navegação / Ações */}
+        <div className={styles.barraTopoImovel}>
+          <Link href="/explorar" className={styles.btnVoltar}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 18-6-6 6-6"/>
             </svg>
             <span>Voltar ao Explorar</span>
           </Link>
 
-          <div className={styles.breadcrumb}>
+          {/* Breadcrumb visível apenas no desktop */}
+          <div className={styles.breadcrumbDesktop}>
             <Link href="/">Início</Link>
             <span>›</span>
             <Link href="/explorar">Explorar</Link>
             <span>›</span>
             <span className={styles.breadcrumbTitulo}>{imovel.titulo}</span>
+          </div>
+
+          {/* Ações de topo rápidas (Favoritar / Compartilhar) */}
+          <div className={styles.acoesTopoRapidas}>
+            <button
+              type="button"
+              className={`${styles.btnAcaoTopo} ${favoritado ? styles.favoritado : ''}`}
+              onClick={toggleFavorito}
+              disabled={carregando}
+              title={favoritado ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+            >
+              {favoritado ? '❤️' : '🤍'}
+              <span className={styles.txtAcao}>{favoritado ? 'Salvo' : 'Favoritar'}</span>
+            </button>
+            <button
+              type="button"
+              className={styles.btnAcaoTopo}
+              onClick={handleCompartilhar}
+              title="Compartilhar imóvel"
+            >
+              🔗
+              <span className={styles.txtAcao}>{linkCopiado ? 'Copiado!' : 'Compartilhar'}</span>
+            </button>
           </div>
         </div>
 
@@ -247,24 +271,6 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                   <p className={styles.endereco}>
                     📍 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade}
                   </p>
-                </div>
-
-                <div className={styles.acoesTopo}>
-                  <button
-                    type="button"
-                    className={`${styles.btnAcao} ${favoritado ? styles.favoritado : ''}`}
-                    onClick={toggleFavorito}
-                    disabled={carregando}
-                  >
-                    {favoritado ? '❤️' : '🤍'} <span>{favoritado ? 'Salvo' : 'Favoritar'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.btnAcao}
-                    onClick={handleCompartilhar}
-                  >
-                    🔗 <span>{linkCopiado ? 'Link Copiado!' : 'Compartilhar'}</span>
-                  </button>
                 </div>
               </div>
 
