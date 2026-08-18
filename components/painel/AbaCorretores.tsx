@@ -103,12 +103,13 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
 
   // Compartilhar via WhatsApp
   function handleCompartilharWhatsApp() {
-    const msg = encodeURIComponent(
-      `🏢 *Convite de Equipe — ${imobiliariaNome}*\n\n` +
-      `Olá! Você foi convidado para integrar a equipe da *${imobiliariaNome}* na Fixum e anunciar seus imóveis com nossa cota corporativa.\n\n` +
-      `🔗 *Acesse seu link de cadastro exclusivo:*\n` +
+    const texto =
+      `*CONVITE DE EQUIPE — ${imobiliariaNome.toUpperCase()}*\n\n` +
+      `Olá! Você foi convidado para integrar a equipe oficial da *${imobiliariaNome}* na Fixum e anunciar seus imóveis com nossa cota corporativa.\n\n` +
+      `👉 *Clique no link abaixo para criar sua conta de corretor parceiro:*\n` +
       `${linkConvite}`
-    )
+
+    const msg = encodeURIComponent(texto)
     window.open(`https://wa.me/?text=${msg}`, '_blank')
   }
 
