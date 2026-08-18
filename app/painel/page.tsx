@@ -138,30 +138,25 @@ function PainelConteudo() {
         console.error('Erro ao buscar dados do painel:', err)
       }
 
-      // ── CARREGAMENTO DE ASSINATURA (Do próprio usuário ou da imobiliária dona) ──
-      const idUsuarioAssinatura = imobId || user.id
+      // ── CARREGAMENTO DE ASSINATURA E COTA VIA API SEGURA ──
       try {
-        const { data: assData } = await supabase
-          .from('assinaturas')
-          .select('*')
-          .eq('usuario_id', idUsuarioAssinatura)
-          .maybeSingle()
-
-        if (assData) {
-          setAssinatura(assData as Assinatura)
-        } else {
+        const resCota = await fetch(`/api/painel/cota?usuario_id=${user.id}`)
+        const jsonCota = await resCota.json()
+        if (jsonCota?.assinatura) {
+          setAssinatura(jsonCota.assinatura)
+        } else if (jsonCota?.plano?.id) {
           setAssinatura({
-            id: isCorretor && imobId ? 'imob_' + imobId : 'local_gratis',
-            usuario_id: idUsuarioAssinatura,
-            plano_id: ehImob || isCorretor ? 'imobiliaria' : 'gratis',
+            id: 'cota_' + jsonCota.plano.id,
+            usuario_id: imobId || user.id,
+            plano_id: jsonCota.plano.id,
             status: 'ativo',
             data_inicio: new Date().toISOString(),
-            metodo_pagamento: 'gratis',
+            metodo_pagamento: 'pix',
             created_at: new Date().toISOString(),
           })
         }
       } catch (e) {
-        console.error('Erro ao buscar assinatura:', e)
+        console.error('Erro ao buscar cota e assinatura:', e)
       }
 
       // ── CARREGAMENTO DE FATURAS (Apenas para Imobiliária / Dono da conta) ──
