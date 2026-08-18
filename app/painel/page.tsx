@@ -352,21 +352,23 @@ function PainelConteudo() {
         </div>
 
         <div className={styles.topbarDireita}>
-          {/* Badge do Plano (Apenas para gestor imobiliária ou anunciante dono) */}
-          {isCorretor && imobiliariaDona ? (
-            <div
-              className={styles.badgePlanoTopbar}
-              style={{ cursor: 'default', background: '#f8fafc', borderColor: '#e2e8f0', color: '#475569' }}
-              title={`Vinculado à equipe de ${imobiliariaDona.nome}`}
-            >
-              <span>🏢 Equipe <strong>{imobiliariaDona.nome}</strong></span>
-            </div>
-          ) : (
+          {/* Badge do Topbar (Apenas para gestor imobiliária ou tag estática de equipe para corretores) */}
+          {isCorretor ? (
+            imobiliariaDona ? (
+              <div
+                className={styles.badgePlanoTopbar}
+                style={{ cursor: 'default', background: '#f8fafc', borderColor: '#e2e8f0', color: '#475569' }}
+                title={`Vinculado à equipe de ${imobiliariaDona.nome}`}
+              >
+                <span>🏢 Equipe <strong>{imobiliariaDona.nome}</strong></span>
+              </div>
+            ) : null
+          ) : isImobiliaria ? (
             <button
               type="button"
               className={styles.badgePlanoTopbar}
               onClick={() => trocarAba('plano')}
-              title="Gerenciar Plano & Faturas"
+              title="Gerenciar Plano & Faturas da Imobiliária"
             >
               <span className={styles.iconePlano}>💳</span>
               <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
@@ -374,7 +376,7 @@ function PainelConteudo() {
                 {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} vagas
               </span>
             </button>
-          )}
+          ) : null}
 
           {/* Ver Portal no Mapa em Nova Aba */}
           <a
