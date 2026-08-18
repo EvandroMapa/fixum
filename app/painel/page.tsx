@@ -262,59 +262,149 @@ function PainelConteudo() {
   }
 
 
+  async function handleSair() {
+    if (!confirm('Deseja realmente sair da sua conta?')) return
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    window.location.href = '/'
+  }
+
   if (carregando) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <div>Carregando painel...</div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#0f172a', color: '#ffffff' }}>
+        <div>Carregando Workspace...</div>
       </div>
     )
   }
 
   return (
-    <>
-      <Header />
-      <div className={styles.painel}>
-      {/* Sidebar */}
-      <aside className={styles.sidebar}>
-        <Link href="/" className={styles.sidebarLogo}>
-          <LogoGota size={36} />
-          <span>FIXUM</span>
-        </Link>
+    <div className={styles.workspaceWrapper}>
+      {/* ── TOPBAR CORPORATIVO DO PAINEL ── */}
+      <header className={styles.topbar}>
+        <div className={styles.topbarEsquerda}>
+          <button
+            type="button"
+            className={styles.logoPainel}
+            onClick={() => trocarAba('dashboard')}
+            title="Ir para o Dashboard"
+          >
+            <LogoGota size={30} />
+            <span className={styles.logoTexto}>FIXUM</span>
+            <span className={styles.badgePro}>WORKSPACE</span>
+          </button>
 
-        <nav className={styles.sidebarNav}>
-          {[
-            { id: 'dashboard', icone: '📊', label: 'Dashboard' },
-            { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis' },
-            { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}` },
-            ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores' }] : []),
-            { id: 'plano', icone: '💳', label: 'Meu Plano' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              className={`${styles.sidebarItem} ${abaAtiva === item.id ? styles.sidebarItemAtivo : ''}`}
-              onClick={() => trocarAba(item.id as Aba)}
-            >
-              <span>{item.icone}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
+          <div className={styles.divisorVertical} />
 
-          <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #e2e8f0' }}>
-            <button
-              type="button"
-              className={styles.sidebarItem}
-              onClick={() => setModalSegurancaAberto(true)}
-              title="Segurança & 2FA"
-            >
-              <span>🛡️</span>
-              <span>Segurança</span>
-            </button>
+          <div className={styles.empresaInfo}>
+            <span className={styles.empresaNome}>{usuarioNome}</span>
+            <span className={styles.empresaTipo}>
+              {isImobiliaria ? '🏢 Imobiliária Parceira' : '👤 Painel de Anúncios'}
+            </span>
           </div>
-        </nav>
-      </aside>
+        </div>
 
-      {/* Conteúdo */}
-      <main className={styles.conteudo}>
+        <div className={styles.topbarDireita}>
+          {/* Badge do Plano */}
+          <button
+            type="button"
+            className={styles.badgePlanoTopbar}
+            onClick={() => trocarAba('plano')}
+            title="Gerenciar Plano & Capacidade"
+          >
+            <span className={styles.iconePlano}>💳</span>
+            <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
+            <span className={styles.vagasPill}>
+              {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} vagas
+            </span>
+          </button>
+
+          {/* Ver Portal no Mapa em Nova Aba */}
+          <a
+            href="/explorar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.btnVerPortal}
+            title="Visualizar mapa público em nova aba"
+          >
+            <span>🌐 Ver Mapa Público</span>
+            <span style={{ fontSize: '0.75rem' }}>↗</span>
+          </a>
+
+          {/* Botão Novo Imóvel */}
+          <Link href="/painel/novo-imovel" className="btn btn-primario btn-sm" style={{ fontWeight: 700 }}>
+            + Novo Imóvel
+          </Link>
+
+          {/* Botão Sair */}
+          <button
+            type="button"
+            className={styles.btnSairTopbar}
+            onClick={handleSair}
+            title="Encerrar sessão"
+          >
+            🚪 Sair
+          </button>
+        </div>
+      </header>
+
+      <div className={styles.painel}>
+        {/* Sidebar */}
+        <aside className={styles.sidebar}>
+          <nav className={styles.sidebarNav}>
+            {[
+              { id: 'dashboard', icone: '📊', label: 'Dashboard' },
+              { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis' },
+              { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}` },
+              ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores' }] : []),
+              { id: 'plano', icone: '💳', label: 'Meu Plano' },
+            ].map((item) => (
+              <button
+                key={item.id}
+                className={`${styles.sidebarItem} ${abaAtiva === item.id ? styles.sidebarItemAtivo : ''}`}
+                onClick={() => trocarAba(item.id as Aba)}
+              >
+                <span>{item.icone}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+
+            <div style={{ marginTop: 'auto', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <button
+                type="button"
+                className={styles.sidebarItem}
+                onClick={() => setModalSegurancaAberto(true)}
+                title="Segurança & 2FA"
+              >
+                <span>🛡️</span>
+                <span>Segurança & 2FA</span>
+              </button>
+
+              <a
+                href="/explorar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.sidebarItem}
+                style={{ color: '#94a3b8' }}
+              >
+                <span>🌐</span>
+                <span>Portal no Mapa ↗</span>
+              </a>
+
+              <button
+                type="button"
+                className={styles.sidebarItem}
+                onClick={handleSair}
+                style={{ color: '#f87171' }}
+              >
+                <span>🚪</span>
+                <span>Sair da Conta</span>
+              </button>
+            </div>
+          </nav>
+        </aside>
+
+        {/* Conteúdo */}
+        <main className={styles.conteudo}>
 
         {/* ── DASHBOARD ── */}
         {abaAtiva === 'dashboard' && (
@@ -591,14 +681,14 @@ function PainelConteudo() {
         onConfirmarPlano={handleAtualizarAssinatura}
       />
 
-      {/* Modal de Configurações de Segurança e 2FA */}
-      <ModalConfigSeguranca
-        aberto={modalSegurancaAberto}
-        onFechar={() => setModalSegurancaAberto(false)}
-        usuarioEmail={usuarioEmail}
-      />
+        {/* Modal de Configurações de Segurança e 2FA */}
+        <ModalConfigSeguranca
+          aberto={modalSegurancaAberto}
+          onFechar={() => setModalSegurancaAberto(false)}
+          usuarioEmail={usuarioEmail}
+        />
+      </div>
     </div>
-    </>
   )
 }
 

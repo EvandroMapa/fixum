@@ -1,8 +1,159 @@
+.workspaceWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* TOPBAR CORPORATIVO DO PAINEL */
+.topbar {
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.topbarEsquerda {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.logoPainel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.logoTexto {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.badgePro {
+  background: #1e3a8a;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.divisorVertical {
+  width: 1px;
+  height: 28px;
+  background: #e2e8f0;
+}
+
+.empresaInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.empresaNome {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.empresaTipo {
+  font-size: 0.725rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.topbarDireita {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.badgePlanoTopbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.badgePlanoTopbar:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.vagasPill {
+  background: #1d4ed8;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  margin-left: 4px;
+}
+
+.btnVerPortal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.825rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.btnVerPortal:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.btnSairTopbar {
+  background: transparent;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btnSairTopbar:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* PAINEL LAYOUT */
 .painel {
   display: grid;
-  grid-template-columns: 260px 1fr;
-  min-height: calc(100vh - var(--altura-header));
-  margin-top: var(--altura-header);
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 64px);
   background: var(--cor-fundo);
 }
 
@@ -12,59 +163,48 @@
   border-right: none;
   display: flex;
   flex-direction: column;
-  padding: var(--espaco-6);
-  gap: var(--espaco-6);
+  padding: 1.25rem 1rem;
+  gap: 1rem;
   position: sticky;
-  top: var(--altura-header);
-  height: calc(100vh - var(--altura-header));
+  top: 64px;
+  height: calc(100vh - 64px);
   overflow-y: auto;
-}
-
-.sidebarLogo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  font-family: var(--fonte-display);
-  font-size: var(--texto-xl);
-  font-weight: 800;
-  color: white;
-  letter-spacing: -0.03em;
 }
 
 .sidebarNav {
   display: flex;
   flex-direction: column;
-  gap: var(--espaco-1);
+  gap: 4px;
   flex: 1;
 }
 
 .sidebarItem {
   display: flex;
   align-items: center;
-  gap: var(--espaco-3);
+  gap: 10px;
   padding: 10px 14px;
-  border-radius: var(--raio-md);
-  font-size: var(--texto-sm);
+  border-radius: 8px;
+  font-size: 0.875rem;
   font-weight: 500;
-  color: var(--cor-texto-secundario);
+  color: #94a3b8;
   cursor: pointer;
-  transition: all var(--transicao);
+  transition: all 0.15s ease;
   border: none;
   background: transparent;
   text-align: left;
   width: 100%;
+  text-decoration: none;
 }
 
 .sidebarItem:hover {
-  background: var(--cor-fundo-alt);
-  color: var(--cor-texto);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
 }
 
 .sidebarItemAtivo {
-  background: var(--cor-primaria-claro);
-  color: var(--cor-primaria);
-  font-weight: 600;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  font-weight: 700;
 }
 
 .sidebarBottom {
