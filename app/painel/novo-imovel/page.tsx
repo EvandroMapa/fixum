@@ -84,6 +84,8 @@ export default function NovoImovelPage() {
 
   const [buscandoCep, setBuscandoCep] = useState(false)
   const [usuarioId, setUsuarioId] = useState("")
+  const [isCorretor, setIsCorretor] = useState(false)
+  const [imobiliariaNome, setImobiliariaNome] = useState("")
   const [assinatura, setAssinatura] = useState<Assinatura | null>(null)
   const [imoveisAtivosCount, setImoveisAtivosCount] = useState(0)
 
@@ -97,7 +99,70 @@ export default function NovoImovelPage() {
       if (!user) return
       setUsuarioId(user.id)
 
-      // Contagem de imóveis ativos
+      const meta = user.user_metadata || {}
+      const { data: perfilData } = await supabase
+        .from('perfis')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      const tipo = perfilData?.tipo || meta.tipo || 'proprietario'
+      const imobId = perfilData?.imobiliaria_id || meta.imobiliaria_id || null
+      const corretor = tipo === 'corretor' || !!imobId
+      setIsCorretor(corretor)
+
+      if (corretor && imobId) {
+        // Corretor vinculado: buscar dados e assinatura da IMOBILIÁRIA mãe
+        try {
+          const { data: imobPerfil } = await supabase
+            .from('perfis')
+            .select('nome')
+            .eq('id', imobId)
+            .maybeSingle()
+          if (imobPerfil?.nome) setImobiliariaNome(imobPerfil.nome)
+
+          // Assinatura da imobiliária
+          const { data: assImob } = await supabase
+            .from('assinaturas')
+            .select('*')
+            .eq('usuario_id', imobId)
+            .maybeSingle()
+
+          if (assImob) {
+            setAssinatura(assImob as Assinatura)
+          } else {
+            setAssinatura({
+              id: 'imob_' + imobId,
+              usuario_id: imobId,
+              plano_id: 'imobiliaria',
+              status: 'ativo',
+              data_inicio: new Date().toISOString(),
+              metodo_pagamento: 'pix',
+              created_at: new Date().toISOString(),
+            })
+          }
+
+          // Contagem de imóveis ativos da imobiliária inteira
+          const { data: equipeUsers } = await supabase.auth.admin?.listUsers?.() || { data: { users: [] } }
+          const idsEquipe = (equipeUsers?.users || [])
+            .filter((u: any) => u.user_metadata?.imobiliaria_id === imobId || u.id === imobId)
+            .map((u: any) => u.id)
+
+          const listaIds = idsEquipe.length > 0 ? idsEquipe : [imobId, user.id]
+          const { count } = await supabase
+            .from('imoveis')
+            .select('*', { count: 'exact', head: true })
+            .in('anunciante_id', listaIds)
+            .in('status', ['publicado', 'ativo'])
+
+          setImoveisAtivosCount(count || 0)
+          return
+        } catch (err) {
+          console.error("Erro ao carregar dados da imobiliária:", err)
+        }
+      }
+
+      // Proprietário ou Imobiliária direta
       const { count } = await supabase
         .from('imoveis')
         .select('*', { count: 'exact', head: true })
@@ -106,7 +171,6 @@ export default function NovoImovelPage() {
 
       setImoveisAtivosCount(count || 0)
 
-      // Assinatura
       try {
         const { data: assData } = await supabase
           .from('assinaturas')
@@ -443,21 +507,21 @@ export default function NovoImovelPage() {
       </div>
 
       {/* Alerta de Limite do Plano */}
-      {usoPlano.atingiuLimite && (
+      {usoPlano.atingiuLimite && !isCorretor && (
         <div style={{
-          maxWidth: '680px',
-          margin: '0 auto 1.5rem',
-          padding: '0.85rem 1.25rem',
+          maxWidth: '660px',
+          margin: '0 auto 0.75rem',
+          padding: '0.6rem 1rem',
           background: '#fffbeb',
           border: '1px solid #fef3c7',
-          borderRadius: '0.75rem',
+          borderRadius: '0.5rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '1rem',
+          gap: '0.75rem',
           flexWrap: 'wrap'
         }}>
-          <span style={{ fontSize: '0.85rem', color: '#b45309' }}>
+          <span style={{ fontSize: '0.8rem', color: '#b45309' }}>
             ⚡ <strong>Plano {usoPlano.plano.nome}:</strong> Limite de {usoPlano.limiteMaximo} anúncio(s) ativo(s) atingido.
           </span>
           {proximoPlano && (
@@ -465,7 +529,7 @@ export default function NovoImovelPage() {
               type="button"
               className="btn btn-primario btn-sm"
               onClick={() => setModalUpgradeAberto(true)}
-              style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+              style={{ fontSize: '0.75rem', padding: '3px 8px' }}
             >
               Upgrade para {proximoPlano.nome}
             </button>
@@ -497,7 +561,7 @@ export default function NovoImovelPage() {
                 ))}
               </div>
 
-              <div className={styles.grupo} style={{ marginTop: '0.75rem' }}>
+              <div className={styles.grupo} style={{ marginTop: '0.5rem' }}>
                 <label className={styles.label}>Modalidade de Negociação</label>
                 <div className={styles.btnGroup}>
                   {["venda", "aluguel", "temporada"].map((neg) => (
@@ -554,7 +618,7 @@ export default function NovoImovelPage() {
                     }}
                     maxLength={9}
                   />
-                  {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.85rem", color: "#64748b" }}>Buscando...</span>}
+                  {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.8rem", color: "#64748b" }}>Buscando...</span>}
                 </div>
               </div>
 
@@ -651,7 +715,7 @@ export default function NovoImovelPage() {
                 <label className={styles.label}>Descrição completa</label>
                 <textarea
                   className={styles.textarea}
-                  rows={3}
+                  rows={2}
                   value={dados.descricao}
                   onChange={(e) => atualizar("descricao", e.target.value)}
                 />
@@ -662,14 +726,14 @@ export default function NovoImovelPage() {
           {/* Etapa 4: Fotos */}
           {etapa === 4 && (
             <div className={styles.etapaConteudo}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <h2 className={styles.etapaTitulo}>Galeria de Fotos</h2>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1d4ed8', background: '#eff6ff', padding: '4px 10px', borderRadius: '20px' }}>
-                  {fotos.length} {fotos.length === 1 ? 'foto adicionada' : 'fotos adicionadas'}
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1d4ed8', background: '#eff6ff', padding: '3px 8px', borderRadius: '16px' }}>
+                  {fotos.length} {fotos.length === 1 ? 'foto' : 'fotos'}
                 </span>
               </div>
               <p className={styles.etapaSubtitulo}>
-                Adicione fotos nítidas do imóvel. A foto com o selo dourado será a capa principal do anúncio no mapa.
+                Adicione fotos nítidas. A foto com selo dourado será a capa principal do anúncio.
               </p>
 
               <input
@@ -681,7 +745,7 @@ export default function NovoImovelPage() {
                 onChange={(e) => adicionarFotos(e.target.files)}
               />
 
-              {/* Dropzone Ultra Premium */}
+              {/* Dropzone Ultra Premium Compacta */}
               <div
                 className={`${styles.dropzonePro} ${arrastando ? styles.dropzoneArrastando : ''}`}
                 onClick={() => inputFotoRef.current?.click()}
@@ -694,17 +758,17 @@ export default function NovoImovelPage() {
                 }}
               >
                 <div className={styles.dropzoneCirculo}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                     <circle cx="8.5" cy="8.5" r="1.5"/>
                     <polyline points="21 15 16 10 5 21"/>
                   </svg>
                 </div>
                 <h3 className={styles.dropzoneTitulo}>
-                  Arraste suas fotos aqui ou <span style={{ color: '#2563eb', textDecoration: 'underline' }}>escolha do seu dispositivo</span>
+                  Arraste suas fotos aqui ou <span style={{ color: '#2563eb', textDecoration: 'underline' }}>escolha do dispositivo</span>
                 </h3>
                 <p className={styles.dropzoneSub}>
-                  Formatos suportados: PNG, JPG ou WEBP • Recomendado alta resolução
+                  PNG, JPG ou WEBP • Até 20 fotos
                 </p>
                 <button
                   type="button"
@@ -720,15 +784,15 @@ export default function NovoImovelPage() {
 
               {/* Grid de Fotos Selecionadas */}
               {fotos.length > 0 && (
-                <div style={{ marginTop: '1.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a' }}>
+                <div style={{ marginTop: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a' }}>
                       Fotos Carregadas ({fotos.length})
                     </span>
                     <button
                       type="button"
                       onClick={() => inputFotoRef.current?.click()}
-                      style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                     >
                       + Adicionar mais fotos
                     </button>
@@ -747,14 +811,14 @@ export default function NovoImovelPage() {
                         {/* Badge de Posição / Capa */}
                         {foto.principal ? (
                           <div className={styles.badgeCapa}>
-                            ⭐ Foto de Capa
+                            ⭐ Capa
                           </div>
                         ) : (
                           <button
                             type="button"
                             className={styles.btnTornarCapa}
                             onClick={() => definirPrincipal(idx)}
-                            title="Definir esta foto como principal do anúncio"
+                            title="Definir como capa"
                           >
                             Tornar Capa
                           </button>
@@ -781,23 +845,6 @@ export default function NovoImovelPage() {
                   </div>
                 </div>
               )}
-
-              {/* Card de Dicas de Fotografia */}
-              <div style={{
-                marginTop: '1.5rem',
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                borderRadius: '0.75rem',
-                padding: '1rem 1.25rem',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '10px'
-              }}>
-                <span style={{ fontSize: '1.25rem' }}>💡</span>
-                <p style={{ fontSize: '0.825rem', color: '#64748b', margin: 0, lineHeight: '1.4' }}>
-                  <strong>Dica de especialista:</strong> Imóveis com a foto de capa mostrando a fachada ou a sala principal bem iluminada recebem até <strong>3x mais cliques</strong> e contatos no WhatsApp.
-                </p>
-              </div>
             </div>
           )}
 
@@ -844,15 +891,22 @@ export default function NovoImovelPage() {
                 <div style={{
                   background: '#fef2f2',
                   border: '1px solid #fee2e2',
-                  borderRadius: '0.75rem',
-                  padding: '1rem',
-                  marginTop: '1rem',
-                  fontSize: '0.9rem',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem 1rem',
+                  marginTop: '0.75rem',
+                  fontSize: '0.825rem',
                   color: '#991b1b',
                   lineHeight: '1.4'
                 }}>
-                  <strong>Atenção:</strong> Seu plano atual ({usoPlano.plano.nome}) já atingiu o limite de {usoPlano.limiteMaximo} imóvel(is) ativo(s).
-                  Você pode <strong>fazer o upgrade</strong> para publicar agora ou <strong>salvar como pausado</strong> e ativar posteriormente.
+                  {isCorretor ? (
+                    <span>
+                      ⚠️ <strong>Cota Corporativa Atingida:</strong> A imobiliária {imobiliariaNome || 'vinculada'} atingiu o limite de {usoPlano.limiteMaximo} anúncio(s) ativo(s). Entre em contato com a administração da imobiliária para solicitar a liberação de mais vagas. Você pode <strong>salvar como Pausado</strong> para gravá-lo no painel.
+                    </span>
+                  ) : (
+                    <span>
+                      ⚠️ <strong>Limite do Plano Atingido:</strong> Seu plano {usoPlano.plano.nome} já atingiu o limite de {usoPlano.limiteMaximo} anúncio(s) ativo(s). Você pode <strong>fazer o upgrade</strong> para publicar agora ou <strong>salvar como pausado</strong> e ativar posteriormente.
+                    </span>
+                  )}
                 </div>
               )}
 
@@ -880,31 +934,37 @@ export default function NovoImovelPage() {
                 Avançar →
               </button>
             ) : (
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                 {usoPlano.atingiuLimite ? (
                   <>
                     <button
+                      type="button"
                       className="btn btn-outline"
                       onClick={() => salvar('pausado')}
                       disabled={salvando}
-                      style={{ minHeight: '44px' }}
+                      style={{ height: '38px', fontSize: '0.825rem', fontWeight: 600 }}
                     >
                       {salvando ? "Salvando..." : "⏸️ Salvar como Pausado"}
                     </button>
-                    <button
-                      className="btn btn-primario"
-                      onClick={() => setModalLimiteAberto(true)}
-                      disabled={salvando}
-                      style={{ minHeight: '44px' }}
-                    >
-                      🚀 Fazer Upgrade para Publicar
-                    </button>
+                    {!isCorretor && (
+                      <button
+                        type="button"
+                        className="btn btn-primario"
+                        onClick={() => setModalLimiteAberto(true)}
+                        disabled={salvando}
+                        style={{ height: '38px', fontSize: '0.825rem', fontWeight: 700 }}
+                      >
+                        🚀 Fazer Upgrade para Publicar
+                      </button>
+                    )}
                   </>
                 ) : (
                   <button
+                    type="button"
                     className={`${styles.btnPublicar} ${salvando ? styles.btnCarregando : ""}`}
                     onClick={() => salvar('publicado')}
                     disabled={salvando}
+                    style={{ height: '38px', fontSize: '0.85rem' }}
                   >
                     {salvando ? "Publicando..." : "🏡 Publicar imóvel"}
                   </button>
