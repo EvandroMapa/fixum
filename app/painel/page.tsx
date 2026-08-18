@@ -50,9 +50,13 @@ function PainelConteudo() {
 
   useEffect(() => {
     if (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'plano'].includes(abaParam)) {
-      setAbaAtiva(abaParam)
+      if (abaParam === 'plano' && isCorretor && imobiliariaDona) {
+        setAbaAtiva('dashboard')
+      } else {
+        setAbaAtiva(abaParam)
+      }
     }
-  }, [abaParam])
+  }, [abaParam, isCorretor, imobiliariaDona])
 
   function trocarAba(novaAba: Aba) {
     setAbaAtiva(novaAba)
@@ -348,19 +352,29 @@ function PainelConteudo() {
         </div>
 
         <div className={styles.topbarDireita}>
-          {/* Badge do Plano */}
-          <button
-            type="button"
-            className={styles.badgePlanoTopbar}
-            onClick={() => trocarAba('plano')}
-            title="Ver Capacidade do Plano"
-          >
-            <span className={styles.iconePlano}>💳</span>
-            <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
-            <span className={styles.vagasPill}>
-              {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} vagas
-            </span>
-          </button>
+          {/* Badge do Plano (Apenas para gestor imobiliária ou anunciante dono) */}
+          {isCorretor && imobiliariaDona ? (
+            <div
+              className={styles.badgePlanoTopbar}
+              style={{ cursor: 'default', background: '#f8fafc', borderColor: '#e2e8f0', color: '#475569' }}
+              title={`Vinculado à equipe de ${imobiliariaDona.nome}`}
+            >
+              <span>🏢 Equipe <strong>{imobiliariaDona.nome}</strong></span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={styles.badgePlanoTopbar}
+              onClick={() => trocarAba('plano')}
+              title="Gerenciar Plano & Faturas"
+            >
+              <span className={styles.iconePlano}>💳</span>
+              <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
+              <span className={styles.vagasPill}>
+                {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} vagas
+              </span>
+            </button>
+          )}
 
           {/* Ver Portal no Mapa em Nova Aba */}
           <a
@@ -400,7 +414,7 @@ function PainelConteudo() {
               { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis' },
               { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}` },
               ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores' }] : []),
-              { id: 'plano', icone: '💳', label: 'Meu Plano' },
+              ...(!isCorretor ? [{ id: 'plano', icone: '💳', label: 'Meu Plano' }] : []),
             ].map((item) => (
               <button
                 key={item.id}
@@ -456,55 +470,57 @@ function PainelConteudo() {
             <h1>Olá, {usuarioNome}! 👋</h1>
             <p className={styles.subtitulo}>Aqui está o resumo dos seus anúncios</p>
 
-            {/* Banner de Plano e Capacidade */}
-            <div style={{
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: '1rem',
-              padding: '1.25rem',
-              marginBottom: '1.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem',
-              flexWrap: 'wrap'
-            }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#0f4c81', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px' }}>
-                    Plano {usoPlano.plano.nome}
-                  </span>
-                  <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                    • {usoPlano.imoveisAtivos} de {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
-                  </span>
+            {/* Banner de Plano e Capacidade (Apenas para gestor imobiliária / anunciante dono) */}
+            {!isCorretor && (
+              <div style={{
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: '1rem',
+                padding: '1.25rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '1rem',
+                flexWrap: 'wrap'
+              }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#0f4c81', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px' }}>
+                      Plano {usoPlano.plano.nome}
+                    </span>
+                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                      • {usoPlano.imoveisAtivos} de {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
+                    </span>
+                  </div>
+                  <div style={{ width: '220px', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                    <div style={{
+                      width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
+                      height: '100%',
+                      backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
+                      borderRadius: '999px'
+                    }} />
+                  </div>
                 </div>
-                <div style={{ width: '220px', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
-                  <div style={{
-                    width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
-                    height: '100%',
-                    backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
-                    borderRadius: '999px'
-                  }} />
-                </div>
-              </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button
-                  className="btn btn-outline btn-sm"
-                  onClick={() => trocarAba('plano')}
-                >
-                  Ver Detalhes do Plano
-                </button>
-                {proximoPlano && (
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button
-                    className="btn btn-primario btn-sm"
-                    onClick={() => dispararUpgrade(proximoPlano)}
+                    className="btn btn-outline btn-sm"
+                    onClick={() => trocarAba('plano')}
                   >
-                    ⚡ Fazer Upgrade
+                    Ver Detalhes do Plano
                   </button>
-                )}
+                  {proximoPlano && (
+                    <button
+                      className="btn btn-primario btn-sm"
+                      onClick={() => dispararUpgrade(proximoPlano)}
+                    >
+                      ⚡ Fazer Upgrade
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className={styles.gridStats}>
               {[
