@@ -348,7 +348,6 @@ export default function NovoImovelPage() {
           cep: dados.cep || null,
           latitude: latNumerica,
           longitude: lngNumerica,
-          endereco_publico: false,
           condominio: extrairNumero(dados.condominio),
           iptu: extrairNumero(dados.iptu),
           aceita_pets: !!dados.aceita_pets,
@@ -426,14 +425,19 @@ export default function NovoImovelPage() {
         <div />
       </header>
 
-      {/* Progress */}
+      {/* Progress / Stepper Moderno */}
       <div className={styles.progresso}>
-        {ETAPAS.map((e) => (
-          <div key={e.numero} className={`${styles.etapaItem} ${etapa >= e.numero ? styles.etapaAtiva : ""} ${etapa > e.numero ? styles.etapaConcluida : ""}`}>
-            <div className={styles.etapaBolha}>
-              {etapa > e.numero ? "✓" : e.numero}
+        {ETAPAS.map((e, idx) => (
+          <div key={e.numero} style={{ display: 'flex', alignItems: 'center' }}>
+            <div className={`${styles.etapaItem} ${etapa === e.numero ? styles.etapaAtiva : ""} ${etapa > e.numero ? styles.etapaConcluida : ""}`}>
+              <div className={styles.etapaBolha}>
+                {etapa > e.numero ? "✓" : e.numero}
+              </div>
+              <span className={styles.etapaLabel}>{e.label}</span>
             </div>
-            <span className={styles.etapaLabel}>{e.label}</span>
+            {idx < ETAPAS.length - 1 && (
+              <div className={`${styles.etapaLinha} ${etapa > e.numero ? styles.etapaLinhaAtiva : ""}`} />
+            )}
           </div>
         ))}
       </div>
@@ -483,6 +487,7 @@ export default function NovoImovelPage() {
                 {TIPOS.map((t) => (
                   <button
                     key={t.valor}
+                    type="button"
                     className={`${styles.tipoCard} ${dados.tipo === t.valor ? styles.tipoSelecionado : ""}`}
                     onClick={() => atualizar("tipo", t.valor)}
                   >
@@ -492,12 +497,13 @@ export default function NovoImovelPage() {
                 ))}
               </div>
 
-              <div className={styles.grupo}>
-                <label className={styles.label}>Negociação</label>
+              <div className={styles.grupo} style={{ marginTop: '0.75rem' }}>
+                <label className={styles.label}>Modalidade de Negociação</label>
                 <div className={styles.btnGroup}>
                   {["venda", "aluguel", "temporada"].map((neg) => (
                     <button
                       key={neg}
+                      type="button"
                       className={`${styles.btnOpcao} ${dados.negociacao === neg ? styles.btnOpcaoAtivo : ""}`}
                       onClick={() => atualizar("negociacao", neg)}
                     >
@@ -519,7 +525,6 @@ export default function NovoImovelPage() {
                 <label className={styles.label}>Título do anúncio *</label>
                 <input
                   className={styles.input}
-                  placeholder="Ex: Apartamento amplo com varanda no Centro"
                   value={dados.titulo}
                   onChange={(e) => atualizar("titulo", e.target.value)}
                   maxLength={100}
@@ -530,7 +535,6 @@ export default function NovoImovelPage() {
                 <label className={styles.label}>Preço (R$) *</label>
                 <input
                   className={styles.input}
-                  placeholder="R$ 0"
                   value={formatarPreco(dados.preco)}
                   onChange={(e) => atualizar("preco", e.target.value)}
                 />
@@ -541,7 +545,6 @@ export default function NovoImovelPage() {
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <input
                     className={styles.input}
-                    placeholder="00000-000"
                     value={dados.cep}
                     onChange={(e) => {
                       atualizar("cep", e.target.value)
@@ -560,7 +563,6 @@ export default function NovoImovelPage() {
                   <label className={styles.label}>Cidade *</label>
                   <input
                     className={styles.input}
-                    placeholder="Ex: Itabirito"
                     value={dados.cidade}
                     onChange={(e) => atualizar("cidade", e.target.value)}
                   />
@@ -569,7 +571,6 @@ export default function NovoImovelPage() {
                   <label className={styles.label}>Estado (UF) *</label>
                   <input
                     className={styles.input}
-                    placeholder="Ex: MG"
                     value={dados.estado}
                     onChange={(e) => atualizar("estado", e.target.value.toUpperCase())}
                     maxLength={2}
@@ -582,7 +583,6 @@ export default function NovoImovelPage() {
                   <label className={styles.label}>Bairro</label>
                   <input
                     className={styles.input}
-                    placeholder="Ex: Centro"
                     value={dados.bairro}
                     onChange={(e) => atualizar("bairro", e.target.value)}
                   />
@@ -591,7 +591,6 @@ export default function NovoImovelPage() {
                   <label className={styles.label}>Endereço (Rua, Av)</label>
                   <input
                     className={styles.input}
-                    placeholder="Ex: Rua Principal"
                     value={dados.endereco}
                     onChange={(e) => atualizar("endereco", e.target.value)}
                   />
@@ -612,7 +611,6 @@ export default function NovoImovelPage() {
                   <input
                     type="number"
                     className={styles.input}
-                    placeholder="Ex: 85"
                     value={dados.area}
                     onChange={(e) => atualizar("area", e.target.value)}
                   />
@@ -622,7 +620,6 @@ export default function NovoImovelPage() {
                   <input
                     type="number"
                     className={styles.input}
-                    placeholder="Ex: 3"
                     value={dados.quartos}
                     onChange={(e) => atualizar("quartos", e.target.value)}
                   />
@@ -635,7 +632,6 @@ export default function NovoImovelPage() {
                   <input
                     type="number"
                     className={styles.input}
-                    placeholder="Ex: 2"
                     value={dados.banheiros}
                     onChange={(e) => atualizar("banheiros", e.target.value)}
                   />
@@ -645,7 +641,6 @@ export default function NovoImovelPage() {
                   <input
                     type="number"
                     className={styles.input}
-                    placeholder="Ex: 1"
                     value={dados.vagas}
                     onChange={(e) => atualizar("vagas", e.target.value)}
                   />
@@ -656,8 +651,7 @@ export default function NovoImovelPage() {
                 <label className={styles.label}>Descrição completa</label>
                 <textarea
                   className={styles.textarea}
-                  rows={4}
-                  placeholder="Conte os diferenciais do imóvel, acabamentos, infraestrutura..."
+                  rows={3}
                   value={dados.descricao}
                   onChange={(e) => atualizar("descricao", e.target.value)}
                 />
