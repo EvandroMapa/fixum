@@ -806,8 +806,188 @@
   background: #fef2f2;
   border: 1px solid #fecaca;
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+/* ── Galeria Pro & Dropzone ── */
+.dropzonePro {
+  border: 2px dashed #93c5fd;
+  background: #f8fafc;
+  border-radius: 1rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.dropzonePro:hover,
+.dropzoneArrastando {
+  border-color: #2563eb;
+  background: #eff6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+}
+
+.dropzoneCirculo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+.dropzoneTitulo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.dropzoneSub {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.btnSelecionarFotos {
+  margin-top: 0.5rem;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnSelecionarFotos:hover {
+  background: #1d4ed8;
+}
+
+/* ── Grid de Fotos Pro ── */
+.gridFotosPro {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.fotoCardPro {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 2px solid #e2e8f0;
+  background: #0f172a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.fotoCardPro:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.fotoCardCapa {
+  border: 3px solid #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+}
+
+.fotoImgPro {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.badgeCapa {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.btnTornarCapa {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.9;
+  z-index: 2;
+}
+
+.btnTornarCapa:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  opacity: 1;
+}
+
+.btnRemoverFoto {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239, 68, 68, 0.9);
+  color: #ffffff;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.btnRemoverFoto:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.numeroFotoPill {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.75);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 /* ── Responsivo ── */

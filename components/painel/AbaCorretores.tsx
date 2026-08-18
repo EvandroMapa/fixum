@@ -41,52 +41,20 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
 
   async function carregarCorretores() {
     setCarregando(true)
-    const supabase = createClient()
-
-    // 1. Buscar perfis onde imobiliaria_id = imobiliariaId
-    const { data: listaCorretores, error } = await supabase
-      .from('perfis')
-      .select('*')
-      .eq('imobiliaria_id', imobiliariaId)
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.error('Erro ao buscar corretores:', error.message)
-      setCarregando(false)
-      return
-    }
-
-    const corretoresData = listaCorretores || []
-
-    // 2. Buscar contagem de imóveis por corretor
-    if (corretoresData.length > 0) {
-      const idsCorretores = corretoresData.map((c: any) => c.id)
-      const { data: imoveis } = await supabase
-        .from('imoveis')
-        .select('anunciante_id')
-        .in('anunciante_id', idsCorretores)
-
-      const contagem: Record<string, number> = {}
-      ;(imoveis || []).forEach((im: any) => {
-        contagem[im.anunciante_id] = (contagem[im.anunciante_id] || 0) + 1
-      })
-
-      const formatados = corretoresData.map((c: any) => ({
-        id: c.id,
-        nome: c.nome || 'Corretor sem nome',
-        email: c.email || '',
-        telefone: c.telefone || c.whatsapp || '',
-        creci: c.creci || 'Não informado',
-        created_at: c.created_at,
-        total_imoveis: contagem[c.id] || 0,
-      }))
-
-      setCorretores(formatados)
-    } else {
+    try {
+      const res = await fetch(`/api/corretores?imobiliaria_id=${imobiliariaId}`)
+      const data = await res.json()
+      if (data?.corretores) {
+        setCorretores(data.corretores)
+      } else {
+        setCorretores([])
+      }
+    } catch (err) {
+      console.error('Erro ao buscar corretores:', err)
       setCorretores([])
+    } finally {
+      setCarregando(false)
     }
-
-    setCarregando(false)
   }
 
   // Copiar link para área de transferência
@@ -117,17 +85,21 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
   async function handleDesvincular(corretorId: string, nomeCorretor: string) {
     if (!confirm(`Deseja desvincular o corretor "${nomeCorretor}" da sua imobiliária?`)) return
 
-    const supabase = createClient()
-    const { error } = await supabase
-      .from('perfis')
-      .update({ imobiliaria_id: null })
-      .eq('id', corretorId)
-
-    if (error) {
-      exibirToast('Não foi possível desvincular o corretor.', 'erro')
-    } else {
-      exibirToast(`${nomeCorretor} foi desvinculado da equipe.`, 'sucesso')
-      setCorretores((prev) => prev.filter((c) => c.id !== corretorId))
+    try {
+      const res = await fetch('/api/corretores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ corretor_id: corretorId }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        exibirToast(`${nomeCorretor} foi desvinculado da equipe.`, 'sucesso')
+        setCorretores((prev) => prev.filter((c) => c.id !== corretorId))
+      } else {
+        exibirToast(data.error || 'Não foi possível desvincular o corretor.', 'erro')
+      }
+    } catch {
+      exibirToast('Erro ao desvincular corretor.', 'erro')
     }
   }
 

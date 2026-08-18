@@ -42,11 +42,8 @@ export async function POST(req: Request) {
         nome: nome || email.split('@')[0],
         email,
         tipo: tipo || 'proprietario',
-        tipo_anunciante: tipo || 'proprietario',
         telefone: telefone || null,
-        imobiliaria_id: imobiliaria_id || null,
         creci: creci || null,
-        plano_id: tipo === 'imobiliaria' ? 'imobiliaria' : 'gratis',
       })
     }
 

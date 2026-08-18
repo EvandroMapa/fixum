@@ -206,6 +206,7 @@ export default function NovoImovelPage() {
     }
   }
 
+  const [arrastando, setArrastando] = useState(false)
   const inputFotoRef = useRef<HTMLInputElement>(null)
 
   const [etapa, setEtapa] = useState<Etapa>(1)
@@ -259,7 +260,7 @@ export default function NovoImovelPage() {
   }
 
   function adicionarFotos(arquivos: FileList | null) {
-    if (!arquivos) return
+    if (!arquivos || arquivos.length === 0) return
     const novas: FotoPreview[] = Array.from(arquivos).map((arquivo, i) => ({
       arquivo,
       preview: URL.createObjectURL(arquivo),
@@ -284,6 +285,12 @@ export default function NovoImovelPage() {
     )
   }
 
+  function extrairNumero(str: string): number | null {
+    if (!str) return null
+    const num = parseFloat(str.replace(/\D/g, ""))
+    return isNaN(num) ? null : num
+  }
+
   async function salvar(statusDesejado: 'publicado' | 'pausado' = 'publicado') {
     if (statusDesejado === 'publicado' && usoPlano.atingiuLimite) {
       setModalLimiteAberto(true)
@@ -294,9 +301,33 @@ export default function NovoImovelPage() {
     setErro("")
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error("Não autenticado")
+      if (!user) throw new Error("Usuário não autenticado. Faça login novamente.")
 
-      // Inserir imóvel
+      // 1. Garantir que o perfil do usuário exista na tabela perfis (evita violação de FK)
+      const { data: perfilExistente } = await supabase
+        .from('perfis')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (!perfilExistente) {
+        const meta = user.user_metadata || {}
+        await supabase.from('perfis').upsert({
+          id: user.id,
+          nome: meta.nome || meta.full_name || user.email?.split('@')[0] || 'Anunciante',
+          email: user.email!,
+          tipo: meta.tipo || 'corretor',
+          telefone: meta.telefone || null,
+          creci: meta.creci || null,
+        })
+      }
+
+      // 2. Inserir imóvel no Supabase
+      const precoNumerico = extrairNumero(dados.preco) || 0
+      const areaNumerica = parseFloat(dados.area.replace(',', '.')) || null
+      const latNumerica = parseFloat(dados.latitude) || 0
+      const lngNumerica = parseFloat(dados.longitude) || 0
+
       const { data: imovel, error: erroImovel } = await supabase
         .from("imoveis")
         .insert({
@@ -305,60 +336,70 @@ export default function NovoImovelPage() {
           negociacao: dados.negociacao,
           titulo: dados.titulo,
           descricao: dados.descricao || null,
-          preco: parseFloat(dados.preco.replace(/\D/g, "")) || 0,
-          area: parseFloat(dados.area) || null,
-          quartos: parseInt(dados.quartos) || null,
-          banheiros: parseInt(dados.banheiros) || null,
-          vagas: parseInt(dados.vagas) || null,
+          preco: precoNumerico,
+          area: areaNumerica,
+          quartos: extrairNumero(dados.quartos),
+          banheiros: extrairNumero(dados.banheiros),
+          vagas: extrairNumero(dados.vagas),
           endereco: dados.endereco || "",
           bairro: dados.bairro || null,
           cidade: dados.cidade,
           estado: dados.estado || null,
           cep: dados.cep || null,
-          latitude: parseFloat(dados.latitude) || 0,
-          longitude: parseFloat(dados.longitude) || 0,
+          latitude: latNumerica,
+          longitude: lngNumerica,
           endereco_publico: false,
-          condominio: parseFloat(dados.condominio) || null,
-          iptu: parseFloat(dados.iptu) || null,
-          aceita_pets: dados.aceita_pets,
-          mobiliado: dados.mobiliado,
-          status: statusDesejado,
+          condominio: extrairNumero(dados.condominio),
+          iptu: extrairNumero(dados.iptu),
+          aceita_pets: !!dados.aceita_pets,
+          mobiliado: !!dados.mobiliado,
+          status: statusDesejado === 'publicado' ? 'ativo' : 'pausado',
           destaque: false,
         })
         .select()
         .single()
 
-      if (erroImovel) throw erroImovel
+      if (erroImovel) {
+        console.error("Erro Supabase imoveis:", erroImovel)
+        throw new Error(erroImovel.message || "Não foi possível cadastrar o imóvel no banco de dados.")
+      }
 
-      // Upload das fotos
-      if (fotos.length > 0) {
+      // 3. Upload das fotos para o bucket fotos-imoveis
+      if (fotos.length > 0 && imovel?.id) {
         for (let i = 0; i < fotos.length; i++) {
           const foto = fotos[i]
-          const ext = foto.arquivo.name.split(".").pop()
+          const ext = foto.arquivo.name.split(".").pop() || 'jpg'
           const caminho = `${user.id}/${imovel.id}/${Date.now()}-${i}.${ext}`
 
-          const { error: erroUpload } = await supabase.storage
-            .from("fotos-imoveis")
-            .upload(caminho, foto.arquivo, { upsert: true })
-
-          if (!erroUpload) {
-            const { data: urlData } = supabase.storage
+          try {
+            const { error: erroUpload } = await supabase.storage
               .from("fotos-imoveis")
-              .getPublicUrl(caminho)
+              .upload(caminho, foto.arquivo, { upsert: true })
 
-            await supabase.from("fotos_imovel").insert({
-              imovel_id: imovel.id,
-              url: urlData.publicUrl,
-              principal: foto.principal,
-              ordem: i,
-            })
+            if (!erroUpload) {
+              const { data: urlData } = supabase.storage
+                .from("fotos-imoveis")
+                .getPublicUrl(caminho)
+
+              await supabase.from("fotos_imovel").insert({
+                imovel_id: imovel.id,
+                url: urlData.publicUrl,
+                principal: foto.principal,
+                ordem: i,
+              })
+            } else {
+              console.warn("Aviso upload foto:", erroUpload.message)
+            }
+          } catch (errFoto) {
+            console.warn("Erro ao enviar foto:", errFoto)
           }
         }
       }
 
       router.push("/painel?novo=1")
     } catch (e: unknown) {
-      setErro(e instanceof Error ? e.message : "Erro ao salvar imóvel")
+      console.error("Erro ao salvar imóvel:", e)
+      setErro(e instanceof Error ? e.message : "Erro ao salvar imóvel. Verifique os dados e tente novamente.")
     } finally {
       setSalvando(false)
     }
@@ -627,47 +668,142 @@ export default function NovoImovelPage() {
           {/* Etapa 4: Fotos */}
           {etapa === 4 && (
             <div className={styles.etapaConteudo}>
-              <h2 className={styles.etapaTitulo}>Fotos do Imóvel</h2>
-              <p className={styles.etapaSubtitulo}>Adicione fotos de alta qualidade para atrair mais clientes</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <h2 className={styles.etapaTitulo}>Galeria de Fotos</h2>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1d4ed8', background: '#eff6ff', padding: '4px 10px', borderRadius: '20px' }}>
+                  {fotos.length} {fotos.length === 1 ? 'foto adicionada' : 'fotos adicionadas'}
+                </span>
+              </div>
+              <p className={styles.etapaSubtitulo}>
+                Adicione fotos nítidas do imóvel. A foto com o selo dourado será a capa principal do anúncio no mapa.
+              </p>
 
               <input
                 ref={inputFotoRef}
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/png, image/jpeg, image/webp"
                 style={{ display: "none" }}
                 onChange={(e) => adicionarFotos(e.target.files)}
               />
 
-              <button
-                type="button"
-                className={styles.btnUpload}
+              {/* Dropzone Ultra Premium */}
+              <div
+                className={`${styles.dropzonePro} ${arrastando ? styles.dropzoneArrastando : ''}`}
                 onClick={() => inputFotoRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setArrastando(true) }}
+                onDragLeave={() => setArrastando(false)}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  setArrastando(false)
+                  adicionarFotos(e.dataTransfer.files)
+                }}
               >
-                <span>📸</span>
-                <span>Selecionar fotos do dispositivo</span>
-              </button>
+                <div className={styles.dropzoneCirculo}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+                <h3 className={styles.dropzoneTitulo}>
+                  Arraste suas fotos aqui ou <span style={{ color: '#2563eb', textDecoration: 'underline' }}>escolha do seu dispositivo</span>
+                </h3>
+                <p className={styles.dropzoneSub}>
+                  Formatos suportados: PNG, JPG ou WEBP • Recomendado alta resolução
+                </p>
+                <button
+                  type="button"
+                  className={styles.btnSelecionarFotos}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    inputFotoRef.current?.click()
+                  }}
+                >
+                  📁 Selecionar Fotos
+                </button>
+              </div>
 
+              {/* Grid de Fotos Selecionadas */}
               {fotos.length > 0 && (
-                <div className={styles.gridFotos}>
-                  {fotos.map((foto, idx) => (
-                    <div key={idx} className={`${styles.fotoCard} ${foto.principal ? styles.fotoCapa : ""}`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={foto.preview} alt={`Foto ${idx + 1}`} />
-                      {!foto.principal && (
-                        <div className={styles.btnDefinirCapa} onClick={() => definirPrincipal(idx)}>
-                          <span>Definir capa</span>
+                <div style={{ marginTop: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a' }}>
+                      Fotos Carregadas ({fotos.length})
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => inputFotoRef.current?.click()}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      + Adicionar mais fotos
+                    </button>
+                  </div>
+
+                  <div className={styles.gridFotosPro}>
+                    {fotos.map((foto, idx) => (
+                      <div
+                        key={idx}
+                        className={`${styles.fotoCardPro} ${foto.principal ? styles.fotoCardCapa : ''}`}
+                      >
+                        {/* Imagem */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={foto.preview} alt={`Foto ${idx + 1}`} className={styles.fotoImgPro} />
+
+                        {/* Badge de Posição / Capa */}
+                        {foto.principal ? (
+                          <div className={styles.badgeCapa}>
+                            ⭐ Foto de Capa
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className={styles.btnTornarCapa}
+                            onClick={() => definirPrincipal(idx)}
+                            title="Definir esta foto como principal do anúncio"
+                          >
+                            Tornar Capa
+                          </button>
+                        )}
+
+                        {/* Botão de Remover */}
+                        <button
+                          type="button"
+                          className={styles.btnRemoverFoto}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            removerFoto(idx)
+                          }}
+                          title="Remover foto"
+                        >
+                          ✕
+                        </button>
+
+                        <div className={styles.numeroFotoPill}>
+                          #{idx + 1}
                         </div>
-                      )}
-                      <button
-                        className={styles.fotoBtnRemover}
-                        onClick={(e) => { e.stopPropagation(); removerFoto(idx) }}
-                        title="Remover"
-                      >✕</button>
-                    </div>
-                  ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
+
+              {/* Card de Dicas de Fotografia */}
+              <div style={{
+                marginTop: '1.5rem',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '0.75rem',
+                padding: '1rem 1.25rem',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px'
+              }}>
+                <span style={{ fontSize: '1.25rem' }}>💡</span>
+                <p style={{ fontSize: '0.825rem', color: '#64748b', margin: 0, lineHeight: '1.4' }}>
+                  <strong>Dica de especialista:</strong> Imóveis com a foto de capa mostrando a fachada ou a sala principal bem iluminada recebem até <strong>3x mais cliques</strong> e contatos no WhatsApp.
+                </p>
+              </div>
             </div>
           )}
 
