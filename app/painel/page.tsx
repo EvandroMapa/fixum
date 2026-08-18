@@ -99,26 +99,28 @@ function PainelConteudo() {
         return
       } else {
         setUsuarioNome(perfil?.nome ?? 'Usuário')
-        const ehImob = perfil?.tipo === 'imobiliaria' || perfil?.tipo_anunciante === 'imobiliaria'
-        const ehCorretor = perfil?.tipo === 'corretor' || !!perfil?.imobiliaria_id
-        setIsImobiliaria(ehImob)
-        setIsCorretor(ehCorretor)
-
-        // Se for corretor com imobiliária vinculada, busca os dados da imobiliária dona
-        if (perfil.imobiliaria_id) {
-          const { data: imobData } = await supabase
-            .from('perfis')
-            .select('id, nome')
-            .eq('id', perfil.imobiliaria_id)
-            .single()
-          if (imobData) {
-            setImobiliariaDona(imobData)
-          }
-        }
       }
 
-      const ehImob = perfil?.tipo === 'imobiliaria' || perfil?.tipo_anunciante === 'imobiliaria' || metaTipo === 'imobiliaria'
-      const imobId = perfil?.imobiliaria_id
+      const meta = user.user_metadata || {}
+      const tipoFinal = perfil?.tipo || perfil?.tipo_anunciante || meta.tipo || meta.tipo_anunciante || searchTipo
+      const imobId = perfil?.imobiliaria_id || meta.imobiliaria_id || null
+
+      const ehImob = tipoFinal === 'imobiliaria'
+      const ehCorretor = tipoFinal === 'corretor' || !!imobId
+
+      setIsImobiliaria(ehImob)
+      setIsCorretor(ehCorretor)
+
+      if (imobId) {
+        const { data: imobData } = await supabase
+          .from('perfis')
+          .select('id, nome')
+          .eq('id', imobId)
+          .maybeSingle()
+        if (imobData) {
+          setImobiliariaDona(imobData)
+        }
+      }
 
       // ── CARREGAMENTO DE IMÓVEIS COM SEGREGAÇÃO ──
       let idsAnunciantes: string[] = [user.id]
@@ -171,9 +173,9 @@ function PainelConteudo() {
           setAssinatura(assData as Assinatura)
         } else {
           setAssinatura({
-            id: 'local_gratis',
+            id: isCorretor && imobId ? 'imob_' + imobId : 'local_gratis',
             usuario_id: idUsuarioAssinatura,
-            plano_id: ehImob ? 'imobiliaria' : 'gratis',
+            plano_id: ehImob || isCorretor ? 'imobiliaria' : 'gratis',
             status: 'ativo',
             data_inicio: new Date().toISOString(),
             metodo_pagamento: 'gratis',
@@ -224,6 +226,12 @@ function PainelConteudo() {
   async function alterarStatus(id: string, novoStatus: string) {
     // Se está tentando publicar/ativar, checa se atingiu o limite do plano
     if ((novoStatus === 'publicado' || novoStatus === 'ativo') && usoPlano.atingiuLimite) {
+      if (isCorretor) {
+        alert(
+          `⚠️ Cota Corporativa Atingida\n\nA cota de anúncios ativos da imobiliária ${imobiliariaDona?.nome ? `"${imobiliariaDona.nome}"` : 'vinculada'} atingiu o limite (${usoPlano.limiteMaximo} anúncios).\n\nEntre em contato com o administrador da sua imobiliária para solicitar novas vagas.`
+        )
+        return
+      }
       setModalLimiteAberto(true)
       return
     }
