@@ -37,6 +37,8 @@ function PainelConteudo() {
   const [usuarioEmail, setUsuarioEmail] = useState('')
   const [usuarioId, setUsuarioId] = useState('')
   const [isImobiliaria, setIsImobiliaria] = useState(false)
+  const [isCorretor, setIsCorretor] = useState(false)
+  const [imobiliariaDona, setImobiliariaDona] = useState<{ id: string; nome: string } | null>(null)
 
   // Estados de Modais
   const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
@@ -47,7 +49,7 @@ function PainelConteudo() {
   const supabase = createClient()
 
   useEffect(() => {
-    if (abaParam && ['dashboard', 'imoveis', 'leads', 'plano'].includes(abaParam)) {
+    if (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'plano'].includes(abaParam)) {
       setAbaAtiva(abaParam)
     }
   }, [abaParam])
@@ -65,7 +67,11 @@ function PainelConteudo() {
       setUsuarioId(user.id)
       setUsuarioEmail(user.email ?? '')
 
-      const { data: perfil } = await supabase.from('perfis').select('nome, tipo, tipo_anunciante').eq('id', user.id).single()
+      const { data: perfil } = await supabase
+        .from('perfis')
+        .select('id, nome, tipo, tipo_anunciante, imobiliaria_id')
+        .eq('id', user.id)
+        .single()
 
       const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
       const metaTipo = perfil?.tipo || perfil?.tipo_anunciante || user.user_metadata?.tipo || user.user_metadata?.tipo_anunciante || searchTipo
@@ -83,19 +89,51 @@ function PainelConteudo() {
         })
         setUsuarioNome(nomeFinal)
         setIsImobiliaria(metaTipo === 'imobiliaria')
+        setIsCorretor(metaTipo === 'corretor')
       } else if (!perfil || !perfil.tipo) {
         window.location.href = '/completar-perfil'
         return
       } else {
         setUsuarioNome(perfil?.nome ?? 'Usuário')
-        setIsImobiliaria(perfil?.tipo === 'imobiliaria' || perfil?.tipo_anunciante === 'imobiliaria')
+        const ehImob = perfil?.tipo === 'imobiliaria' || perfil?.tipo_anunciante === 'imobiliaria'
+        const ehCorretor = perfil?.tipo === 'corretor' || !!perfil?.imobiliaria_id
+        setIsImobiliaria(ehImob)
+        setIsCorretor(ehCorretor)
+
+        // Se for corretor com imobiliária vinculada, busca os dados da imobiliária dona
+        if (perfil.imobiliaria_id) {
+          const { data: imobData } = await supabase
+            .from('perfis')
+            .select('id, nome')
+            .eq('id', perfil.imobiliaria_id)
+            .single()
+          if (imobData) {
+            setImobiliariaDona(imobData)
+          }
+        }
       }
 
-      // Carregar imóveis
+      const ehImob = perfil?.tipo === 'imobiliaria' || perfil?.tipo_anunciante === 'imobiliaria' || metaTipo === 'imobiliaria'
+      const imobId = perfil?.imobiliaria_id
+
+      // ── CARREGAMENTO DE IMÓVEIS COM SEGREGAÇÃO ──
+      let idsAnunciantes: string[] = [user.id]
+
+      if (ehImob) {
+        // Se for imobiliária, busca também os imóveis de todos os corretores da equipe
+        const { data: corretores } = await supabase
+          .from('perfis')
+          .select('id')
+          .eq('imobiliaria_id', user.id)
+        if (corretores && corretores.length > 0) {
+          idsAnunciantes = [user.id, ...corretores.map((c) => c.id)]
+        }
+      }
+
       const { data: imoveisData } = await supabase
         .from('imoveis')
         .select('*, fotos_imovel(id, url, principal, ordem)')
-        .eq('anunciante_id', user.id)
+        .in('anunciante_id', idsAnunciantes)
         .order('created_at', { ascending: false })
 
       const listaImoveis = ((imoveisData ?? []).map((i: Record<string, unknown>) => ({
@@ -105,7 +143,7 @@ function PainelConteudo() {
 
       setImoveis(listaImoveis)
 
-      // Carregar leads
+      // ── CARREGAMENTO DE LEADS (Apenas dos imóveis visíveis) ──
       const imoveisIds = (imoveisData ?? []).map((i: Record<string, unknown>) => i.id as string)
       if (imoveisIds.length > 0) {
         const { data: leadsData } = await supabase
@@ -116,22 +154,22 @@ function PainelConteudo() {
         setLeads((leadsData ?? []) as Lead[])
       }
 
-      // Carregar assinatura
+      // ── CARREGAMENTO DE ASSINATURA (Do próprio usuário ou da imobiliária dona) ──
+      const idUsuarioAssinatura = imobId || user.id
       try {
         const { data: assData } = await supabase
           .from('assinaturas')
           .select('*')
-          .eq('usuario_id', user.id)
+          .eq('usuario_id', idUsuarioAssinatura)
           .maybeSingle()
 
         if (assData) {
           setAssinatura(assData as Assinatura)
         } else {
-          // Default grátis
           setAssinatura({
             id: 'local_gratis',
-            usuario_id: user.id,
-            plano_id: 'gratis',
+            usuario_id: idUsuarioAssinatura,
+            plano_id: ehImob ? 'imobiliaria' : 'gratis',
             status: 'ativo',
             data_inicio: new Date().toISOString(),
             metodo_pagamento: 'gratis',
@@ -142,18 +180,20 @@ function PainelConteudo() {
         console.error('Erro ao buscar assinatura:', e)
       }
 
-      // Carregar faturas
-      try {
-        const { data: faturasData } = await supabase
-          .from('faturas')
-          .select('*')
-          .eq('usuario_id', user.id)
-          .order('created_at', { ascending: false })
-        if (faturasData) {
-          setFaturas(faturasData as Fatura[])
+      // ── CARREGAMENTO DE FATURAS (Apenas para Imobiliária / Dono da conta) ──
+      if (ehImob) {
+        try {
+          const { data: faturasData } = await supabase
+            .from('faturas')
+            .select('*')
+            .eq('usuario_id', user.id)
+            .order('created_at', { ascending: false })
+          if (faturasData) {
+            setFaturas(faturasData as Fatura[])
+          }
+        } catch (e) {
+          console.error('Erro ao buscar faturas:', e)
         }
-      } catch (e) {
-        console.error('Erro ao buscar faturas:', e)
       }
 
       setCarregando(false)
@@ -298,7 +338,11 @@ function PainelConteudo() {
           <div className={styles.empresaInfo}>
             <span className={styles.empresaNome}>{usuarioNome}</span>
             <span className={styles.empresaTipo}>
-              {isImobiliaria ? '🏢 Imobiliária Parceira' : '👤 Painel de Anúncios'}
+              {isImobiliaria
+                ? '🏢 Gestão Imobiliária'
+                : isCorretor && imobiliariaDona
+                ? `👔 Corretor Oficial — ${imobiliariaDona.nome}`
+                : '👤 Painel de Anúncios'}
             </span>
           </div>
         </div>
@@ -309,7 +353,7 @@ function PainelConteudo() {
             type="button"
             className={styles.badgePlanoTopbar}
             onClick={() => trocarAba('plano')}
-            title="Gerenciar Plano & Capacidade"
+            title="Ver Capacidade do Plano"
           >
             <span className={styles.iconePlano}>💳</span>
             <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
@@ -642,21 +686,60 @@ function PainelConteudo() {
           </div>
         )}
 
-        {/* ── EQUIPE DE CORRETORES (IMOBILIÁRIA) ── */}
-        {abaAtiva === 'corretores' && (
+        {/* ── EQUIPE DE CORRETORES (APENAS GESTOR DA IMOBILIÁRIA) ── */}
+        {abaAtiva === 'corretores' && isImobiliaria && (
           <AbaCorretores
             imobiliariaId={usuarioId}
             imobiliariaNome={usuarioNome}
           />
         )}
 
-        {/* ── MEU PLANO ── */}
+        {/* ── MEU PLANO (SEGREGAÇÃO DE PERMISSÕES) ── */}
         {abaAtiva === 'plano' && (
-          <AbaMeuPlano
-            usoPlano={usoPlano}
-            faturas={faturas}
-            onAtualizarAssinatura={handleAtualizarAssinatura}
-          />
+          isCorretor && imobiliariaDona ? (
+            <div style={{
+              background: '#ffffff',
+              border: '1.5px solid #bfdbfe',
+              borderRadius: '1rem',
+              padding: '2.5rem 2rem',
+              textAlign: 'center',
+              maxWidth: '620px',
+              margin: '2rem auto',
+              boxShadow: '0 4px 20px rgba(37, 99, 235, 0.08)',
+            }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👔</div>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
+                Plano Corporativo — {imobiliariaDona.nome}
+              </h2>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+                Sua conta de corretor está vinculada à cota corporativa oficial da <strong>{imobiliariaDona.nome}</strong>.
+                Todos os seus anúncios publicados utilizam as vagas contratadas pela empresa.
+              </p>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#eff6ff',
+                border: '1.5px solid #93c5fd',
+                color: '#1d4ed8',
+                padding: '10px 18px',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+              }}>
+                ⚡ Cota da Imobiliária: {usoPlano.imoveisAtivos} / {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
+              </div>
+              <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '1.75rem' }}>
+                ℹ️ Para solicitar ampliação de vagas ou alterações contratuais, consulte a administração da {imobiliariaDona.nome}.
+              </p>
+            </div>
+          ) : (
+            <AbaMeuPlano
+              usoPlano={usoPlano}
+              faturas={faturas}
+              onAtualizarAssinatura={handleAtualizarAssinatura}
+            />
+          )
         )}
       </main>
 
