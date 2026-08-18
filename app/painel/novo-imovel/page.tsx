@@ -99,92 +99,21 @@ export default function NovoImovelPage() {
       if (!user) return
       setUsuarioId(user.id)
 
-      const meta = user.user_metadata || {}
-      const { data: perfilData } = await supabase
-        .from('perfis')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle()
-
-      const tipo = perfilData?.tipo || meta.tipo || 'proprietario'
-      const imobId = perfilData?.imobiliaria_id || meta.imobiliaria_id || null
-      const corretor = tipo === 'corretor' || !!imobId
-      setIsCorretor(corretor)
-
-      if (corretor && imobId) {
-        // Corretor vinculado: buscar dados e assinatura da IMOBILIÁRIA mãe
-        try {
-          const { data: imobPerfil } = await supabase
-            .from('perfis')
-            .select('nome')
-            .eq('id', imobId)
-            .maybeSingle()
-          if (imobPerfil?.nome) setImobiliariaNome(imobPerfil.nome)
-
-          // Assinatura da imobiliária
-          const { data: assImob } = await supabase
-            .from('assinaturas')
-            .select('*')
-            .eq('usuario_id', imobId)
-            .maybeSingle()
-
-          if (assImob) {
-            setAssinatura(assImob as Assinatura)
-          } else {
-            setAssinatura({
-              id: 'imob_' + imobId,
-              usuario_id: imobId,
-              plano_id: 'imobiliaria',
-              status: 'ativo',
-              data_inicio: new Date().toISOString(),
-              metodo_pagamento: 'pix',
-              created_at: new Date().toISOString(),
-            })
-          }
-
-          // Contagem de imóveis ativos da imobiliária inteira
-          const { data: equipeUsers } = await supabase.auth.admin?.listUsers?.() || { data: { users: [] } }
-          const idsEquipe = (equipeUsers?.users || [])
-            .filter((u: any) => u.user_metadata?.imobiliaria_id === imobId || u.id === imobId)
-            .map((u: any) => u.id)
-
-          const listaIds = idsEquipe.length > 0 ? idsEquipe : [imobId, user.id]
-          const { count } = await supabase
-            .from('imoveis')
-            .select('*', { count: 'exact', head: true })
-            .in('anunciante_id', listaIds)
-            .in('status', ['publicado', 'ativo'])
-
-          setImoveisAtivosCount(count || 0)
-          return
-        } catch (err) {
-          console.error("Erro ao carregar dados da imobiliária:", err)
-        }
-      }
-
-      // Proprietário ou Imobiliária direta
-      const { count } = await supabase
-        .from('imoveis')
-        .select('*', { count: 'exact', head: true })
-        .eq('anunciante_id', user.id)
-        .in('status', ['publicado', 'ativo'])
-
-      setImoveisAtivosCount(count || 0)
-
       try {
-        const { data: assData } = await supabase
-          .from('assinaturas')
-          .select('*')
-          .eq('usuario_id', user.id)
-          .maybeSingle()
+        const resCota = await fetch(`/api/painel/cota?usuario_id=${user.id}`)
+        const jsonCota = await resCota.json()
 
-        if (assData) {
-          setAssinatura(assData as Assinatura)
+        if (jsonCota) {
+          setIsCorretor(!!jsonCota.isCorretor)
+          if (jsonCota.imobiliariaNome) setImobiliariaNome(jsonCota.imobiliariaNome)
+          if (jsonCota.assinatura) setAssinatura(jsonCota.assinatura)
+          setImoveisAtivosCount(jsonCota.totalAtivos || 0)
         }
-      } catch (e) {
-        console.error("Erro ao carregar assinatura:", e)
+      } catch (err) {
+        console.error("Erro ao carregar cota do usuário:", err)
       }
     }
+
     carregarPlanoUsuario()
   }, [supabase])
 

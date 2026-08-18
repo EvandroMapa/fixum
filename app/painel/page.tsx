@@ -218,6 +218,23 @@ function PainelConteudo() {
     setImoveis((prev) => prev.map((i) => i.id === id ? { ...i, status: novoStatus as Imovel['status'] } : i))
   }
 
+  async function excluirImovel(id: string, titulo: string) {
+    if (!confirm(`Tem certeza que deseja excluir permanentemente o anúncio "${titulo}"? Esta ação não pode ser desfeita.`)) return
+
+    try {
+      await supabase.from('fotos_imovel').delete().eq('imovel_id', id)
+      await supabase.from('leads').delete().eq('imovel_id', id)
+      const { error } = await supabase.from('imoveis').delete().eq('id', id)
+      if (error) throw error
+
+      setImoveis((prev) => prev.filter((i) => i.id !== id))
+      alert('Imóvel excluído com sucesso!')
+    } catch (err: any) {
+      console.error('Erro ao excluir imóvel:', err)
+      alert('Não foi possível excluir o imóvel.')
+    }
+  }
+
   async function alterarStatusLead(id: string, status: string) {
     await supabase.from('leads').update({ status }).eq('id', id)
     setLeads((prev) => prev.map((l) => l.id === id ? { ...l, status: status as Lead['status'] } : l))
@@ -552,6 +569,35 @@ function PainelConteudo() {
                         : `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos`}
                   </p>
                 </div>
+
+                {/* Filtro por Corretor para a Imobiliária Gestora */}
+                {isImobiliaria && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Filtrar por:</span>
+                    <select
+                      value={filtroCorretor}
+                      onChange={(e) => setFiltroCorretor(e.target.value)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        background: '#ffffff',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        color: '#0f172a',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <option value="todos">👥 Toda a Equipe ({imoveis.length})</option>
+                      <option value={usuarioId}>🏢 Meus Diretos ({imoveis.filter((i) => i.anunciante_id === usuarioId).length})</option>
+                      {listaCorretoresFiltro.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          👤 {c.nome} ({imoveis.filter((i) => i.anunciante_id === c.id).length})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               {usoPlano.atingiuLimite && (
@@ -596,35 +642,131 @@ function PainelConteudo() {
                 </div>
               ) : (
                 <div className={styles.listaImoveis}>
-                  {imoveis.map((imovel) => (
-                    <div key={imovel.id} className={styles.imovelRow}>
-                      <div
-                        className={styles.imovelFoto}
-                        style={{ backgroundImage: `url(${fotoPrincipal(imovel)})` }}
-                      >
-                        {!imovel.fotos?.length && <span>🏠</span>}
-                      </div>
-                      <div className={styles.imovelInfo}>
-                        <strong>{imovel.titulo}</strong>
-                        <span>{labelTipoImovel(imovel.tipo)} • {imovel.cidade}</span>
-                        <span className={styles.imovelPreco}>{formatarPreco(imovel.preco, imovel.negociacao)}</span>
-                      </div>
-                      <div className={styles.imovelStatus}>
-                        <span className={`${styles.statusBadge} ${styles[`status_${imovel.status}`]}`}>
-                          {imovel.status}
-                        </span>
-                      </div>
-                      <div className={styles.imovelAcoes}>
-                        <Link href={`/imovel/${imovel.id}`} className="btn btn-ghost btn-sm">Ver</Link>
-                        <Link href={`/painel/editar-imovel/${imovel.id}`} className="btn btn-outline btn-sm">Editar</Link>
-                        {imovel.status === 'publicado' || imovel.status === 'ativo' ? (
-                          <button className="btn btn-outline btn-sm" onClick={() => alterarStatus(imovel.id, 'pausado')}>Pausar</button>
-                        ) : imovel.status === 'pausado' ? (
-                          <button className="btn btn-primario btn-sm" onClick={() => alterarStatus(imovel.id, 'publicado')}>Publicar</button>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))}
+                  {imoveis
+                    .filter((i) => filtroCorretor === 'todos' || i.anunciante_id === filtroCorretor)
+                    .map((imovel) => {
+                      const status = imovel.status
+                      const isAtivo = status === 'publicado' || status === 'ativo'
+                      const isPausado = status === 'pausado'
+                      const isVendido = status === 'vendido' || status === 'alugado'
+
+                      return (
+                        <div key={imovel.id} className={styles.imovelRow}>
+                          <div
+                            className={styles.imovelFoto}
+                            style={{ backgroundImage: `url(${fotoPrincipal(imovel)})` }}
+                          >
+                            {!imovel.fotos?.length && <span>🏠</span>}
+                          </div>
+                          <div className={styles.imovelInfo}>
+                            <strong>{imovel.titulo}</strong>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
+                              <span>{labelTipoImovel(imovel.tipo)} • {imovel.cidade}</span>
+                              {isImobiliaria && nomesAnunciantes[imovel.anunciante_id] && (
+                                <span style={{
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  color: '#1d4ed8',
+                                  background: '#eff6ff',
+                                  border: '1px solid #bfdbfe',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
+                                }}>
+                                  👤 {nomesAnunciantes[imovel.anunciante_id]}
+                                </span>
+                              )}
+                            </div>
+                            <span className={styles.imovelPreco}>{formatarPreco(imovel.preco, imovel.negociacao)}</span>
+                          </div>
+
+                          <div className={styles.imovelStatus}>
+                            <span
+                              className={styles.statusBadge}
+                              style={{
+                                background: isAtivo ? '#ecfdf5' : isPausado ? '#fffbeb' : '#f1f5f9',
+                                color: isAtivo ? '#065f46' : isPausado ? '#b45309' : '#475569',
+                                border: `1px solid ${isAtivo ? '#a7f3d0' : isPausado ? '#fde68a' : '#cbd5e1'}`,
+                                fontWeight: 700,
+                                textTransform: 'capitalize',
+                              }}
+                            >
+                              {isAtivo ? '🟢 Ativo' : isPausado ? '⏸️ Pausado' : isVendido ? '🏷️ Vendido' : status}
+                            </span>
+                          </div>
+
+                          <div className={styles.imovelAcoes}>
+                            <Link href={`/imovel/${imovel.id}`} target="_blank" className="btn btn-ghost btn-sm" title="Ver anúncio público">
+                              Ver
+                            </Link>
+                            <Link href={`/painel/editar-imovel/${imovel.id}`} className="btn btn-outline btn-sm" title="Editar dados e fotos">
+                              ✏️ Editar
+                            </Link>
+
+                            {/* Ação de Pausar / Publicar */}
+                            {isAtivo && (
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => alterarStatus(imovel.id, 'pausado')}
+                                title="Pausar anúncio (não consome vaga de imóvel ativo)"
+                              >
+                                ⏸️ Pausar
+                              </button>
+                            )}
+
+                            {isPausado && (
+                              <button
+                                type="button"
+                                className="btn btn-primario btn-sm"
+                                onClick={() => alterarStatus(imovel.id, 'publicado')}
+                                title="Publicar anúncio no mapa"
+                              >
+                                ▶️ Ativar
+                              </button>
+                            )}
+
+                            {/* Ação de Marcar como Vendido */}
+                            {!isVendido && (
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => {
+                                  if (confirm(`Marcar o imóvel "${imovel.titulo}" como VENDIDO / NEGOCIADO?`)) {
+                                    alterarStatus(imovel.id, 'vendido')
+                                  }
+                                }}
+                                title="Marcar como vendido"
+                                style={{ color: '#059669' }}
+                              >
+                                🏷️ Vendido
+                              </button>
+                            )}
+
+                            {isVendido && (
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                onClick={() => alterarStatus(imovel.id, 'publicado')}
+                                title="Reativar anúncio no mapa"
+                              >
+                                🔄 Reativar
+                              </button>
+                            )}
+
+                            {/* Ação de Excluir */}
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-sm"
+                              onClick={() => excluirImovel(imovel.id, imovel.titulo)}
+                              title="Excluir imóvel permanentemente"
+                              style={{ color: '#dc2626' }}
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
                 </div>
               )}
             </div>
