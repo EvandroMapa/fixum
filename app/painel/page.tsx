@@ -559,22 +559,12 @@ function PainelConteudo() {
               <div>
                 <h1>Meus Imóveis</h1>
                 <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
-                  {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} ativos utilizados no plano {usoPlano.plano.nome}
+                  {isCorretor
+                    ? 'Gerencie seus anúncios publicados'
+                    : isImobiliaria
+                    ? `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos na cota corporativa`
+                    : `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos`}
                 </p>
-              </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {usoPlano.atingiuLimite ? (
-                  <button
-                    className="btn btn-primario"
-                    onClick={() => setModalLimiteAberto(true)}
-                  >
-                    + Novo imóvel
-                  </button>
-                ) : (
-                  <Link href="/painel/novo-imovel" className="btn btn-primario">
-                    + Novo imóvel
-                  </Link>
-                )}
               </div>
             </div>
 
@@ -592,9 +582,11 @@ function PainelConteudo() {
                 flexWrap: 'wrap'
               }}>
                 <span style={{ fontSize: '0.85rem', color: '#991b1b' }}>
-                  ⚠️ Você atingiu o limite de {usoPlano.limiteMaximo} imóvel(is) ativo(s) do seu plano <strong>{usoPlano.plano.nome}</strong>.
+                  {isCorretor
+                    ? '⚠️ A cota corporativa atingiu o limite de anúncios ativos. Contate a administração da imobiliária para solicitar novas vagas.'
+                    : `⚠️ Você atingiu o limite de ${usoPlano.limiteMaximo} imóvel(is) ativo(s) do seu plano ${usoPlano.plano.nome}.`}
                 </span>
-                {proximoPlano && (
+                {!isCorretor && proximoPlano && (
                   <button
                     className="btn btn-primario btn-sm"
                     onClick={() => dispararUpgrade(proximoPlano)}
@@ -609,7 +601,12 @@ function PainelConteudo() {
               <div className={styles.vazio}>
                 <span>🏢</span>
                 <h3>Nenhum imóvel cadastrado</h3>
-                <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">Cadastrar imóvel</Link>
+                <p style={{ color: '#64748b', marginBottom: '1.25rem', fontSize: '0.9rem' }}>
+                  Comece anunciando seu primeiro imóvel para exibi-lo no mapa.
+                </p>
+                <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
+                  Cadastrar primeiro imóvel
+                </Link>
               </div>
             ) : (
               <div className={styles.listaImoveis}>
