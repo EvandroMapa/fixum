@@ -40,6 +40,11 @@ function PainelConteudo() {
   const [isCorretor, setIsCorretor] = useState(false)
   const [imobiliariaDona, setImobiliariaDona] = useState<{ id: string; nome: string } | null>(null)
 
+  // Estados de Filtro de Corretores da Equipe
+  const [filtroCorretor, setFiltroCorretor] = useState<string>('todos')
+  const [nomesAnunciantes, setNomesAnunciantes] = useState<Record<string, string>>({})
+  const [listaCorretoresFiltro, setListaCorretoresFiltro] = useState<{ id: string; nome: string }[]>([])
+
   // Estados de Modais
   const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
   const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
@@ -73,27 +78,27 @@ function PainelConteudo() {
 
       const { data: perfil } = await supabase
         .from('perfis')
-        .select('id, nome, tipo, tipo_anunciante, imobiliaria_id')
+        .select('id, nome, tipo, telefone, creci')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
-      const metaTipo = perfil?.tipo || perfil?.tipo_anunciante || user.user_metadata?.tipo || user.user_metadata?.tipo_anunciante || searchTipo
+      const meta = user.user_metadata || {}
+      const metaTipo = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
+      const imobId = meta.imobiliaria_id || null
 
       if ((!perfil || !perfil.tipo) && metaTipo) {
-        const nomeFinal = perfil?.nome || user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.nome || user.email?.split('@')[0] || 'Imobiliária'
+        const nomeFinal = perfil?.nome || meta.full_name || meta.name || meta.nome || user.email?.split('@')[0] || 'Imobiliária'
         await supabase.from('perfis').upsert({
           id: user.id,
           nome: nomeFinal,
           email: user.email!,
           tipo: metaTipo,
-          tipo_anunciante: metaTipo,
-          telefone: user.user_metadata?.telefone || null,
-          plano_id: metaTipo === 'imobiliaria' ? 'imobiliaria' : 'gratis',
+          telefone: meta.telefone || null,
         })
         setUsuarioNome(nomeFinal)
         setIsImobiliaria(metaTipo === 'imobiliaria')
-        setIsCorretor(metaTipo === 'corretor')
+        setIsCorretor(metaTipo === 'corretor' || !!imobId)
       } else if (!perfil || !perfil.tipo) {
         window.location.href = '/completar-perfil'
         return
@@ -101,10 +106,7 @@ function PainelConteudo() {
         setUsuarioNome(perfil?.nome ?? 'Usuário')
       }
 
-      const meta = user.user_metadata || {}
-      const tipoFinal = perfil?.tipo || perfil?.tipo_anunciante || meta.tipo || meta.tipo_anunciante || searchTipo
-      const imobId = perfil?.imobiliaria_id || meta.imobiliaria_id || null
-
+      const tipoFinal = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
       const ehImob = tipoFinal === 'imobiliaria'
       const ehCorretor = tipoFinal === 'corretor' || !!imobId
 
@@ -122,42 +124,18 @@ function PainelConteudo() {
         }
       }
 
-      // ── CARREGAMENTO DE IMÓVEIS COM SEGREGAÇÃO ──
-      let idsAnunciantes: string[] = [user.id]
-
-      if (ehImob) {
-        // Se for imobiliária, busca também os imóveis de todos os corretores da equipe
-        const { data: corretores } = await supabase
-          .from('perfis')
-          .select('id')
-          .eq('imobiliaria_id', user.id)
-        if (corretores && corretores.length > 0) {
-          idsAnunciantes = [user.id, ...corretores.map((c) => c.id)]
+      // ── CARREGAMENTO DE IMÓVEIS, LEADS E EQUIPE VIA API SEGURA ──
+      try {
+        const resPainel = await fetch(`/api/painel/imoveis?usuario_id=${user.id}`)
+        const jsonPainel = await resPainel.json()
+        if (jsonPainel?.imoveis) {
+          setImoveis(jsonPainel.imoveis)
+          setLeads(jsonPainel.leads || [])
+          setNomesAnunciantes(jsonPainel.mapaNomes || {})
+          setListaCorretoresFiltro(jsonPainel.listaCorretores || [])
         }
-      }
-
-      const { data: imoveisData } = await supabase
-        .from('imoveis')
-        .select('*, fotos_imovel(id, url, principal, ordem)')
-        .in('anunciante_id', idsAnunciantes)
-        .order('created_at', { ascending: false })
-
-      const listaImoveis = ((imoveisData ?? []).map((i: Record<string, unknown>) => ({
-        ...i,
-        fotos: (i.fotos_imovel as Record<string, unknown>[]) ?? [],
-      })) as unknown as Imovel[])
-
-      setImoveis(listaImoveis)
-
-      // ── CARREGAMENTO DE LEADS (Apenas dos imóveis visíveis) ──
-      const imoveisIds = (imoveisData ?? []).map((i: Record<string, unknown>) => i.id as string)
-      if (imoveisIds.length > 0) {
-        const { data: leadsData } = await supabase
-          .from('leads')
-          .select('*, imoveis(titulo)')
-          .in('imovel_id', imoveisIds)
-          .order('created_at', { ascending: false })
-        setLeads((leadsData ?? []) as Lead[])
+      } catch (err) {
+        console.error('Erro ao buscar dados do painel:', err)
       }
 
       // ── CARREGAMENTO DE ASSINATURA (Do próprio usuário ou da imobiliária dona) ──
