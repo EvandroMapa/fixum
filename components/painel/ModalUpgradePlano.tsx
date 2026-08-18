@@ -80,7 +80,6 @@ export default function ModalUpgradePlano({
         </button>
 
         <div className={styles.cabecalho}>
-          <span className={styles.iconeModal}>⚡</span>
           <h2 className={styles.titulo}>
             {isMesmoPlano ? 'Seu Plano Atual' : isDowngrade ? 'Alterar Plano' : 'Confirmar Upgrade'}
           </h2>
