@@ -100,9 +100,9 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
   function abrirTipo() {
     if (!isMobile && btnTipoRef.current) {
       const rect = btnTipoRef.current.getBoundingClientRect()
-      const dropW = 560
-      const left = Math.min(rect.left, window.innerWidth - dropW - 8)
-      setDropPos({ top: rect.bottom + 8, left: Math.max(8, left) })
+      const dropW = 680
+      const left = Math.max(16, Math.min(rect.left, window.innerWidth - dropW - 16))
+      setDropPos({ top: rect.bottom + 8, left })
     }
     setModalAberto((v) => v === 'tipo' ? null : 'tipo')
   }

@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -25,12 +25,37 @@ export default function CompletarPerfilPage() {
     async function init() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push("/login"); return }
-      setNome(
-        user.user_metadata?.full_name ||
-        user.user_metadata?.name ||
-        user.user_metadata?.nome ||
-        user.email?.split("@")[0] || ""
-      )
+
+      // Verificar se o perfil já tem tipo ou se foi passado no metadata
+      const { data: perfilExistente } = await supabase
+        .from('perfis')
+        .select('tipo, tipo_anunciante, nome, telefone')
+        .eq('id', user.id)
+        .single()
+
+      const tipoDetectado = perfilExistente?.tipo || perfilExistente?.tipo_anunciante || user.user_metadata?.tipo || user.user_metadata?.tipo_anunciante
+      const nomeDetectado = perfilExistente?.nome || user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.nome || user.email?.split("@")[0] || ""
+      const telDetectado = perfilExistente?.telefone || user.user_metadata?.telefone || ""
+
+      // Se já escolheu o tipo (ex: imobiliária), salva e vai direto pro painel sem perguntar de novo
+      if (tipoDetectado) {
+        if (!perfilExistente?.tipo) {
+          await supabase.from("perfis").upsert({
+            id: user.id,
+            nome: nomeDetectado,
+            email: user.email!,
+            tipo: tipoDetectado,
+            tipo_anunciante: tipoDetectado,
+            telefone: telDetectado || null,
+            plano_id: tipoDetectado === 'imobiliaria' ? 'imobiliaria' : 'gratis',
+          })
+        }
+        router.replace("/painel")
+        return
+      }
+
+      setNome(nomeDetectado)
+      setTelefone(telDetectado)
       setCarregando(false)
     }
     init()

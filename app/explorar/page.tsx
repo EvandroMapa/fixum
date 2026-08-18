@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
+import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
@@ -59,10 +60,12 @@ function ExplorarConteudo() {
       if (filtrosAtivos.preco_min) query = query.gte('preco', filtrosAtivos.preco_min)
       if (filtrosAtivos.preco_max) query = query.lte('preco', filtrosAtivos.preco_max)
       if (filtrosAtivos.quartos_min) query = query.gte('quartos', filtrosAtivos.quartos_min)
-      if (filtrosAtivos.cidade) query = query.ilike('cidade', `%${filtrosAtivos.cidade}%`)
+      if (filtrosAtivos.cidade) {
+        query = query.or(`cidade.ilike.%${filtrosAtivos.cidade}%,bairro.ilike.%${filtrosAtivos.cidade}%`)
+      }
 
       // Filtro por bounds do mapa (pesquisar nesta area)
-      if (bounds) {
+      if (bounds && !filtrosAtivos.cidade) {
         const sw = bounds.getSouthWest()
         const ne = bounds.getNorthEast()
         query = query
@@ -105,24 +108,18 @@ function ExplorarConteudo() {
     buscarImoveis(filtros, boundsAtualRef.current)
   }, [filtros, buscarImoveis])
 
-  // Chamado pelo mapa automaticamente ao mover/zoom
+  // Chamado pelo mapa automaticamente ao mover/zoom manual
   const handlePesquisarNaArea = useCallback((bounds: mapboxgl.LngLatBounds, isInteracaoUsuario?: boolean) => {
     boundsAtualRef.current = bounds // salva para reusar ao trocar filtros
 
     if (isInteracaoUsuario) {
-      // Quando o usuário arrasta/move o mapa manualmente, limpamos o filtro de cidade
-      // para que a busca seja geográfica (por limites visíveis) e o input seja desobstruído
       setFiltros((f) => {
         if (f.cidade) {
-          const novos = { ...f, cidade: undefined }
-          buscarImoveis(novos, bounds)
-          return novos
+          return { ...f, cidade: undefined }
         }
-        buscarImoveis(f, bounds)
         return f
       })
-    } else {
-      buscarImoveis(filtros, bounds)
+      buscarImoveis({ ...filtros, cidade: undefined }, bounds)
     }
   }, [filtros, buscarImoveis])
 
@@ -142,6 +139,8 @@ function ExplorarConteudo() {
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }, 50)
   }, [])
+
+  const isOrigemGps = searchParams.get('origem') === 'gps'
 
   return (
     <div className={styles.layout}>
@@ -185,6 +184,27 @@ function ExplorarConteudo() {
             )}
           </div>
 
+          {/* Banner de contexto de localização quando pesquisado puramente por GPS sem cidade */}
+          {!carregando && isOrigemGps && !filtros.cidade && totalResultados > 0 && (
+            <div style={{
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              borderRadius: '0.75rem',
+              padding: '0.65rem 0.9rem',
+              marginBottom: '1rem',
+              fontSize: '0.82rem',
+              color: '#1e40af',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span>📍</span>
+              <span>
+                Sua localização foi detectada no mapa. Mostrando imóveis disponíveis cadastrados na plataforma.
+              </span>
+            </div>
+          )}
+
           {carregando ? (
             <div className={styles.gridSkeleton}>
               {Array.from({ length: 6 }).map((_, i) => (
@@ -193,9 +213,27 @@ function ExplorarConteudo() {
             </div>
           ) : imoveis.length === 0 ? (
             <div className={styles.semResultados}>
-              <span>{"\uD83D\uDDFA\uFE0F"}</span>
-              <h3>Nenhum imóvel encontrado</h3>
-              <p>Tente ajustar os filtros ou clique em "Pesquisar nesta área" no mapa</p>
+              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>📍</span>
+              <h3>Nenhum imóvel encontrado{filtros.cidade ? ` em ${filtros.cidade}` : ''}</h3>
+              <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
+                {filtros.cidade
+                  ? `Ainda não temos imóveis para ${filtros.negociacao === 'aluguel' ? 'alugar' : 'comprar'} cadastrados em ${filtros.cidade}. Você pode ser o primeiro a anunciar ou explorar outras cidades no mapa!`
+                  : 'Tente ajustar os filtros ou clique em "Pesquisar nesta área" no mapa.'}
+              </p>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Link href="/painel/novo-imovel" className="btn btn-primario btn-sm">
+                  + Anunciar Imóvel Aqui
+                </Link>
+                {filtros.cidade && (
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => handleFiltrosChange({ ...filtros, cidade: undefined })}
+                  >
+                    Ver Todos os Imóveis
+                  </button>
+                )}
+              </div>
             </div>
           ) : (
             <div className={styles.grid}>
@@ -223,6 +261,8 @@ function ExplorarConteudo() {
             onPesquisarNaArea={handlePesquisarNaArea}
             voarPara={voarPara}
             centroInicial={centroInicial}
+            cidadeFiltro={filtros.cidade}
+            isOrigemGps={isOrigemGps}
           />
         </div>
       </div>

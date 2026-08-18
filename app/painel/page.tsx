@@ -4,33 +4,50 @@ import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { type Imovel, type Lead } from '@/lib/types'
+import { type Imovel, type Lead, type Assinatura, type Fatura, type Plano, type MetodoPagamento } from '@/lib/types'
 import { formatarPreco, labelTipoImovel, fotoPrincipal } from '@/lib/utils'
+import { calcularUsoPlano, obterPlanoPorId, obterProximoPlano } from '@/lib/planos'
 import Header from '@/components/layout/Header'
 import LogoGota from '@/components/ui/LogoGota'
+import AbaMeuPlano from '@/components/painel/AbaMeuPlano'
+import AbaCorretores from '@/components/painel/AbaCorretores'
+import ModalLimiteAtingido from '@/components/painel/ModalLimiteAtingido'
+import ModalUpgradePlano from '@/components/painel/ModalUpgradePlano'
+import ModalConfigSeguranca from '@/components/painel/ModalConfigSeguranca'
 import styles from './page.module.css'
 
-type Aba = 'dashboard' | 'imoveis' | 'leads'
+type Aba = 'dashboard' | 'imoveis' | 'leads' | 'corretores' | 'plano'
 
 function PainelConteudo() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const abaParam = searchParams.get('aba') as Aba | null
 
-  const abaInicial: Aba = (abaParam && ['dashboard', 'imoveis', 'leads'].includes(abaParam))
+  const abaInicial: Aba = (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'plano'].includes(abaParam))
     ? abaParam
     : (typeof window !== 'undefined' && (localStorage.getItem('fixum_painel_aba') as Aba)) || 'imoveis'
 
   const [abaAtiva, setAbaAtiva] = useState<Aba>(abaInicial)
   const [imoveis, setImoveis] = useState<Imovel[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
+  const [assinatura, setAssinatura] = useState<Assinatura | null>(null)
+  const [faturas, setFaturas] = useState<Fatura[]>([])
   const [carregando, setCarregando] = useState(true)
   const [usuarioNome, setUsuarioNome] = useState('')
+  const [usuarioEmail, setUsuarioEmail] = useState('')
+  const [usuarioId, setUsuarioId] = useState('')
+  const [isImobiliaria, setIsImobiliaria] = useState(false)
+
+  // Estados de Modais
+  const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
+  const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
+  const [modalSegurancaAberto, setModalSegurancaAberto] = useState(false)
+  const [planoAlvoUpgrade, setPlanoAlvoUpgrade] = useState<Plano | null>(null)
 
   const supabase = createClient()
 
   useEffect(() => {
-    if (abaParam && ['dashboard', 'imoveis', 'leads'].includes(abaParam)) {
+    if (abaParam && ['dashboard', 'imoveis', 'leads', 'plano'].includes(abaParam)) {
       setAbaAtiva(abaParam)
     }
   }, [abaParam])
@@ -45,26 +62,50 @@ function PainelConteudo() {
     async function carregar() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/login'; return }
+      setUsuarioId(user.id)
+      setUsuarioEmail(user.email ?? '')
 
-      const { data: perfil } = await supabase.from('perfis').select('nome, tipo').eq('id', user.id).single()
+      const { data: perfil } = await supabase.from('perfis').select('nome, tipo, tipo_anunciante').eq('id', user.id).single()
 
-      if (!perfil || !perfil.tipo) {
+      const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
+      const metaTipo = perfil?.tipo || perfil?.tipo_anunciante || user.user_metadata?.tipo || user.user_metadata?.tipo_anunciante || searchTipo
+
+      if ((!perfil || !perfil.tipo) && metaTipo) {
+        const nomeFinal = perfil?.nome || user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.nome || user.email?.split('@')[0] || 'Imobiliária'
+        await supabase.from('perfis').upsert({
+          id: user.id,
+          nome: nomeFinal,
+          email: user.email!,
+          tipo: metaTipo,
+          tipo_anunciante: metaTipo,
+          telefone: user.user_metadata?.telefone || null,
+          plano_id: metaTipo === 'imobiliaria' ? 'imobiliaria' : 'gratis',
+        })
+        setUsuarioNome(nomeFinal)
+        setIsImobiliaria(metaTipo === 'imobiliaria')
+      } else if (!perfil || !perfil.tipo) {
         window.location.href = '/completar-perfil'
         return
+      } else {
+        setUsuarioNome(perfil?.nome ?? 'Usuário')
+        setIsImobiliaria(perfil?.tipo === 'imobiliaria' || perfil?.tipo_anunciante === 'imobiliaria')
       }
-      setUsuarioNome(perfil?.nome ?? 'Usuário')
 
+      // Carregar imóveis
       const { data: imoveisData } = await supabase
         .from('imoveis')
         .select('*, fotos_imovel(id, url, principal, ordem)')
         .eq('anunciante_id', user.id)
         .order('created_at', { ascending: false })
 
-      setImoveis((imoveisData ?? []).map((i: Record<string, unknown>) => ({
+      const listaImoveis = ((imoveisData ?? []).map((i: Record<string, unknown>) => ({
         ...i,
         fotos: (i.fotos_imovel as Record<string, unknown>[]) ?? [],
       })) as unknown as Imovel[])
 
+      setImoveis(listaImoveis)
+
+      // Carregar leads
       const imoveisIds = (imoveisData ?? []).map((i: Record<string, unknown>) => i.id as string)
       if (imoveisIds.length > 0) {
         const { data: leadsData } = await supabase
@@ -73,6 +114,46 @@ function PainelConteudo() {
           .in('imovel_id', imoveisIds)
           .order('created_at', { ascending: false })
         setLeads((leadsData ?? []) as Lead[])
+      }
+
+      // Carregar assinatura
+      try {
+        const { data: assData } = await supabase
+          .from('assinaturas')
+          .select('*')
+          .eq('usuario_id', user.id)
+          .maybeSingle()
+
+        if (assData) {
+          setAssinatura(assData as Assinatura)
+        } else {
+          // Default grátis
+          setAssinatura({
+            id: 'local_gratis',
+            usuario_id: user.id,
+            plano_id: 'gratis',
+            status: 'ativo',
+            data_inicio: new Date().toISOString(),
+            metodo_pagamento: 'gratis',
+            created_at: new Date().toISOString(),
+          })
+        }
+      } catch (e) {
+        console.error('Erro ao buscar assinatura:', e)
+      }
+
+      // Carregar faturas
+      try {
+        const { data: faturasData } = await supabase
+          .from('faturas')
+          .select('*')
+          .eq('usuario_id', user.id)
+          .order('created_at', { ascending: false })
+        if (faturasData) {
+          setFaturas(faturasData as Fatura[])
+        }
+      } catch (e) {
+        console.error('Erro ao buscar faturas:', e)
       }
 
       setCarregando(false)
@@ -87,15 +168,99 @@ function PainelConteudo() {
     leadsNovos: leads.filter((l) => l.status === 'novo').length,
   }
 
-  async function alterarStatus(id: string, status: string) {
-    await supabase.from('imoveis').update({ status }).eq('id', id)
-    setImoveis((prev) => prev.map((i) => i.id === id ? { ...i, status: status as Imovel['status'] } : i))
+  const usoPlano = calcularUsoPlano(
+    assinatura?.plano_id || 'gratis',
+    stats.publicados,
+    stats.pausados,
+    assinatura || undefined
+  )
+
+  const proximoPlano = obterProximoPlano(usoPlano.plano.id)
+
+  async function alterarStatus(id: string, novoStatus: string) {
+    // Se está tentando publicar/ativar, checa se atingiu o limite do plano
+    if ((novoStatus === 'publicado' || novoStatus === 'ativo') && usoPlano.atingiuLimite) {
+      setModalLimiteAberto(true)
+      return
+    }
+
+    await supabase.from('imoveis').update({ status: novoStatus }).eq('id', id)
+    setImoveis((prev) => prev.map((i) => i.id === id ? { ...i, status: novoStatus as Imovel['status'] } : i))
   }
 
   async function alterarStatusLead(id: string, status: string) {
     await supabase.from('leads').update({ status }).eq('id', id)
     setLeads((prev) => prev.map((l) => l.id === id ? { ...l, status: status as Lead['status'] } : l))
   }
+
+  async function handleAtualizarAssinatura(novoPlano: Plano, metodo: MetodoPagamento) {
+    if (!usuarioId) return
+
+    try {
+      // 1. Tenta atualizar ou criar no Supabase
+      const { data: assData } = await supabase
+        .from('assinaturas')
+        .upsert(
+          {
+            usuario_id: usuarioId,
+            plano_id: novoPlano.id,
+            status: 'ativo',
+            metodo_pagamento: metodo,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'usuario_id' }
+        )
+        .select()
+        .single()
+
+      if (assData) {
+        setAssinatura(assData as Assinatura)
+      } else {
+        // Fallback local se tabela ainda não existir no Supabase
+        setAssinatura({
+          id: 'local_' + novoPlano.id,
+          usuario_id: usuarioId,
+          plano_id: novoPlano.id,
+          status: 'ativo',
+          data_inicio: new Date().toISOString(),
+          metodo_pagamento: metodo,
+          created_at: new Date().toISOString(),
+        })
+      }
+
+      // 2. Se for plano pago, registrar fatura paga
+      if (novoPlano.preco_mensal > 0) {
+        const novaFatura: Partial<Fatura> = {
+          usuario_id: usuarioId,
+          valor: novoPlano.preco_mensal,
+          status: 'pago',
+          metodo_pagamento: metodo,
+          data_vencimento: new Date().toISOString(),
+          data_pagamento: new Date().toISOString(),
+        }
+
+        try {
+          const { data: fatData } = await supabase.from('faturas').insert(novaFatura).select().single()
+          if (fatData) {
+            setFaturas((prev) => [fatData as Fatura, ...prev])
+          } else {
+            setFaturas((prev) => [{ ...novaFatura, id: 'fat_' + Date.now(), created_at: new Date().toISOString() } as Fatura, ...prev])
+          }
+        } catch {
+          setFaturas((prev) => [{ ...novaFatura, id: 'fat_' + Date.now(), created_at: new Date().toISOString() } as Fatura, ...prev])
+        }
+      }
+    } catch (err) {
+      console.error('Erro na assinatura:', err)
+      throw err
+    }
+  }
+
+  function dispararUpgrade(plano?: Plano) {
+    setPlanoAlvoUpgrade(plano || proximoPlano || usoPlano.plano)
+    setModalUpgradeAberto(true)
+  }
+
 
   if (carregando) {
     return (
@@ -121,6 +286,8 @@ function PainelConteudo() {
             { id: 'dashboard', icone: '📊', label: 'Dashboard' },
             { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis' },
             { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}` },
+            ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores' }] : []),
+            { id: 'plano', icone: '💳', label: 'Meu Plano' },
           ].map((item) => (
             <button
               key={item.id}
@@ -131,6 +298,18 @@ function PainelConteudo() {
               <span>{item.label}</span>
             </button>
           ))}
+
+          <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #e2e8f0' }}>
+            <button
+              type="button"
+              className={styles.sidebarItem}
+              onClick={() => setModalSegurancaAberto(true)}
+              title="Segurança & 2FA"
+            >
+              <span>🛡️</span>
+              <span>Segurança</span>
+            </button>
+          </div>
         </nav>
       </aside>
 
@@ -142,6 +321,56 @@ function PainelConteudo() {
           <div className={styles.secao}>
             <h1>Olá, {usuarioNome}! 👋</h1>
             <p className={styles.subtitulo}>Aqui está o resumo dos seus anúncios</p>
+
+            {/* Banner de Plano e Capacidade */}
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '1rem',
+              padding: '1.25rem',
+              marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              flexWrap: 'wrap'
+            }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#0f4c81', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px' }}>
+                    Plano {usoPlano.plano.nome}
+                  </span>
+                  <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                    • {usoPlano.imoveisAtivos} de {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
+                  </span>
+                </div>
+                <div style={{ width: '220px', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                  <div style={{
+                    width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
+                    height: '100%',
+                    backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
+                    borderRadius: '999px'
+                  }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  className="btn btn-outline btn-sm"
+                  onClick={() => trocarAba('plano')}
+                >
+                  Ver Detalhes do Plano
+                </button>
+                {proximoPlano && (
+                  <button
+                    className="btn btn-primario btn-sm"
+                    onClick={() => dispararUpgrade(proximoPlano)}
+                  >
+                    ⚡ Fazer Upgrade
+                  </button>
+                )}
+              </div>
+            </div>
 
             <div className={styles.gridStats}>
               {[
@@ -175,11 +404,54 @@ function PainelConteudo() {
         {abaAtiva === 'imoveis' && (
           <div className={styles.secao}>
             <div className={styles.secaoHeader}>
-              <h1>Meus Imóveis</h1>
-              <Link href="/painel/novo-imovel" className="btn btn-primario">
-                + Novo imóvel
-              </Link>
+              <div>
+                <h1>Meus Imóveis</h1>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
+                  {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} ativos utilizados no plano {usoPlano.plano.nome}
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {usoPlano.atingiuLimite ? (
+                  <button
+                    className="btn btn-primario"
+                    onClick={() => setModalLimiteAberto(true)}
+                  >
+                    + Novo imóvel
+                  </button>
+                ) : (
+                  <Link href="/painel/novo-imovel" className="btn btn-primario">
+                    + Novo imóvel
+                  </Link>
+                )}
+              </div>
             </div>
+
+            {usoPlano.atingiuLimite && (
+              <div style={{
+                background: '#fef2f2',
+                border: '1px solid #fee2e2',
+                borderRadius: '0.75rem',
+                padding: '0.85rem 1.25rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '1rem',
+                flexWrap: 'wrap'
+              }}>
+                <span style={{ fontSize: '0.85rem', color: '#991b1b' }}>
+                  ⚠️ Você atingiu o limite de {usoPlano.limiteMaximo} imóvel(is) ativo(s) do seu plano <strong>{usoPlano.plano.nome}</strong>.
+                </span>
+                {proximoPlano && (
+                  <button
+                    className="btn btn-primario btn-sm"
+                    onClick={() => dispararUpgrade(proximoPlano)}
+                  >
+                    Fazer Upgrade para {proximoPlano.nome}
+                  </button>
+                )}
+              </div>
+            )}
 
             {imoveis.length === 0 ? (
               <div className={styles.vazio}>
@@ -279,7 +551,52 @@ function PainelConteudo() {
             )}
           </div>
         )}
+
+        {/* ── EQUIPE DE CORRETORES (IMOBILIÁRIA) ── */}
+        {abaAtiva === 'corretores' && (
+          <AbaCorretores
+            imobiliariaId={usuarioId}
+            imobiliariaNome={usuarioNome}
+          />
+        )}
+
+        {/* ── MEU PLANO ── */}
+        {abaAtiva === 'plano' && (
+          <AbaMeuPlano
+            usoPlano={usoPlano}
+            faturas={faturas}
+            onAtualizarAssinatura={handleAtualizarAssinatura}
+          />
+        )}
       </main>
+
+      {/* Modal de Limite Atingido */}
+      <ModalLimiteAtingido
+        aberto={modalLimiteAberto}
+        onFechar={() => setModalLimiteAberto(false)}
+        planoAtual={usoPlano.plano}
+        proximoPlano={proximoPlano}
+        imoveisAtivos={usoPlano.imoveisAtivos}
+        onFazerUpgrade={(plano) => dispararUpgrade(plano)}
+        acaoTentada="reativar_imovel"
+      />
+
+      {/* Modal de Upgrade / Troca de Plano */}
+      <ModalUpgradePlano
+        aberto={modalUpgradeAberto}
+        onFechar={() => setModalUpgradeAberto(false)}
+        planoAtual={usoPlano.plano}
+        planoSugerido={planoAlvoUpgrade}
+        imoveisAtivos={usoPlano.imoveisAtivos}
+        onConfirmarPlano={handleAtualizarAssinatura}
+      />
+
+      {/* Modal de Configurações de Segurança e 2FA */}
+      <ModalConfigSeguranca
+        aberto={modalSegurancaAberto}
+        onFechar={() => setModalSegurancaAberto(false)}
+        usuarioEmail={usuarioEmail}
+      />
     </div>
     </>
   )

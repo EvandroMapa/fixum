@@ -1,0 +1,598 @@
+.pagina {
+  background: #f8fafc;
+  color: #0f172a;
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  width: 100%;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 5rem 0 3.5rem;
+  text-align: center;
+  background: radial-gradient(circle at 50% 20%, #eff6ff 0%, #f8fafc 100%);
+}
+
+.heroBadge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0f4c81;
+  background: #dbeafe;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.heroTitulo {
+  font-size: 2.75rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #0f172a;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.gradiente {
+  background: linear-gradient(135deg, #0f4c81 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubtitulo {
+  font-size: 1.15rem;
+  color: #475569;
+  max-width: 680px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.heroAcoes {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── SIMULADOR ── */
+.secaoSimulador {
+  margin: -1.5rem 0 4rem;
+}
+
+.cardSimulador {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+}
+
+.simuladorHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.simuladorHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+}
+
+.simuladorHeader p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.botoesFaixas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.btnFaixa {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 38px;
+  transition: all 0.15s;
+}
+
+.btnFaixa:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btnFaixaAtivo {
+  background: #0f4c81 !important;
+  color: #ffffff !important;
+  border-color: #0f4c81 !important;
+}
+
+.sliderWrapper {
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+}
+
+.rangeInput {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #e2e8f0;
+  outline: none;
+  cursor: pointer;
+  accent-color: #0f4c81;
+}
+
+.rangeLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 0.5rem;
+}
+
+.resultadoSimulador {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 1.25rem;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tagResultado {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+
+.resultadoInfo h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.resultadoInfo p {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.resultadoPreco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.precoMensalidade strong {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f4c81;
+}
+
+.precoMensalidade small {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-left: 2px;
+}
+
+.precoConsulta {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f4c81;
+}
+
+.custoUnitarioBadge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 0.25rem;
+}
+
+.resultadoAcao {
+  margin-left: auto;
+}
+
+/* ── TABELA DE PLANOS ── */
+.secaoPlanos {
+  padding: 3rem 0;
+}
+
+.secaoHeaderCentral {
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto 3rem;
+}
+
+.secaoHeaderCentral h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.secaoHeaderCentral p {
+  font-size: 1rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.gridPlanosOficiais {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.cardPlano {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.cardPlano:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.cardPlanoDestaque {
+  border-color: #0f4c81 !important;
+  box-shadow: 0 10px 15px -3px rgba(15, 76, 129, 0.15) !important;
+  background: #fdfefe;
+}
+
+.cardPlanoGratis {
+  background: #fcfdfe;
+}
+
+.badgePopular {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f4c81;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badgeGratis {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.cardPlanoTitulo {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+}
+
+.cardPlanoDescricao {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+  margin-bottom: 1.25rem;
+  min-height: 38px;
+}
+
+.cardPlanoCapacidadeBox {
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.capacidadeNumero {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.capacidadeTexto {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cardPlanoPrecoBox {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 0.25rem;
+}
+
+.precoSimbolo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f4c81;
+}
+
+.precoValor {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f4c81;
+}
+
+.precoPeriodo {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.precoSobConsulta {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f4c81;
+}
+
+.cardPlanoCustoUnitario {
+  font-size: 0.75rem;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 1.25rem;
+  align-self: center;
+}
+
+.listaRecursos {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+  font-size: 0.82rem;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.cardPlanoBtnWrapper {
+  margin-top: auto;
+}
+
+.btnCard {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── COMPARATIVO ── */
+.secaoComparativo {
+  padding: 3rem 0;
+}
+
+.tabelaWrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.tabelaComparativa {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.tabelaComparativa th {
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.tabelaComparativa td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+}
+
+.linhaDestacada {
+  background: #eff6ff;
+}
+
+.colCustoUnitario {
+  color: #0f172a;
+}
+
+.badgeCusto {
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.colEconomia {
+  font-weight: 600;
+  color: #2563eb;
+  font-size: 0.85rem;
+}
+
+/* ── VANTAGENS ── */
+.secaoVantagens {
+  padding: 3.5rem 0;
+}
+
+.gridVantagens {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.cardVantagem {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  transition: all 0.2s;
+}
+
+.cardVantagem:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+.iconeVantagem {
+  font-size: 2rem;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.cardVantagem h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+}
+
+.cardVantagem p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* ── FAQ ── */
+.secaoFaqPublico {
+  padding: 3.5rem 0;
+}
+
+.gridFaqPublico {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.faqCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+.faqCard h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.faqCard p {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* ── CTA FINAL ── */
+.ctaFinal {
+  padding: 3rem 0 1rem;
+}
+
+.cardCta {
+  background: linear-gradient(135deg, #0f4c81 0%, #1e3a8a 100%);
+  color: #ffffff;
+  border-radius: 1.75rem;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(15, 76, 129, 0.25);
+}
+
+.cardCta h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cardCta p {
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  max-width: 580px;
+  margin: 0 auto 2rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .heroTitulo {
+    font-size: 2rem;
+  }
+  .resultadoSimulador {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .resultadoPreco {
+    align-items: center;
+  }
+  .resultadoAcao {
+    margin-left: 0;
+  }
+  .resultadoAcao .btn {
+    width: 100%;
+  }
+  .gridFaqPublico {
+    grid-template-columns: 1fr;
+  }
+  .cardSimulador {
+    padding: 1.5rem;
+  }
+}

@@ -1,0 +1,482 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.25s ease-out;
+}
+
+.btnFechar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: #94a3b8;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btnFechar:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.cabecalho {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.iconeModal {
+  font-size: 2.2rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.titulo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.subtitulo {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.labelSecao {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.secaoPlanos {
+  margin-bottom: 1.5rem;
+}
+
+.gridPlanos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.6rem;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.cardPlanoItem {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.5rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardPlanoItem:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+.cardPlanoItemAtivo {
+  border-color: #0f4c81 !important;
+  background: #eff6ff !important;
+  box-shadow: 0 4px 6px -1px rgba(15, 76, 129, 0.1);
+}
+
+.cardPlanoItemAtual {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.cardPlanoItemDesabilitado {
+  opacity: 0.55;
+  background: #f1f5f9;
+}
+
+.cardPlanoTopo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.nomePlano {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.badgeAtual {
+  font-size: 0.6rem;
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.capacidadePlano {
+  font-size: 0.75rem;
+  color: #475569;
+  margin-bottom: 0.4rem;
+}
+
+.precoPlano {
+  font-size: 0.85rem;
+  color: #0f4c81;
+  font-weight: 700;
+}
+
+.precoPlano small {
+  font-size: 0.65rem;
+  color: #64748b;
+  font-weight: normal;
+}
+
+.custoUnitarioMini {
+  font-size: 0.65rem;
+  color: #15803d;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.resumoPlano {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resumoLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.resumoLinha strong {
+  color: #0f172a;
+}
+
+.valorDestaque {
+  font-size: 1.1rem !important;
+  color: #0f4c81 !important;
+}
+
+.alertaBloqueio {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #b45309;
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 1.25rem;
+}
+
+.alertaErro {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #dc2626;
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.secaoPagamento {
+  margin-bottom: 1.5rem;
+}
+
+.opcoesPagamento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.btnMetodo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  min-height: 54px;
+  transition: all 0.15s;
+}
+
+.btnMetodo:hover {
+  border-color: #cbd5e1;
+}
+
+.btnMetodoAtivo {
+  border-color: #0f4c81;
+  background: #eff6ff;
+}
+
+.iconeMetodo {
+  font-size: 1.3rem;
+}
+
+.btnMetodo strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.btnMetodo small {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.rodape {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.btnConfirmar {
+  width: 100%;
+  min-height: 48px;
+  background: #0f4c81;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnConfirmar:hover:not(:disabled) {
+  background: #0c3d68;
+}
+
+.btnConfirmar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnCancelar {
+  width: 100%;
+  min-height: 40px;
+  background: transparent;
+  color: #64748b;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btnCancelar:hover {
+  color: #0f172a;
+}
+
+.containerSucesso {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.iconeSucesso {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.containerSucesso h3 {
+  font-size: 1.3rem;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+/* Card Resumo do Plano Selecionado */
+.cardResumoPlano {
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  border: 2px solid #3b82f6;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.12);
+}
+
+.resumoTopo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.badgePlanoAlvo {
+  display: inline-block;
+  background: #3b82f6;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.resumoNome {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.resumoDesc {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.resumoPrecoBox {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.resumoValor {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1d4ed8;
+}
+
+.resumoPeriodo {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.valorSobConsulta {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.resumoBeneficios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dbeafe;
+}
+
+.beneficioItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.825rem;
+  color: #475569;
+}
+
+.beneficioItem strong {
+  color: #0f172a;
+  font-size: 0.9rem;
+}
+
+.btnTrocarPlano {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+
+.btnTrocarPlano:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(15px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 1.5rem 1rem;
+  }
+  .resumoTopo {
+    flex-direction: column;
+  }
+  .resumoPrecoBox {
+    text-align: left;
+  }
+  .gridPlanos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .opcoesPagamento {
+    grid-template-columns: 1fr;
+  }
+}

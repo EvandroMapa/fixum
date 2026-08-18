@@ -87,7 +87,7 @@
   cursor: pointer;
   box-shadow: var(--sombra-md);
   transition: all var(--transicao);
-  z-index: var(--z-dropdown);
+  z-index: 10;
   white-space: nowrap;
   animation: fadeIn 0.3s ease;
 }
@@ -97,6 +97,80 @@
   color: white;
   border-color: var(--cor-primaria);
   box-shadow: var(--sombra-lg);
+}
+
+/* Marcador da localização do usuário */
+.marcadorUsuario {
+  width: 22px;
+  height: 22px;
+  background: #2563eb;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
+  position: relative;
+  cursor: pointer;
+}
+
+.marcadorUsuario::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.35);
+  animation: pulsar 2s infinite ease-out;
+  pointer-events: none;
+}
+
+@keyframes pulsar {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Banner de localização distante no mapa */
+.bannerDistante {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  z-index: 20;
+  white-space: nowrap;
+  animation: slideDown 0.3s ease;
+}
+
+.btnVerTodosMapa {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btnVerTodosMapa:hover {
+  background: #1d4ed8;
+  transform: scale(1.03);
+}
+
+@keyframes slideDown {
+  from { transform: translate(-50%, -20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
 }
 
 /* Loading */

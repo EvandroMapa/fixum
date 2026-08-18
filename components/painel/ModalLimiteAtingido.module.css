@@ -1,0 +1,236 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  max-width: 520px;
+  width: 100%;
+  padding: 2rem 1.75rem;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: slideUp 0.25s ease-out;
+}
+
+.btnFechar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: #94a3b8;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btnFechar:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.iconeAlerta {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #eff6ff;
+  border: 2px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.titulo {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.descricao {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.cardComparativo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.infoPlanoAtual,
+.infoProximoPlano {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+}
+
+.infoPlanoAtual {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.infoProximoPlano {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.tagAtual {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.tagRecomendado {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 0.25rem;
+}
+
+.infoPlanoAtual h4,
+.infoProximoPlano h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0.2rem 0;
+}
+
+.infoPlanoAtual p,
+.infoProximoPlano p {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.4rem;
+}
+
+.precoAtual {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.precoProximo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.custoUnitario {
+  font-size: 0.75rem;
+  color: #15803d;
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+.setaUpgrade {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btnUpgrade {
+  width: 100%;
+  min-height: 48px;
+  background: #0f4c81;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnUpgrade:hover {
+  background: #0c3d68;
+  transform: translateY(-1px);
+}
+
+.btnSecundario {
+  width: 100%;
+  min-height: 44px;
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSecundario:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(15px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .cardComparativo {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .setaUpgrade {
+    transform: rotate(90deg);
+  }
+}

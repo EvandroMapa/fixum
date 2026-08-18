@@ -36,6 +36,16 @@
 .navLink   { color: rgba(255,255,255,0.85); }
 .navLink:hover { color: white; background: rgba(255,255,255,0.12); }
 .btnAnunciar { border-color: rgba(255,255,255,0.45); color: white; }
+.btnImobiliaria {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+.btnImobiliaria:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+}
 .burger, .burger::before, .burger::after { background: white; }
 
 /* Cores quando solido */
@@ -55,12 +65,25 @@
   box-shadow: 0 4px 16px rgba(26,86,219,0.35);
   transform: translateY(-1px);
 }
+.solido .btnImobiliaria {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1a56db;
+  box-shadow: 0 1px 3px rgba(26, 86, 219, 0.1);
+}
+.solido .btnImobiliaria:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+  transform: translateY(-1px);
+}
 .solido .burger,
 .solido .burger::before,
 .solido .burger::after { background: #334155; }
 
 /* ---- Layout interno ---- */
 .inner {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -114,11 +137,15 @@
   opacity: 1;
 }
 
-/* Nav */
+/* Nav - Centralizada perfeitamente no meio da tela */
 .nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 0;
+  white-space: nowrap;
 }
 
 /* Separador entre links */
@@ -182,6 +209,25 @@
   transition: all 0.2s;
   white-space: nowrap;
   transform: translateY(0);
+}
+
+.btnImobiliaria {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+@media (max-width: 990px) {
+  .btnImobiliaria {
+    display: none;
+  }
 }
 
 /* Burger */

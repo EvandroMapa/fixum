@@ -1,0 +1,580 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cabecalhoAba {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tituloPrincipal {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.subtituloPrincipal {
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+.btnUpgradePrincipal {
+  background: #0f4c81;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(15, 76, 129, 0.2);
+}
+
+.btnUpgradePrincipal:hover {
+  background: #0c3d68;
+  transform: translateY(-1px);
+}
+
+/* ── GRID STATUS PRINCIPAL ── */
+.gridStatus {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.5rem;
+}
+
+.cardStatusPrincipal {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.cardStatusTopo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.tagStatusPlano {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #0f4c81;
+  background: #eff6ff;
+  padding: 3px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 0.4rem;
+}
+
+.nomePlanoDestaque {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.precoPlanoDestaque {
+  text-align: right;
+}
+
+.valorPreco {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f4c81;
+}
+
+.periodoPreco {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.descricaoPlanoDestaque {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.secaoProgresso {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.progressoInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #334155;
+  margin-bottom: 0.6rem;
+}
+
+.porcentagemTexto {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.trilhaProgresso {
+  width: 100%;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.85rem;
+}
+
+.barraProgresso {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.estatisticasUso {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tagMiniStat {
+  font-size: 0.8rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 0.5rem;
+  color: #475569;
+}
+
+.avisoLimite {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #991b1b;
+}
+
+.cardProximoPlano {
+  background: linear-gradient(135deg, #0f4c81 0%, #1e3a8a 100%);
+  color: #ffffff;
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: 0 10px 15px -3px rgba(15, 76, 129, 0.2);
+}
+
+.badgeProximo {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 0.5rem;
+}
+
+.cardProximoPlano h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.descricaoProximo {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.precoProximoBox {
+  margin-bottom: 0.5rem;
+}
+
+.precoProximoValor {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.precoProximoPeriodo {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+}
+
+.custoEfetivoTag {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  color: #e2e8f0;
+}
+
+.btnContratarProximo {
+  width: 100%;
+  min-height: 44px;
+  background: #ffffff;
+  color: #0f4c81;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnContratarProximo:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+/* ── TABELA GERAL DE PLANOS ── */
+.secaoTodosPlanos {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 2rem;
+}
+
+.cabecalhoSecao {
+  margin-bottom: 1.5rem;
+}
+
+.cabecalhoSecao h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.cabecalhoSecao p {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.gridTodosPlanos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.cardTabelaPlano {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.cardTabelaPlano:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cardTabelaPlanoAtual {
+  border-color: #10b981 !important;
+  background: #f0fdf4 !important;
+}
+
+.cardTabelaPlanoProximo {
+  border-color: #0f4c81 !important;
+  background: #eff6ff !important;
+}
+
+.badgeCardAtual {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badgeCardRecomendado {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f4c81;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.cardPlanoNome {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.cardPlanoCapacidade {
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 0.75rem;
+}
+
+.cardPlanoPreco {
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+}
+
+.cifrao {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f4c81;
+}
+
+.valorGrande {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f4c81;
+}
+
+.mes {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.valorConsulta {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f4c81;
+}
+
+.custoUnitarioItem {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 0 auto 0.75rem;
+}
+
+.cardPlanoDesc {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.35;
+  margin-bottom: 1.25rem;
+  flex: 1;
+}
+
+.cardPlanoAcao {
+  margin-top: auto;
+}
+
+.btnPlanoAtual {
+  width: 100%;
+  min-height: 38px;
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: default;
+}
+
+.btnEscolherDestaque {
+  width: 100%;
+  min-height: 38px;
+  background: #0f4c81;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btnEscolherDestaque:hover {
+  background: #0c3d68;
+}
+
+.btnEscolherNormal {
+  width: 100%;
+  min-height: 38px;
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btnEscolherNormal:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* ── FATURAS ── */
+.secaoFaturas {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 2rem;
+}
+
+.vazioFaturas {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #94a3b8;
+}
+
+.vazioFaturas span {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.tabelaFaturasWrapper {
+  overflow-x: auto;
+}
+
+.tabelaFaturas {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.tabelaFaturas th {
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tabelaFaturas td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.formaPag {
+  font-weight: 600;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.status_pago {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status_pendente {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* ── FAQ ── */
+.secaoFaq {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 2rem;
+}
+
+.secaoFaq h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1.5rem;
+}
+
+.gridFaq {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.faqItem h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+}
+
+.faqItem p {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .gridStatus {
+    grid-template-columns: 1fr;
+  }
+  .gridFaq {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    gap: 1.5rem;
+  }
+  .cardStatusPrincipal,
+  .secaoTodosPlanos,
+  .secaoFaturas,
+  .secaoFaq {
+    padding: 1.25rem 1rem;
+  }
+  .gridTodosPlanos {
+    grid-template-columns: 1fr;
+  }
+}

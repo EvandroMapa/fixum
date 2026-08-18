@@ -1,9 +1,13 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import { Plano, Assinatura, UsoPlano, MetodoPagamento } from "@/lib/types"
+import { calcularUsoPlano, obterProximoPlano } from "@/lib/planos"
+import ModalLimiteAtingido from "@/components/painel/ModalLimiteAtingido"
+import ModalUpgradePlano from "@/components/painel/ModalUpgradePlano"
 import styles from "./page.module.css"
 
 // -- Tipos ------------------------------------------------------------------
@@ -79,6 +83,91 @@ export default function NovoImovelPage() {
   const supabase = createClient()
 
   const [buscandoCep, setBuscandoCep] = useState(false)
+  const [usuarioId, setUsuarioId] = useState("")
+  const [assinatura, setAssinatura] = useState<Assinatura | null>(null)
+  const [imoveisAtivosCount, setImoveisAtivosCount] = useState(0)
+
+  // Modais de Limite / Upgrade
+  const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
+  const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
+
+  useEffect(() => {
+    async function carregarPlanoUsuario() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      setUsuarioId(user.id)
+
+      // Contagem de imóveis ativos
+      const { count } = await supabase
+        .from('imoveis')
+        .select('*', { count: 'exact', head: true })
+        .eq('anunciante_id', user.id)
+        .in('status', ['publicado', 'ativo'])
+
+      setImoveisAtivosCount(count || 0)
+
+      // Assinatura
+      try {
+        const { data: assData } = await supabase
+          .from('assinaturas')
+          .select('*')
+          .eq('usuario_id', user.id)
+          .maybeSingle()
+
+        if (assData) {
+          setAssinatura(assData as Assinatura)
+        }
+      } catch (e) {
+        console.error("Erro ao carregar assinatura:", e)
+      }
+    }
+    carregarPlanoUsuario()
+  }, [supabase])
+
+  const usoPlano = calcularUsoPlano(
+    assinatura?.plano_id || 'gratis',
+    imoveisAtivosCount,
+    0,
+    assinatura || undefined
+  )
+
+  const proximoPlano = obterProximoPlano(usoPlano.plano.id)
+
+  async function handleAtualizarAssinatura(novoPlano: Plano, metodo: MetodoPagamento) {
+    if (!usuarioId) return
+    try {
+      const { data: assData } = await supabase
+        .from('assinaturas')
+        .upsert(
+          {
+            usuario_id: usuarioId,
+            plano_id: novoPlano.id,
+            status: 'ativo',
+            metodo_pagamento: metodo,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'usuario_id' }
+        )
+        .select()
+        .single()
+
+      if (assData) {
+        setAssinatura(assData as Assinatura)
+      } else {
+        setAssinatura({
+          id: 'local_' + novoPlano.id,
+          usuario_id: usuarioId,
+          plano_id: novoPlano.id,
+          status: 'ativo',
+          data_inicio: new Date().toISOString(),
+          metodo_pagamento: metodo,
+          created_at: new Date().toISOString(),
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   async function buscarCep(cepRaw: string) {
     const cep = cepRaw.replace(/\D/g, "")
@@ -195,7 +284,12 @@ export default function NovoImovelPage() {
     )
   }
 
-  async function salvar() {
+  async function salvar(statusDesejado: 'publicado' | 'pausado' = 'publicado') {
+    if (statusDesejado === 'publicado' && usoPlano.atingiuLimite) {
+      setModalLimiteAberto(true)
+      return
+    }
+
     setSalvando(true)
     setErro("")
     try {
@@ -228,7 +322,7 @@ export default function NovoImovelPage() {
           iptu: parseFloat(dados.iptu) || null,
           aceita_pets: dados.aceita_pets,
           mobiliado: dados.mobiliado,
-          status: "publicado",
+          status: statusDesejado,
           destaque: false,
         })
         .select()
@@ -296,12 +390,43 @@ export default function NovoImovelPage() {
         {ETAPAS.map((e) => (
           <div key={e.numero} className={`${styles.etapaItem} ${etapa >= e.numero ? styles.etapaAtiva : ""} ${etapa > e.numero ? styles.etapaConcluida : ""}`}>
             <div className={styles.etapaBolha}>
-              {etapa > e.numero ? "?" : e.numero}
+              {etapa > e.numero ? "✓" : e.numero}
             </div>
             <span className={styles.etapaLabel}>{e.label}</span>
           </div>
         ))}
       </div>
+
+      {/* Alerta de Limite do Plano */}
+      {usoPlano.atingiuLimite && (
+        <div style={{
+          maxWidth: '680px',
+          margin: '0 auto 1.5rem',
+          padding: '0.85rem 1.25rem',
+          background: '#fffbeb',
+          border: '1px solid #fef3c7',
+          borderRadius: '0.75rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1rem',
+          flexWrap: 'wrap'
+        }}>
+          <span style={{ fontSize: '0.85rem', color: '#b45309' }}>
+            ⚡ <strong>Plano {usoPlano.plano.nome}:</strong> Limite de {usoPlano.limiteMaximo} anúncio(s) ativo(s) atingido.
+          </span>
+          {proximoPlano && (
+            <button
+              type="button"
+              className="btn btn-primario btn-sm"
+              onClick={() => setModalUpgradeAberto(true)}
+              style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+            >
+              Upgrade para {proximoPlano.nome}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Conteúdo */}
       <main className={styles.main}>
@@ -346,136 +471,90 @@ export default function NovoImovelPage() {
           {/* -- Etapa 2: Dados Básicos -- */}
           {etapa === 2 && (
             <div className={styles.etapaConteudo}>
-              <h2 className={styles.etapaTitulo}>Dados do imóvel</h2>
-              <p className={styles.etapaSubtitulo}>Informações principais e localização</p>
+              <h2 className={styles.etapaTitulo}>Dados do Imóvel</h2>
+              <p className={styles.etapaSubtitulo}>Preço, título e localização</p>
 
               <div className={styles.grupo}>
                 <label className={styles.label}>Título do anúncio *</label>
                 <input
                   className={styles.input}
-                  placeholder="Título do anúncio"
+                  placeholder="Ex: Apartamento amplo com varanda no Centro"
                   value={dados.titulo}
                   onChange={(e) => atualizar("titulo", e.target.value)}
                   maxLength={100}
                 />
-                <span className={styles.contador}>{dados.titulo.length}/100</span>
               </div>
 
               <div className={styles.grupo}>
-                <label className={styles.label}>Preço *</label>
+                <label className={styles.label}>Preço (R$) *</label>
                 <input
                   className={styles.input}
-                  placeholder="Valor"
-                  value={dados.preco}
-                  onChange={(e) => atualizar("preco", formatarPreco(e.target.value))}
+                  placeholder="R$ 0"
+                  value={formatarPreco(dados.preco)}
+                  onChange={(e) => atualizar("preco", e.target.value)}
                 />
               </div>
 
-              {/* CEP com auto-preenchimento via ViaCEP */}
               <div className={styles.grupo}>
                 <label className={styles.label}>CEP</label>
-                <div style={{ position: "relative" }}>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
                   <input
                     className={styles.input}
                     placeholder="00000-000"
                     value={dados.cep}
-                    autoComplete="postal-code"
-                    maxLength={9}
                     onChange={(e) => {
-                      const v = e.target.value.replace(/\D/g, "").replace(/(\d{5})(\d)/, "$1-$2")
-                      atualizar("cep", v)
-                      buscarCep(v)
+                      atualizar("cep", e.target.value)
+                      if (e.target.value.replace(/\D/g, "").length === 8) {
+                        buscarCep(e.target.value)
+                      }
                     }}
+                    maxLength={9}
                   />
-                  {buscandoCep && (
-                    <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#64748b" }}>
-                      Buscando...
-                    </span>
-                  )}
+                  {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.85rem", color: "#64748b" }}>Buscando...</span>}
                 </div>
               </div>
 
-              <div className={styles.grupo}>
-                <label className={styles.label}>Logradouro</label>
-                <input
-                  className={styles.input}
-                  placeholder="Rua, Avenida..."
-                  value={dados.endereco}
-                  autoComplete="street-address"
-                  onChange={(e) => atualizar("endereco", e.target.value)}
-                />
-              </div>
-
-              <div className={styles.linha2}>
-                <div className={styles.grupo}>
-                  <label className={styles.label}>Numero</label>
-                  <input
-                    className={styles.input}
-                    placeholder="123"
-                    value={dados.numero}
-                    autoComplete="off"
-                    onChange={(e) => atualizar("numero", e.target.value)}
-                  />
-                </div>
-                <div className={styles.grupo}>
-                  <label className={styles.label}>Complemento <span style={{fontWeight:400,color:"#94a3b8"}}>(opcional)</span></label>
-                  <input
-                    className={styles.input}
-                    placeholder="Apto 42, Bloco B..."
-                    value={dados.complemento}
-                    autoComplete="off"
-                    onChange={(e) => atualizar("complemento", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.linha2}>
-                <div className={styles.grupo}>
-                  <label className={styles.label}>Bairro</label>
-                  <input
-                    className={styles.input}
-                    placeholder="Bairro"
-                    value={dados.bairro}
-                    autoComplete="off"
-                    onChange={(e) => atualizar("bairro", e.target.value)}
-                  />
-                </div>
+              <div className={styles.grid2}>
                 <div className={styles.grupo}>
                   <label className={styles.label}>Cidade *</label>
                   <input
                     className={styles.input}
-                    placeholder="Cidade"
+                    placeholder="Ex: Itabirito"
                     value={dados.cidade}
-                    autoComplete="address-level2"
                     onChange={(e) => atualizar("cidade", e.target.value)}
+                  />
+                </div>
+                <div className={styles.grupo}>
+                  <label className={styles.label}>Estado (UF) *</label>
+                  <input
+                    className={styles.input}
+                    placeholder="Ex: MG"
+                    value={dados.estado}
+                    onChange={(e) => atualizar("estado", e.target.value.toUpperCase())}
+                    maxLength={2}
                   />
                 </div>
               </div>
 
-              <div className={styles.grupo}>
-                <label className={styles.label}>Estado *</label>
-                <select
-                  className={styles.input}
-                  value={dados.estado}
-                  autoComplete="address-level1"
-                  onChange={(e) => atualizar("estado", e.target.value)}
-                >
-                  <option value="">Selecione</option>
-                  {["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"].map(uf => (
-                    <option key={uf} value={uf}>{uf}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={styles.grupo}>
-                <label className={styles.label}>Descricao</label>
-                <textarea
-                  className={`${styles.input} ${styles.textarea}`}
-                  placeholder="Descreva o imovel"
-                  value={dados.descricao}
-                  onChange={(e) => atualizar("descricao", e.target.value)}
-                  rows={3}
-                />
+              <div className={styles.grid2}>
+                <div className={styles.grupo}>
+                  <label className={styles.label}>Bairro</label>
+                  <input
+                    className={styles.input}
+                    placeholder="Ex: Centro"
+                    value={dados.bairro}
+                    onChange={(e) => atualizar("bairro", e.target.value)}
+                  />
+                </div>
+                <div className={styles.grupo}>
+                  <label className={styles.label}>Endereço (Rua, Av)</label>
+                  <input
+                    className={styles.input}
+                    placeholder="Ex: Rua Principal"
+                    value={dados.endereco}
+                    onChange={(e) => atualizar("endereco", e.target.value)}
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -483,48 +562,64 @@ export default function NovoImovelPage() {
           {/* -- Etapa 3: Detalhes -- */}
           {etapa === 3 && (
             <div className={styles.etapaConteudo}>
-              <h2 className={styles.etapaTitulo}>Detalhes e características</h2>
-              <p className={styles.etapaSubtitulo}>Quanto mais detalhes, mais fácil de encontrar</p>
+              <h2 className={styles.etapaTitulo}>Detalhes e Medidas</h2>
+              <p className={styles.etapaSubtitulo}>Informe dimensões e cômodos</p>
 
-              <div className={styles.linha3}>
+              <div className={styles.grid2}>
                 <div className={styles.grupo}>
-                  <label className={styles.label}>Área (m²) *</label>
-                  <input className={styles.input} type="number" placeholder="m²" value={dados.area} onChange={(e) => atualizar("area", e.target.value)} />
+                  <label className={styles.label}>Área total (m²) *</label>
+                  <input
+                    type="number"
+                    className={styles.input}
+                    placeholder="Ex: 85"
+                    value={dados.area}
+                    onChange={(e) => atualizar("area", e.target.value)}
+                  />
                 </div>
                 <div className={styles.grupo}>
                   <label className={styles.label}>Quartos</label>
-                  <input className={styles.input} type="number" placeholder="Qtd" min="0" max="20" value={dados.quartos} onChange={(e) => atualizar("quartos", e.target.value)} />
+                  <input
+                    type="number"
+                    className={styles.input}
+                    placeholder="Ex: 3"
+                    value={dados.quartos}
+                    onChange={(e) => atualizar("quartos", e.target.value)}
+                  />
                 </div>
+              </div>
+
+              <div className={styles.grid2}>
                 <div className={styles.grupo}>
                   <label className={styles.label}>Banheiros</label>
-                  <input className={styles.input} type="number" placeholder="Qtd" min="0" max="20" value={dados.banheiros} onChange={(e) => atualizar("banheiros", e.target.value)} />
+                  <input
+                    type="number"
+                    className={styles.input}
+                    placeholder="Ex: 2"
+                    value={dados.banheiros}
+                    onChange={(e) => atualizar("banheiros", e.target.value)}
+                  />
+                </div>
+                <div className={styles.grupo}>
+                  <label className={styles.label}>Vagas na garagem</label>
+                  <input
+                    type="number"
+                    className={styles.input}
+                    placeholder="Ex: 1"
+                    value={dados.vagas}
+                    onChange={(e) => atualizar("vagas", e.target.value)}
+                  />
                 </div>
               </div>
 
-              <div className={styles.linha3}>
-                <div className={styles.grupo}>
-                  <label className={styles.label}>Vagas</label>
-                  <input className={styles.input} type="number" placeholder="Qtd" min="0" max="20" value={dados.vagas} onChange={(e) => atualizar("vagas", e.target.value)} />
-                </div>
-                <div className={styles.grupo}>
-                  <label className={styles.label}>Condomínio (R$)</label>
-                  <input className={styles.input} type="number" placeholder="R$" value={dados.condominio} onChange={(e) => atualizar("condominio", e.target.value)} />
-                </div>
-                <div className={styles.grupo}>
-                  <label className={styles.label}>IPTU (R$/ano)</label>
-                  <input className={styles.input} type="number" placeholder="R$/ano" value={dados.iptu} onChange={(e) => atualizar("iptu", e.target.value)} />
-                </div>
-              </div>
-
-              <div className={styles.checkboxGrupo}>
-                <label className={styles.checkboxItem}>
-                  <input type="checkbox" checked={dados.aceita_pets} onChange={(e) => atualizar("aceita_pets", e.target.checked)} />
-                  <span>{"\uD83D\uDC3E"} Aceita pets</span>
-                </label>
-                <label className={styles.checkboxItem}>
-                  <input type="checkbox" checked={dados.mobiliado} onChange={(e) => atualizar("mobiliado", e.target.checked)} />
-                  <span>{"\uD83D\uDECB\uFE0F"} Mobiliado</span>
-                </label>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Descrição completa</label>
+                <textarea
+                  className={styles.textarea}
+                  rows={4}
+                  placeholder="Conte os diferenciais do imóvel, acabamentos, infraestrutura..."
+                  value={dados.descricao}
+                  onChange={(e) => atualizar("descricao", e.target.value)}
+                />
               </div>
             </div>
           )}
@@ -532,64 +627,46 @@ export default function NovoImovelPage() {
           {/* Etapa 4: Fotos */}
           {etapa === 4 && (
             <div className={styles.etapaConteudo}>
-              <h2 className={styles.etapaTitulo}>Fotos do imovel</h2>
-              <p className={styles.etapaSubtitulo}>Clique em uma foto para defini-la como capa do anuncio</p>
+              <h2 className={styles.etapaTitulo}>Fotos do Imóvel</h2>
+              <p className={styles.etapaSubtitulo}>Adicione fotos de alta qualidade para atrair mais clientes</p>
 
-              <div
-                className={styles.dropzone}
+              <input
+                ref={inputFotoRef}
+                type="file"
+                multiple
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => adicionarFotos(e.target.files)}
+              />
+
+              <button
+                type="button"
+                className={styles.btnUpload}
                 onClick={() => inputFotoRef.current?.click()}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  adicionarFotos(e.dataTransfer.files)
-                }}
               >
-                <span className={styles.dropzoneIcone}>{"\uD83D\uDCF7"}</span>
-                <p>Clique ou arraste fotos aqui</p>
-                <span className={styles.dropzoneHint}>JPG, PNG ou WEBP — Maximo 10MB cada</span>
-                <input
-                  ref={inputFotoRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  style={{ display: "none" }}
-                  onChange={(e) => adicionarFotos(e.target.files)}
-                />
-              </div>
+                <span>📸</span>
+                <span>Selecionar fotos do dispositivo</span>
+              </button>
 
               {fotos.length > 0 && (
-                <>
-                  <p style={{ fontSize: 12, color: "#64748b", margin: "12px 0 8px" }}>
-                    {fotos.length} foto{fotos.length !== 1 ? "s" : ""} adicionada{fotos.length !== 1 ? "s" : ""} — clique para definir a capa
-                  </p>
-                  <div className={styles.gridFotos}>
-                    {fotos.map((foto, idx) => (
-                      <div
-                        key={idx}
-                        className={`${styles.fotoItem} ${foto.principal ? styles.fotoPrincipal : ""}`}
-                        onClick={() => definirPrincipal(idx)}
-                        style={{ cursor: "pointer" }}
-                        title={foto.principal ? "Foto de capa" : "Clique para definir como capa"}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={foto.preview} alt={`Foto ${idx + 1}`} className={styles.fotoPreview} />
-                        {foto.principal && (
-                          <span className={styles.fotoBadge}>? Capa</span>
-                        )}
-                        {!foto.principal && (
-                          <div className={styles.fotoOverlay}>
-                            <span>Definir capa</span>
-                          </div>
-                        )}
-                        <button
-                          className={styles.fotoBtnRemover}
-                          onClick={(e) => { e.stopPropagation(); removerFoto(idx) }}
-                          title="Remover"
-                        >?</button>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                <div className={styles.gridFotos}>
+                  {fotos.map((foto, idx) => (
+                    <div key={idx} className={`${styles.fotoCard} ${foto.principal ? styles.fotoCapa : ""}`}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={foto.preview} alt={`Foto ${idx + 1}`} />
+                      {!foto.principal && (
+                        <div className={styles.btnDefinirCapa} onClick={() => definirPrincipal(idx)}>
+                          <span>Definir capa</span>
+                        </div>
+                      )}
+                      <button
+                        className={styles.fotoBtnRemover}
+                        onClick={(e) => { e.stopPropagation(); removerFoto(idx) }}
+                        title="Remover"
+                      >✕</button>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}
@@ -600,38 +677,25 @@ export default function NovoImovelPage() {
               <h2 className={styles.etapaTitulo}>Revise e publique</h2>
               <p className={styles.etapaSubtitulo}>Confira os dados antes de publicar</p>
 
-              {/* Preview das fotos */}
-              {fotos.length > 0 && (
-                <div className={styles.revisaoFotos}>
-                  {fotos.map((foto, idx) => (
-                    <div key={idx} className={`${styles.revisaoFotoItem} ${foto.principal ? styles.revisaoFotoCapa : ""}`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={foto.preview} alt={`Foto ${idx + 1}`} />
-                      {foto.principal && <span className={styles.revisaoFotoBadge}>Capa</span>}
-                    </div>
-                  ))}
-                </div>
-              )}
-
               <div className={styles.revisaoCard}>
                 <div className={styles.revisaoLinha}>
                   <span>Tipo</span>
                   <strong>{dados.tipo} · {dados.negociacao}</strong>
                 </div>
                 <div className={styles.revisaoLinha}>
-                  <span>Titulo</span>
+                  <span>Título</span>
                   <strong>{dados.titulo}</strong>
                 </div>
                 <div className={styles.revisaoLinha}>
-                  <span>Preco</span>
-                  <strong className={styles.revisaoPreco}>{dados.preco}</strong>
+                  <span>Preço</span>
+                  <strong className={styles.revisaoPreco}>{formatarPreco(dados.preco)}</strong>
                 </div>
                 <div className={styles.revisaoLinha}>
-                  <span>Localizacao</span>
+                  <span>Localização</span>
                   <strong>{dados.cidade} - {dados.estado}</strong>
                 </div>
                 <div className={styles.revisaoLinha}>
-                  <span>Area</span>
+                  <span>Área</span>
                   <strong>{dados.area} m²</strong>
                 </div>
                 {dados.quartos && (
@@ -646,6 +710,22 @@ export default function NovoImovelPage() {
                 </div>
               </div>
 
+              {usoPlano.atingiuLimite && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #fee2e2',
+                  borderRadius: '0.75rem',
+                  padding: '1rem',
+                  marginTop: '1rem',
+                  fontSize: '0.9rem',
+                  color: '#991b1b',
+                  lineHeight: '1.4'
+                }}>
+                  <strong>Atenção:</strong> Seu plano atual ({usoPlano.plano.nome}) já atingiu o limite de {usoPlano.limiteMaximo} imóvel(is) ativo(s).
+                  Você pode <strong>fazer o upgrade</strong> para publicar agora ou <strong>salvar como pausado</strong> e ativar posteriormente.
+                </div>
+              )}
+
               {erro && <p className={styles.erro}>{erro}</p>}
             </div>
           )}
@@ -655,7 +735,7 @@ export default function NovoImovelPage() {
           <div className={styles.navegacao}>
             {etapa > 1 ? (
               <button className={styles.btnVoltar2} onClick={voltar}>
-                {"\u2190"} Voltar
+                ← Voltar
               </button>
             ) : (
               <div />
@@ -667,20 +747,64 @@ export default function NovoImovelPage() {
                 onClick={avancar}
                 disabled={!podeAvancar()}
               >
-                Avançar ?
+                Avançar →
               </button>
             ) : (
-              <button
-                className={`${styles.btnPublicar} ${salvando ? styles.btnCarregando : ""}`}
-                onClick={salvar}
-                disabled={salvando}
-              >
-                {salvando ? "Publicando..." : "\uD83C\uDFE0 Publicar imóvel"}
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {usoPlano.atingiuLimite ? (
+                  <>
+                    <button
+                      className="btn btn-outline"
+                      onClick={() => salvar('pausado')}
+                      disabled={salvando}
+                      style={{ minHeight: '44px' }}
+                    >
+                      {salvando ? "Salvando..." : "⏸️ Salvar como Pausado"}
+                    </button>
+                    <button
+                      className="btn btn-primario"
+                      onClick={() => setModalLimiteAberto(true)}
+                      disabled={salvando}
+                      style={{ minHeight: '44px' }}
+                    >
+                      🚀 Fazer Upgrade para Publicar
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className={`${styles.btnPublicar} ${salvando ? styles.btnCarregando : ""}`}
+                    onClick={() => salvar('publicado')}
+                    disabled={salvando}
+                  >
+                    {salvando ? "Publicando..." : "🏡 Publicar imóvel"}
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>
       </main>
+
+      {/* Modal Limite Atingido */}
+      <ModalLimiteAtingido
+        aberto={modalLimiteAberto}
+        onFechar={() => setModalLimiteAberto(false)}
+        planoAtual={usoPlano.plano}
+        proximoPlano={proximoPlano}
+        imoveisAtivos={usoPlano.imoveisAtivos}
+        onFazerUpgrade={() => setModalUpgradeAberto(true)}
+        acaoTentada="novo_imovel"
+      />
+
+      {/* Modal Upgrade */}
+      <ModalUpgradePlano
+        aberto={modalUpgradeAberto}
+        onFechar={() => setModalUpgradeAberto(false)}
+        planoAtual={usoPlano.plano}
+        planoSugerido={proximoPlano}
+        imoveisAtivos={usoPlano.imoveisAtivos}
+        onConfirmarPlano={handleAtualizarAssinatura}
+      />
     </div>
   )
 }

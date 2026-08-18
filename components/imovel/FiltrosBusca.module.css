@@ -42,8 +42,9 @@
 .autocompleteContainer {
   display: flex;
   align-items: center;
-  flex: 1;
-  min-width: 0;
+  flex: 0 1 340px;
+  min-width: 220px;
+  max-width: 380px;
 }
 
 /* Badge de modo Desktop (Compra / Aluguel) */
@@ -178,7 +179,8 @@
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-lg);
   box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.1);
-  min-width: 560px;
+  width: 680px;
+  max-width: calc(100vw - 32px);
   z-index: 9999;
   animation: fadeIn 0.15s ease;
   display: flex;
@@ -193,32 +195,28 @@
 }
 
 .dropdownTresColunas {
-  display: flex;
-  align-items: flex-start;
-  gap: 0;
-  padding: var(--espaco-4);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 18px 20px;
 }
 
 .grupoWrapperItem {
-  display: contents;
+  display: flex;
+  flex-direction: column;
 }
 
 .colunaGrupo {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
 .divisorVertical {
-  width: 1px;
-  background: var(--cor-borda);
-  align-self: stretch;
-  margin: 0 12px;
-  flex-shrink: 0;
+  display: none;
 }
 
 .dropdownGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
 }
 

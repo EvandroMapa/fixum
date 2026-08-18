@@ -151,3 +151,75 @@ export interface FiltrosBusca {
   bairro?: string
   caracteristicas?: string[]
 }
+
+// ── MONETIZAÇÃO E PLANOS ──────────────────────────────────────────
+export type SlugPlano =
+  | 'gratis'
+  | 'inicial'
+  | 'basico'
+  | 'profissional'
+  | 'profissional_plus'
+  | 'avancado'
+  | 'imobiliaria'
+  | 'imobiliaria_plus'
+  | 'enterprise'
+  | 'enterprise_plus'
+
+export type StatusAssinatura = 'ativo' | 'pendente' | 'cancelado' | 'atrasado'
+export type MetodoPagamento = 'pix' | 'cartao' | 'gratis'
+export type StatusFatura = 'pago' | 'pendente' | 'falhou' | 'reembolsado'
+
+export interface Plano {
+  id: SlugPlano
+  nome: string
+  descricao: string
+  limite_imoveis_min: number
+  limite_imoveis_max: number // ex: 1, 2, 3, 10, 20, 50, 100, 200, 500, 99999
+  preco_mensal: number
+  preco_anual?: number
+  custo_unitario_max: number
+  destaque_incluso: boolean
+  ordem: number
+  ativo: boolean
+}
+
+export interface Assinatura {
+  id: string
+  usuario_id: string
+  plano_id: SlugPlano
+  status: StatusAssinatura
+  data_inicio: string
+  data_fim_ciclo?: string
+  cancelado_em?: string
+  metodo_pagamento: MetodoPagamento
+  created_at: string
+  updated_at?: string
+  plano?: Plano
+}
+
+export interface Fatura {
+  id: string
+  assinatura_id?: string
+  usuario_id: string
+  valor: number
+  status: StatusFatura
+  metodo_pagamento: MetodoPagamento
+  data_vencimento?: string
+  data_pagamento?: string
+  comprovante_url?: string
+  created_at: string
+}
+
+export interface UsoPlano {
+  plano: Plano
+  assinatura?: Assinatura
+  imoveisAtivos: number
+  imoveisPausados: number
+  totalImoveis: number
+  limiteMaximo: number
+  porcentagemUso: number
+  atingiuLimite: boolean
+  podePublicarMais: boolean
+  vagasRestantes: number
+}
+

@@ -77,11 +77,21 @@ export default function Header() {
             <Link href="/explorar?negociacao=venda" className={styles.navLink}>🏠 Comprar</Link>
             <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>🔑 Alugar</Link>
             <Link href="/explorar" className={styles.navLink}>🗺️ Explorar</Link>
+            <Link href="/planos" className={styles.navLink}>💳 Planos</Link>
           </nav>
         )}
 
         {/* Acoes */}
         <div className={styles.acoes}>
+          <Link
+            href="/para-imobiliarias"
+            className={styles.btnImobiliaria}
+            title="Conheça nossos planos corporativos para imobiliárias e redes"
+          >
+            <span>🏢</span>
+            <span>Para Imobiliárias</span>
+          </Link>
+
           <Link
             href={usuario ? '/painel/novo-imovel' : '/login?next=/painel/novo-imovel'}
             className={styles.btnAnunciar}
@@ -106,6 +116,9 @@ export default function Header() {
                   <Link href="/painel" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
                     🏠 Meu Painel
                   </Link>
+                  <Link href="/painel?aba=plano" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
+                    💳 Meu Plano
+                  </Link>
                   <Link href="/painel/favoritos" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
                     ❤️ Favoritos
                   </Link>
@@ -117,7 +130,45 @@ export default function Header() {
               )}
             </div>
           ) : (
-            <Link href="/login" className="btn btn-primario btn-sm">Entrar</Link>
+            /* Dropdown de Entrada Rápida */
+            <div className={styles.avatarWrap} ref={dropdownRef}>
+              <button
+                type="button"
+                className="btn btn-primario btn-sm"
+                onClick={() => setDropdownAberto(!dropdownAberto)}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              >
+                <span>Entrar</span>
+                <span style={{ fontSize: '0.65rem' }}>▼</span>
+              </button>
+              {dropdownAberto && (
+                <div className={styles.dropdown} style={{ minWidth: '240px' }}>
+                  <Link
+                    href="/login?tipo=usuario"
+                    className={styles.dropdownItem}
+                    onClick={() => setDropdownAberto(false)}
+                  >
+                    <span>👤</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#0f172a' }}>Minha Conta</div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Buscar imóveis e favoritos</div>
+                    </div>
+                  </Link>
+                  <Link
+                    href="/login?tipo=imobiliaria"
+                    className={styles.dropdownItem}
+                    onClick={() => setDropdownAberto(false)}
+                    style={{ background: '#f8fafc', marginTop: '4px', borderRadius: '8px' }}
+                  >
+                    <span>🏢</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#1d4ed8' }}>Painel Imobiliário</div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Imobiliárias & Corretores</div>
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </div>
           )}
 
           <button className={styles.menuBurger} onClick={() => setMenuAberto(!menuAberto)} aria-label="Menu">
@@ -132,8 +183,16 @@ export default function Header() {
           <Link href="/explorar?negociacao=venda" onClick={() => setMenuAberto(false)}>Comprar</Link>
           <Link href="/explorar?negociacao=aluguel" onClick={() => setMenuAberto(false)}>Alugar</Link>
           <Link href="/explorar" onClick={() => setMenuAberto(false)}>Explorar pelo Mapa</Link>
-          <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imovel</Link>
-          <Link href="/login" onClick={() => setMenuAberto(false)}>Entrar</Link>
+          <Link href="/planos" onClick={() => setMenuAberto(false)}>Planos Individuais</Link>
+          <Link href="/para-imobiliarias" onClick={() => setMenuAberto(false)} style={{ color: '#0f4c81', fontWeight: 700 }}>
+            🏢 Para Imobiliárias & Redes
+          </Link>
+          <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imóvel</Link>
+          <hr style={{ margin: '8px 0', borderColor: '#f1f5f9' }} />
+          <Link href="/login?tipo=usuario" onClick={() => setMenuAberto(false)}>👤 Entrar como Usuário</Link>
+          <Link href="/login?tipo=imobiliaria" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
+            🏢 Painel da Imobiliária
+          </Link>
           <Link href="/cadastro" onClick={() => setMenuAberto(false)}>Criar Conta</Link>
         </div>
       )}

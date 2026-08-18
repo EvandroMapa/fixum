@@ -17,6 +17,8 @@ interface Props {
   onPesquisarNaArea?: (bounds: mapboxgl.LngLatBounds, isInteracaoUsuario?: boolean) => void
   centroInicial?: [number, number]
   voarPara?: [number, number] | null // [lng, lat] — recebido do autocomplete
+  cidadeFiltro?: string
+  isOrigemGps?: boolean
 }
 
 function precoLabel(preco: number): string {
@@ -28,6 +30,20 @@ function precoLabel(preco: number): string {
   }).format(preco)
 }
 
+function calcularDistanciaKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLon = ((lon2 - lon1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return R * c
+}
+
 export default function MapaExplorar({
   imoveis,
   imovelHover,
@@ -37,13 +53,17 @@ export default function MapaExplorar({
   onPesquisarNaArea,
   centroInicial,
   voarPara,
+  cidadeFiltro,
+  isOrigemGps,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapaRef = useRef<mapboxgl.Map | null>(null)
+  const marcadorUsuarioRef = useRef<mapboxgl.Marker | null>(null)
   const marcadoresMapRef = useRef<Map<string, { marcador: mapboxgl.Marker; popup: mapboxgl.Popup; inner: HTMLElement; btnHeart: HTMLButtonElement }>>(new Map())
   const [mapaPronto, setMapaPronto] = useState(false)
-  // Ignora o primeiro moveend (disparo do carregamento inicial do mapa)
-  const primeiroMovimentoRef = useRef(false)
+  const [mostrarBannerDistante, setMostrarBannerDistante] = useState(false)
+  const fitInicialExecutadoRef = useRef(false)
+
   // Ref para evitar stale closure no listener do moveend
   const onPesquisarRef = useRef(onPesquisarNaArea)
   useEffect(() => { onPesquisarRef.current = onPesquisarNaArea }, [onPesquisarNaArea])
@@ -56,7 +76,7 @@ export default function MapaExplorar({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
       center: centroInicial ?? [-47.9292, -15.7801], // Brasil (Brasília) como fallback
-      zoom: centroInicial ? 13 : 4,                  // Cidade → zoom 13 | Brasil → zoom 4
+      zoom: centroInicial ? 12 : 4,                  // Cidade → zoom 12 | Brasil → zoom 4
       attributionControl: false,
     })
 
@@ -66,19 +86,96 @@ export default function MapaExplorar({
     mapa.on('load', () => setMapaPronto(true))
 
     mapa.on('moveend', (e) => {
-      if (!primeiroMovimentoRef.current) {
-        primeiroMovimentoRef.current = true
-        return // pula o primeiro moveend (posicionamento inicial)
-      }
+      // SÓ pesquisa automaticamente se o movimento veio de arrasto/scroll manual do usuário
       const isInteracaoUsuario = Boolean((e as unknown as { originalEvent?: unknown }).originalEvent)
-      // Usa ref para garantir sempre o callback mais recente (evita stale closure)
-      onPesquisarRef.current?.(mapa.getBounds()!, isInteracaoUsuario)
+      if (isInteracaoUsuario) {
+        onPesquisarRef.current?.(mapa.getBounds()!, true)
+      }
     })
 
     mapaRef.current = mapa
     return () => { mapa.remove(); mapaRef.current = null }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Gerenciar marcador da localização do usuário
+  useEffect(() => {
+    if (!mapaPronto || !mapaRef.current) return
+
+    if (marcadorUsuarioRef.current) {
+      marcadorUsuarioRef.current.remove()
+      marcadorUsuarioRef.current = null
+    }
+
+    if (centroInicial) {
+      const el = document.createElement('div')
+      el.className = styles.marcadorUsuario
+      el.title = 'Sua localização atual'
+
+      const popup = new mapboxgl.Popup({ offset: 12, closeButton: false }).setText('📍 Você está aqui')
+
+      marcadorUsuarioRef.current = new mapboxgl.Marker({ element: el })
+        .setLngLat(centroInicial)
+        .setPopup(popup)
+        .addTo(mapaRef.current)
+    }
+  }, [centroInicial, mapaPronto])
+
+  // Verificar proximidade dos imóveis apenas uma vez na montagem
+  useEffect(() => {
+    if (!centroInicial || !mapaPronto || fitInicialExecutadoRef.current) {
+      return
+    }
+
+    const [userLng, userLat] = centroInicial
+    const imoveisValidos = imoveis.filter((i) => i.latitude && i.longitude)
+
+    fitInicialExecutadoRef.current = true
+
+    if (cidadeFiltro) {
+      // Se há um filtro explícito de cidade: nunca mostra o banner de outras cidades
+      setMostrarBannerDistante(false)
+      if (imoveisValidos.length > 0 && mapaRef.current) {
+        const bounds = new mapboxgl.LngLatBounds()
+        imoveisValidos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
+        mapaRef.current.fitBounds(bounds, { padding: 70, duration: 1000, maxZoom: 14 })
+      }
+      return
+    }
+
+    if (isOrigemGps && imoveisValidos.length > 0) {
+      const imoveisProximos = imoveisValidos.filter(
+        (i) => calcularDistanciaKm(userLat, userLng, i.latitude!, i.longitude!) <= 50
+      )
+
+      if (imoveisProximos.length === 0) {
+        setMostrarBannerDistante(true)
+      } else {
+        setMostrarBannerDistante(false)
+        if (mapaRef.current) {
+          const bounds = new mapboxgl.LngLatBounds()
+          bounds.extend(centroInicial)
+          imoveisProximos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
+          mapaRef.current.fitBounds(bounds, { padding: 70, duration: 1000, maxZoom: 14 })
+        }
+      }
+    }
+  }, [centroInicial, imoveis, mapaPronto, cidadeFiltro, isOrigemGps])
+
+  function handleEnquadrarTodosImoveis() {
+    if (!mapaRef.current || imoveis.length === 0) return
+    const bounds = new mapboxgl.LngLatBounds()
+    if (centroInicial) {
+      bounds.extend(centroInicial)
+    }
+    imoveis.forEach((i) => {
+      if (i.latitude && i.longitude) {
+        bounds.extend([i.longitude, i.latitude])
+      }
+    })
+    mapaRef.current.fitBounds(bounds, { padding: 80, duration: 1500, maxZoom: 14 })
+    setMostrarBannerDistante(false)
+  }
 
   // Voar para coordenadas quando o usuário seleciona uma sugestão do autocomplete
   useEffect(() => {
@@ -358,6 +455,20 @@ export default function MapaExplorar({
   return (
     <div className={styles.wrapper}>
       <div ref={containerRef} className={styles.mapa} />
+
+      {mostrarBannerDistante && (
+        <div className={styles.bannerDistante}>
+          <span>📍 Imóveis disponíveis em outras cidades</span>
+          <button
+            type="button"
+            className={styles.btnVerTodosMapa}
+            onClick={handleEnquadrarTodosImoveis}
+          >
+            Ver {imoveis.length} {imoveis.length === 1 ? 'imóvel' : 'imóveis'} no mapa
+          </button>
+        </div>
+      )}
+
       {!mapaPronto && (
         <div className={styles.loading}>
           <div className={styles.loadingSpinner} />
