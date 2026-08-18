@@ -14,6 +14,7 @@ import AbaCorretores from '@/components/painel/AbaCorretores'
 import ModalLimiteAtingido from '@/components/painel/ModalLimiteAtingido'
 import ModalUpgradePlano from '@/components/painel/ModalUpgradePlano'
 import ModalConfigSeguranca from '@/components/painel/ModalConfigSeguranca'
+import ModalNovoImovel from '@/components/painel/ModalNovoImovel'
 import styles from './page.module.css'
 
 type Aba = 'dashboard' | 'imoveis' | 'leads' | 'corretores' | 'plano'
@@ -46,12 +47,19 @@ function PainelConteudo() {
   const [listaCorretoresFiltro, setListaCorretoresFiltro] = useState<{ id: string; nome: string }[]>([])
 
   // Estados de Modais
+  const [modalNovoImovelAberto, setModalNovoImovelAberto] = useState(false)
   const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
   const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
   const [modalSegurancaAberto, setModalSegurancaAberto] = useState(false)
   const [planoAlvoUpgrade, setPlanoAlvoUpgrade] = useState<Plano | null>(null)
 
   const supabase = createClient()
+
+  useEffect(() => {
+    if (searchParams.get('novo') === '1') {
+      setModalNovoImovelAberto(true)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     if (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'plano'].includes(abaParam)) {
@@ -69,116 +77,117 @@ function PainelConteudo() {
     router.replace(`/painel?aba=${novaAba}`)
   }
 
-  useEffect(() => {
-    async function carregar() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { window.location.href = '/login'; return }
-      setUsuarioId(user.id)
-      setUsuarioEmail(user.email ?? '')
+  async function carregarDados() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { window.location.href = '/login'; return }
+    setUsuarioId(user.id)
+    setUsuarioEmail(user.email ?? '')
 
-      const { data: perfil } = await supabase
+    const { data: perfil } = await supabase
+      .from('perfis')
+      .select('id, nome, tipo, telefone, creci')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
+    const meta = user.user_metadata || {}
+    const metaTipo = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
+    const imobId = meta.imobiliaria_id || null
+
+    if ((!perfil || !perfil.tipo) && metaTipo) {
+      const nomeFinal = perfil?.nome || meta.full_name || meta.name || meta.nome || user.email?.split('@')[0] || 'Imobiliária'
+      await supabase.from('perfis').upsert({
+        id: user.id,
+        nome: nomeFinal,
+        email: user.email!,
+        tipo: metaTipo,
+        telefone: meta.telefone || null,
+      })
+      setUsuarioNome(nomeFinal)
+      setIsImobiliaria(metaTipo === 'imobiliaria')
+      setIsCorretor(metaTipo === 'corretor' || !!imobId)
+    } else if (!perfil || !perfil.tipo) {
+      window.location.href = '/completar-perfil'
+      return
+    } else {
+      setUsuarioNome(perfil?.nome ?? 'Usuário')
+    }
+
+    const tipoFinal = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
+    const ehImob = tipoFinal === 'imobiliaria'
+    const ehCorretor = tipoFinal === 'corretor' || !!imobId
+
+    setIsImobiliaria(ehImob)
+    setIsCorretor(ehCorretor)
+
+    if (imobId) {
+      const { data: imobData } = await supabase
         .from('perfis')
-        .select('id, nome, tipo, telefone, creci')
-        .eq('id', user.id)
+        .select('id, nome')
+        .eq('id', imobId)
         .maybeSingle()
+      if (imobData) {
+        setImobiliariaDona(imobData)
+      }
+    }
 
-      const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
-      const meta = user.user_metadata || {}
-      const metaTipo = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
-      const imobId = meta.imobiliaria_id || null
+    // ── CARREGAMENTO DE IMÓVEIS, LEADS E EQUIPE VIA API SEGURA ──
+    try {
+      const resPainel = await fetch(`/api/painel/imoveis?usuario_id=${user.id}`)
+      const jsonPainel = await resPainel.json()
+      if (jsonPainel?.imoveis) {
+        setImoveis(jsonPainel.imoveis)
+        setLeads(jsonPainel.leads || [])
+        setNomesAnunciantes(jsonPainel.mapaNomes || {})
+        setListaCorretoresFiltro(jsonPainel.listaCorretores || [])
+      }
+    } catch (err) {
+      console.error('Erro ao buscar dados do painel:', err)
+    }
 
-      if ((!perfil || !perfil.tipo) && metaTipo) {
-        const nomeFinal = perfil?.nome || meta.full_name || meta.name || meta.nome || user.email?.split('@')[0] || 'Imobiliária'
-        await supabase.from('perfis').upsert({
-          id: user.id,
-          nome: nomeFinal,
-          email: user.email!,
-          tipo: metaTipo,
-          telefone: meta.telefone || null,
+    // ── CARREGAMENTO DE ASSINATURA E COTA VIA API SEGURA ──
+    try {
+      const resCota = await fetch(`/api/painel/cota?usuario_id=${user.id}`)
+      const jsonCota = await resCota.json()
+      if (jsonCota?.assinatura) {
+        setAssinatura(jsonCota.assinatura)
+      } else if (jsonCota?.plano?.id) {
+        setAssinatura({
+          id: 'cota_' + jsonCota.plano.id,
+          usuario_id: imobId || user.id,
+          plano_id: jsonCota.plano.id,
+          status: 'ativo',
+          data_inicio: new Date().toISOString(),
+          metodo_pagamento: 'pix',
+          created_at: new Date().toISOString(),
         })
-        setUsuarioNome(nomeFinal)
-        setIsImobiliaria(metaTipo === 'imobiliaria')
-        setIsCorretor(metaTipo === 'corretor' || !!imobId)
-      } else if (!perfil || !perfil.tipo) {
-        window.location.href = '/completar-perfil'
-        return
-      } else {
-        setUsuarioNome(perfil?.nome ?? 'Usuário')
       }
+    } catch (e) {
+      console.error('Erro ao buscar cota e assinatura:', e)
+    }
 
-      const tipoFinal = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
-      const ehImob = tipoFinal === 'imobiliaria'
-      const ehCorretor = tipoFinal === 'corretor' || !!imobId
-
-      setIsImobiliaria(ehImob)
-      setIsCorretor(ehCorretor)
-
-      if (imobId) {
-        const { data: imobData } = await supabase
-          .from('perfis')
-          .select('id, nome')
-          .eq('id', imobId)
-          .maybeSingle()
-        if (imobData) {
-          setImobiliariaDona(imobData)
-        }
-      }
-
-      // ── CARREGAMENTO DE IMÓVEIS, LEADS E EQUIPE VIA API SEGURA ──
+    // ── CARREGAMENTO DE FATURAS (Apenas para Imobiliária / Dono da conta) ──
+    if (ehImob) {
       try {
-        const resPainel = await fetch(`/api/painel/imoveis?usuario_id=${user.id}`)
-        const jsonPainel = await resPainel.json()
-        if (jsonPainel?.imoveis) {
-          setImoveis(jsonPainel.imoveis)
-          setLeads(jsonPainel.leads || [])
-          setNomesAnunciantes(jsonPainel.mapaNomes || {})
-          setListaCorretoresFiltro(jsonPainel.listaCorretores || [])
+        const { data: faturasData } = await supabase
+          .from('faturas')
+          .select('*')
+          .eq('usuario_id', user.id)
+          .order('created_at', { ascending: false })
+        if (faturasData) {
+          setFaturas(faturasData as Fatura[])
         }
       } catch (err) {
-        console.error('Erro ao buscar dados do painel:', err)
+        console.error('Erro ao buscar faturas:', err)
       }
-
-      // ── CARREGAMENTO DE ASSINATURA E COTA VIA API SEGURA ──
-      try {
-        const resCota = await fetch(`/api/painel/cota?usuario_id=${user.id}`)
-        const jsonCota = await resCota.json()
-        if (jsonCota?.assinatura) {
-          setAssinatura(jsonCota.assinatura)
-        } else if (jsonCota?.plano?.id) {
-          setAssinatura({
-            id: 'cota_' + jsonCota.plano.id,
-            usuario_id: imobId || user.id,
-            plano_id: jsonCota.plano.id,
-            status: 'ativo',
-            data_inicio: new Date().toISOString(),
-            metodo_pagamento: 'pix',
-            created_at: new Date().toISOString(),
-          })
-        }
-      } catch (e) {
-        console.error('Erro ao buscar cota e assinatura:', e)
-      }
-
-      // ── CARREGAMENTO DE FATURAS (Apenas para Imobiliária / Dono da conta) ──
-      if (ehImob) {
-        try {
-          const { data: faturasData } = await supabase
-            .from('faturas')
-            .select('*')
-            .eq('usuario_id', user.id)
-            .order('created_at', { ascending: false })
-          if (faturasData) {
-            setFaturas(faturasData as Fatura[])
-          }
-        } catch (e) {
-          console.error('Erro ao buscar faturas:', e)
-        }
-      }
-
-      setCarregando(false)
     }
-    carregar()
-  }, [supabase])
+
+    setCarregando(false)
+  }
+
+  useEffect(() => {
+    carregarDados()
+  }, [])
 
   const stats = {
     total: imoveis.length,
@@ -389,9 +398,14 @@ function PainelConteudo() {
           </a>
 
           {/* Botão Novo Imóvel */}
-          <Link href="/painel/novo-imovel" className="btn btn-primario btn-sm" style={{ fontWeight: 700 }}>
+          <button
+            type="button"
+            onClick={() => setModalNovoImovelAberto(true)}
+            className="btn btn-primario btn-sm"
+            style={{ fontWeight: 700, cursor: 'pointer' }}
+          >
             + Novo Imóvel
-          </Link>
+          </button>
 
           {/* Botão Sair */}
           <button
@@ -542,9 +556,14 @@ function PainelConteudo() {
                   <span>🏡</span>
                   <h3>Você ainda não tem imóveis cadastrados</h3>
                   <p>Comece anunciando seu primeiro imóvel. É rápido e gratuito!</p>
-                  <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
+                  <button
+                    type="button"
+                    onClick={() => setModalNovoImovelAberto(true)}
+                    className="btn btn-primario btn-lg"
+                    style={{ cursor: 'pointer' }}
+                  >
                     Anunciar meu primeiro imóvel
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -907,6 +926,13 @@ function PainelConteudo() {
           aberto={modalSegurancaAberto}
           onFechar={() => setModalSegurancaAberto(false)}
           usuarioEmail={usuarioEmail}
+        />
+
+        {/* Modal de Cadastro de Novo Imóvel (com Workspace visível atrás) */}
+        <ModalNovoImovel
+          isOpen={modalNovoImovelAberto}
+          onClose={() => setModalNovoImovelAberto(false)}
+          onImovelCriado={() => carregarDados()}
         />
       </div>
     </div>

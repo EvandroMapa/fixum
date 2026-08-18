@@ -7,11 +7,12 @@
 }
 
 /* ── Header ── */
+/* ── Header Ultra Compacto ── */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
+  padding: 8px 20px;
   background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -21,7 +22,7 @@
 }
 
 .headerTitulo {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   color: white;
   letter-spacing: -0.01em;
@@ -30,16 +31,16 @@
 .btnVoltar {
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 5px 12px;
+  border-radius: 6px;
   transition: all 0.2s;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.08);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .btnVoltar:hover {
@@ -51,16 +52,16 @@
 .voltar {
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 5px 12px;
+  border-radius: 6px;
   transition: all 0.2s;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.08);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   cursor: pointer;
 }
 
@@ -75,30 +76,30 @@
   align-items: center;
   justify-content: center;
   gap: 0;
-  padding: 10px 16px;
+  padding: 6px 16px;
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .etapaItem {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   position: relative;
   cursor: default;
 }
 
 .etapaBolha {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: #f1f5f9;
   border: 1.5px solid #cbd5e1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: #64748b;
   transition: all 0.2s ease;
@@ -106,7 +107,7 @@
 }
 
 .etapaLabel {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
   color: #64748b;
   transition: all 0.2s ease;
@@ -116,7 +117,7 @@
   background: #2563eb;
   border-color: #2563eb;
   color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
   transform: scale(1.05);
 }
 
@@ -136,10 +137,10 @@
 }
 
 .etapaLinha {
-  width: 24px;
+  width: 20px;
   height: 2px;
   background: #e2e8f0;
-  margin: 0 6px;
+  margin: 0 4px;
   border-radius: 999px;
   transition: all 0.2s ease;
 }
@@ -153,22 +154,22 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  padding: 12px 14px 40px;
+  padding: 6px 12px 14px;
 }
 
 .card {
   background: white;
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 660px;
+  max-width: 680px;
   overflow: hidden;
 }
 
 /* ── Card da etapa ── */
 .etapaConteudo {
-  padding: 18px 22px 14px;
+  padding: 12px 18px 8px;
 }
 
 .etapaTitulo {
@@ -181,15 +182,15 @@
 .etapaSubtitulo {
   font-size: 0.78rem;
   color: #64748b;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-/* ── Tipos de Imóvel Compactos (5 colunas, sem scroll) ── */
+/* ── Tipos de Imóvel Equilibrados e Confortáveis ── */
 .gridTipos {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .tipoCard {
@@ -197,14 +198,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 6px 3px;
+  gap: 3px;
+  padding: 6px 4px;
   border: 1.5px solid #e2e8f0;
   border-radius: 8px;
   background: #ffffff;
   cursor: pointer;
-  transition: all 0.12s ease;
-  min-height: 52px;
+  transition: all 0.15s ease;
+  min-height: 54px;
 }
 
 .tipoCard:hover {
@@ -216,27 +217,24 @@
 .tipoSelecionado {
   border-color: #2563eb !important;
   background: #eff6ff !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 .tipoIcone {
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   line-height: 1;
 }
 
 .tipoLabel {
-  font-size: 9.5px;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: #1e293b;
   text-align: center;
   line-height: 1.1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 100%;
 }
 
-/* ── Botões de Negociação Compactos ── */
+/* ── Botões de Negociação ── */
 .btnGroup {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -248,11 +246,117 @@
   border: 1.5px solid #e2e8f0;
   border-radius: 6px;
   background: #f8fafc;
+  font-size: 0.84rem;
+  font-weight: 600;
   color: #475569;
-  font-size: 0.8rem;
-  font-weight: 700;
   cursor: pointer;
   transition: all 0.12s ease;
+}
+
+/* ── Revisão e Publicação (Etapa 5) ── */
+.revisaoCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 4px 14px;
+  margin-bottom: 6px;
+}
+
+.revisaoLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.revisaoLinha:last-child {
+  border-bottom: none;
+}
+
+.revisaoLinha strong {
+  color: #0f172a;
+}
+
+.revisaoPreco {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #2563eb !important;
+}
+
+/* ── Barra de Navegação Inferior ── */
+.navegacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 18px;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.btnAvancar {
+  background: #2563eb;
+  color: #ffffff;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnAvancar:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.btnDesabilitado {
+  background: #94a3b8 !important;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnVoltar2 {
+  background: transparent;
+  color: #64748b;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnVoltar2:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.btnPublicar {
+  background: #2563eb;
+  color: #ffffff;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btnPublicar:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.btnCarregando {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .btnOpcao:hover {
@@ -320,6 +424,24 @@
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.7fr;
+  gap: 8px;
+}
+
+.gridTituloPreco {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 8px;
+}
+
+.gridEnderecoBairro {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
   gap: 8px;
 }
 
