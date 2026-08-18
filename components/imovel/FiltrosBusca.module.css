@@ -1,4 +1,12 @@
-.wrapper {
+.wrapperPrincipal {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.linhaBusca {
   display: flex;
   align-items: center;
   gap: var(--espaco-2);
@@ -12,8 +20,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--cor-fundo-alt);
   border: 1.5px solid var(--cor-borda);
@@ -30,43 +38,16 @@
   transform: translateX(-2px);
 }
 
-.wrapper::-webkit-scrollbar {
-  height: 0;
-}
-
-/* Campo cidade */
-.campoCidade {
+/* Container do Autocomplete */
+.autocompleteContainer {
   display: flex;
   align-items: center;
-  gap: var(--espaco-2);
-  background: var(--cor-fundo-alt);
-  border: 1.5px solid var(--cor-borda);
-  border-radius: var(--raio-sm);
-  padding: 7px 12px;
-  min-width: 200px;
-  transition: all var(--transicao);
+  flex: 1;
+  min-width: 0;
 }
 
-.campoCidade:focus-within {
-  border-color: var(--cor-primaria);
-  background: white;
-}
-
-.inputCidade {
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: var(--texto-sm);
-  color: var(--cor-texto);
-  width: 100%;
-}
-
-.inputCidade::placeholder {
-  color: var(--cor-texto-placeholder);
-}
-
-/* Badge de modo (Compra / Aluguel) */
-.badgeModo {
+/* Badge de modo Desktop (Compra / Aluguel) */
+.badgeModoDesktop {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -81,7 +62,7 @@
   letter-spacing: 0.01em;
 }
 
-.badgeModo:hover {
+.badgeModoDesktop:hover {
   opacity: 0.8;
 }
 
@@ -97,142 +78,100 @@
   border: 1.5px solid #fdba74;
 }
 
-/* Botões de filtro */
-.grupoFiltro {
-  display: flex;
-  gap: 2px;
-  background: var(--cor-fundo-alt);
-  border-radius: var(--raio-sm);
-  padding: 3px;
-  flex-shrink: 0;
-  border: 1px solid var(--cor-borda);
-}
-
-/* Divisor visual na barra */
-.divisorPill {
-  display: block;
-  width: 1px;
-  height: 20px;
-  background: var(--cor-borda);
-  flex-shrink: 0;
-}
-
-/* Pills de categoria */
-.pillCategoria {
-  display: flex;
+/* Botão Filtros Gerais Mobile */
+.btnFiltrosMobile {
+  display: none;
   align-items: center;
-  gap: 5px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: white;
   border: 1.5px solid var(--cor-borda);
-  background: transparent;
-  color: var(--cor-texto-secundario);
-  cursor: pointer;
-  transition: all 0.18s;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.pillCategoria:hover {
-  background: var(--cor-fundo-alt);
   color: var(--cor-texto);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.15s;
 }
 
-/* Pill ativo — base */
-.pillAtivo {
-  border-width: 1.5px;
+.btnFiltrosMobile:active {
+  transform: scale(0.95);
+  background: #f1f5f9;
 }
 
-/* Residencial ativo — azul */
-.pillResidencial {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  color: #1d4ed8;
-}
-
-/* Comercial ativo — laranja */
-.pillComercial {
-  background: #fff7ed;
-  border-color: #f97316;
-  color: #c2410c;
-}
-
-/* Rural ativo — verde */
-.pillRural {
-  background: #f0fdf4;
-  border-color: #22c55e;
-  color: #15803d;
-}
-
-/* Pill com dropdown aberto */
-.pillAberta {
-  background: var(--cor-fundo-alt);
+.btnFiltrosMobileAtivo {
   border-color: var(--cor-primaria);
   color: var(--cor-primaria);
+  background: var(--cor-primaria-claro);
 }
 
-/* × de remoção dentro da pill */
-.pillX {
-  font-size: 0.9rem;
-  opacity: 0.7;
-  line-height: 1;
+.badgeQtdFiltros {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--cor-primaria);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+/* Filtros Desktop */
+.filtrosDesktop {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  flex-shrink: 0;
+}
+
+.filtroRelativo {
+  position: relative;
+  flex-shrink: 0;
 }
 
 .btnFiltro {
   display: flex;
   align-items: center;
   gap: var(--espaco-1);
-  padding: 6px 14px;
-  border-radius: var(--raio-xs);
+  padding: 7px 14px;
+  border-radius: var(--raio-sm);
   font-size: var(--texto-xs);
   font-weight: 600;
   color: var(--cor-texto-secundario);
-  background: transparent;
+  background: var(--cor-fundo-alt);
+  border: 1px solid var(--cor-borda);
   cursor: pointer;
   transition: all var(--transicao);
-  border: none;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .btnFiltro:hover {
-  background: white;
-  color: var(--cor-texto);
-}
-
-.ativo {
-  background: var(--cor-primaria) !important;
-  color: white !important;
-  box-shadow: var(--sombra-xs);
-}
-
-.setinha {
-  font-size: 0.6rem;
-  opacity: 0.6;
-}
-
-/* Filtro relativo (dropdown) */
-.filtroRelativo {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.filtroRelativo > .btnFiltro {
-  background: var(--cor-fundo-alt);
-  border: 1px solid var(--cor-borda);
-  border-radius: var(--raio-sm);
-  padding: 7px 14px;
-}
-
-.filtroRelativo > .btnFiltro:hover {
   border-color: var(--cor-primaria);
   background: var(--cor-primaria-claro);
   color: var(--cor-primaria);
 }
 
-/* Dropdown */
+.ativo {
+  background: var(--cor-primaria) !important;
+  color: white !important;
+  border-color: var(--cor-primaria) !important;
+  box-shadow: var(--sombra-xs);
+}
+
+.setinha {
+  font-size: 0.65rem;
+  opacity: 0.7;
+}
+
+/* Dropdown Desktop */
 .dropdown {
   position: fixed;
   background: white;
@@ -246,7 +185,6 @@
   flex-direction: column;
 }
 
-/* Rodapé fixo com botão Aplicar */
 .dropdownFooter {
   padding: var(--espaco-3) var(--espaco-4);
   border-top: 1px solid var(--cor-borda);
@@ -254,7 +192,6 @@
   flex-shrink: 0;
 }
 
-/* Layout 3 colunas: uma por categoria */
 .dropdownTresColunas {
   display: flex;
   align-items: flex-start;
@@ -262,13 +199,15 @@
   padding: var(--espaco-4);
 }
 
-/* Coluna individual de grupo */
+.grupoWrapperItem {
+  display: contents;
+}
+
 .colunaGrupo {
   flex: 1;
   min-width: 0;
 }
 
-/* Divisor vertical entre colunas */
 .divisorVertical {
   width: 1px;
   background: var(--cor-borda);
@@ -277,20 +216,12 @@
   flex-shrink: 0;
 }
 
-/* Grid dentro de cada coluna — 2 sub-colunas */
 .dropdownGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  margin-bottom: 0;
 }
 
-/* Rural — 1 coluna só */
-.dropdownGridUma {
-  grid-template-columns: 1fr;
-}
-
-/* Cabeçalho do grupo com título e botão 'Marcar todos' */
 .headerGrupo {
   display: flex;
   align-items: center;
@@ -299,7 +230,6 @@
   margin-bottom: 10px;
 }
 
-/* Tarja de grupo de tipos */
 .labelGrupo {
   display: inline-block;
   font-size: 10px;
@@ -308,13 +238,10 @@
   text-transform: uppercase;
   padding: 3px 10px;
   border-radius: 99px;
-  margin-bottom: 0;
-  /* cor default — sobrescrita por variante */
   background: #eff6ff;
   color: #1d4ed8;
 }
 
-/* Botão toggle 'Marcar todos' por categoria */
 .btnToggleTodos {
   font-size: 11px;
   font-weight: 600;
@@ -334,7 +261,6 @@
   border-color: #cbd5e1;
 }
 
-/* Residencial — azul */
 .grupoResidencial .labelGrupo {
   background: #eff6ff;
   color: #1d4ed8;
@@ -346,7 +272,6 @@
   border-color: #93c5fd;
 }
 
-/* Comercial — laranja */
 .grupoComercial .labelGrupo {
   background: #fff7ed;
   color: #c2410c;
@@ -358,7 +283,6 @@
   border-color: #fdba74;
 }
 
-/* Rural — verde */
 .grupoRural .labelGrupo {
   background: #f0fdf4;
   color: #15803d;
@@ -368,13 +292,6 @@
   background: #dcfce7;
   color: #15803d;
   border-color: #86efac;
-}
-
-/* Divisor entre grupos */
-.divisorGrupo {
-  border: none;
-  border-top: 1px solid var(--cor-borda);
-  margin: 12px 0 10px;
 }
 
 .chipTipo {
@@ -411,6 +328,7 @@
   flex-direction: column;
   gap: var(--espaco-3);
   margin-bottom: var(--espaco-4);
+  padding: var(--espaco-3) var(--espaco-4) 0;
 }
 
 .campoPreco {
@@ -430,6 +348,7 @@
   display: flex;
   gap: var(--espaco-2);
   margin-bottom: var(--espaco-4);
+  padding: var(--espaco-3) var(--espaco-4) 0;
 }
 
 .chipQuarto {
@@ -451,7 +370,6 @@
   color: var(--cor-primaria);
 }
 
-/* Botão Fechar */
 .btnAplicar {
   width: 100%;
   padding: 10px;
@@ -469,7 +387,7 @@
   background: var(--cor-primaria-hover);
 }
 
-/* Limpar */
+/* Limpar Desktop */
 .btnLimpar {
   padding: 7px 14px;
   border: 1.5px solid var(--cor-borda);
@@ -489,9 +407,329 @@
   border-color: var(--cor-erro);
 }
 
-/* Overlay */
 .overlay {
   position: fixed;
   inset: 0;
   z-index: calc(var(--z-dropdown) - 1);
 }
+
+/* ── LINHA 2 MOBILE CHIPS ── */
+.linhaChipsMobile {
+  display: none;
+}
+
+/* ── ESTILOS ESPECÍFICOS DO DRAWER MOBILE ── */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 10001;
+  display: flex;
+  align-items: flex-end;
+  animation: fadeIn 0.2s ease;
+}
+
+.drawerContainer {
+  width: 100%;
+  max-height: 85vh;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  z-index: 10002;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.drawerHandle {
+  width: 40px;
+  height: 4px;
+  background: #cbd5e1;
+  border-radius: 2px;
+  margin: 10px auto 4px;
+  flex-shrink: 0;
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.drawerTitulo {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.drawerBtnFechar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.drawerCorpo {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.drawerSecao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drawerSecaoTitulo {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.drawerToggleNegociacao {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btnToggleNeg {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.btnToggleNegAtivo {
+  background: #1565c0;
+  color: white;
+  border-color: #1565c0;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
+}
+
+.drawerFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px 18px;
+  border-top: 1px solid #f1f5f9;
+  background: white;
+  flex-shrink: 0;
+}
+
+.drawerBtnLimpar {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.drawerBtnAplicar {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  background: #1565c0;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+  transition: all 0.15s;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── REGRAS RESPONSIVAS MOBILE (< 768px) ── */
+@media (max-width: 768px) {
+  .wrapperPrincipal {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .linhaBusca {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .btnVoltar {
+    width: 38px;
+    height: 38px;
+  }
+
+  .badgeModoDesktop {
+    display: none;
+  }
+
+  .filtrosDesktop {
+    display: none;
+  }
+
+  .btnFiltrosMobile {
+    display: flex;
+  }
+
+  .linhaChipsMobile {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 2px 2px;
+  }
+
+  .linhaChipsMobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chipMobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 12.5px;
+    font-weight: 600;
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    color: #334155;
+    white-space: nowrap;
+    flex-shrink: 0;
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .chipMobile:active {
+    transform: scale(0.96);
+  }
+
+  .chipCompra {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    font-weight: 700;
+  }
+
+  .chipAluguel {
+    background: #fff7ed;
+    color: #c2410c;
+    border-color: #fed7aa;
+    font-weight: 700;
+  }
+
+  .chipTrocaModo {
+    font-size: 13px;
+    opacity: 0.7;
+  }
+
+  .chipMobileAtivo {
+    background: #1565c0 !important;
+    color: white !important;
+    border-color: #1565c0 !important;
+  }
+
+  .chipLimparMobile {
+    padding: 5px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    cursor: pointer;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Drawer interno mobile */
+  .dropdownTresColunas {
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+  }
+
+  .divisorVertical {
+    display: none;
+  }
+
+  .grupoWrapperItem {
+    display: block;
+  }
+
+  .colunaGrupo {
+    width: 100%;
+  }
+
+  .dropdownGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .chipTipo {
+    padding: 9px 12px;
+    font-size: 12.5px;
+    justify-content: center;
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  .dropdownPreco, .dropdownQuartos {
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  .chipQuarto {
+    padding: 12px 0;
+    font-size: 15px;
+  }
+}
+

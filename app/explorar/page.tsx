@@ -176,10 +176,10 @@ function ExplorarConteudo() {
         <div className={`${styles.lista} ${vistaAtiva === 'mapa' ? styles.listaOculta : ''}`}>
           <div className={styles.listaHeader}>
             {carregando ? (
-              <span className={styles.carregando}>Buscando imoveis...</span>
+              <span className={styles.carregando}>Buscando imóveis...</span>
             ) : (
               <span className={styles.resultados}>
-                <strong>{totalResultados}</strong> imovel{totalResultados !== 1 ? 'is' : ''} encontrado{totalResultados !== 1 ? 's' : ''}
+                <strong>{totalResultados}</strong> {totalResultados === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
                 {filtros.cidade && ` em ${filtros.cidade}`}
               </span>
             )}
@@ -194,8 +194,8 @@ function ExplorarConteudo() {
           ) : imoveis.length === 0 ? (
             <div className={styles.semResultados}>
               <span>{"\uD83D\uDDFA\uFE0F"}</span>
-              <h3>Nenhum imovel encontrado</h3>
-              <p>Tente ajustar os filtros ou clique em "Pesquisar nesta area" no mapa</p>
+              <h3>Nenhum imóvel encontrado</h3>
+              <p>Tente ajustar os filtros ou clique em "Pesquisar nesta área" no mapa</p>
             </div>
           ) : (
             <div className={styles.grid}>
@@ -226,6 +226,26 @@ function ExplorarConteudo() {
           />
         </div>
       </div>
+
+      {/* Botão Flutuante Mobile: Alternar Lista / Mapa */}
+      <button
+        type="button"
+        className={styles.btnFlutuanteMobile}
+        onClick={() => setVistaAtiva(vistaAtiva === 'lista' ? 'mapa' : 'lista')}
+        aria-label={vistaAtiva === 'lista' ? 'Ver no mapa' : 'Ver lista de imóveis'}
+      >
+        {vistaAtiva === 'lista' ? (
+          <>
+            <span className={styles.iconeFlutuante}>🗺️</span>
+            <span>Ver no Mapa</span>
+          </>
+        ) : (
+          <>
+            <span className={styles.iconeFlutuante}>📋</span>
+            <span>Ver Lista</span>
+          </>
+        )}
+      </button>
     </div>
   )
 }

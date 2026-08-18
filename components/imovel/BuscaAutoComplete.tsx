@@ -47,10 +47,17 @@ export default function BuscaAutoComplete({
   const atualizarPosicao = useCallback(() => {
     if (!wrapperRef.current) return
     const rect = wrapperRef.current.getBoundingClientRect()
+    const screenW = window.innerWidth
+    const isMobile = screenW < 768
+    const width = isMobile ? Math.min(rect.width, screenW - 24) : Math.max(rect.width, 280)
+    const left = isMobile
+      ? Math.max(12, Math.min(rect.left, screenW - width - 12))
+      : rect.left + window.scrollX
+
     setDropdownPos({
       top: rect.bottom + window.scrollY + 6,
-      left: rect.left + window.scrollX,
-      width: Math.max(rect.width, 280),
+      left,
+      width,
     })
   }, [])
 

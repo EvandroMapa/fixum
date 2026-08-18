@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { type Imovel } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel } from '@/lib/utils'
@@ -20,18 +20,20 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
   const fotos = imovel.fotos ?? []
   const [fotoAtiva, setFotoAtiva] = useState(0)
   const [hovering, setHovering] = useState(false)
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
 
   const fotoAtual = fotos[fotoAtiva]?.url ?? null
 
-  const irAnterior = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const irAnterior = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    e?.preventDefault()
     setFotoAtiva(i => (i - 1 + fotos.length) % fotos.length)
   }, [fotos.length])
 
-  const irProxima = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const irProxima = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    e?.preventDefault()
     setFotoAtiva(i => (i + 1) % fotos.length)
   }, [fotos.length])
 
@@ -40,6 +42,28 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
     e.preventDefault()
     setFotoAtiva(idx)
   }, [])
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX
+    touchEndX.current = null
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return
+    const diff = touchStartX.current - touchEndX.current
+    const minSwipeDistance = 35
+    if (diff > minSwipeDistance) {
+      irProxima()
+    } else if (diff < -minSwipeDistance) {
+      irAnterior()
+    }
+    touchStartX.current = null
+    touchEndX.current = null
+  }
 
   const handleMouseEnter = () => {
     setHovering(true)
@@ -59,7 +83,12 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
       onClick={() => onSelecionar?.(imovel.id)}
     >
       {/* ── CARROSSEL DE FOTOS ── */}
-      <div className={styles.fotoWrapper}>
+      <div
+        className={styles.fotoWrapper}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <div className={styles.foto}>
           {fotoAtual ? (
             <img

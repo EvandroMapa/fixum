@@ -247,6 +247,7 @@
 .menuMobile a:hover { background: #eff6ff; color: #1565c0; }
 
 @media (max-width: 768px) {
+  .inner { padding: 0 16px; }
   .nav { display: none; }
   .menuBurger { display: flex; }
   .btnAnunciar { display: none; }

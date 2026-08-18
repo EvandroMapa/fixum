@@ -273,3 +273,22 @@
   box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
   transform: translateY(-1px);
 }
+
+@media (max-width: 768px) {
+  .foto {
+    height: 190px;
+  }
+  .info {
+    padding: 12px 14px 14px;
+    gap: 8px;
+  }
+  .preco {
+    font-size: 1.25rem;
+  }
+  .btnVisualizar {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+    min-height: 42px;
+  }
+}

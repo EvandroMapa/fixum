@@ -1,8 +1,8 @@
 .wrapper {
   position: relative;
   flex: 1;
-  min-width: 180px;
-  max-width: 360px;
+  min-width: 0;
+  width: 100%;
 }
 
 .inputWrapper {
