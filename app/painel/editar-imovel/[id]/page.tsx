@@ -40,12 +40,25 @@ interface FotoPreview {
 }
 
 const TIPOS = [
-  { valor: "apartamento", icone: "\uD83C\uDFE2", label: "Apartamento" },
-  { valor: "casa", icone: "\uD83C\uDFE0", label: "Casa" },
-  { valor: "terreno", icone: "\uD83C\uDF33", label: "Terreno" },
-  { valor: "comercial", icone: "\uD83C\uDFEA", label: "Comercial" },
-  { valor: "rural", icone: "\uD83C\uDF3E", label: "Rural" },
-  { valor: "cobertura", icone: "\uD83C\uDFD9\uFE0F", label: "Cobertura" },
+  { valor: "apartamento", icone: "🏢", label: "Apartamento" },
+  { valor: "casa", icone: "🏠", label: "Casa" },
+  { valor: "sobrado", icone: "🏡", label: "Sobrado" },
+  { valor: "casa_condominio", icone: "🏘️", label: "Casa em Condomínio" },
+  { valor: "cobertura", icone: "🌇", label: "Cobertura" },
+  { valor: "kitnet", icone: "🛏️", label: "Kitnet / Studio" },
+  { valor: "flat", icone: "🏨", label: "Flat" },
+  { valor: "lote", icone: "📐", label: "Lote" },
+  { valor: "comercial", icone: "📁", label: "Sala Comercial" },
+  { valor: "loja", icone: "🏪", label: "Loja / Ponto" },
+  { valor: "galpao", icone: "🏭", label: "Galpão" },
+  { valor: "predio_comercial", icone: "🏬", label: "Prédio Comercial" },
+  { valor: "garagem", icone: "🚗", label: "Garagem" },
+  { valor: "terreno_comercial", icone: "🏗️", label: "Terreno" },
+  { valor: "sitio", icone: "🌿", label: "Sítio" },
+  { valor: "chacara", icone: "🌳", label: "Chácara" },
+  { valor: "fazenda", icone: "🌾", label: "Fazenda" },
+  { valor: "rancho", icone: "🐄", label: "Rancho" },
+  { valor: "outro", icone: "🏷️", label: "Outro" },
 ]
 
 export default function EditarImovelPage({ params }: { params: Promise<{ id: string }> }) {
@@ -129,17 +142,48 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
         return
       }
 
-      const { data: imovel, error } = await supabase
-        .from("imoveis")
-        .select("*, fotos_imovel(id, url, principal, ordem)")
-        .eq("id", id)
-        .single()
+      try {
+        const { data: imovel, error } = await supabase
+          .from("imoveis")
+          .select("*, fotos_imovel(id, url, principal, ordem)")
+          .eq("id", id)
+          .maybeSingle()
 
-      if (!imovel || error) {
-        // mantem na tela
-        return
+        if (error || !imovel) {
+          // Fallback buscando dados e fotos separadamente
+          const { data: imovelSimples } = await supabase
+            .from("imoveis")
+            .select("*")
+            .eq("id", id)
+            .maybeSingle()
+
+          if (!imovelSimples) {
+            setErro("Imóvel não encontrado ou você não tem permissão para editá-lo.")
+            setCarregando(false)
+            return
+          }
+
+          const { data: fotosData } = await supabase
+            .from("fotos_imovel")
+            .select("id, url, principal, ordem")
+            .eq("imovel_id", id)
+            .order("ordem", { ascending: true })
+
+          imovelSimples.fotos_imovel = fotosData || []
+          preencherDados(imovelSimples)
+          return
+        }
+
+        preencherDados(imovel)
+      } catch (err: any) {
+        console.error("Erro ao carregar imóvel:", err)
+        setErro("Não foi possível carregar os dados do imóvel.")
+      } finally {
+        setCarregando(false)
       }
+    }
 
+    function preencherDados(imovel: any) {
       setDados({
         tipo: imovel.tipo || "",
         negociacao: imovel.negociacao || "venda",
@@ -179,8 +223,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
     }
 
     carregar()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [id, router, supabase])
 
   function atualizar(campo: keyof DadosImovel, valor: string | boolean) {
     setDados((prev) => ({ ...prev, [campo]: valor }))
@@ -188,13 +231,14 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   }
 
   function adicionarFotos(arquivos: FileList | null) {
-    if (!arquivos) return
+    if (!arquivos || arquivos.length === 0) return
     const novas: FotoPreview[] = Array.from(arquivos).map((arquivo, i) => ({
       arquivo,
       preview: URL.createObjectURL(arquivo),
       principal: fotos.length === 0 && i === 0,
     }))
     setFotos((prev) => [...prev, ...novas])
+    setSucesso(false)
   }
 
   function removerFoto(idx: number) {
@@ -205,14 +249,22 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       if (nova.length > 0 && !nova.some((f) => f.principal)) nova[0].principal = true
       return nova
     })
-  }
-
-  function handleVoltar() {
-    router.push("/painel?aba=imoveis")
+    setSucesso(false)
   }
 
   function definirPrincipal(idx: number) {
     setFotos((prev) => prev.map((f, i) => ({ ...f, principal: i === idx })))
+    setSucesso(false)
+  }
+
+  function formatarPreco(valor: string) {
+    const num = valor.replace(/\D/g, "")
+    if (!num) return ""
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 0,
+    }).format(parseInt(num))
   }
 
   async function salvar() {
@@ -226,48 +278,54 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       } = await supabase.auth.getUser()
       if (!user) throw new Error("Não autenticado")
 
+      const precoNum = parseFloat(dados.preco.replace(/\D/g, "")) || 0
+      const areaNum = parseFloat(dados.area.replace(",", ".")) || null
+
       const { error: erroImovel } = await supabase
         .from("imoveis")
         .update({
           tipo: dados.tipo,
           negociacao: dados.negociacao,
           titulo: dados.titulo,
-          descricao: dados.descricao,
-          preco: parseFloat(dados.preco.replace(/\D/g, "")) || 0,
-          area: parseFloat(dados.area) || null,
+          descricao: dados.descricao || null,
+          preco: precoNum,
+          area: areaNum,
           quartos: parseInt(dados.quartos) || null,
           banheiros: parseInt(dados.banheiros) || null,
           vagas: parseInt(dados.vagas) || null,
-          endereco: dados.endereco,
-          bairro: dados.bairro,
+          endereco: dados.endereco || "",
+          bairro: dados.bairro || null,
           cidade: dados.cidade,
-          estado: dados.estado,
-          cep: dados.cep,
-          latitude: parseFloat(dados.latitude) || null,
-          longitude: parseFloat(dados.longitude) || null,
+          estado: dados.estado || null,
+          cep: dados.cep || null,
+          latitude: parseFloat(dados.latitude) || 0,
+          longitude: parseFloat(dados.longitude) || 0,
           condominio: parseFloat(dados.condominio) || null,
           iptu: parseFloat(dados.iptu) || null,
-          aceita_pets: dados.aceita_pets,
-          mobiliado: dados.mobiliado,
+          aceita_pets: !!dados.aceita_pets,
+          mobiliado: !!dados.mobiliado,
         })
         .eq("id", id)
 
       if (erroImovel) throw erroImovel
 
+      // 1. Deletar fotos removidas
       if (fotosRemovidas.length > 0) {
         await supabase.from("fotos_imovel").delete().in("id", fotosRemovidas)
       }
 
+      // 2. Atualizar capa das fotos existentes
       for (const foto of fotos) {
         if (foto.id) {
           await supabase.from("fotos_imovel").update({ principal: foto.principal }).eq("id", foto.id)
         }
       }
 
+      // 3. Upload das novas fotos
       const fotosNovas = fotos.filter((f) => f.arquivo)
       for (let i = 0; i < fotosNovas.length; i++) {
         const foto = fotosNovas[i]
-        const ext = foto.arquivo!.name.split(".").pop()
+        const ext = foto.arquivo!.name.split(".").pop() || "jpg"
         const caminho = `${user.id}/${id}/${Date.now()}-${i}.${ext}`
         const { error: erroUpload } = await supabase.storage
           .from("fotos-imoveis")
@@ -286,9 +344,9 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
 
       setSucesso(true)
       setFotosRemovidas([])
-      // mantem na tela
     } catch (e: unknown) {
-      setErro(e instanceof Error ? e.message : "Erro ao salvar imóvel")
+      console.error("Erro ao salvar edição:", e)
+      setErro(e instanceof Error ? e.message : "Erro ao salvar alterações do imóvel.")
     } finally {
       setSalvando(false)
     }
@@ -297,8 +355,8 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   if (carregando) {
     return (
       <div className={styles.pagina}>
-        <div className={styles.container}>
-          <p style={{ textAlign: "center", padding: "60px 0", color: "#64748b" }}>Carregando dados do imóvel...</p>
+        <div style={{ textAlign: "center", padding: "4rem", color: "#64748b" }}>
+          <p>Carregando dados do imóvel...</p>
         </div>
       </div>
     )
@@ -307,321 +365,292 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   return (
     <div className={styles.pagina}>
       <header className={styles.header}>
-        <button type="button" onClick={handleVoltar} className={styles.voltar}>
-          {"\u2190"} Voltar
-        </button>
+        <Link href="/painel?aba=imoveis" className={styles.btnVoltar}>
+          ← Painel
+        </Link>
         <h1 className={styles.headerTitulo}>Editar Imóvel</h1>
-        <div style={{ width: 60 }} />
+        <div />
       </header>
 
-      <main className={styles.container}>
-        {sucesso && (
-          <div className={styles.alertaSucesso}>
-            {"\u2705"} Imóvel atualizado com sucesso!
-          </div>
-        )}
-        {erro && (
-          <div className={styles.alertaErro}>
-            {"\u274C"} {erro}
-          </div>
-        )}
+      <main className={styles.main}>
+        <div className={styles.card}>
+          <div className={styles.etapaConteudo}>
+            {sucesso && (
+              <div style={{
+                background: "#ecfdf5",
+                border: "1px solid #a7f3d0",
+                color: "#065f46",
+                padding: "0.75rem 1rem",
+                borderRadius: "0.5rem",
+                marginBottom: "1rem",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+              }}>
+                ✅ Imóvel atualizado com sucesso!
+              </div>
+            )}
 
-        {/* SEÇÃO 1: Tipo e Negociação */}
-        <section className={styles.secaoCard}>
-          <h2 className={styles.secaoTitulo}>Tipo e Negociação</h2>
-          <p className={styles.secaoSub}>Categoria e modalidade do imóvel</p>
-          <div className={styles.gridTipos}>
-            {TIPOS.map((t) => (
-              <button
-                key={t.valor}
-                type="button"
-                className={`${styles.tipoBtn} ${dados.tipo === t.valor ? styles.tipoBtnAtivo : ""}`}
-                onClick={() => atualizar("tipo", t.valor)}
-              >
-                <span className={styles.tipoIcone}>{t.icone}</span>
-                <span className={styles.tipoLabel}>{t.label}</span>
-              </button>
-            ))}
-          </div>
-          <div className={styles.negociacao}>
-            <button
-              type="button"
-              className={`${styles.negBtn} ${dados.negociacao === "venda" ? styles.negBtnAtivo : ""}`}
-              onClick={() => atualizar("negociacao", "venda")}
-            >
-              Venda
-            </button>
-            <button
-              type="button"
-              className={`${styles.negBtn} ${dados.negociacao === "aluguel" ? styles.negBtnAtivo : ""}`}
-              onClick={() => atualizar("negociacao", "aluguel")}
-            >
-              Aluguel
-            </button>
-          </div>
-        </section>
+            {erro && (
+              <div style={{
+                background: "#fef2f2",
+                border: "1px solid #fee2e2",
+                color: "#991b1b",
+                padding: "0.75rem 1rem",
+                borderRadius: "0.5rem",
+                marginBottom: "1rem",
+                fontSize: "0.85rem",
+              }}>
+                ⚠️ {erro}
+              </div>
+            )}
 
-        {/* SEÇÃO 2: Informações Principais */}
-        <section className={styles.secaoCard}>
-          <h2 className={styles.secaoTitulo}>Informações do Anúncio</h2>
-          <p className={styles.secaoSub}>Título, descrição e valores principais</p>
-          <div className={styles.grupo}>
-            <label className={styles.label}>Título do Anúncio</label>
-            <input
-              className={styles.input}
-              value={dados.titulo}
-              onChange={(e) => atualizar("titulo", e.target.value)}
-              placeholder="Ex: Apartamento 3 quartos no Centro"
-            />
-          </div>
-          <div className={styles.grupo}>
-            <label className={styles.label}>Descrição</label>
-            <textarea
-              className={styles.textarea}
-              value={dados.descricao}
-              rows={4}
-              onChange={(e) => atualizar("descricao", e.target.value)}
-              placeholder="Descreva detalhes, acabamento, pontos de interesse..."
-            />
-          </div>
-          <div className={styles.linha2}>
+            {/* Tipo */}
             <div className={styles.grupo}>
-              <label className={styles.label}>Preço (R$)</label>
-              <input
-                className={styles.input}
-                value={dados.preco}
-                onChange={(e) => atualizar("preco", e.target.value)}
-                placeholder="450000"
-              />
-            </div>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Área (m²)</label>
-              <input
-                className={styles.input}
-                type="number"
-                value={dados.area}
-                onChange={(e) => atualizar("area", e.target.value)}
-                placeholder="120"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SEÇÃO 3: Localização */}
-        <section className={styles.secaoCard}>
-          <h2 className={styles.secaoTitulo}>Localização</h2>
-          <p className={styles.secaoSub}>Endereço e dados geográficos</p>
-          <div className={styles.grupo}>
-            <label className={styles.label}>CEP</label>
-            <input
-              className={`${styles.input} ${buscandoCep ? styles.inputCarregando : ""}`}
-              value={dados.cep}
-              onChange={(e) => {
-                atualizar("cep", e.target.value)
-                if (e.target.value.replace(/\D/g, "").length === 8) buscarCep(e.target.value)
-              }}
-              placeholder="36300-000"
-              maxLength={9}
-            />
-          </div>
-          <div className={styles.linha2}>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Cidade</label>
-              <input
-                className={styles.input}
-                value={dados.cidade}
-                onChange={(e) => atualizar("cidade", e.target.value)}
-              />
-            </div>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Estado (UF)</label>
-              <input
-                className={styles.input}
-                value={dados.estado}
-                onChange={(e) => atualizar("estado", e.target.value)}
-                maxLength={2}
-              />
-            </div>
-          </div>
-          <div className={styles.grupo}>
-            <label className={styles.label}>Bairro</label>
-            <input
-              className={styles.input}
-              value={dados.bairro}
-              onChange={(e) => atualizar("bairro", e.target.value)}
-            />
-          </div>
-          <div className={styles.linha2}>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Endereço</label>
-              <input
-                className={styles.input}
-                value={dados.endereco}
-                onChange={(e) => atualizar("endereco", e.target.value)}
-              />
-            </div>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Número</label>
-              <input
-                className={styles.input}
-                value={dados.numero}
-                onChange={(e) => atualizar("numero", e.target.value)}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SEÇÃO 4: Características e Custos */}
-        <section className={styles.secaoCard}>
-          <h2 className={styles.secaoTitulo}>Características & Detalhes</h2>
-          <p className={styles.secaoSub}>Quartos, banheiros, vagas e custos adicionais</p>
-          <div className={styles.linha3}>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Quartos</label>
-              <input
-                className={styles.input}
-                type="number"
-                min="0"
-                value={dados.quartos}
-                onChange={(e) => atualizar("quartos", e.target.value)}
-              />
-            </div>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Banheiros</label>
-              <input
-                className={styles.input}
-                type="number"
-                min="0"
-                value={dados.banheiros}
-                onChange={(e) => atualizar("banheiros", e.target.value)}
-              />
-            </div>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Vagas</label>
-              <input
-                className={styles.input}
-                type="number"
-                min="0"
-                value={dados.vagas}
-                onChange={(e) => atualizar("vagas", e.target.value)}
-              />
-            </div>
-          </div>
-          <div className={styles.linha2}>
-            <div className={styles.grupo}>
-              <label className={styles.label}>Condomínio (R$)</label>
-              <input
-                className={styles.input}
-                type="number"
-                value={dados.condominio}
-                onChange={(e) => atualizar("condominio", e.target.value)}
-              />
-            </div>
-            <div className={styles.grupo}>
-              <label className={styles.label}>IPTU (R$/ano)</label>
-              <input
-                className={styles.input}
-                type="number"
-                value={dados.iptu}
-                onChange={(e) => atualizar("iptu", e.target.value)}
-              />
-            </div>
-          </div>
-          <div className={styles.checkboxGrupo}>
-            <label className={styles.checkboxItem}>
-              <input
-                type="checkbox"
-                checked={dados.aceita_pets}
-                onChange={(e) => atualizar("aceita_pets", e.target.checked)}
-              />
-              <span>{"\uD83D\uDC3E"} Aceita pets</span>
-            </label>
-            <label className={styles.checkboxItem}>
-              <input
-                type="checkbox"
-                checked={dados.mobiliado}
-                onChange={(e) => atualizar("mobiliado", e.target.checked)}
-              />
-              <span>{"\uD83D\uDECB\uFE0F"} Mobiliado</span>
-            </label>
-          </div>
-        </section>
-
-        {/* SEÇÃO 5: Fotos */}
-        <section className={styles.secaoCard}>
-          <h2 className={styles.secaoTitulo}>Galeria de Fotos</h2>
-          <p className={styles.secaoSub}>Adicione fotos e clique em uma para definir como Capa</p>
-          <div
-            className={styles.dropzone}
-            onClick={() => inputFotoRef.current?.click()}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault()
-              adicionarFotos(e.dataTransfer.files)
-            }}
-          >
-            <span className={styles.dropzoneIcone}>{"\uD83D\uDCF7"}</span>
-            <p>Clique ou arraste fotos aqui</p>
-            <span className={styles.dropzoneHint}>JPG, PNG ou WEBP — Máximo 10MB cada</span>
-            <input
-              ref={inputFotoRef}
-              type="file"
-              accept="image/*"
-              multiple
-              style={{ display: "none" }}
-              onChange={(e) => adicionarFotos(e.target.files)}
-            />
-          </div>
-          {fotos.length > 0 && (
-            <div className={styles.gridFotos}>
-              {fotos.map((foto, idx) => (
-                <div
-                  key={idx}
-                  className={`${styles.fotoItem} ${foto.principal ? styles.fotoPrincipal : ""}`}
-                  onClick={() => definirPrincipal(idx)}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={foto.preview} alt={`Foto ${idx + 1}`} className={styles.fotoPreview} />
-                  {foto.principal && <span className={styles.fotoBadge}>{"\u2B50"} Capa</span>}
-                  {!foto.principal && (
-                    <div className={styles.fotoOverlay}>
-                      <span>Definir capa</span>
-                    </div>
-                  )}
+              <label className={styles.label}>Tipo de Imóvel</label>
+              <div className={styles.gridTipos}>
+                {TIPOS.map((t) => (
                   <button
+                    key={t.valor}
                     type="button"
-                    className={styles.fotoBtnRemover}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      removerFoto(idx)
-                    }}
-                    title="Remover"
+                    className={`${styles.tipoCard} ${dados.tipo === t.valor ? styles.tipoSelecionado : ""}`}
+                    onClick={() => atualizar("tipo", t.valor)}
                   >
-                    {"\u2715"}
+                    <span className={styles.tipoIcone}>{t.icone}</span>
+                    <span className={styles.tipoLabel}>{t.label}</span>
                   </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          )}
-        </section>
-      </main>
 
-      {/* Barra Fixa Inferior */}
-      <footer className={styles.barraInferior}>
-        <div className={styles.barraConteudo}>
-          <button type="button" onClick={handleVoltar} className={styles.btnCancelar}>
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className={styles.btnSalvar}
-            onClick={salvar}
-            disabled={salvando}
-          >
-            {salvando ? "Salvando..." : "\u2705 Salvar Alterações"}
-          </button>
+            {/* Negociação */}
+            <div className={styles.grupo} style={{ marginTop: "0.5rem" }}>
+              <label className={styles.label}>Modalidade de Negociação</label>
+              <div className={styles.btnGroup}>
+                {["venda", "aluguel", "temporada"].map((neg) => (
+                  <button
+                    key={neg}
+                    type="button"
+                    className={`${styles.btnOpcao} ${dados.negociacao === neg ? styles.btnOpcaoAtivo : ""}`}
+                    onClick={() => atualizar("negociacao", neg)}
+                  >
+                    {neg.charAt(0).toUpperCase() + neg.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Título */}
+            <div className={styles.grupo} style={{ marginTop: "0.75rem" }}>
+              <label className={styles.label}>Título do anúncio *</label>
+              <input
+                className={styles.input}
+                value={dados.titulo}
+                onChange={(e) => atualizar("titulo", e.target.value)}
+              />
+            </div>
+
+            {/* Preço */}
+            <div className={styles.grupo}>
+              <label className={styles.label}>Preço (R$) *</label>
+              <input
+                className={styles.input}
+                value={formatarPreco(dados.preco)}
+                onChange={(e) => atualizar("preco", e.target.value)}
+              />
+            </div>
+
+            {/* CEP */}
+            <div className={styles.grupo}>
+              <label className={styles.label}>CEP</label>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <input
+                  className={styles.input}
+                  value={dados.cep}
+                  onChange={(e) => {
+                    atualizar("cep", e.target.value)
+                    if (e.target.value.replace(/\D/g, "").length === 8) {
+                      buscarCep(e.target.value)
+                    }
+                  }}
+                  maxLength={9}
+                />
+                {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.8rem", color: "#64748b" }}>Buscando...</span>}
+              </div>
+            </div>
+
+            {/* Cidade e Estado */}
+            <div className={styles.grid2}>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Cidade *</label>
+                <input
+                  className={styles.input}
+                  value={dados.cidade}
+                  onChange={(e) => atualizar("cidade", e.target.value)}
+                />
+              </div>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Estado (UF) *</label>
+                <input
+                  className={styles.input}
+                  value={dados.estado}
+                  onChange={(e) => atualizar("estado", e.target.value.toUpperCase())}
+                  maxLength={2}
+                />
+              </div>
+            </div>
+
+            {/* Bairro e Endereço */}
+            <div className={styles.grid2}>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Bairro</label>
+                <input
+                  className={styles.input}
+                  value={dados.bairro}
+                  onChange={(e) => atualizar("bairro", e.target.value)}
+                />
+              </div>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Endereço (Rua, Av)</label>
+                <input
+                  className={styles.input}
+                  value={dados.endereco}
+                  onChange={(e) => atualizar("endereco", e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Área, Quartos, Banheiros, Vagas */}
+            <div className={styles.grid2}>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Área total (m²)</label>
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={dados.area}
+                  onChange={(e) => atualizar("area", e.target.value)}
+                />
+              </div>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Quartos</label>
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={dados.quartos}
+                  onChange={(e) => atualizar("quartos", e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={styles.grid2}>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Banheiros</label>
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={dados.banheiros}
+                  onChange={(e) => atualizar("banheiros", e.target.value)}
+                />
+              </div>
+              <div className={styles.grupo}>
+                <label className={styles.label}>Vagas</label>
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={dados.vagas}
+                  onChange={(e) => atualizar("vagas", e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Descrição */}
+            <div className={styles.grupo}>
+              <label className={styles.label}>Descrição</label>
+              <textarea
+                className={styles.textarea}
+                rows={3}
+                value={dados.descricao}
+                onChange={(e) => atualizar("descricao", e.target.value)}
+              />
+            </div>
+
+            {/* Galeria de Fotos */}
+            <div style={{ marginTop: "1rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                <label className={styles.label}>Galeria de Fotos ({fotos.length})</label>
+                <button
+                  type="button"
+                  onClick={() => inputFotoRef.current?.click()}
+                  style={{ background: "none", border: "none", color: "#2563eb", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}
+                >
+                  + Adicionar fotos
+                </button>
+              </div>
+
+              <input
+                ref={inputFotoRef}
+                type="file"
+                multiple
+                accept="image/png, image/jpeg, image/webp"
+                style={{ display: "none" }}
+                onChange={(e) => adicionarFotos(e.target.files)}
+              />
+
+              {fotos.length > 0 && (
+                <div className={styles.gridFotosPro}>
+                  {fotos.map((foto, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.fotoCardPro} ${foto.principal ? styles.fotoCardCapa : ""}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={foto.preview} alt={`Foto ${idx + 1}`} className={styles.fotoImgPro} />
+
+                      {foto.principal ? (
+                        <div className={styles.badgeCapa}>⭐ Capa</div>
+                      ) : (
+                        <button
+                          type="button"
+                          className={styles.btnTornarCapa}
+                          onClick={() => definirPrincipal(idx)}
+                        >
+                          Tornar Capa
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        className={styles.btnRemoverFoto}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          removerFoto(idx)
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Botões Salvar */}
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid #e2e8f0" }}>
+              <Link href="/painel?aba=imoveis" className="btn btn-outline" style={{ height: "38px", fontSize: "0.85rem" }}>
+                Voltar
+              </Link>
+              <button
+                type="button"
+                className={`btn btn-primario ${salvando ? styles.btnCarregando : ""}`}
+                onClick={salvar}
+                disabled={salvando}
+                style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700 }}
+              >
+                {salvando ? "Salvando..." : "💾 Salvar Alterações"}
+              </button>
+            </div>
+          </div>
         </div>
-      </footer>
+      </main>
     </div>
   )
 }

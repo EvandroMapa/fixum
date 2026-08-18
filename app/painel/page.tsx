@@ -353,8 +353,8 @@ function PainelConteudo() {
               {isImobiliaria
                 ? '🏢 Gestão Imobiliária'
                 : isCorretor && imobiliariaDona
-                ? `👔 Corretor Oficial — ${imobiliariaDona.nome}`
-                : '👤 Painel de Anúncios'}
+                  ? `👔 Corretor Oficial — ${imobiliariaDona.nome}`
+                  : '👤 Painel de Anúncios'}
             </span>
           </div>
         </div>
@@ -474,318 +474,318 @@ function PainelConteudo() {
         {/* Conteúdo */}
         <main className={styles.conteudo}>
 
-        {/* ── DASHBOARD ── */}
-        {abaAtiva === 'dashboard' && (
-          <div className={styles.secao}>
-            <h1>Olá, {usuarioNome}! 👋</h1>
-            <p className={styles.subtitulo}>Aqui está o resumo dos seus anúncios</p>
+          {/* ── DASHBOARD ── */}
+          {abaAtiva === 'dashboard' && (
+            <div className={styles.secao}>
+              <h1>Olá, {usuarioNome}! 👋</h1>
+              <p className={styles.subtitulo}>Aqui está o resumo dos seus anúncios</p>
 
-            {/* Banner de Plano e Capacidade (Apenas para gestor imobiliária / anunciante dono) */}
-            {!isCorretor && (
-              <div style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '1rem',
-                padding: '1.25rem',
-                marginBottom: '1.5rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '1rem',
-                flexWrap: 'wrap'
-              }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#0f4c81', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px' }}>
-                      Plano {usoPlano.plano.nome}
-                    </span>
-                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                      • {usoPlano.imoveisAtivos} de {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
-                    </span>
+              {/* Banner de Plano e Capacidade (Apenas para gestor imobiliária / anunciante dono) */}
+              {!isCorretor && (
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '1rem',
+                  padding: '1.25rem',
+                  marginBottom: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  flexWrap: 'wrap'
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#0f4c81', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px' }}>
+                        Plano {usoPlano.plano.nome}
+                      </span>
+                      <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                        • {usoPlano.imoveisAtivos} de {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
+                      </span>
+                    </div>
+                    <div style={{ width: '220px', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                      <div style={{
+                        width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
+                        height: '100%',
+                        backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
+                        borderRadius: '999px'
+                      }} />
+                    </div>
                   </div>
-                  <div style={{ width: '220px', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
-                    <div style={{
-                      width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
-                      height: '100%',
-                      backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
-                      borderRadius: '999px'
-                    }} />
+
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      className="btn btn-outline btn-sm"
+                      onClick={() => trocarAba('plano')}
+                    >
+                      Ver Detalhes do Plano
+                    </button>
+                    {proximoPlano && (
+                      <button
+                        className="btn btn-primario btn-sm"
+                        onClick={() => dispararUpgrade(proximoPlano)}
+                      >
+                        ⚡ Fazer Upgrade
+                      </button>
+                    )}
                   </div>
                 </div>
+              )}
 
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button
-                    className="btn btn-outline btn-sm"
-                    onClick={() => trocarAba('plano')}
-                  >
-                    Ver Detalhes do Plano
-                  </button>
-                  {proximoPlano && (
+              <div className={styles.gridStats}>
+                {[
+                  { label: 'Total de imóveis', valor: stats.total, icone: '🏢', cor: '#0f4c81' },
+                  { label: 'Publicados', valor: stats.publicados, icone: '✅', cor: '#22c55e' },
+                  { label: 'Pausados', valor: stats.pausados, icone: '⏸️', cor: '#f59e0b' },
+                  { label: 'Leads novos', valor: stats.leadsNovos, icone: '👥', cor: '#ef4444' },
+                ].map((s) => (
+                  <div key={s.label} className={styles.statCard} style={{ borderTopColor: s.cor }}>
+                    <span className={styles.statIcone}>{s.icone}</span>
+                    <strong className={styles.statValor}>{s.valor}</strong>
+                    <span className={styles.statLabel}>{s.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {imoveis.length === 0 && (
+                <div className={styles.vazio}>
+                  <span>🏡</span>
+                  <h3>Você ainda não tem imóveis cadastrados</h3>
+                  <p>Comece anunciando seu primeiro imóvel. É rápido e gratuito!</p>
+                  <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
+                    Anunciar meu primeiro imóvel
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── IMÓVEIS ── */}
+          {abaAtiva === 'imoveis' && (
+            <div className={styles.secao}>
+              <div className={styles.secaoHeader}>
+                <div>
+                  <h1>Meus Imóveis</h1>
+                  <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
+                    {isCorretor
+                      ? 'Gerencie seus anúncios publicados'
+                      : isImobiliaria
+                        ? `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos na cota corporativa`
+                        : `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos`}
+                  </p>
+                </div>
+              </div>
+
+              {usoPlano.atingiuLimite && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #fee2e2',
+                  borderRadius: '0.75rem',
+                  padding: '0.85rem 1.25rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  flexWrap: 'wrap'
+                }}>
+                  <span style={{ fontSize: '0.85rem', color: '#991b1b' }}>
+                    {isCorretor
+                      ? '⚠️ A cota corporativa atingiu o limite de anúncios ativos. Contate a administração da imobiliária para solicitar novas vagas.'
+                      : `⚠️ Você atingiu o limite de ${usoPlano.limiteMaximo} imóvel(is) ativo(s) do seu plano ${usoPlano.plano.nome}.`}
+                  </span>
+                  {!isCorretor && proximoPlano && (
                     <button
                       className="btn btn-primario btn-sm"
                       onClick={() => dispararUpgrade(proximoPlano)}
                     >
-                      ⚡ Fazer Upgrade
+                      Fazer Upgrade para {proximoPlano.nome}
                     </button>
                   )}
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className={styles.gridStats}>
-              {[
-                { label: 'Total de imóveis', valor: stats.total, icone: '🏢', cor: '#0f4c81' },
-                { label: 'Publicados', valor: stats.publicados, icone: '✅', cor: '#22c55e' },
-                { label: 'Pausados', valor: stats.pausados, icone: '⏸️', cor: '#f59e0b' },
-                { label: 'Leads novos', valor: stats.leadsNovos, icone: '👥', cor: '#ef4444' },
-              ].map((s) => (
-                <div key={s.label} className={styles.statCard} style={{ borderTopColor: s.cor }}>
-                  <span className={styles.statIcone}>{s.icone}</span>
-                  <strong className={styles.statValor}>{s.valor}</strong>
-                  <span className={styles.statLabel}>{s.label}</span>
+              {imoveis.length === 0 ? (
+                <div className={styles.vazio}>
+                  <span>🏢</span>
+                  <h3>Nenhum imóvel cadastrado</h3>
+                  <p style={{ color: '#64748b', marginBottom: '1.25rem', fontSize: '0.9rem' }}>
+                    Comece anunciando seu primeiro imóvel para exibi-lo no mapa.
+                  </p>
+                  <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
+                    Cadastrar primeiro imóvel
+                  </Link>
                 </div>
-              ))}
-            </div>
-
-            {imoveis.length === 0 && (
-              <div className={styles.vazio}>
-                <span>🏡</span>
-                <h3>Você ainda não tem imóveis cadastrados</h3>
-                <p>Comece anunciando seu primeiro imóvel. É rápido e gratuito!</p>
-                <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
-                  Anunciar meu primeiro imóvel
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── IMÓVEIS ── */}
-        {abaAtiva === 'imoveis' && (
-          <div className={styles.secao}>
-            <div className={styles.secaoHeader}>
-              <div>
-                <h1>Meus Imóveis</h1>
-                <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
-                  {isCorretor
-                    ? 'Gerencie seus anúncios publicados'
-                    : isImobiliaria
-                    ? `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos na cota corporativa`
-                    : `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos`}
-                </p>
-              </div>
-            </div>
-
-            {usoPlano.atingiuLimite && (
-              <div style={{
-                background: '#fef2f2',
-                border: '1px solid #fee2e2',
-                borderRadius: '0.75rem',
-                padding: '0.85rem 1.25rem',
-                marginBottom: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '1rem',
-                flexWrap: 'wrap'
-              }}>
-                <span style={{ fontSize: '0.85rem', color: '#991b1b' }}>
-                  {isCorretor
-                    ? '⚠️ A cota corporativa atingiu o limite de anúncios ativos. Contate a administração da imobiliária para solicitar novas vagas.'
-                    : `⚠️ Você atingiu o limite de ${usoPlano.limiteMaximo} imóvel(is) ativo(s) do seu plano ${usoPlano.plano.nome}.`}
-                </span>
-                {!isCorretor && proximoPlano && (
-                  <button
-                    className="btn btn-primario btn-sm"
-                    onClick={() => dispararUpgrade(proximoPlano)}
-                  >
-                    Fazer Upgrade para {proximoPlano.nome}
-                  </button>
-                )}
-              </div>
-            )}
-
-            {imoveis.length === 0 ? (
-              <div className={styles.vazio}>
-                <span>🏢</span>
-                <h3>Nenhum imóvel cadastrado</h3>
-                <p style={{ color: '#64748b', marginBottom: '1.25rem', fontSize: '0.9rem' }}>
-                  Comece anunciando seu primeiro imóvel para exibi-lo no mapa.
-                </p>
-                <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
-                  Cadastrar primeiro imóvel
-                </Link>
-              </div>
-            ) : (
-              <div className={styles.listaImoveis}>
-                {imoveis.map((imovel) => (
-                  <div key={imovel.id} className={styles.imovelRow}>
-                    <div
-                      className={styles.imovelFoto}
-                      style={{ backgroundImage: `url(${fotoPrincipal(imovel)})` }}
-                    >
-                      {!imovel.fotos?.length && <span>🏠</span>}
-                    </div>
-                    <div className={styles.imovelInfo}>
-                      <strong>{imovel.titulo}</strong>
-                      <span>{labelTipoImovel(imovel.tipo)} • {imovel.cidade}</span>
-                      <span className={styles.imovelPreco}>{formatarPreco(imovel.preco, imovel.negociacao)}</span>
-                    </div>
-                    <div className={styles.imovelStatus}>
-                      <span className={`${styles.statusBadge} ${styles[`status_${imovel.status}`]}`}>
-                        {imovel.status}
-                      </span>
-                    </div>
-                    <div className={styles.imovelAcoes}>
-                      <Link href={`/imovel/${imovel.id}`} className="btn btn-ghost btn-sm">Ver</Link>
-                      <Link href={`/painel/editar-imovel/${imovel.id}`} className="btn btn-outline btn-sm">Editar</Link>
-                      {imovel.status === 'publicado' || imovel.status === 'ativo' ? (
-                        <button className="btn btn-outline btn-sm" onClick={() => alterarStatus(imovel.id, 'pausado')}>Pausar</button>
-                      ) : imovel.status === 'pausado' ? (
-                        <button className="btn btn-primario btn-sm" onClick={() => alterarStatus(imovel.id, 'publicado')}>Publicar</button>
-                      ) : null}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── LEADS ── */}
-        {abaAtiva === 'leads' && (
-          <div className={styles.secao}>
-            <h1>Leads</h1>
-            <p className={styles.subtitulo}>Pessoas interessadas nos seus imóveis</p>
-
-            {leads.length === 0 ? (
-              <div className={styles.vazio}>
-                <span>👥</span>
-                <h3>Nenhum lead ainda</h3>
-                <p>Quando alguém entrar em contato pelos seus imóveis, aparecerá aqui</p>
-              </div>
-            ) : (
-              <div className={styles.listaLeads}>
-                {leads.map((lead) => (
-                  <div key={lead.id} className={styles.leadCard}>
-                    <div className={styles.leadAvatar}>
-                      {lead.nome.charAt(0).toUpperCase()}
-                    </div>
-                    <div className={styles.leadInfo}>
-                      <strong>{lead.nome}</strong>
-                      {lead.email && <span>📧 {lead.email}</span>}
-                      {lead.telefone && <span>📱 {lead.telefone}</span>}
-                      {lead.mensagem && <p className={styles.leadMensagem}>{lead.mensagem}</p>}
-                      <span className={styles.leadData}>
-                        {new Date(lead.created_at).toLocaleDateString('pt-BR')}
-                      </span>
-                    </div>
-                    <div className={styles.leadAcoes}>
-                      <select
-                        className="campo"
-                        value={lead.status}
-                        onChange={(e) => alterarStatusLead(lead.id, e.target.value)}
-                        style={{ fontSize: '0.75rem', padding: '6px 10px' }}
+              ) : (
+                <div className={styles.listaImoveis}>
+                  {imoveis.map((imovel) => (
+                    <div key={imovel.id} className={styles.imovelRow}>
+                      <div
+                        className={styles.imovelFoto}
+                        style={{ backgroundImage: `url(${fotoPrincipal(imovel)})` }}
                       >
-                        {['novo','em_contato','visita_agendada','proposta','negociacao','fechado','perdido'].map((s) => (
-                          <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
-                        ))}
-                      </select>
-                      {lead.telefone && (
-                        <a
-                          href={`https://wa.me/55${lead.telefone.replace(/\D/g,'')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-primario btn-sm"
-                        >
-                          💬 WhatsApp
-                        </a>
-                      )}
+                        {!imovel.fotos?.length && <span>🏠</span>}
+                      </div>
+                      <div className={styles.imovelInfo}>
+                        <strong>{imovel.titulo}</strong>
+                        <span>{labelTipoImovel(imovel.tipo)} • {imovel.cidade}</span>
+                        <span className={styles.imovelPreco}>{formatarPreco(imovel.preco, imovel.negociacao)}</span>
+                      </div>
+                      <div className={styles.imovelStatus}>
+                        <span className={`${styles.statusBadge} ${styles[`status_${imovel.status}`]}`}>
+                          {imovel.status}
+                        </span>
+                      </div>
+                      <div className={styles.imovelAcoes}>
+                        <Link href={`/imovel/${imovel.id}`} className="btn btn-ghost btn-sm">Ver</Link>
+                        <Link href={`/painel/editar-imovel/${imovel.id}`} className="btn btn-outline btn-sm">Editar</Link>
+                        {imovel.status === 'publicado' || imovel.status === 'ativo' ? (
+                          <button className="btn btn-outline btn-sm" onClick={() => alterarStatus(imovel.id, 'pausado')}>Pausar</button>
+                        ) : imovel.status === 'pausado' ? (
+                          <button className="btn btn-primario btn-sm" onClick={() => alterarStatus(imovel.id, 'publicado')}>Publicar</button>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── EQUIPE DE CORRETORES (APENAS GESTOR DA IMOBILIÁRIA) ── */}
-        {abaAtiva === 'corretores' && isImobiliaria && (
-          <AbaCorretores
-            imobiliariaId={usuarioId}
-            imobiliariaNome={usuarioNome}
-          />
-        )}
-
-        {/* ── MEU PLANO (SEGREGAÇÃO DE PERMISSÕES) ── */}
-        {abaAtiva === 'plano' && (
-          isCorretor && imobiliariaDona ? (
-            <div style={{
-              background: '#ffffff',
-              border: '1.5px solid #bfdbfe',
-              borderRadius: '1rem',
-              padding: '2.5rem 2rem',
-              textAlign: 'center',
-              maxWidth: '620px',
-              margin: '2rem auto',
-              boxShadow: '0 4px 20px rgba(37, 99, 235, 0.08)',
-            }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👔</div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
-                Plano Corporativo — {imobiliariaDona.nome}
-              </h2>
-              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
-                Sua conta de corretor está vinculada à cota corporativa oficial da <strong>{imobiliariaDona.nome}</strong>.
-                Todos os seus anúncios publicados utilizam as vagas contratadas pela empresa.
-              </p>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#eff6ff',
-                border: '1.5px solid #93c5fd',
-                color: '#1d4ed8',
-                padding: '10px 18px',
-                borderRadius: '10px',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-              }}>
-                ⚡ Cota da Imobiliária: {usoPlano.imoveisAtivos} / {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
-              </div>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '1.75rem' }}>
-                ℹ️ Para solicitar ampliação de vagas ou alterações contratuais, consulte a administração da {imobiliariaDona.nome}.
-              </p>
+                  ))}
+                </div>
+              )}
             </div>
-          ) : (
-            <AbaMeuPlano
-              usoPlano={usoPlano}
-              faturas={faturas}
-              onAtualizarAssinatura={handleAtualizarAssinatura}
+          )}
+
+          {/* ── LEADS ── */}
+          {abaAtiva === 'leads' && (
+            <div className={styles.secao}>
+              <h1>Leads</h1>
+              <p className={styles.subtitulo}>Pessoas interessadas nos seus imóveis</p>
+
+              {leads.length === 0 ? (
+                <div className={styles.vazio}>
+                  <span>👥</span>
+                  <h3>Nenhum lead ainda</h3>
+                  <p>Quando alguém entrar em contato pelos seus imóveis, aparecerá aqui</p>
+                </div>
+              ) : (
+                <div className={styles.listaLeads}>
+                  {leads.map((lead) => (
+                    <div key={lead.id} className={styles.leadCard}>
+                      <div className={styles.leadAvatar}>
+                        {lead.nome.charAt(0).toUpperCase()}
+                      </div>
+                      <div className={styles.leadInfo}>
+                        <strong>{lead.nome}</strong>
+                        {lead.email && <span>📧 {lead.email}</span>}
+                        {lead.telefone && <span>📱 {lead.telefone}</span>}
+                        {lead.mensagem && <p className={styles.leadMensagem}>{lead.mensagem}</p>}
+                        <span className={styles.leadData}>
+                          {new Date(lead.created_at).toLocaleDateString('pt-BR')}
+                        </span>
+                      </div>
+                      <div className={styles.leadAcoes}>
+                        <select
+                          className="campo"
+                          value={lead.status}
+                          onChange={(e) => alterarStatusLead(lead.id, e.target.value)}
+                          style={{ fontSize: '0.75rem', padding: '6px 10px' }}
+                        >
+                          {['novo', 'em_contato', 'visita_agendada', 'proposta', 'negociacao', 'fechado', 'perdido'].map((s) => (
+                            <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
+                          ))}
+                        </select>
+                        {lead.telefone && (
+                          <a
+                            href={`https://wa.me/55${lead.telefone.replace(/\D/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-primario btn-sm"
+                          >
+                            💬 WhatsApp
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── EQUIPE DE CORRETORES (APENAS GESTOR DA IMOBILIÁRIA) ── */}
+          {abaAtiva === 'corretores' && isImobiliaria && (
+            <AbaCorretores
+              imobiliariaId={usuarioId}
+              imobiliariaNome={usuarioNome}
             />
-          )
-        )}
-      </main>
+          )}
 
-      {/* Modal de Limite Atingido */}
-      <ModalLimiteAtingido
-        aberto={modalLimiteAberto}
-        onFechar={() => setModalLimiteAberto(false)}
-        planoAtual={usoPlano.plano}
-        proximoPlano={proximoPlano}
-        imoveisAtivos={usoPlano.imoveisAtivos}
-        onFazerUpgrade={(plano) => dispararUpgrade(plano)}
-        acaoTentada="reativar_imovel"
-      />
+          {/* ── MEU PLANO (SEGREGAÇÃO DE PERMISSÕES) ── */}
+          {abaAtiva === 'plano' && (
+            isCorretor && imobiliariaDona ? (
+              <div style={{
+                background: '#ffffff',
+                border: '1.5px solid #bfdbfe',
+                borderRadius: '1rem',
+                padding: '2.5rem 2rem',
+                textAlign: 'center',
+                maxWidth: '620px',
+                margin: '2rem auto',
+                boxShadow: '0 4px 20px rgba(37, 99, 235, 0.08)',
+              }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👔</div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
+                  Plano Corporativo — {imobiliariaDona.nome}
+                </h2>
+                <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+                  Sua conta de corretor está vinculada à cota corporativa oficial da <strong>{imobiliariaDona.nome}</strong>.
+                  Todos os seus anúncios publicados utilizam as vagas contratadas pela empresa.
+                </p>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: '#eff6ff',
+                  border: '1.5px solid #93c5fd',
+                  color: '#1d4ed8',
+                  padding: '10px 18px',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                }}>
+                  ⚡ Cota da Imobiliária: {usoPlano.imoveisAtivos} / {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '1.75rem' }}>
+                  ℹ️ Para solicitar ampliação de vagas ou alterações contratuais, consulte a administração da {imobiliariaDona.nome}.
+                </p>
+              </div>
+            ) : (
+              <AbaMeuPlano
+                usoPlano={usoPlano}
+                faturas={faturas}
+                onAtualizarAssinatura={handleAtualizarAssinatura}
+              />
+            )
+          )}
+        </main>
 
-      {/* Modal de Upgrade / Troca de Plano */}
-      <ModalUpgradePlano
-        aberto={modalUpgradeAberto}
-        onFechar={() => setModalUpgradeAberto(false)}
-        planoAtual={usoPlano.plano}
-        planoSugerido={planoAlvoUpgrade}
-        imoveisAtivos={usoPlano.imoveisAtivos}
-        onConfirmarPlano={handleAtualizarAssinatura}
-      />
+        {/* Modal de Limite Atingido */}
+        <ModalLimiteAtingido
+          aberto={modalLimiteAberto}
+          onFechar={() => setModalLimiteAberto(false)}
+          planoAtual={usoPlano.plano}
+          proximoPlano={proximoPlano}
+          imoveisAtivos={usoPlano.imoveisAtivos}
+          onFazerUpgrade={(plano) => dispararUpgrade(plano)}
+          acaoTentada="reativar_imovel"
+        />
+
+        {/* Modal de Upgrade / Troca de Plano */}
+        <ModalUpgradePlano
+          aberto={modalUpgradeAberto}
+          onFechar={() => setModalUpgradeAberto(false)}
+          planoAtual={usoPlano.plano}
+          planoSugerido={planoAlvoUpgrade}
+          imoveisAtivos={usoPlano.imoveisAtivos}
+          onConfirmarPlano={handleAtualizarAssinatura}
+        />
 
         {/* Modal de Configurações de Segurança e 2FA */}
         <ModalConfigSeguranca
