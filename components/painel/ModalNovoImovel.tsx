@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Plano, Assinatura, UsoPlano, MetodoPagamento } from "@/lib/types"
 import { calcularUsoPlano, obterProximoPlano } from "@/lib/planos"
+import { useConfirm } from "@/contexts/ModalConfirmacaoContext"
 import ModalLimiteAtingido from "@/components/painel/ModalLimiteAtingido"
 import ModalUpgradePlano from "@/components/painel/ModalUpgradePlano"
 import styles from "./ModalNovoImovel.module.css"
@@ -106,6 +107,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
   // Modais de Limite / Upgrade
   const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
   const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
+  const { alertar } = useConfirm()
 
   const [etapa, setEtapa] = useState<Etapa>(1)
   const [salvando, setSalvando] = useState(false)
@@ -267,6 +269,31 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
     if (etapa > 1) setEtapa((prev) => (prev - 1) as Etapa)
   }
 
+  function normalizarTipoParaBanco(tipo: string): string {
+    const map: Record<string, string> = {
+      apartamento: 'apartamento',
+      casa: 'casa',
+      sobrado: 'casa',
+      casa_condominio: 'casa',
+      cobertura: 'cobertura',
+      kitnet: 'apartamento',
+      flat: 'apartamento',
+      lote: 'terreno',
+      terreno: 'terreno',
+      terreno_comercial: 'terreno',
+      sala_comercial: 'comercial',
+      loja: 'comercial',
+      galpao: 'comercial',
+      predio: 'comercial',
+      garagem: 'comercial',
+      sitio: 'rural',
+      chacara: 'rural',
+      fazenda: 'rural',
+      rancho: 'rural',
+    }
+    return map[tipo] || 'apartamento'
+  }
+
   async function salvar(statusDesejado: 'publicado' | 'pausado' = 'publicado') {
     setSalvando(true)
     setErro("")
@@ -274,6 +301,11 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error("Você precisa estar logado.")
+
+      const precoNumerico = Number(String(dados.preco).replace(/\D/g, "")) || 0
+      const areaNumerica = Number(String(dados.area).replace(/\D/g, "")) || 0
+      const latNumerica = dados.latitude ? parseFloat(String(dados.latitude)) : null
+      const lngNumerica = dados.longitude ? parseFloat(String(dados.longitude)) : null
 
       const { data: perfilExistente } = await supabase
         .from('perfis')
@@ -293,10 +325,17 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         })
       }
 
-      const precoNumerico = extrairNumero(dados.preco) || 0
-      const areaNumerica = parseFloat(dados.area.replace(',', '.')) || null
-      const latNumerica = parseFloat(dados.latitude) || 0
-      const lngNumerica = parseFloat(dados.longitude) || 0
+      const meta = user.user_metadata || {}
+      const imobId = meta.imobiliaria_id
+
+      let statusFinal: 'ativo' | 'pausado' | 'rascunho' = 'ativo'
+      if (isCorretor || statusDesejado === 'em_analise' || statusDesejado === 'rascunho') {
+        statusFinal = 'rascunho'
+      } else if (statusDesejado === 'pausado' || usoPlano.atingiuLimite) {
+        statusFinal = 'pausado'
+      } else {
+        statusFinal = 'ativo'
+      }
 
       const { data: imovel, error: erroImovel } = await supabase
         .from("imoveis")
@@ -322,7 +361,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
           iptu: extrairNumero(dados.iptu),
           aceita_pets: !!dados.aceita_pets,
           mobiliado: !!dados.mobiliado,
-          status: statusDesejado === 'publicado' ? 'ativo' : 'pausado',
+          status: statusFinal,
           destaque: false,
         })
         .select()
@@ -363,13 +402,40 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         }
       }
 
-      // 1. Atualiza a lista do workspace primeiro (enquanto o botão exibe 'Publicando...')
+      // Se for corretor, notificar os gestores da imobiliária
+      if (isCorretor && imobId && imovel?.id) {
+        try {
+          await fetch('/api/painel/notificacoes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              usuario_id: imobId,
+              titulo: '⏳ Novo Anúncio para Revisão',
+              mensagem: `O corretor ${user.user_metadata?.nome || user.email?.split('@')[0] || 'da equipe'} submeteu "${dados.titulo}" para revisão e publicação.`,
+              tipo: 'revisao_pendente',
+              imovel_id: imovel.id,
+            }),
+          })
+        } catch {}
+      }
+
+      // 1. Atualiza a lista do workspace primeiro
       await onImovelCriado()
 
-      // 2. Pequeno intervalo para renderização da lista ao fundo
+      // 2. Feedback se for corretor
+      if (isCorretor) {
+        await alertar({
+          titulo: 'Anúncio Submetido com Sucesso!',
+          mensagem: `Seu imóvel "${dados.titulo}" foi enviado para revisão da gestão da ${imobiliariaNome || 'sua imobiliária'}. Assim que for aprovado, ele será publicado no mapa.`,
+          icone: '🎉',
+          tipo: 'sucesso',
+        })
+      }
+
+      // 3. Pequeno intervalo para renderização da lista ao fundo
       await new Promise((resolve) => setTimeout(resolve, 200))
 
-      // 3. Fecha a janela suavemente
+      // 4. Fecha a janela suavemente
       onClose()
     } catch (e: unknown) {
       console.error("Erro ao salvar imóvel:", e)
@@ -466,7 +532,12 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
           {/* Etapa 2: Dados Básicos */}
           {etapa === 2 && (
-            <div className={styles.etapaConteudo}>
+            <form
+              className={styles.etapaConteudo}
+              onSubmit={(e) => e.preventDefault()}
+              autoComplete="off"
+              role="presentation"
+            >
               <h2 className={styles.etapaTitulo}>Dados do Imóvel</h2>
               <p className={styles.etapaSubtitulo}>Preço, título e localização</p>
 
@@ -478,6 +549,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                     value={dados.titulo}
                     onChange={(e) => atualizar("titulo", e.target.value)}
                     maxLength={100}
+                    name="imovel_d_titulo"
+                    autoComplete="one-time-code"
                   />
                 </div>
 
@@ -487,6 +560,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                     className={styles.input}
                     value={formatarPreco(dados.preco)}
                     onChange={(e) => atualizar("preco", e.target.value)}
+                    name="imovel_d_preco"
+                    autoComplete="one-time-code"
                   />
                 </div>
               </div>
@@ -505,6 +580,10 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                         }
                       }}
                       maxLength={9}
+                      name="imovel_d_cep"
+                      autoComplete="one-time-code"
+                      data-lpignore="true"
+                      data-form-type="other"
                     />
                     {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.75rem", color: "#64748b" }}>...</span>}
                   </div>
@@ -516,6 +595,10 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                     className={styles.input}
                     value={dados.cidade}
                     onChange={(e) => atualizar("cidade", e.target.value)}
+                    name="imovel_d_cidade"
+                    autoComplete="one-time-code"
+                    data-lpignore="true"
+                    data-form-type="other"
                   />
                 </div>
 
@@ -526,6 +609,10 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                     value={dados.estado}
                     onChange={(e) => atualizar("estado", e.target.value.toUpperCase())}
                     maxLength={2}
+                    name="imovel_d_uf"
+                    autoComplete="one-time-code"
+                    data-lpignore="true"
+                    data-form-type="other"
                   />
                 </div>
               </div>
@@ -537,6 +624,10 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                     className={styles.input}
                     value={dados.endereco}
                     onChange={(e) => atualizar("endereco", e.target.value)}
+                    name="imovel_d_logradouro"
+                    autoComplete="one-time-code"
+                    data-lpignore="true"
+                    data-form-type="other"
                   />
                 </div>
 
@@ -546,10 +637,14 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                     className={styles.input}
                     value={dados.bairro}
                     onChange={(e) => atualizar("bairro", e.target.value)}
+                    name="imovel_d_bairro"
+                    autoComplete="one-time-code"
+                    data-lpignore="true"
+                    data-form-type="other"
                   />
                 </div>
               </div>
-            </div>
+            </form>
           )}
 
           {/* Etapa 3: Detalhes */}
@@ -776,25 +871,43 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                 </div>
               </div>
 
+              {isCorretor && (
+                <div style={{
+                  background: '#eff6ff',
+                  border: '1.5px solid #bfdbfe',
+                  borderRadius: '0.75rem',
+                  padding: '0.85rem 1rem',
+                  fontSize: '0.825rem',
+                  color: '#1e40af',
+                  lineHeight: '1.4',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}>
+                  <span style={{ fontSize: '1.2rem' }}>👔</span>
+                  <span>
+                    <strong>Moderação da Equipe:</strong> Como corretor oficial, seu anúncio será enviado para revisão e aprovação da gestão da {imobiliariaNome || 'sua imobiliária'} antes de ser publicado no mapa.
+                  </span>
+                </div>
+              )}
+
               {usoPlano.atingiuLimite && (
                 <div style={{
                   background: '#fef2f2',
-                  border: '1px solid #fee2e2',
-                  borderRadius: '0.5rem',
-                  padding: '0.5rem 0.75rem',
-                  fontSize: '0.78rem',
+                  border: '1.5px solid #fecaca',
+                  borderRadius: '0.75rem',
+                  padding: '0.85rem 1rem',
+                  fontSize: '0.825rem',
                   color: '#991b1b',
-                  lineHeight: '1.3'
+                  lineHeight: '1.4',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}>
-                  {isCorretor ? (
-                    <span>
-                      ⚠️ <strong>Cota Corporativa:</strong> A imobiliária atingiu o limite de {usoPlano.limiteMaximo} anúncio(s). Salve como <strong>Pausado</strong> para gravar.
-                    </span>
-                  ) : (
-                    <span>
-                      ⚠️ <strong>Limite Atingido:</strong> Seu plano atingiu o limite de {usoPlano.limiteMaximo} imóvel(is).
-                    </span>
-                  )}
+                  <span style={{ fontSize: '1.2rem' }}>⚠️</span>
+                  <span>
+                    <strong>Limite de Cota Atingido:</strong> Você atingiu o limite de {usoPlano.limiteMaximo} anúncio(s) ativo(s) do plano {usoPlano.plano.nome}. Este anúncio só poderá ser salvo como <strong>Pausado / Rascunho</strong> ou será necessário fazer <strong>Upgrade do Plano</strong> para publicá-lo diretamente no mapa.
+                  </span>
                 </div>
               )}
 
@@ -823,37 +936,84 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                 Avançar →
               </button>
             ) : (
-              <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                {usoPlano.atingiuLimite ? (
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                {isCorretor ? (
                   <>
                     <button
                       type="button"
                       className={styles.btnVoltar2}
                       onClick={() => salvar('pausado')}
                       disabled={salvando}
+                      title="Salvar como pausado sem enviar para aprovação"
                     >
-                      {salvando ? "Salvando..." : "⏸️ Salvar Pausado"}
+                      Salvar Pausado
                     </button>
-                    {!isCorretor && (
+
+                    <button
+                      type="button"
+                      className={`${styles.btnPublicar} ${salvando ? styles.btnCarregando : ""}`}
+                      onClick={() => salvar('rascunho')}
+                      disabled={salvando}
+                      style={{ background: '#d97706' }}
+                    >
+                      {salvando ? "Enviando..." : "📤 Enviar para Revisão do Gestor"}
+                    </button>
+                  </>
+                ) : usoPlano.atingiuLimite ? (
+                  <>
+                    <button
+                      type="button"
+                      className={styles.btnVoltar2}
+                      onClick={() => salvar('pausado')}
+                      disabled={salvando}
+                      title="Salvar imóvel como pausado aguardando vagas de cota"
+                    >
+                      Salvar como Pausado
+                    </button>
+
+                    {proximoPlano && (
                       <button
                         type="button"
-                        className={styles.btnAvancar}
+                        className="btn btn-primario btn-md"
                         onClick={() => setModalLimiteAberto(true)}
-                        disabled={salvando}
+                        style={{ fontWeight: 700 }}
                       >
-                        Upgrade
+                        ⚡ Upgrade p/ Publicar
                       </button>
                     )}
                   </>
                 ) : (
-                  <button
-                    type="button"
-                    className={`${styles.btnPublicar} ${salvando ? styles.btnCarregando : ""}`}
-                    onClick={() => salvar('publicado')}
-                    disabled={salvando}
-                  >
-                    {salvando ? "Publicando..." : "🏡 Publicar imóvel"}
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className={styles.btnVoltar2}
+                      onClick={() => salvar('pausado')}
+                      disabled={salvando}
+                      title="Salvar como rascunho pausado"
+                    >
+                      Salvar Pausado
+                    </button>
+
+                    <button
+                      type="button"
+                      className={styles.btnVoltar2}
+                      onClick={() => salvar('rascunho')}
+                      disabled={salvando}
+                      style={{ borderColor: '#f59e0b', color: '#b45309', background: '#fffbeb', fontWeight: 700 }}
+                      title="Salvar e colocar na fila de revisão interna"
+                    >
+                      ⏳ Enviar p/ Revisão Interna
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`${styles.btnPublicar} ${salvando ? styles.btnCarregando : ""}`}
+                      onClick={() => salvar('ativo')}
+                      disabled={salvando}
+                    >
+                      {salvando ? "Publicando..." : "🏡 Publicar Direto no Mapa"}
+                    </button>
+                  </>
                 )}
               </div>
             )}

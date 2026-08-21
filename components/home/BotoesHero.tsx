@@ -1,51 +1,34 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import styles from './BotoesHero.module.css'
-import ModalBuscaCidade from './ModalBuscaCidade'
-
-type Negociacao = 'venda' | 'aluguel'
 
 export default function BotoesHero() {
-  const router = useRouter()
-  const [modalNeg, setModalNeg] = useState<Negociacao | null>(null)
-
   return (
-    <>
-      <div className={styles.wrapper}>
-        {/* Comprar — abre modal de cidade */}
-        <button
-          className={`btn btn-acento btn-lg ${styles.btnPrimario}`}
-          onClick={() => setModalNeg('venda')}
-        >
-          <span>🏠</span> Quero Comprar
-        </button>
+    <div className={styles.wrapper}>
+      {/* Comprar — vai direto para o mapa com filtro de venda */}
+      <Link
+        href="/explorar?negociacao=venda"
+        className={`btn btn-acento btn-lg ${styles.btnPrimario}`}
+      >
+        <span>🏠</span> Quero Comprar
+      </Link>
 
-        {/* Alugar — abre modal de cidade */}
-        <button
-          className={`btn btn-lg ${styles.btnSecundario}`}
-          onClick={() => setModalNeg('aluguel')}
-        >
-          <span>🔑</span> Quero Alugar
-        </button>
+      {/* Alugar — vai direto para o mapa com filtro de aluguel */}
+      <Link
+        href="/explorar?negociacao=aluguel"
+        className={`btn btn-lg ${styles.btnSecundario}`}
+      >
+        <span>🔑</span> Quero Alugar
+      </Link>
 
-        {/* Explorar no mapa — vai direto, sem modal */}
-        <button
-          className={`btn btn-lg ${styles.btnMapa}`}
-          onClick={() => router.push('/explorar')}
-        >
-          <span>🗺️</span> Explorar no mapa
-        </button>
-      </div>
-
-      {/* Modal de cidade */}
-      {modalNeg && (
-        <ModalBuscaCidade
-          negociacao={modalNeg}
-          onFechar={() => setModalNeg(null)}
-        />
-      )}
-    </>
+      {/* Explorar no mapa — visão geral */}
+      <Link
+        href="/explorar"
+        className={`btn btn-lg ${styles.btnMapa}`}
+      >
+        <span>🗺️</span> Explorar no mapa
+      </Link>
+    </div>
   )
 }

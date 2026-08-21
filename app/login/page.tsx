@@ -11,7 +11,7 @@ import styles from "./page.module.css"
 function traduzirErro(msg: string): string {
   if (msg.includes("For security purposes") || msg.includes("after")) {
     const segundos = msg.match(/\d+/)?.[0] ?? "alguns"
-    return `Por seguranca, aguarde ${segundos} segundos.`
+    return `Por segurança, aguarde ${segundos} segundos.`
   }
   if (msg.includes("Invalid login credentials")) return "E-mail ou senha incorretos."
   if (msg.includes("Email not confirmed")) return "Confirme seu e-mail antes de entrar."
@@ -22,10 +22,6 @@ function traduzirErro(msg: string): string {
 function LoginConteudo() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const tipoParam = searchParams.get('tipo') || searchParams.get('perfil')
-  const [modoLogin, setModoLogin] = useState<'usuario' | 'imobiliaria'>(
-    tipoParam === 'imobiliaria' ? 'imobiliaria' : 'usuario'
-  )
   const destino = searchParams.get('next') || '/painel'
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
@@ -35,8 +31,6 @@ function LoginConteudo() {
   const [carregando, setCarregando] = useState(false)
   const [carregandoGoogle, setCarregandoGoogle] = useState(false)
   const [erro, setErro] = useState("")
-
-  const isModoImobiliaria = modoLogin === 'imobiliaria'
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -106,19 +100,27 @@ function LoginConteudo() {
 
   return (
     <div className={styles.pagina}>
+      {/* Lado Esquerdo: Formulário */}
       <div className={styles.lado}>
         <div className={styles.ladoConteudo}>
-          <Link href="/" className={styles.logo}>
-            <LogoGota size={30} />
-            <span>FIXUM</span>
-          </Link>
+          {/* Topo com Logo e Voltar */}
+          <div className={styles.topoForm}>
+            <Link href="/" className={styles.logo}>
+              <LogoGota size={32} />
+              <span>FIXUM</span>
+            </Link>
+            <Link href="/" className={styles.linkVoltarHome}>
+              <span>←</span> Voltar ao início
+            </Link>
+          </div>
 
           {precisaMfa ? (
-            <>
-              <h1>Autenticação em 2 Fatores 🔐</h1>
-              <p>Digite o código de 6 dígitos gerado no seu aplicativo autenticador (Google Authenticator ou Authy)</p>
+            <div className={styles.cardMfa}>
+              <div className={styles.iconeMfa}>🔐</div>
+              <h1>Autenticação em 2 Fatores</h1>
+              <p>Digite o código de 6 dígitos gerado no seu aplicativo autenticador (Google Authenticator ou similar).</p>
 
-              <form onSubmit={handleVerificarMfa} className={styles.form} style={{ marginTop: '1.5rem' }}>
+              <form onSubmit={handleVerificarMfa} className={styles.form}>
                 <div className={styles.campo}>
                   <label>Código de Segurança (TOTP)</label>
                   <input
@@ -130,7 +132,7 @@ function LoginConteudo() {
                     onChange={(e) => setCodigoMfa(e.target.value)}
                     required
                     autoFocus
-                    style={{ fontSize: '1.4rem', letterSpacing: '0.25em', textAlign: 'center' }}
+                    style={{ fontSize: '1.5rem', letterSpacing: '0.3em', textAlign: 'center', fontWeight: 700 }}
                   />
                 </div>
 
@@ -144,77 +146,46 @@ function LoginConteudo() {
                   <button
                     type="button"
                     onClick={() => { setPrecisaMfa(false); setCodigoMfa("") }}
-                    style={{ background: 'none', border: 'none', color: '#0f4c81', cursor: 'pointer', fontSize: '0.85rem' }}
+                    className={styles.btnVoltarMfa}
                   >
                     ← Voltar para login com senha
                   </button>
                 </div>
               </form>
-            </>
+            </div>
           ) : (
-            <>
-              {/* Seletor de Perfil de Login (exibido apenas quando não veio de link direto) */}
-              {!tipoParam && (
-                <div className={styles.seletorPerfil}>
-                  <button
-                    type="button"
-                    className={`${styles.btnModo} ${!isModoImobiliaria ? styles.btnModoAtivo : ''}`}
-                    onClick={() => setModoLogin('usuario')}
-                  >
-                    👤 Sou Cliente / Proprietário
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.btnModo} ${isModoImobiliaria ? styles.btnModoAtivo : ''}`}
-                    onClick={() => setModoLogin('imobiliaria')}
-                  >
-                    🏢 Sou Imobiliária / Corretor
-                  </button>
-                </div>
-              )}
+            <div className={styles.cardForm}>
+              <div className={styles.cabecalhoForm}>
+                <h1>Bem-vindo de volta</h1>
+                <p>Acesse sua conta para gerenciar seus imóveis e propostas</p>
+              </div>
 
-              {isModoImobiliaria && (
-                <div className={styles.badgeCorporativo}>
-                  🏢 Acesso Corporativo & Gestão de Corretores
-                </div>
-              )}
+              {/* Botão Google */}
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={carregandoGoogle}
+                className={styles.btnGoogle}
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+                  <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
+                  <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                  <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                </svg>
+                <span>{carregandoGoogle ? "Conectando..." : "Entrar com Google"}</span>
+              </button>
 
-              <h1>{isModoImobiliaria ? "Painel Imobiliário" : "Bem-vindo de volta"}</h1>
-              <p>
-                {isModoImobiliaria
-                  ? "Acesse a conta da sua imobiliária para gerenciar corretores e imóveis"
-                  : "Entre na sua conta para acessar seus imóveis e favoritos"}
-              </p>
-
-              {/* Botão Google (visível para usuários) */}
-              {!isModoImobiliaria && (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleGoogle}
-                    disabled={carregandoGoogle}
-                    className={styles.btnGoogle}
-                  >
-                    <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
-                      <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
-                      <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-                      <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
-                    </svg>
-                    {carregandoGoogle ? "Conectando..." : "Continuar com Google"}
-                  </button>
-
-                  <div className={styles.divisor}><span>ou</span></div>
-                </>
-              )}
+              <div className={styles.divisor}><span>ou entre com seu e-mail</span></div>
 
               <form onSubmit={handleLogin} className={styles.form}>
                 <div className={styles.campo}>
-                  <label>{isModoImobiliaria ? "E-mail Corporativo" : "E-mail"}</label>
+                  <label htmlFor="campo-email">E-mail</label>
                   <input
+                    id="campo-email"
                     type="email"
                     className="campo"
-                    placeholder={isModoImobiliaria ? "contato@suaimobiliaria.com.br" : "seu@email.com"}
+                    placeholder="ex: seu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -222,17 +193,14 @@ function LoginConteudo() {
                 </div>
 
                 <div className={styles.campo}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <label>Senha</label>
-                    <Link
-                      href="/recuperar-senha"
-                      style={{ fontSize: '0.78rem', color: '#0f4c81', textDecoration: 'none', fontWeight: 500 }}
-                    >
+                  <div className={styles.campoSenhaHeader}>
+                    <label htmlFor="campo-senha">Senha</label>
+                    <Link href="/recuperar-senha" className={styles.linkEsqueceu}>
                       Esqueceu a senha?
                     </Link>
                   </div>
                   <InputSenha
-                    placeholder="Sua senha"
+                    placeholder="Sua senha de acesso"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
                     required
@@ -241,37 +209,78 @@ function LoginConteudo() {
 
                 {erro && <div className={styles.erro}>{erro}</div>}
 
-                <button type="submit" className="btn btn-primario btn-lg" disabled={carregando}>
-                  {carregando
-                    ? "Entrando..."
-                    : isModoImobiliaria
-                    ? "🏢 Entrar no Painel Imobiliário"
-                    : "Entrar"}
+                <button type="submit" className={`btn btn-primario btn-lg ${styles.btnSubmit}`} disabled={carregando}>
+                  {carregando ? (
+                    <span className={styles.btnCarregando}>
+                      <span className={styles.spinner} /> Entrando...
+                    </span>
+                  ) : (
+                    "Acessar Conta"
+                  )}
                 </button>
               </form>
 
               <div className={styles.rodape}>
-                {isModoImobiliaria ? (
-                  <>
-                    <span>Ainda não cadastrou sua imobiliária?</span>
-                    <Link href="/cadastro?tipo=imobiliaria">Cadastrar Imobiliária</Link>
-                  </>
-                ) : (
-                  <>
-                    <span>Não tem conta?</span>
-                    <Link href="/cadastro">Criar conta grátis</Link>
-                  </>
-                )}
+                <span>Ainda não tem uma conta?</span>
+                <Link href="/cadastro" className={styles.linkCadastro}>Criar Conta Gratuita</Link>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
 
+      {/* Lado Direito: Painel Decorativo Visual (Estilo Pro) */}
       <div className={styles.ladoVisual}>
+        <div className={styles.glow1} />
+        <div className={styles.glow2} />
+        <div className={styles.gridBackground} />
+
         <div className={styles.ladoVisualConteudo}>
-          <h2>Explore onde voce quer viver</h2>
-          <p>A plataforma imobiliaria centrada no mapa. Descubra imoveis, explore bairros e encontre o lugar perfeito.</p>
+          {/* Badge flutuante */}
+          <div className={styles.badgeDestaque}>
+            <span className={styles.pontoVerde} />
+            <span>Plataforma Imobiliária Geolocalizada</span>
+          </div>
+
+          <h2>Encontre e anuncie imóveis com inteligência no mapa.</h2>
+          <p>A ferramenta completa para imobiliárias, corretores autônomos e proprietários conectarem compradores em tempo real.</p>
+
+          {/* Card Mockup Flutuante com Efeito Glassmorphism */}
+          <div className={styles.cardPreviewGlass}>
+            <div className={styles.cardPreviewTopo}>
+              <div className={styles.tagStatus}>⚡ Novo Lead Recebido</div>
+              <span className={styles.horarioLead}>Há 2 min</span>
+            </div>
+            <div className={styles.cardPreviewCorpo}>
+              <div className={styles.avatarLead}>👤</div>
+              <div>
+                <div className={styles.nomeLead}>Rodrigo Silveira</div>
+                <div className={styles.interesseLead}>Interesse em: Apartamento 3Q · Centro</div>
+              </div>
+            </div>
+            <div className={styles.cardPreviewFooter}>
+              <span className={styles.badgeConversao}>📍 Encontrado no Mapa</span>
+              <span className={styles.valorPreco}>R$ 480.000</span>
+            </div>
+          </div>
+
+          {/* Métricas de Confiança */}
+          <div className={styles.metricasConfianca}>
+            <div className={styles.metricaItem}>
+              <strong>+5.000</strong>
+              <span>Imóveis Mapeados</span>
+            </div>
+            <div className={styles.divisorMetrica} />
+            <div className={styles.metricaItem}>
+              <strong>100%</strong>
+              <span>Precisão GPS</span>
+            </div>
+            <div className={styles.divisorMetrica} />
+            <div className={styles.metricaItem}>
+              <strong>24/7</strong>
+              <span>Gestão de Leads</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -280,7 +289,18 @@ function LoginConteudo() {
 
 export default function LoginPage() {
   return (
-    <Suspense>
+    <Suspense fallback={
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "var(--cor-texto-secundario)",
+        fontSize: "var(--texto-sm)",
+      }}>
+        Carregando...
+      </div>
+    }>
       <LoginConteudo />
     </Suspense>
   )

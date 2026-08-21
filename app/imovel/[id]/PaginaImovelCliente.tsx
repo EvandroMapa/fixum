@@ -7,19 +7,20 @@ import Header from '@/components/layout/Header'
 import { type Imovel } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel } from '@/lib/utils'
 import { useFavorito } from '@/hooks/useFavorito'
+import { createClient } from '@/lib/supabase/client'
 import styles from './page.module.css'
 
 const MapaImovel = dynamic(() => import('@/components/mapa/MapaImovel'), { ssr: false })
 
 const PONTOS_INTERESSE = [
-  { icone: '🏫', label: 'Escolas' },
-  { icone: '🏥', label: 'Hospitais' },
+  { icone: '🏫', label: 'Escolas e Creches' },
+  { icone: '🏥', label: 'Hospitais e Clínicas' },
   { icone: '🛒', label: 'Supermercados' },
   { icone: '💊', label: 'Farmácias' },
-  { icone: '🍽️', label: 'Restaurantes' },
+  { icone: '🍽️', label: 'Restaurantes e Cafés' },
   { icone: '🏋️', label: 'Academias' },
-  { icone: '🏦', label: 'Bancos' },
-  { icone: '🚌', label: 'Transporte' },
+  { icone: '🏦', label: 'Bancos e Caixas' },
+  { icone: '🚌', label: 'Transporte Público' },
 ]
 
 const CARACTERISTICAS_ICONES: Record<string, string> = {
@@ -35,13 +36,25 @@ const CARACTERISTICAS_ICONES: Record<string, string> = {
   ar_condicionado: '❄️',
   portao_eletronico: '🚗',
   armarios_planejados: '🪟',
+  salao_festas: '🎉',
+  academia: '🏋️',
+  playground: '🎠',
 }
 
 interface Props {
   imovel: Imovel & {
     fotos_imovel?: { id: string; url: string; principal: boolean; ordem: number }[]
     caracteristicas_imovel?: { caracteristica: string }[]
-    perfis?: { id: string; nome: string; tipo: string; foto_url?: string; telefone?: string; whatsapp?: string }
+    perfis?: {
+      id: string
+      nome: string
+      tipo: string
+      foto_url?: string
+      telefone?: string
+      whatsapp?: string
+      creci?: string
+      imobiliaria_nome?: string
+    }
   }
   historico: { preco_anterior: number; preco_novo: number; created_at: string }[]
 }
@@ -51,6 +64,15 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
   const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
   const [modalFoto, setModalFoto] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
+
+  // Formulário de Lead / Contato
+  const [formNome, setFormNome] = useState('')
+  const [formTelefone, setFormTelefone] = useState('')
+  const [formMensagem, setFormMensagem] = useState(
+    `Olá! Tenho interesse no imóvel "${imovel.titulo}" (Cód: ${imovel.id.slice(0, 8).toUpperCase()}). Poderia me passar mais informações?`
+  )
+  const [enviandoLead, setEnviandoLead] = useState(false)
+  const [leadEnviado, setLeadEnviado] = useState(false)
 
   const touchStartX = useRef<number | null>(null)
   const touchEndX = useRef<number | null>(null)
@@ -73,7 +95,7 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
     setFotoAtiva((i) => (i + 1) % fotos.length)
   }, [fotos.length])
 
-  // Gestos de swipe no carrossel principal
+  // Gestos de swipe no carrossel mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.targetTouches[0].clientX
     touchEndX.current = null
@@ -90,22 +112,17 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
     touchEndX.current = null
   }
 
-  // Gestos de swipe no modal de fotos
-  const handleModalTouchStart = (e: React.TouchEvent) => {
-    modalTouchStartX.current = e.targetTouches[0].clientX
-    modalTouchEndX.current = null
-  }
-  const handleModalTouchMove = (e: React.TouchEvent) => {
-    modalTouchEndX.current = e.targetTouches[0].clientX
-  }
-  const handleModalTouchEnd = () => {
-    if (modalTouchStartX.current === null || modalTouchEndX.current === null) return
-    const diff = modalTouchStartX.current - modalTouchEndX.current
-    if (diff > 40) irProxima()
-    else if (diff < -40) irAnterior()
-    modalTouchStartX.current = null
-    modalTouchEndX.current = null
-  }
+  // Teclado no lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!modalFoto) return
+      if (e.key === 'ArrowRight') irProxima()
+      if (e.key === 'ArrowLeft') irAnterior()
+      if (e.key === 'Escape') setModalFoto(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [modalFoto, irAnterior, irProxima])
 
   // Trava scroll quando o modal de fotos estiver aberto
   useEffect(() => {
@@ -118,8 +135,10 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
   }, [modalFoto])
 
   function handleWhatsApp() {
-    const msg = encodeURIComponent(`Olá! Tenho interesse no imóvel: ${imovel.titulo}. Vi no FIXUM.`)
-    const tel = anunciante?.whatsapp ?? anunciante?.telefone ?? ''
+    const msg = encodeURIComponent(
+      `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${imovel.id.slice(0, 8).toUpperCase()}) em ${imovel.cidade}. Vi no FIXUM.`
+    )
+    const tel = anunciante?.whatsapp ?? anunciante?.telefone ?? '31988027152'
     window.open(`https://wa.me/55${tel.replace(/\D/g, '')}?text=${msg}`, '_blank')
   }
 
@@ -141,6 +160,34 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
     }
   }
 
+  async function handleEnviarLead(e: React.FormEvent) {
+    e.preventDefault()
+    if (!formNome.trim() || !formTelefone.trim()) return
+
+    setEnviandoLead(true)
+    try {
+      const supabase = createClient()
+      await supabase.from('leads').insert({
+        imovel_id: imovel.id,
+        nome: formNome,
+        telefone: formTelefone,
+        mensagem: formMensagem,
+        status: 'novo',
+      })
+      setLeadEnviado(true)
+    } catch (err) {
+      console.error('Erro ao enviar mensagem:', err)
+    } finally {
+      setEnviandoLead(false)
+    }
+  }
+
+  // Cálculos financeiros
+  const precoNum = imovel.preco || 0
+  const condNum = imovel.condominio || 0
+  const iptuNum = imovel.iptu || 0
+  const custoTotalMensal = precoNum + condNum + (imovel.negociacao === 'aluguel' ? Math.round(iptuNum / 12) : 0)
+
   return (
     <>
       <Header />
@@ -149,10 +196,10 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
         {/* Barra superior de navegação / Ações */}
         <div className={styles.barraTopoImovel}>
           <Link href="/explorar" className={styles.btnVoltar}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 18-6-6 6-6"/>
             </svg>
-            <span>Voltar ao Explorar</span>
+            <span>Voltar ao Mapa</span>
           </Link>
 
           {/* Breadcrumb visível apenas no desktop */}
@@ -160,6 +207,8 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
             <Link href="/">Início</Link>
             <span>›</span>
             <Link href="/explorar">Explorar</Link>
+            <span>›</span>
+            <span style={{ color: '#475569' }}>{imovel.cidade}</span>
             <span>›</span>
             <span className={styles.breadcrumbTitulo}>{imovel.titulo}</span>
           </div>
@@ -180,20 +229,59 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
               type="button"
               className={styles.btnAcaoTopo}
               onClick={handleCompartilhar}
-              title="Compartilhar imóvel"
+              title="Compartilhar link do imóvel"
             >
               🔗
-              <span className={styles.txtAcao}>{linkCopiado ? 'Copiado!' : 'Compartilhar'}</span>
+              <span className={styles.txtAcao}>{linkCopiado ? 'Link Copiado!' : 'Compartilhar'}</span>
             </button>
           </div>
         </div>
 
-        <div className={styles.layout}>
-          {/* COLUNA PRINCIPAL */}
-          <div className={styles.colunaPrincipal}>
+        {/* ═══════════════════════════════════════════════════════════════
+            GALERIA DE FOTOS (MOSAICO AIRBNB / QUINTOANDAR NO DESKTOP)
+            ═══════════════════════════════════════════════════════════════ */}
+        <div className={styles.secaoGaleriaWrapper}>
+          {fotos.length >= 3 ? (
+            <div className={styles.mosaicoFotos} onClick={() => setModalFoto(true)}>
+              {/* Foto Principal (Esquerda) */}
+              <div
+                className={styles.mosaicoFotoPrincipal}
+                style={{ backgroundImage: `url(${fotos[0].url})` }}
+              >
+                <div className={styles.overlayHoverFoto} />
+              </div>
 
-            {/* Galeria */}
-            <div className={styles.galeria}>
+              {/* Stack de Fotos Laterais (Direita) */}
+              <div className={styles.mosaicoFotosLaterais}>
+                <div
+                  className={styles.mosaicoFotoItem}
+                  style={{ backgroundImage: `url(${fotos[1].url})` }}
+                >
+                  <div className={styles.overlayHoverFoto} />
+                </div>
+                <div
+                  className={styles.mosaicoFotoItem}
+                  style={{ backgroundImage: `url(${fotos[2].url})` }}
+                >
+                  <div className={styles.overlayHoverFoto} />
+                </div>
+              </div>
+
+              {/* Botão Flutuante de Ver Todas as Fotos */}
+              <button
+                type="button"
+                className={styles.btnVerTodasFotosFlutuante}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setModalFoto(true)
+                }}
+              >
+                📷 Ver todas as {fotos.length} fotos
+              </button>
+            </div>
+          ) : (
+            /* Carrossel clássico quando houver 1 ou 2 fotos */
+            <div className={styles.galeriaSimples}>
               <div
                 className={styles.fotoGrande}
                 style={{ backgroundImage: `url(${fotoAtual})` }}
@@ -202,18 +290,14 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
-                {fotos.length === 0 && (
-                  <div className={styles.semFoto}>🏠</div>
-                )}
+                {fotos.length === 0 && <div className={styles.semFoto}>🏠</div>}
 
-                {/* Badge de contador de fotos */}
                 {fotos.length > 0 && (
                   <div className={styles.badgeQtdFotos}>
                     📷 {fotoAtiva + 1} / {fotos.length}
                   </div>
                 )}
 
-                {/* Setas de navegação no desktop */}
                 {fotos.length > 1 && (
                   <>
                     <button
@@ -237,49 +321,84 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
 
                 <div className={styles.galeriaOverlay}>
                   <button type="button" className={styles.btnVerFotos}>
-                    📷 Ver todas as fotos ({fotos.length || 1})
+                    📷 Ver fotos em tela cheia ({fotos.length || 1})
                   </button>
                 </div>
               </div>
-
-              {fotos.length > 1 && (
-                <div className={styles.miniaturas}>
-                  {fotos.slice(0, 6).map((foto, i) => (
-                    <div
-                      key={foto.id}
-                      className={`${styles.miniatura} ${i === fotoAtiva ? styles.miniaturaAtiva : ''}`}
-                      style={{ backgroundImage: `url(${foto.url})` }}
-                      onClick={() => setFotoAtiva(i)}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
+          )}
+        </div>
 
-            {/* Título e preço */}
-            <div className={styles.cabecalho}>
-              <div className={styles.cabecalhoTop}>
-                <div>
-                  <div className={styles.selos}>
-                    <span className={`badge ${imovel.negociacao === 'venda' ? 'badge-primario' : 'badge-acento'}`}>
-                      {imovel.negociacao === 'venda' ? '🏷️ Venda' : '🔑 Aluguel'}
-                    </span>
-                    <span className="badge badge-primario">{labelTipoImovel(imovel.tipo)}</span>
-                    {imovel.destaque && <span className="badge badge-destaque">⭐ Destaque</span>}
-                  </div>
-                  <h1 className={styles.titulo}>{imovel.titulo}</h1>
-                  <p className={styles.endereco}>
-                    📍 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade}
-                  </p>
-                </div>
+        {/* ═══════════════════════════════════════════════════════════════
+            LAYOUT SPLIT: CONTEÚDO PRINCIPAL (ESQ) + STICKY CONTATO (DIR)
+            ═══════════════════════════════════════════════════════════════ */}
+        <div className={styles.layout}>
+          {/* COLUNA PRINCIPAL */}
+          <div className={styles.colunaPrincipal}>
+            {/* Título, Badges e Preço */}
+            <div className={styles.cabecalhoInfo}>
+              <div className={styles.selos}>
+                <span className={`${styles.tagBadge} ${imovel.negociacao === 'venda' ? styles.tagVenda : styles.tagAluguel}`}>
+                  {imovel.negociacao === 'venda' ? '🏷️ Venda' : '🔑 Aluguel'}
+                </span>
+                <span className={`${styles.tagBadge} styles.tagTipo`}>
+                  {labelTipoImovel(imovel.tipo)}
+                </span>
+                {imovel.aceita_pets && (
+                  <span className={`${styles.tagBadge} styles.tagPet`}>
+                    🐾 Aceita Pets
+                  </span>
+                )}
+                {imovel.mobiliado && (
+                  <span className={`${styles.tagBadge} styles.tagMobiliado`}>
+                    🛋️ Mobiliado
+                  </span>
+                )}
+                {imovel.destaque && (
+                  <span className={`${styles.tagBadge} styles.tagDestaque`}>
+                    ⭐ Destaque
+                  </span>
+                )}
               </div>
 
-              <div className={styles.precoGrande}>
-                {formatarPreco(imovel.preco, imovel.negociacao)}
-                {imovel.condominio && (
-                  <span className={styles.condominio}>
-                    + R$ {imovel.condominio.toLocaleString('pt-BR')} cond./mês
+              <h1 className={styles.titulo}>{imovel.titulo}</h1>
+
+              <p className={styles.endereco}>
+                <span>📍</span> {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade} - {imovel.estado || 'MG'}
+              </p>
+
+              {/* Bloco de Preço & Custos */}
+              <div className={styles.blocoPrecoCard}>
+                <div className={styles.linhaPrecoPrincipal}>
+                  <span className={styles.precoValorDestaque}>
+                    {formatarPreco(imovel.preco, imovel.negociacao)}
                   </span>
+                  {imovel.negociacao === 'aluguel' && (
+                    <span className={styles.precoSufixo}>/ mês</span>
+                  )}
+                </div>
+
+                {(imovel.condominio || imovel.iptu) && (
+                  <div className={styles.detalhamentoCustos}>
+                    {imovel.condominio && (
+                      <div className={styles.itemCusto}>
+                        <span className={styles.itemCustoLabel}>Condomínio:</span>
+                        <strong className={styles.itemCustoValor}>R$ {imovel.condominio.toLocaleString('pt-BR')}</strong>
+                      </div>
+                    )}
+                    {imovel.iptu && (
+                      <div className={styles.itemCusto}>
+                        <span className={styles.itemCustoLabel}>IPTU:</span>
+                        <strong className={styles.itemCustoValor}>R$ {imovel.iptu.toLocaleString('pt-BR')}</strong>
+                      </div>
+                    )}
+                    {imovel.negociacao === 'aluguel' && (
+                      <div className={styles.itemCustoTotal}>
+                        <span className={styles.itemCustoLabel}>Total Mensal Estimado:</span>
+                        <strong className={styles.itemCustoValorTotal}>R$ {custoTotalMensal.toLocaleString('pt-BR')}</strong>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -290,210 +409,219 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
               )}
             </div>
 
-            {/* Dados principais */}
-            <div className={styles.dadosPrincipais}>
-              {imovel.quartos != null && imovel.quartos > 0 && (
-                <div className={styles.dado}>
-                  <span className={styles.dadoIcone}>🛏️</span>
-                  <strong>{imovel.quartos}</strong>
-                  <span>{imovel.quartos === 1 ? 'Quarto' : 'Quartos'}</span>
+            {/* ESPECIFICAÇÕES PRINCIPAIS (GRID MODERNO) */}
+            <div className={styles.especificacoesGrid}>
+              <div className={styles.especificacaoCard}>
+                <span className={styles.especificacaoIcone}>📐</span>
+                <div className={styles.especificacaoInfo}>
+                  <strong>{formatarArea((imovel.area || imovel.area_construida)!)}</strong>
+                  <span>Área Útil</span>
                 </div>
-              )}
-              {imovel.suites != null && imovel.suites > 0 && (
-                <div className={styles.dado}>
-                  <span className={styles.dadoIcone}>🛁</span>
-                  <strong>{imovel.suites}</strong>
-                  <span>{imovel.suites === 1 ? 'Suíte' : 'Suítes'}</span>
-                </div>
-              )}
+              </div>
+
               {imovel.banheiros != null && imovel.banheiros > 0 && (
-                <div className={styles.dado}>
-                  <span className={styles.dadoIcone}>🚿</span>
-                  <strong>{imovel.banheiros}</strong>
-                  <span>{imovel.banheiros === 1 ? 'Banheiro' : 'Banheiros'}</span>
+                <div className={styles.especificacaoCard}>
+                  <span className={styles.especificacaoIcone}>🚿</span>
+                  <div className={styles.especificacaoInfo}>
+                    <strong>{imovel.banheiros}</strong>
+                    <span>{imovel.banheiros === 1 ? 'Banheiro' : 'Banheiros'}</span>
+                  </div>
                 </div>
               )}
+
               {imovel.vagas != null && imovel.vagas > 0 && (
-                <div className={styles.dado}>
-                  <span className={styles.dadoIcone}>🚗</span>
-                  <strong>{imovel.vagas}</strong>
-                  <span>{imovel.vagas === 1 ? 'Vaga' : 'Vagas'}</span>
+                <div className={styles.especificacaoCard}>
+                  <span className={styles.especificacaoIcone}>🚗</span>
+                  <div className={styles.especificacaoInfo}>
+                    <strong>{imovel.vagas}</strong>
+                    <span>{imovel.vagas === 1 ? 'Vaga' : 'Vagas'}</span>
+                  </div>
                 </div>
               )}
-              {imovel.area_construida && (
-                <div className={styles.dado}>
-                  <span className={styles.dadoIcone}>📐</span>
-                  <strong>{formatarArea(imovel.area_construida)}</strong>
-                  <span>Área útil</span>
+
+              {imovel.quartos != null && imovel.quartos > 0 ? (
+                <div className={styles.especificacaoCard}>
+                  <span className={styles.especificacaoIcone}>🛏️</span>
+                  <div className={styles.especificacaoInfo}>
+                    <strong>{imovel.quartos}</strong>
+                    <span>{imovel.quartos === 1 ? 'Quarto' : 'Quartos'}</span>
+                  </div>
                 </div>
-              )}
-              {imovel.area_terreno && (
-                <div className={styles.dado}>
-                  <span className={styles.dadoIcone}>🌍</span>
-                  <strong>{formatarArea(imovel.area_terreno)}</strong>
-                  <span>Terreno</span>
+              ) : (
+                <div className={styles.especificacaoCard}>
+                  <span className={styles.especificacaoIcone}>🏢</span>
+                  <div className={styles.especificacaoInfo}>
+                    <strong>Vão Livre</strong>
+                    <span>Espaço Amplo</span>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Descrição */}
+            {/* Descrição do Imóvel */}
             {imovel.descricao && (
-              <div className={styles.secao}>
-                <h2>Sobre este imóvel</h2>
-                <p className={styles.descricao}>{imovel.descricao}</p>
+              <div className={styles.secaoDetalhe}>
+                <h2 className={styles.secaoSubtitulo}>Sobre o Imóvel</h2>
+                <p className={styles.descricaoTexto}>{imovel.descricao}</p>
               </div>
             )}
 
-            {/* Características */}
+            {/* Características e Comodidades */}
             {caracteristicas.length > 0 && (
-              <div className={styles.secao}>
-                <h2>Características</h2>
+              <div className={styles.secaoDetalhe}>
+                <h2 className={styles.secaoSubtitulo}>Comodidades & Características</h2>
                 <div className={styles.gridCaracteristicas}>
                   {caracteristicas.map((c) => (
-                    <div key={c} className={styles.caracteristica}>
-                      <span>{CARACTERISTICAS_ICONES[c] ?? '✅'}</span>
-                      <span>{c.replace(/_/g, ' ')}</span>
+                    <div key={c} className={styles.caracteristicaItem}>
+                      <span className={styles.caracteristicaIcone}>{CARACTERISTICAS_ICONES[c] ?? '✨'}</span>
+                      <span className={styles.caracteristicaNome}>{c.replace(/_/g, ' ')}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Localização */}
-            <div className={styles.secao}>
-              <h2>📍 Localização</h2>
+            {/* Localização & Mapa Interativo */}
+            <div className={styles.secaoDetalhe}>
+              <h2 className={styles.secaoSubtitulo}>📍 Localização no Mapa</h2>
               <p className={styles.enderecoCompleto}>
-                {imovel.endereco_publico ? imovel.endereco : `${imovel.bairro ?? ''}, ${imovel.cidade}`}
+                {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade} - {imovel.estado || 'MG'}
               </p>
               <div className={styles.mapaImovelWrapper}>
                 <MapaImovel
                   lat={imovel.latitude}
                   lng={imovel.longitude}
                   titulo={imovel.titulo}
-                  publico={imovel.endereco_publico}
+                  publico={true}
                 />
               </div>
             </div>
 
-            {/* O que tem perto */}
-            <div className={styles.secao}>
-              <h2>🏘️ O que tem perto?</h2>
+            {/* O Que Tem no Entorno */}
+            <div className={styles.secaoDetalhe}>
+              <h2 className={styles.secaoSubtitulo}>🏘️ O que tem no entorno?</h2>
               <div className={styles.gridPontos}>
                 {PONTOS_INTERESSE.map((p) => (
-                  <div key={p.label} className={styles.ponto}>
+                  <div key={p.label} className={styles.pontoCard}>
                     <span className={styles.pontoIcone}>{p.icone}</span>
-                    <span>{p.label}</span>
+                    <span className={styles.pontoLabel}>{p.label}</span>
                   </div>
                 ))}
               </div>
-              <p className={styles.pontoNota}>
-                * Pontos de interesse são aproximados com base na localização do imóvel
-              </p>
             </div>
-
-            {/* Dados financeiros */}
-            {(imovel.condominio || imovel.iptu) && (
-              <div className={styles.secao}>
-                <h2>Custos adicionais</h2>
-                <div className={styles.custos}>
-                  {imovel.condominio && (
-                    <div className={styles.custo}>
-                      <span>Condomínio</span>
-                      <strong>R$ {imovel.condominio.toLocaleString('pt-BR')}/mês</strong>
-                    </div>
-                  )}
-                  {imovel.iptu && (
-                    <div className={styles.custo}>
-                      <span>IPTU</span>
-                      <strong>R$ {imovel.iptu.toLocaleString('pt-BR')}/ano</strong>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* COLUNA LATERAL — Contato Desktop */}
+          {/* ═══════════════════════════════════════════════════════════════
+              COLUNA LATERAL — CARD DE CONTATO & PROPOSTA (STICKY)
+              ═══════════════════════════════════════════════════════════════ */}
           <div className={styles.colunaLateral}>
-            <div className={styles.cardContato}>
-              {/* Anunciante */}
-              {anunciante && (
-                <div className={styles.anunciante}>
-                  <div className={styles.anuncianteAvatar}>
-                    {anunciante.foto_url ? (
-                      <img src={anunciante.foto_url} alt={anunciante.nome} />
-                    ) : (
-                      <span>👤</span>
-                    )}
-                  </div>
-                  <div>
-                    <strong>{anunciante.nome}</strong>
-                    <span className={`badge badge-primario`}>
-                      {anunciante.tipo === 'proprietario' ? 'Proprietário' :
-                       anunciante.tipo === 'corretor' ? 'Corretor' : 'Imobiliária'}
-                    </span>
-                  </div>
+            <div className={styles.cardContatoSticky}>
+              {/* Identificação do Anunciante */}
+              <div className={styles.boxAnuncianteInfo}>
+                <div className={styles.anuncianteAvatarWrapper}>
+                  {anunciante?.foto_url ? (
+                    <img src={anunciante.foto_url} alt={anunciante.nome} className={styles.anuncianteAvatarImg} />
+                  ) : (
+                    <div className={styles.anuncianteAvatarPlaceholder}>
+                      {anunciante?.nome?.slice(0, 2).toUpperCase() || 'IM'}
+                    </div>
+                  )}
                 </div>
-              )}
-
-              <div className={styles.precoCard}>
-                {formatarPreco(imovel.preco, imovel.negociacao)}
+                <div className={styles.anuncianteTextos}>
+                  <div className={styles.anuncianteNome}>{anunciante?.nome || 'Gestão Imobiliária'}</div>
+                  <div className={styles.anuncianteImobiliariaBadge}>
+                    <span>🏢</span>
+                    <strong>{anunciante?.imobiliaria_nome || 'M2 Imóveis & Aço'}</strong>
+                  </div>
+                  {anunciante?.creci && (
+                    <div className={styles.anuncianteCreci}>CRECI: {anunciante.creci}</div>
+                  )}
+                </div>
               </div>
 
-              {/* Botões de contato */}
-              <div className={styles.botoesContato}>
+              {/* Botões de Ação Imediata */}
+              <div className={styles.botoesContatoDireto}>
                 <button
                   type="button"
-                  className={`btn btn-sucesso btn-lg ${styles.btnWhatsApp}`}
+                  className={styles.btnWhatsAppDestaque}
                   onClick={handleWhatsApp}
                 >
-                  <span>💬</span> WhatsApp
+                  <span>💬</span> Conversar no WhatsApp
                 </button>
 
                 {anunciante?.telefone && (
                   <a
                     href={`tel:${anunciante.telefone}`}
-                    className={`btn btn-outline btn-lg ${styles.btnTelefone}`}
+                    className={styles.btnLigarDestaque}
                   >
-                    <span>📞</span> Ligar
+                    <span>📞</span> Ligar para o Corretor
                   </a>
                 )}
               </div>
 
-              {/* Formulário de mensagem */}
-              <div className={styles.formMensagem}>
-                <p className={styles.formLabel}>Enviar mensagem</p>
-                <textarea
-                  className={`campo ${styles.textarea}`}
-                  placeholder="Tenho interesse neste imóvel. Podem me enviar mais informações?"
-                  rows={3}
-                />
-                <input
-                  type="text"
-                  className="campo"
-                  placeholder="Seu nome"
-                  style={{ marginTop: '8px' }}
-                />
-                <input
-                  type="tel"
-                  className="campo"
-                  placeholder="Seu WhatsApp"
-                  style={{ marginTop: '8px' }}
-                />
-                <button type="button" className="btn btn-primario btn-lg" style={{ marginTop: '12px', width: '100%' }}>
-                  Enviar mensagem
-                </button>
+              {/* Formulário de Envio de Mensagem / Lead */}
+              <div className={styles.divisorContato} />
+
+              {leadEnviado ? (
+                <div className={styles.sucessoLeadCard}>
+                  <div style={{ fontSize: '2rem', marginBottom: '4px' }}>🎉</div>
+                  <strong>Mensagem Enviada!</strong>
+                  <p>O corretor responsável entrará em contato em instantes pelo WhatsApp.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleEnviarLead} className={styles.formLead}>
+                  <p className={styles.formLeadTitulo}>Envie uma mensagem rápida</p>
+
+                  <div className={styles.campoGrupo}>
+                    <input
+                      type="text"
+                      required
+                      className={styles.inputLead}
+                      placeholder="Seu nome completo"
+                      value={formNome}
+                      onChange={(e) => setFormNome(e.target.value)}
+                    />
+                  </div>
+
+                  <div className={styles.campoGrupo}>
+                    <input
+                      type="tel"
+                      required
+                      className={styles.inputLead}
+                      placeholder="Seu WhatsApp (com DDD)"
+                      value={formTelefone}
+                      onChange={(e) => setFormTelefone(e.target.value)}
+                    />
+                  </div>
+
+                  <div className={styles.campoGrupo}>
+                    <textarea
+                      rows={2}
+                      className={styles.textareaLead}
+                      value={formMensagem}
+                      onChange={(e) => setFormMensagem(e.target.value)}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className={styles.btnEnviarLead}
+                    disabled={enviandoLead}
+                  >
+                    {enviandoLead ? 'Enviando...' : '✉️ Enviar Proposta'}
+                  </button>
+                </form>
+              )}
+
+              {/* Código do Imóvel & Segurança */}
+              <div className={styles.rodapeSegurancaCard}>
+                <div className={styles.codigoImovelPill}>
+                  Código: <strong>{imovel.id.slice(0, 8).toUpperCase()}</strong>
+                </div>
+                <p className={styles.avisoSeguro}>
+                  🔒 Seus dados são protegidos e enviados com exclusividade para a equipe autorizada.
+                </p>
               </div>
-
-              <p className={styles.aviso}>
-                🔒 Seus dados são protegidos. Não compartilhamos com terceiros.
-              </p>
-            </div>
-
-            {/* Card de referência do imóvel */}
-            <div className={styles.cardRef}>
-              <span>Código do imóvel</span>
-              <strong>{imovel.id.slice(0, 8).toUpperCase()}</strong>
             </div>
           </div>
         </div>
@@ -513,21 +641,12 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
         </div>
 
         <div className={styles.botoesMobileAcao}>
-          {anunciante?.telefone && (
-            <a
-              href={`tel:${anunciante.telefone}`}
-              className={styles.btnTelefoneMobile}
-              title="Ligar"
-            >
-              📞
-            </a>
-          )}
           <button
             type="button"
             className={styles.btnWhatsAppMobile}
             onClick={handleWhatsApp}
           >
-            <span>💬</span> Conversar no WhatsApp
+            <span>💬</span> WhatsApp
           </button>
         </div>
       </div>
@@ -550,12 +669,8 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
               </button>
             </div>
 
-            <div
-              className={styles.lightboxCorpo}
-              onTouchStart={handleModalTouchStart}
-              onTouchMove={handleModalTouchMove}
-              onTouchEnd={handleModalTouchEnd}
-            >
+            <div className={styles.lightboxCorpo}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={fotoAtual}
                 alt={imovel.titulo}

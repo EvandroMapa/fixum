@@ -23,6 +23,16 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 3. BANCO DE DADOS
 - Supabase é o backend e banco de dados oficial do projeto.
-- Tabelas: imoveis (campos: latitude, longitude, preco, 	ipo, 
-egociacao, airro, cidade, etc.), otos_imovel (campos: id, imovel_id, url, principal, ordem), perfis, etc.
-- Storage: bucket otos-imoveis (público).
+- Tabelas: imoveis (campos: latitude, longitude, preco, tipo, negociacao, bairro, cidade, etc.), fotos_imovel (campos: id, imovel_id, url, principal, ordem), perfis, etc.
+- Storage: bucket fotos-imoveis (público).
+
+## 4. PADRÃO OBRIGATÓRIO DE DIÁLOGOS E ALERTAS (MODAIS PROFISSIONAIS)
+- **NUNCA utilizar `window.confirm()` ou `window.alert()` nativos do navegador** (eles aparecem colados no topo da barra de endereços e quebram a experiência visual da plataforma).
+- Usar SEMPRE o hook `const { confirmar, alertar } = useConfirm()` importado de `@/contexts/ModalConfirmacaoContext`.
+- **Confirmações de Ações (`confirmar`)**:
+  - Modal centralizado com backdrop blur, ícone temático (👑, 🗑️, 🚪, ⚠️, ℹ️), título destacado, mensagem explicativa e botões 'Cancelar' + ação (ex: 'Sim, Promover', 'Sim, Excluir').
+  - Suporta tipo: `'primario'`, `'perigo'`, `'aviso'`, `'sucesso'`.
+  - Exemplo: `const confirmou = await confirmar({ titulo: 'Promover a Gestor?', mensagem: '...', icone: '👑', tipo: 'primario' })`
+- **Alertas e Notificações Informativas (`alertar`)**:
+  - Modal centralizado com ícone temático, título, mensagem clara e botão único 'Entendi'.
+  - Exemplo: `await alertar({ titulo: 'Imóvel Publicado!', mensagem: '...', icone: '🎉', tipo: 'sucesso' })`

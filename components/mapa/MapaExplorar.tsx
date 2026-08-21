@@ -19,6 +19,7 @@ interface Props {
   voarPara?: [number, number] | null // [lng, lat] — recebido do autocomplete
   cidadeFiltro?: string
   isOrigemGps?: boolean
+  isFavoritos?: boolean
 }
 
 function precoLabel(preco: number): string {
@@ -55,6 +56,7 @@ export default function MapaExplorar({
   voarPara,
   cidadeFiltro,
   isOrigemGps,
+  isFavoritos,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapaRef = useRef<mapboxgl.Map | null>(null)
@@ -75,12 +77,25 @@ export default function MapaExplorar({
     const mapa = new mapboxgl.Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: centroInicial ?? [-47.9292, -15.7801], // Brasil (Brasília) como fallback
-      zoom: centroInicial ? 12 : 4,                  // Cidade → zoom 12 | Brasil → zoom 4
+      center: centroInicial ?? [-43.9386, -20.3000], // Região de atuação (MG Central)
+      zoom: centroInicial ? 12 : 9,                  // Zoom 12 para cidade/GPS | Zoom 9 regional com imóveis
       attributionControl: false,
     })
 
     mapa.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right')
+    
+    // Controle oficial de Geolocalização com alta precisão e sem cache
+    const geolocateControl = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 7000,
+      },
+      trackUserLocation: false,
+      showUserHeading: true,
+    })
+    mapa.addControl(geolocateControl, 'top-right')
+
     mapa.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right')
 
     mapa.on('load', () => setMapaPronto(true))
@@ -121,29 +136,31 @@ export default function MapaExplorar({
     }
   }, [centroInicial, mapaPronto])
 
-  // Verificar proximidade dos imóveis apenas uma vez na montagem
+  // Enquadramento inteligente na montagem (seja por cidade/GPS ou abrangendo os imóveis ativos)
   useEffect(() => {
-    if (!centroInicial || !mapaPronto || fitInicialExecutadoRef.current) {
+    if (!mapaPronto || fitInicialExecutadoRef.current) {
       return
     }
 
-    const [userLng, userLat] = centroInicial
     const imoveisValidos = imoveis.filter((i) => i.latitude && i.longitude)
+    if (imoveisValidos.length === 0) return
 
     fitInicialExecutadoRef.current = true
 
-    if (cidadeFiltro) {
-      // Se há um filtro explícito de cidade: nunca mostra o banner de outras cidades
+    // Caso 1: Filtro explícito de cidade ou busca geral sem GPS
+    if (cidadeFiltro || !centroInicial) {
       setMostrarBannerDistante(false)
-      if (imoveisValidos.length > 0 && mapaRef.current) {
+      if (mapaRef.current) {
         const bounds = new mapboxgl.LngLatBounds()
         imoveisValidos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
-        mapaRef.current.fitBounds(bounds, { padding: 70, duration: 1000, maxZoom: 14 })
+        mapaRef.current.fitBounds(bounds, { padding: 60, duration: 900, maxZoom: 13 })
       }
       return
     }
 
-    if (isOrigemGps && imoveisValidos.length > 0) {
+    // Caso 2: Origem por GPS do usuário
+    if (centroInicial && isOrigemGps) {
+      const [userLng, userLat] = centroInicial
       const imoveisProximos = imoveisValidos.filter(
         (i) => calcularDistanciaKm(userLat, userLng, i.latitude!, i.longitude!) <= 50
       )
@@ -161,6 +178,17 @@ export default function MapaExplorar({
       }
     }
   }, [centroInicial, imoveis, mapaPronto, cidadeFiltro, isOrigemGps])
+
+  // Quando o modo de favoritos estiver ativo ou a lista de favoritos mudar: enquadrar todos os favoritos no mapa
+  useEffect(() => {
+    if (!mapaPronto || !mapaRef.current || !isFavoritos) return
+    const imoveisValidos = imoveis.filter((i) => i.latitude && i.longitude)
+    if (imoveisValidos.length === 0) return
+
+    const bounds = new mapboxgl.LngLatBounds()
+    imoveisValidos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
+    mapaRef.current.fitBounds(bounds, { padding: 80, duration: 900, maxZoom: 14 })
+  }, [isFavoritos, imoveis, mapaPronto])
 
   function handleEnquadrarTodosImoveis() {
     if (!mapaRef.current || imoveis.length === 0) return
@@ -188,26 +216,54 @@ export default function MapaExplorar({
     })
   }, [voarPara, mapaPronto])
 
-  // Sincroniza favoritos: lista → mapa
-  // Quando o card (useFavorito) favorita/desfavorita, atualiza o coração no marcador do mapa
+  // Cache local em memória de IDs favoritados para renderização síncrona instantânea (sem piscar)
+  const favoritosSetRef = useRef<Set<string>>(new Set())
+
+  // Carregar todos os favoritos do usuário logado de uma só vez
   useEffect(() => {
-    function criarSvgHeart(cheio: boolean): SVGSVGElement {
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-      svg.setAttribute('width', '14'); svg.setAttribute('height', '14')
-      svg.setAttribute('viewBox', '0 0 24 24')
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-      path.setAttribute('d', 'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z')
-      path.setAttribute('fill', cheio ? '#e53e3e' : 'none')
-      path.setAttribute('stroke', cheio ? '#e53e3e' : '#94a3b8')
-      path.setAttribute('stroke-width', '2.5')
-      path.setAttribute('stroke-linecap', 'round')
-      path.setAttribute('stroke-linejoin', 'round')
-      svg.appendChild(path)
-      return svg
+    async function carregarIdsFavoritos() {
+      try {
+        const { createClient } = await import('@/lib/supabase/client')
+        const sb = createClient()
+        const { data: { session } } = await sb.auth.getSession()
+        if (session?.user) {
+          const { data } = await sb
+            .from('favoritos')
+            .select('imovel_id')
+            .eq('usuario_id', session.user.id)
+
+          const ids = (data ?? []).map((f) => f.imovel_id).filter(Boolean)
+          favoritosSetRef.current = new Set(ids)
+
+          // Atualiza marcadores existentes no mapa caso já estejam renderizados
+          ids.forEach((id) => {
+            const item = marcadoresMapRef.current.get(id)
+            if (item) {
+              item.btnHeart.innerHTML = ''
+              item.btnHeart.appendChild(criarSvgHeart(true))
+              item.btnHeart.dataset.favoritado = 'true'
+              item.btnHeart.style.opacity = '1'
+            }
+          })
+        } else {
+          favoritosSetRef.current.clear()
+        }
+      } catch { /* silencioso */ }
     }
 
+    carregarIdsFavoritos()
+  }, [])
+
+  // Sincroniza favoritos: lista → mapa
+  useEffect(() => {
     function handleFavoritoAtualizado(e: Event) {
       const { imovelId, favoritado } = (e as CustomEvent).detail
+      if (favoritado) {
+        favoritosSetRef.current.add(imovelId)
+      } else {
+        favoritosSetRef.current.delete(imovelId)
+      }
+
       const item = marcadoresMapRef.current.get(imovelId)
       if (!item) return
       const { btnHeart } = item
@@ -221,6 +277,26 @@ export default function MapaExplorar({
     return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [])
 
+  // Helper síncrono para criar SVG do coração
+  function criarSvgHeart(cheio: boolean): SVGSVGElement {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    svg.setAttribute('width', '14')
+    svg.setAttribute('height', '14')
+    svg.setAttribute('viewBox', '0 0 24 24')
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    path.setAttribute(
+      'd',
+      'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'
+    )
+    path.setAttribute('fill', cheio ? '#e53e3e' : 'none')
+    path.setAttribute('stroke', cheio ? '#e53e3e' : '#94a3b8')
+    path.setAttribute('stroke-width', '2.5')
+    path.setAttribute('stroke-linecap', 'round')
+    path.setAttribute('stroke-linejoin', 'round')
+    svg.appendChild(path)
+    return svg
+  }
+
   // Recriar marcadores quando lista de imoveis mudar
   useEffect(() => {
     if (!mapaPronto || !mapaRef.current) return
@@ -233,6 +309,7 @@ export default function MapaExplorar({
       .filter((i) => i.latitude && i.longitude)
       .forEach((i) => {
         const label = precoLabel(i.preco || 0)
+        const isFavoritado = favoritosSetRef.current.has(i.id)
 
         // wrapper transparente — o Mapbox aplica o transform nele para posicionar
         const wrapper = document.createElement('div')
@@ -248,29 +325,13 @@ export default function MapaExplorar({
         precoSpan.textContent = label
         inner.appendChild(precoSpan)
 
-        // Helper: cria SVG heart via createElementNS (não sofre sanitização)
-        function criarSvgHeart(cheio: boolean): SVGSVGElement {
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-          svg.setAttribute('width', '14'); svg.setAttribute('height', '14')
-          svg.setAttribute('viewBox', '0 0 24 24')
-          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-          path.setAttribute('d', 'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z')
-          path.setAttribute('fill', cheio ? '#e53e3e' : 'none')
-          path.setAttribute('stroke', cheio ? '#e53e3e' : '#94a3b8')
-          path.setAttribute('stroke-width', '2.5')
-          path.setAttribute('stroke-linecap', 'round')
-          path.setAttribute('stroke-linejoin', 'round')
-          svg.appendChild(path)
-          return svg
-        }
-
-        // Coração no marcador — oculto por padrão, visível no hover ou se favoritado
+        // Coração no marcador — já nasce perfeitamente preenchido e visível se for favorito (sem piscar!)
         const btnHeart = document.createElement('button')
         btnHeart.type = 'button'
-        btnHeart.title = 'Favoritar'
-        btnHeart.dataset.favoritado = 'false'
-        btnHeart.style.cssText = 'background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;line-height:1;transition:transform 0.15s,opacity 0.15s;opacity:0'
-        btnHeart.appendChild(criarSvgHeart(false))
+        btnHeart.title = isFavoritado ? 'Remover dos favoritos' : 'Favoritar'
+        btnHeart.dataset.favoritado = String(isFavoritado)
+        btnHeart.style.cssText = `background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;line-height:1;transition:transform 0.15s,opacity 0.15s;opacity:${isFavoritado ? '1' : '0'}`
+        btnHeart.appendChild(criarSvgHeart(isFavoritado))
         inner.appendChild(btnHeart)
 
         // Mostrar coração no hover (só se não favoritado)
@@ -295,12 +356,14 @@ export default function MapaExplorar({
               return
             }
             if (btnHeart.dataset.favoritado === 'true') {
+              favoritosSetRef.current.delete(i.id)
               await sb.from('favoritos').delete().eq('usuario_id', session.user.id).eq('imovel_id', i.id)
               btnHeart.innerHTML = ''; btnHeart.appendChild(criarSvgHeart(false))
               btnHeart.dataset.favoritado = 'false'
               btnHeart.style.opacity = '0'
               window.dispatchEvent(new CustomEvent('fixum:favoritoAtualizado', { detail: { imovelId: i.id, favoritado: false } }))
             } else {
+              favoritosSetRef.current.add(i.id)
               await sb.from('favoritos').insert({ usuario_id: session.user.id, imovel_id: i.id })
               btnHeart.innerHTML = ''; btnHeart.appendChild(criarSvgHeart(true))
               btnHeart.dataset.favoritado = 'true'
@@ -310,24 +373,6 @@ export default function MapaExplorar({
           } catch { /* silencioso */ }
         })
 
-        // Verificar estado inicial do favorito (usuário logado)
-        ;(async () => {
-          try {
-            const { createClient } = await import('@/lib/supabase/client')
-            const sb = createClient()
-            const { data: { session } } = await sb.auth.getSession()
-            if (session?.user) {
-              const { data } = await sb.from('favoritos').select('id')
-                .eq('usuario_id', session.user.id).eq('imovel_id', i.id).maybeSingle()
-              if (data) {
-                btnHeart.innerHTML = ''; btnHeart.appendChild(criarSvgHeart(true))
-                btnHeart.dataset.favoritado = 'true'
-                btnHeart.style.opacity = '1' // sempre visível quando favoritado
-              }
-            }
-          } catch { /* silencioso */ }
-        })()
-
         wrapper.appendChild(inner)
 
         wrapper.addEventListener('click', (e) => {
@@ -336,6 +381,35 @@ export default function MapaExplorar({
           marcadoresMapRef.current.forEach(({ popup, marcador }, otherId) => {
             if (otherId !== i.id && popup.isOpen()) marcador.togglePopup()
           })
+
+          // Auto-ajuste de câmera (Auto-Pan inteligente): garante que o popup nunca fique cortado em nenhuma borda
+          if (mapa && i.longitude && i.latitude) {
+            const point = mapa.project([i.longitude, i.latitude])
+            const containerH = mapa.getContainer().clientHeight
+            const containerW = mapa.getContainer().clientWidth
+
+            let deltaY = 0
+            let deltaX = 0
+
+            // Se estiver próximo à parte inferior (popup tem ~320px de altura)
+            if (point.y > containerH - 340) {
+              deltaY = point.y - (containerH - 340) + 40
+            } else if (point.y < 130) {
+              deltaY = point.y - 130
+            }
+
+            // Se estiver próximo às laterais
+            if (point.x < 160) {
+              deltaX = point.x - 160
+            } else if (point.x > containerW - 160) {
+              deltaX = point.x - (containerW - 160)
+            }
+
+            if (deltaX !== 0 || deltaY !== 0) {
+              mapa.panBy([deltaX, deltaY], { duration: 320 })
+            }
+          }
+
           // Abrir popup deste marcador
           const item = marcadoresMapRef.current.get(i.id)
           if (item && !item.popup.isOpen()) item.marcador.togglePopup()
@@ -414,18 +488,6 @@ export default function MapaExplorar({
       marcadoresMapRef.current.clear()
     }
   }, [imoveis, mapaPronto, onSelecionarImovel])
-
-  // Ao selecionar imóvel (lista ou mapa): abre popup no marcador, sem mover o mapa
-  useEffect(() => {
-    if (!mapaPronto || !imovelSelecionado) return
-    // Fechar outros popups abertos
-    marcadoresMapRef.current.forEach(({ popup, marcador }, otherId) => {
-      if (otherId !== imovelSelecionado && popup.isOpen()) marcador.togglePopup()
-    })
-    // Abrir popup do imóvel selecionado
-    const item = marcadoresMapRef.current.get(imovelSelecionado)
-    if (item && !item.popup.isOpen()) item.marcador.togglePopup()
-  }, [imovelSelecionado, mapaPronto])
 
   // Hover/selecao — estilizar apenas o .inner, nunca o wrapper (que o Mapbox controla)
   useEffect(() => {

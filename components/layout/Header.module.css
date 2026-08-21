@@ -224,6 +224,69 @@
   white-space: nowrap;
 }
 
+.btnFavoritos {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #ef4444;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.btnFavoritos:hover {
+  transform: scale(1.08);
+  border-color: #fca5a5;
+  background: #fef2f2;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.btnFavoritosAtivo {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2), 0 2px 8px rgba(239, 68, 68, 0.15) !important;
+  transform: scale(1.05);
+}
+
+.iconeFavorito {
+  display: inline-block;
+  line-height: 1;
+  font-size: 0.95rem;
+}
+
+.badgeFavoritos {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  animation: surgimentoBadge 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes surgimentoBadge {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
 @media (max-width: 990px) {
   .btnImobiliaria {
     display: none;
@@ -346,16 +409,29 @@
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.dropdownEmail {
+.dropdownUsuario {
   padding: 8px 12px 10px;
-  font-size: 0.75rem;
-  color: #94a3b8;
-  font-weight: 500;
   border-bottom: 1px solid #f1f5f9;
   margin-bottom: 4px;
+}
+
+.dropdownNome {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.dropdownEmail {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
 }
 
 .dropdownItem {

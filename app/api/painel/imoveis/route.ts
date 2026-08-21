@@ -57,11 +57,49 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: imoveisError.message }, { status: 500 })
     }
 
-    const imoveis = (imoveisData || []).map((i: any) => ({
-      ...i,
-      fotos: i.fotos_imovel || [],
-      nome_anunciante: mapaNomes[i.anunciante_id] || 'Anunciante',
-    }))
+    // Buscar histórico de revisão e notificações recentes para mapear os motivos de ajuste
+    let mapaMotivos: Record<string, string> = {}
+    try {
+      const { data: notifs } = await supabase
+        .from('notificacoes')
+        .select('*')
+        .eq('tipo', 'imovel_recusado')
+        .order('created_at', { ascending: false })
+
+      if (notifs) {
+        notifs.forEach((n) => {
+          if (n.imovel_id && !mapaMotivos[n.imovel_id]) {
+            mapaMotivos[n.imovel_id] = n.mensagem || ''
+          }
+        })
+      }
+    } catch {}
+
+    try {
+      const { data: historicos } = await supabase
+        .from('historico_revisao_imoveis')
+        .select('*')
+        .eq('tipo_evento', 'solicitacao_ajuste')
+        .order('created_at', { ascending: false })
+
+      if (historicos) {
+        historicos.forEach((h) => {
+          if (h.imovel_id && !mapaMotivos[h.imovel_id]) {
+            mapaMotivos[h.imovel_id] = h.mensagem || ''
+          }
+        })
+      }
+    } catch {}
+
+    const imoveis = (imoveisData || []).map((i: any) => {
+      const motivoFallback = mapaMotivos[i.id] || i.descricao_motivo_rejeicao || null
+      return {
+        ...i,
+        descricao_motivo_rejeicao: motivoFallback,
+        fotos: i.fotos_imovel || [],
+        nome_anunciante: mapaNomes[i.anunciante_id] || 'Anunciante',
+      }
+    })
 
     // 3. Buscar leads
     const imoveisIds = imoveis.map((i: any) => i.id)
@@ -75,12 +113,20 @@ export async function GET(req: Request) {
       leads = leadsData || []
     }
 
+    const papel = meta.papel || (isImobiliaria ? 'gestor_principal' : 'corretor')
+    const isCorretorVinculado = !isImobiliaria && !!imobiliariaId
+    const isGestor = isImobiliaria || papel === 'gestor' || papel === 'gestor_principal'
+    const podeExcluir = !isCorretorVinculado || isGestor
+
     return NextResponse.json({
       imoveis,
       leads,
       mapaNomes,
       listaCorretores,
       isImobiliaria,
+      isGestor,
+      podeExcluir,
+      papel,
     })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Erro ao carregar dados do painel.' }, { status: 500 })

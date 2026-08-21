@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import styles from './ModalConfigSeguranca.module.css'
 
 interface ModalConfigSegurancaProps {
@@ -16,6 +17,7 @@ export default function ModalConfigSeguranca({
   usuarioEmail,
 }: ModalConfigSegurancaProps) {
   const supabase = createClient()
+  const { confirmar } = useConfirm()
 
   const [carregando, setCarregando] = useState(false)
   const [temMfaAtivo, setTemMfaAtivo] = useState(false)
@@ -102,7 +104,13 @@ export default function ModalConfigSeguranca({
 
   async function handleDesativarMfa() {
     if (!fatorId) return
-    const confirma = window.confirm('Deseja realmente desativar a Autenticação em 2 Fatores da sua conta?')
+    const confirma = await confirmar({
+      titulo: 'Desativar 2FA?',
+      mensagem: 'Deseja realmente desativar a Autenticação em 2 Fatores da sua conta? Sua conta ficará protegida apenas pela senha.',
+      icone: '🔓',
+      textoBotaoConfirmar: 'Sim, Desativar 2FA',
+      tipo: 'aviso',
+    })
     if (!confirma) return
 
     setCarregando(true)

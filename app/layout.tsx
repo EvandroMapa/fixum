@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ModalLoginProvider } from '@/contexts/ModalLoginContext'
+import { ModalConfirmacaoProvider } from '@/contexts/ModalConfirmacaoContext'
 
 export const metadata: Metadata = {
   title: 'FIXUM — Encontre seu lugar.',
@@ -40,7 +41,9 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body>
         <ModalLoginProvider>
-          {children}
+          <ModalConfirmacaoProvider>
+            {children}
+          </ModalConfirmacaoProvider>
         </ModalLoginProvider>
       </body>
     </html>

@@ -61,3 +61,71 @@ export function coordenadasValidas(lat?: number, lng?: number): boolean {
     lng >= -180 && lng <= 180
   )
 }
+
+/**
+ * Retorna as iniciais inteligentes do usuário (2 letras).
+ * - Se tiver 2 ou mais nomes: 1ª letra do 1º nome + 1ª letra do último nome (ex: "Evandro Mapa" -> "EM", "Carlos Silva Santos" -> "CS")
+ * - Se tiver 1 nome: as 2 primeiras letras (ex: "Evandro" -> "EV", "Fixum" -> "FI")
+ * - Se for e-mail: 2 primeiras letras do prefixo (ex: "corretor02" -> "CO")
+ */
+export function obterIniciaisUsuario(nome?: string | null, email?: string | null): string {
+  const texto = (nome || '').trim()
+  if (texto) {
+    const palavras = texto.split(/\s+/).filter(Boolean)
+    if (palavras.length >= 2) {
+      const p1 = palavras[0][0] || ''
+      const p2 = palavras[palavras.length - 1][0] || ''
+      return (p1 + p2).toUpperCase()
+    }
+    if (palavras.length === 1) {
+      if (palavras[0].length >= 2) {
+        return palavras[0].substring(0, 2).toUpperCase()
+      }
+      return palavras[0][0].toUpperCase()
+    }
+  }
+
+  const emailUsuario = (email || '').trim().split('@')[0] || ''
+  if (emailUsuario.length >= 2) {
+    return emailUsuario.substring(0, 2).toUpperCase()
+  }
+  if (emailUsuario.length === 1) {
+    return emailUsuario[0].toUpperCase()
+  }
+
+  return 'FX'
+}
+
+/**
+ * Paleta harmônica de gradientes vibrantes e elegantes para identificação de usuários.
+ * Cada usuário/corretor recebe determinísticamente uma cor única baseada no seu identificador (id, email ou nome).
+ */
+const PALETA_AVATARES = [
+  'linear-gradient(135deg, #2563eb, #1d4ed8)', // Azul Real
+  'linear-gradient(135deg, #7c3aed, #6d28d9)', // Roxo Violeta
+  'linear-gradient(135deg, #059669, #047857)', // Esmeralda
+  'linear-gradient(135deg, #d97706, #b45309)', // Âmbar Dourado
+  'linear-gradient(135deg, #db2777, #be185d)', // Magenta Pink
+  'linear-gradient(135deg, #0891b2, #0e7490)', // Ciano Oceano
+  'linear-gradient(135deg, #4f46e5, #4338ca)', // Índigo Nobre
+  'linear-gradient(135deg, #ea580c, #c2410c)', // Laranja Coral
+  'linear-gradient(135deg, #0d9488, #115e59)', // Verde Petróleo
+  'linear-gradient(135deg, #e11d48, #be123c)', // Rubi Carmim
+  'linear-gradient(135deg, #475569, #1e293b)', // Grafite Slate
+  'linear-gradient(135deg, #6366f1, #4338ca)', // Lilás Índigo
+]
+
+export function obterGradienteUsuario(identificador?: string | null): string {
+  if (!identificador || !identificador.trim()) {
+    return PALETA_AVATARES[0]
+  }
+
+  const str = identificador.trim().toLowerCase()
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash)
+  }
+
+  const index = Math.abs(hash) % PALETA_AVATARES.length
+  return PALETA_AVATARES[index]
+}

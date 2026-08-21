@@ -5,16 +5,19 @@ import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { type Imovel, type Lead, type Assinatura, type Fatura, type Plano, type MetodoPagamento } from '@/lib/types'
-import { formatarPreco, labelTipoImovel, fotoPrincipal } from '@/lib/utils'
+import { formatarPreco, labelTipoImovel, fotoPrincipal, obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import { calcularUsoPlano, obterPlanoPorId, obterProximoPlano } from '@/lib/planos'
+import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import Header from '@/components/layout/Header'
 import LogoGota from '@/components/ui/LogoGota'
 import AbaMeuPlano from '@/components/painel/AbaMeuPlano'
 import AbaCorretores from '@/components/painel/AbaCorretores'
+import AbaImoveis from '@/components/painel/AbaImoveis'
 import ModalLimiteAtingido from '@/components/painel/ModalLimiteAtingido'
 import ModalUpgradePlano from '@/components/painel/ModalUpgradePlano'
 import ModalConfigSeguranca from '@/components/painel/ModalConfigSeguranca'
 import ModalNovoImovel from '@/components/painel/ModalNovoImovel'
+import MenuNotificacoes from '@/components/painel/MenuNotificacoes'
 import styles from './page.module.css'
 
 type Aba = 'dashboard' | 'imoveis' | 'leads' | 'corretores' | 'plano'
@@ -26,7 +29,7 @@ function PainelConteudo() {
 
   const abaInicial: Aba = (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'plano'].includes(abaParam))
     ? abaParam
-    : (typeof window !== 'undefined' && (localStorage.getItem('fixum_painel_aba') as Aba)) || 'imoveis'
+    : 'dashboard'
 
   const [abaAtiva, setAbaAtiva] = useState<Aba>(abaInicial)
   const [imoveis, setImoveis] = useState<Imovel[]>([])
@@ -39,7 +42,10 @@ function PainelConteudo() {
   const [usuarioId, setUsuarioId] = useState('')
   const [isImobiliaria, setIsImobiliaria] = useState(false)
   const [isCorretor, setIsCorretor] = useState(false)
+  const [isGestor, setIsGestor] = useState(false)
+  const [podeExcluir, setPodeExcluir] = useState(true)
   const [imobiliariaDona, setImobiliariaDona] = useState<{ id: string; nome: string } | null>(null)
+  const { confirmar, alertar } = useConfirm()
 
   // Estados de Filtro de Corretores da Equipe
   const [filtroCorretor, setFiltroCorretor] = useState<string>('todos')
@@ -52,6 +58,7 @@ function PainelConteudo() {
   const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
   const [modalSegurancaAberto, setModalSegurancaAberto] = useState(false)
   const [planoAlvoUpgrade, setPlanoAlvoUpgrade] = useState<Plano | null>(null)
+  const [ultimoEventoChat, setUltimoEventoChat] = useState<any>(null)
 
   const supabase = createClient()
 
@@ -73,11 +80,10 @@ function PainelConteudo() {
 
   function trocarAba(novaAba: Aba) {
     setAbaAtiva(novaAba)
-    localStorage.setItem('fixum_painel_aba', novaAba)
     router.replace(`/painel?aba=${novaAba}`)
   }
 
-  async function carregarDados() {
+  async function carregarDados(silencioso = false) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { window.location.href = '/login'; return }
     setUsuarioId(user.id)
@@ -140,6 +146,8 @@ function PainelConteudo() {
         setLeads(jsonPainel.leads || [])
         setNomesAnunciantes(jsonPainel.mapaNomes || {})
         setListaCorretoresFiltro(jsonPainel.listaCorretores || [])
+        if (typeof jsonPainel.isGestor === 'boolean') setIsGestor(jsonPainel.isGestor)
+        if (typeof jsonPainel.podeExcluir === 'boolean') setPodeExcluir(jsonPainel.podeExcluir)
       }
     } catch (err) {
       console.error('Erro ao buscar dados do painel:', err)
@@ -182,12 +190,61 @@ function PainelConteudo() {
       }
     }
 
-    setCarregando(false)
+    if (!silencioso) setCarregando(false)
   }
 
   useEffect(() => {
     carregarDados()
   }, [])
+
+  // ── INSCRIÇÃO EM TEMPO REAL (SUPABASE REALTIME) ──
+  useEffect(() => {
+    if (!usuarioId) return
+
+    const canalPainel = supabase
+      .channel('painel-realtime-sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'imoveis' },
+        () => {
+          carregarDados(true)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'leads' },
+        () => {
+          carregarDados(true)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'fotos_imovel' },
+        () => {
+          carregarDados(true)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'notificacoes' },
+        () => {
+          carregarDados(true)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'historico_revisao_imoveis' },
+        (payload: any) => {
+          console.log('[REALTIME-PAINEL] Nova msg historico_revisao_imoveis:', payload)
+          setUltimoEventoChat(payload.new)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(canalPainel)
+    }
+  }, [usuarioId, supabase])
 
   const stats = {
     total: imoveis.length,
@@ -209,33 +266,73 @@ function PainelConteudo() {
     // Se está tentando publicar/ativar, checa se atingiu o limite do plano
     if ((novoStatus === 'publicado' || novoStatus === 'ativo') && usoPlano.atingiuLimite) {
       if (isCorretor) {
-        alert(
-          `⚠️ Cota Corporativa Atingida\n\nA cota de anúncios ativos da imobiliária ${imobiliariaDona?.nome ? `"${imobiliariaDona.nome}"` : 'vinculada'} atingiu o limite (${usoPlano.limiteMaximo} anúncios).\n\nEntre em contato com o administrador da sua imobiliária para solicitar novas vagas.`
-        )
+        await alertar({
+          titulo: 'Cota Corporativa Atingida',
+          mensagem: `A cota de anúncios ativos da imobiliária ${imobiliariaDona?.nome ? `"${imobiliariaDona.nome}"` : 'vinculada'} atingiu o limite (${usoPlano.limiteMaximo} anúncios). Entre em contato com o administrador da sua imobiliária para solicitar novas vagas.`,
+          icone: '🏢',
+          tipo: 'aviso',
+        })
         return
       }
       setModalLimiteAberto(true)
       return
     }
 
-    await supabase.from('imoveis').update({ status: novoStatus }).eq('id', id)
-    setImoveis((prev) => prev.map((i) => i.id === id ? { ...i, status: novoStatus as Imovel['status'] } : i))
+    const statusNormalizado = (novoStatus === 'publicado' || novoStatus === 'ativo') ? 'ativo' : (novoStatus === 'em_analise' || novoStatus === 'rascunho') ? 'rascunho' : novoStatus
+
+    await supabase.from('imoveis').update({ status: statusNormalizado }).eq('id', id)
+    setImoveis((prev) => prev.map((i) => i.id === id ? { ...i, status: statusNormalizado as Imovel['status'] } : i))
   }
 
   async function excluirImovel(id: string, titulo: string) {
-    if (!confirm(`Tem certeza que deseja excluir permanentemente o anúncio "${titulo}"? Esta ação não pode ser desfeita.`)) return
+    if (!podeExcluir) {
+      await alertar({
+        titulo: 'Ação Não Permitida',
+        mensagem: 'Apenas gestores da imobiliária têm permissão para excluir anúncios. Se você não deseja mais divulgar este imóvel, solicite ao seu gestor ou pause o anúncio.',
+        icone: '🔒',
+        tipo: 'aviso',
+      })
+      return
+    }
+
+    const confirmou = await confirmar({
+      titulo: 'Excluir Anúncio?',
+      mensagem: `Tem certeza que deseja excluir permanentemente o anúncio "${titulo}"? Esta ação não pode ser desfeita.`,
+      icone: '🗑️',
+      textoBotaoConfirmar: 'Sim, Excluir Anúncio',
+      tipo: 'perigo',
+      destrutivo: true,
+    })
+    if (!confirmou) return
 
     try {
-      await supabase.from('fotos_imovel').delete().eq('imovel_id', id)
-      await supabase.from('leads').delete().eq('imovel_id', id)
-      const { error } = await supabase.from('imoveis').delete().eq('id', id)
-      if (error) throw error
+      const res = await fetch('/api/painel/imoveis/acoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          acao: 'excluir_lote',
+          imoveisIds: [id],
+          usuarioId,
+        }),
+      })
+
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Erro ao excluir imóvel.')
 
       setImoveis((prev) => prev.filter((i) => i.id !== id))
-      alert('Imóvel excluído com sucesso!')
+      await alertar({
+        titulo: 'Imóvel Excluído',
+        mensagem: 'O anúncio foi removido com sucesso.',
+        icone: '🗑️',
+        tipo: 'info',
+      })
     } catch (err: any) {
       console.error('Erro ao excluir imóvel:', err)
-      alert('Não foi possível excluir o imóvel.')
+      await alertar({
+        titulo: 'Erro ao Excluir',
+        mensagem: err.message || 'Não foi possível excluir o anúncio. Tente novamente mais tarde.',
+        tipo: 'perigo',
+      })
     }
   }
 
@@ -314,7 +411,14 @@ function PainelConteudo() {
 
 
   async function handleSair() {
-    if (!confirm('Deseja realmente sair da sua conta?')) return
+    const confirmou = await confirmar({
+      titulo: 'Encerrar Sessão?',
+      mensagem: 'Deseja realmente sair da sua conta na Fixum?',
+      icone: '🚪',
+      textoBotaoConfirmar: 'Sim, Sair',
+      tipo: 'aviso',
+    })
+    if (!confirmou) return
     const supabase = createClient()
     await supabase.auth.signOut()
     window.location.href = '/'
@@ -346,15 +450,26 @@ function PainelConteudo() {
 
           <div className={styles.divisorVertical} />
 
-          <div className={styles.empresaInfo}>
-            <span className={styles.empresaNome}>{usuarioNome}</span>
-            <span className={styles.empresaTipo}>
-              {isImobiliaria
-                ? '🏢 Gestão Imobiliária'
-                : isCorretor && imobiliariaDona
-                  ? `👔 Corretor Oficial — ${imobiliariaDona.nome}`
-                  : '👤 Painel de Anúncios'}
-            </span>
+          <div
+            className={styles.usuarioPerfilTopbar}
+            title={`${usuarioNome || 'Usuário'}${usuarioEmail ? ` • ${usuarioEmail}` : ''}`}
+          >
+            <div
+              className={styles.usuarioAvatar}
+              style={{ background: obterGradienteUsuario(usuarioId || usuarioEmail || usuarioNome) }}
+            >
+              {obterIniciaisUsuario(usuarioNome, usuarioEmail)}
+            </div>
+            <div className={styles.empresaInfo}>
+              <span className={styles.empresaNome}>{usuarioNome || 'Usuário'}</span>
+              <span className={styles.empresaTipo}>
+                {isImobiliaria
+                  ? '🏢 Gestão Imobiliária'
+                  : isCorretor && imobiliariaDona
+                    ? `👔 Corretor Oficial — ${imobiliariaDona.nome}`
+                    : '👤 Painel de Anúncios'}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -397,6 +512,17 @@ function PainelConteudo() {
             <span style={{ fontSize: '0.75rem' }}>↗</span>
           </a>
 
+          {/* Notificações Corporativas */}
+          <MenuNotificacoes
+            usuarioId={usuarioId}
+            imobiliariaId={imobiliariaDona?.id || (isImobiliaria ? usuarioId : undefined)}
+            onClicarNotificacao={(notif) => {
+              if (notif.tipo === 'revisao_pendente' || notif.tipo === 'imovel_aprovado' || notif.tipo === 'imovel_recusado') {
+                trocarAba('imoveis')
+              }
+            }}
+          />
+
           {/* Botão Novo Imóvel */}
           <button
             type="button"
@@ -406,6 +532,15 @@ function PainelConteudo() {
           >
             + Novo Imóvel
           </button>
+
+          {/* Avatar com 2 Iniciais Inteligentes e Cor Única Determinística */}
+          <div
+            className={styles.avatarTopbarDireita}
+            style={{ background: obterGradienteUsuario(usuarioId || usuarioEmail || usuarioNome) }}
+            title={`${usuarioNome || 'Usuário'}${usuarioEmail ? ` • ${usuarioEmail}` : ''}`}
+          >
+            {obterIniciaisUsuario(usuarioNome, usuarioEmail)}
+          </div>
 
           {/* Botão Sair */}
           <button
@@ -571,219 +706,26 @@ function PainelConteudo() {
 
           {/* ── IMÓVEIS ── */}
           {abaAtiva === 'imoveis' && (
-            <div className={styles.secao}>
-              <div className={styles.secaoHeader}>
-                <div>
-                  <h1>Meus Imóveis</h1>
-                  <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
-                    {isCorretor
-                      ? 'Gerencie seus anúncios publicados'
-                      : isImobiliaria
-                        ? `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos na cota corporativa`
-                        : `${usoPlano.imoveisAtivos}/${usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} imóveis ativos`}
-                  </p>
-                </div>
-
-                {/* Filtro por Corretor para a Imobiliária Gestora */}
-                {isImobiliaria && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Filtrar por:</span>
-                    <select
-                      value={filtroCorretor}
-                      onChange={(e) => setFiltroCorretor(e.target.value)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '8px',
-                        border: '1.5px solid #cbd5e1',
-                        background: '#ffffff',
-                        fontSize: '0.85rem',
-                        fontWeight: 600,
-                        color: '#0f172a',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <option value="todos">👥 Toda a Equipe ({imoveis.length})</option>
-                      <option value={usuarioId}>🏢 Meus Diretos ({imoveis.filter((i) => i.anunciante_id === usuarioId).length})</option>
-                      {listaCorretoresFiltro.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          👤 {c.nome} ({imoveis.filter((i) => i.anunciante_id === c.id).length})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-
-              {usoPlano.atingiuLimite && (
-                <div style={{
-                  background: '#fef2f2',
-                  border: '1px solid #fee2e2',
-                  borderRadius: '0.75rem',
-                  padding: '0.85rem 1.25rem',
-                  marginBottom: '1.25rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  flexWrap: 'wrap'
-                }}>
-                  <span style={{ fontSize: '0.85rem', color: '#991b1b' }}>
-                    {isCorretor
-                      ? '⚠️ A cota corporativa atingiu o limite de anúncios ativos. Contate a administração da imobiliária para solicitar novas vagas.'
-                      : `⚠️ Você atingiu o limite de ${usoPlano.limiteMaximo} imóvel(is) ativo(s) do seu plano ${usoPlano.plano.nome}.`}
-                  </span>
-                  {!isCorretor && proximoPlano && (
-                    <button
-                      className="btn btn-primario btn-sm"
-                      onClick={() => dispararUpgrade(proximoPlano)}
-                    >
-                      Fazer Upgrade para {proximoPlano.nome}
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {imoveis.length === 0 ? (
-                <div className={styles.vazio}>
-                  <span>🏢</span>
-                  <h3>Nenhum imóvel cadastrado</h3>
-                  <p style={{ color: '#64748b', marginBottom: '1.25rem', fontSize: '0.9rem' }}>
-                    Comece anunciando seu primeiro imóvel para exibi-lo no mapa.
-                  </p>
-                  <Link href="/painel/novo-imovel" className="btn btn-primario btn-lg">
-                    Cadastrar primeiro imóvel
-                  </Link>
-                </div>
-              ) : (
-                <div className={styles.listaImoveis}>
-                  {imoveis
-                    .filter((i) => filtroCorretor === 'todos' || i.anunciante_id === filtroCorretor)
-                    .map((imovel) => {
-                      const status = imovel.status
-                      const isAtivo = status === 'publicado' || status === 'ativo'
-                      const isPausado = status === 'pausado'
-                      const isVendido = status === 'vendido' || status === 'alugado'
-
-                      return (
-                        <div key={imovel.id} className={styles.imovelRow}>
-                          <div
-                            className={styles.imovelFoto}
-                            style={{ backgroundImage: `url(${fotoPrincipal(imovel)})` }}
-                          >
-                            {!imovel.fotos?.length && <span>🏠</span>}
-                          </div>
-                          <div className={styles.imovelInfo}>
-                            <strong>{imovel.titulo}</strong>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
-                              <span>{labelTipoImovel(imovel.tipo)} • {imovel.cidade}</span>
-                              {isImobiliaria && nomesAnunciantes[imovel.anunciante_id] && (
-                                <span style={{
-                                  fontSize: '0.75rem',
-                                  fontWeight: 700,
-                                  color: '#1d4ed8',
-                                  background: '#eff6ff',
-                                  border: '1px solid #bfdbfe',
-                                  padding: '2px 8px',
-                                  borderRadius: '12px',
-                                }}>
-                                  👤 {nomesAnunciantes[imovel.anunciante_id]}
-                                </span>
-                              )}
-                            </div>
-                            <span className={styles.imovelPreco}>{formatarPreco(imovel.preco, imovel.negociacao)}</span>
-                          </div>
-
-                          <div className={styles.imovelStatus}>
-                            <span
-                              className={styles.statusBadge}
-                              style={{
-                                background: isAtivo ? '#ecfdf5' : isPausado ? '#fffbeb' : '#f1f5f9',
-                                color: isAtivo ? '#065f46' : isPausado ? '#b45309' : '#475569',
-                                border: `1px solid ${isAtivo ? '#a7f3d0' : isPausado ? '#fde68a' : '#cbd5e1'}`,
-                                fontWeight: 700,
-                                textTransform: 'capitalize',
-                              }}
-                            >
-                              {isAtivo ? '🟢 Ativo' : isPausado ? '⏸️ Pausado' : isVendido ? '🏷️ Vendido' : status}
-                            </span>
-                          </div>
-
-                          <div className={styles.imovelAcoes}>
-                            <Link href={`/imovel/${imovel.id}`} target="_blank" className="btn btn-ghost btn-sm" title="Ver anúncio público">
-                              Ver
-                            </Link>
-                            <Link href={`/painel/editar-imovel/${imovel.id}`} className="btn btn-outline btn-sm" title="Editar dados e fotos">
-                              ✏️ Editar
-                            </Link>
-
-                            {/* Ação de Pausar / Publicar */}
-                            {isAtivo && (
-                              <button
-                                type="button"
-                                className="btn btn-outline btn-sm"
-                                onClick={() => alterarStatus(imovel.id, 'pausado')}
-                                title="Pausar anúncio (não consome vaga de imóvel ativo)"
-                              >
-                                ⏸️ Pausar
-                              </button>
-                            )}
-
-                            {isPausado && (
-                              <button
-                                type="button"
-                                className="btn btn-primario btn-sm"
-                                onClick={() => alterarStatus(imovel.id, 'publicado')}
-                                title="Publicar anúncio no mapa"
-                              >
-                                ▶️ Ativar
-                              </button>
-                            )}
-
-                            {/* Ação de Marcar como Vendido */}
-                            {!isVendido && (
-                              <button
-                                type="button"
-                                className="btn btn-outline btn-sm"
-                                onClick={() => {
-                                  if (confirm(`Marcar o imóvel "${imovel.titulo}" como VENDIDO / NEGOCIADO?`)) {
-                                    alterarStatus(imovel.id, 'vendido')
-                                  }
-                                }}
-                                title="Marcar como vendido"
-                                style={{ color: '#059669' }}
-                              >
-                                🏷️ Vendido
-                              </button>
-                            )}
-
-                            {isVendido && (
-                              <button
-                                type="button"
-                                className="btn btn-outline btn-sm"
-                                onClick={() => alterarStatus(imovel.id, 'publicado')}
-                                title="Reativar anúncio no mapa"
-                              >
-                                🔄 Reativar
-                              </button>
-                            )}
-
-                            {/* Ação de Excluir */}
-                            <button
-                              type="button"
-                              className="btn btn-ghost btn-sm"
-                              onClick={() => excluirImovel(imovel.id, imovel.titulo)}
-                              title="Excluir imóvel permanentemente"
-                              style={{ color: '#dc2626' }}
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        </div>
-                      )
-                    })}
-                </div>
-              )}
-            </div>
+            <AbaImoveis
+              imoveis={imoveis}
+              leads={leads}
+              usuarioId={usuarioId}
+              usuarioNome={usuarioNome}
+              isImobiliaria={isImobiliaria}
+              isCorretor={isCorretor}
+              podeExcluir={podeExcluir}
+              imobiliariaDona={imobiliariaDona}
+              nomesAnunciantes={nomesAnunciantes}
+              listaCorretores={listaCorretoresFiltro}
+              usoPlano={usoPlano}
+              proximoPlano={proximoPlano}
+              onAbrirModalNovo={() => setModalNovoImovelAberto(true)}
+              onDispararUpgrade={(plano) => dispararUpgrade(plano)}
+              onAlterarStatus={alterarStatus}
+              onExcluirImovel={excluirImovel}
+              onRecarregarDados={carregarDados}
+              ultimoEventoChat={ultimoEventoChat}
+            />
           )}
 
           {/* ── LEADS ── */}

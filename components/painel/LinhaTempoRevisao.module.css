@@ -1,0 +1,126 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.tituloSecao {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.listaTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.itemTimeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  transition: all 0.15s ease;
+}
+
+.itemTimelineSolicitacao {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.itemTimelineAprovacao {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.itemTimelineResposta {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.avatarAutor {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.conteudoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.cabecalhoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.autorNome {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.badgePapel {
+  font-size: 0.675rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.badgeGestor {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badgeCorretor {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.dataHora {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.mensagemTexto {
+  font-size: 0.825rem;
+  color: #334155;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.boxSemHistorico {
+  padding: 1.25rem;
+  text-align: center;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.75rem;
+  color: #64748b;
+  font-size: 0.8rem;
+}

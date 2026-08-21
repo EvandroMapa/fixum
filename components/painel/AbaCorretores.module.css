@@ -14,107 +14,160 @@
 }
 
 .tituloPrincipal {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: #0f172a;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
+  letter-spacing: -0.02em;
 }
 
 .subtituloPrincipal {
-  font-size: 0.9rem;
+  font-size: 0.775rem;
   color: #64748b;
 }
 
-/* Card de Convite com Link Exclusivo */
-.cardConvite {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-  color: #ffffff;
-  border-radius: 1.25rem;
-  padding: 1.75rem 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
+/* GRID SUPERIOR COMPACTO (3 COLUNAS) */
+.gridSuperiorEquipe {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.6fr;
+  gap: 0.65rem;
+  align-items: stretch;
 }
 
-.conviteTopo {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  flex-wrap: wrap;
+@media (max-width: 1024px) {
+  .gridSuperiorEquipe {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cardConviteCompacto {
+    grid-column: span 2;
+  }
 }
 
-.conviteTitulo {
+@media (max-width: 640px) {
+  .gridSuperiorEquipe {
+    grid-template-columns: 1fr;
+  }
+  .cardConviteCompacto {
+    grid-column: span 1;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.cardMetricaEquipe {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.iconeMetricaEquipe {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.valorMetricaEquipe {
   font-size: 1.2rem;
   font-weight: 800;
-  margin-bottom: 0.25rem;
+  color: #0f172a;
+  line-height: 1.15;
+  display: block;
 }
 
-.conviteDesc {
-  font-size: 0.875rem;
-  color: #bfdbfe;
-  max-width: 600px;
+.labelMetricaEquipe {
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 600;
 }
 
-.boxLinkInput {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.inputLink {
-  flex: 1;
-  min-width: 280px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
+/* Card de Convite Compacto Integrado */
+.cardConviteCompacto {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
   color: #ffffff;
-  font-size: 0.875rem;
-  font-family: monospace;
-  outline: none;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.12);
 }
 
-.btnCopiarLink {
+.conviteCompactoTopo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.conviteCompactoTitulo {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.conviteCompactoSub {
+  font-size: 0.68rem;
+  color: #bfdbfe;
+}
+
+.conviteCompactoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.btnCopiarCompacto {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 3px;
   background: #ffffff;
   color: #1e3a8a;
   font-weight: 700;
-  font-size: 0.875rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.45rem;
   border: none;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
-.btnCopiarLink:hover {
+.btnCopiarCompacto:hover {
   background: #f8fafc;
   transform: translateY(-1px);
 }
 
-.btnWhatsConvite {
+.btnWhatsCompacto {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 3px;
   background: #22c55e;
   color: #ffffff;
   font-weight: 700;
-  font-size: 0.875rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.45rem;
   border: none;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
-.btnWhatsConvite:hover {
+.btnWhatsCompacto:hover {
   background: #16a34a;
   transform: translateY(-1px);
 }

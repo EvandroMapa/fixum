@@ -32,6 +32,10 @@ function ExplorarConteudo() {
     cidade: searchParams.get('cidade') ?? searchParams.get('q') ?? undefined,
   })
 
+  const isFavoritos = searchParams.get('favoritos') === 'true'
+  const isOrigemGps = searchParams.get('origem') === 'gps'
+  const [precisaLoginFavoritos, setPrecisaLoginFavoritos] = useState(false)
+
   // Centro inicial do mapa: vem da URL (lat/lng do modal de busca) ou fallback fixo
   const centroInicial = (() => {
     const lat = parseFloat(searchParams.get('lat') ?? '')
@@ -46,7 +50,35 @@ function ExplorarConteudo() {
 
   const buscarImoveis = useCallback(async (filtrosAtivos: TFiltros, bounds?: mapboxgl.LngLatBounds | null) => {
     setCarregando(true)
+    setPrecisaLoginFavoritos(false)
     try {
+      let idsFavoritos: string[] = []
+
+      if (isFavoritos) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.user) {
+          setPrecisaLoginFavoritos(true)
+          setImoveis([])
+          setTotalResultados(0)
+          setCarregando(false)
+          return
+        }
+
+        const { data: favs } = await supabase
+          .from('favoritos')
+          .select('imovel_id')
+          .eq('usuario_id', session.user.id)
+
+        idsFavoritos = (favs ?? []).map((f) => f.imovel_id).filter(Boolean)
+
+        if (idsFavoritos.length === 0) {
+          setImoveis([])
+          setTotalResultados(0)
+          setCarregando(false)
+          return
+        }
+      }
+
       let query = supabase
         .from('imoveis')
         .select(`*, fotos_imovel (id, url, principal, ordem)`)
@@ -54,6 +86,17 @@ function ExplorarConteudo() {
         .order('destaque', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(50)
+
+      if (isFavoritos) {
+        if (idsFavoritos.length > 0) {
+          query = query.in('id', idsFavoritos)
+        } else {
+          setImoveis([])
+          setTotalResultados(0)
+          setCarregando(false)
+          return
+        }
+      }
 
       if (filtrosAtivos.negociacao) query = query.eq('negociacao', filtrosAtivos.negociacao)
       if (filtrosAtivos.tipo && filtrosAtivos.tipo.length > 0) query = query.in('tipo', filtrosAtivos.tipo)
@@ -64,8 +107,8 @@ function ExplorarConteudo() {
         query = query.or(`cidade.ilike.%${filtrosAtivos.cidade}%,bairro.ilike.%${filtrosAtivos.cidade}%`)
       }
 
-      // Filtro por bounds do mapa (pesquisar nesta area)
-      if (bounds && !filtrosAtivos.cidade) {
+      // Filtro por bounds do mapa (pesquisar nesta area) quando não estiver filtrando favoritos
+      if (bounds && !filtrosAtivos.cidade && !isFavoritos) {
         const sw = bounds.getSouthWest()
         const ne = bounds.getNorthEast()
         query = query
@@ -90,7 +133,7 @@ function ExplorarConteudo() {
     } finally {
       setCarregando(false)
     }
-  }, [supabase])
+  }, [supabase, isFavoritos])
 
   // Sincroniza estado de filtros com os parâmetros da URL
   useEffect(() => {
@@ -140,8 +183,6 @@ function ExplorarConteudo() {
     }, 50)
   }, [])
 
-  const isOrigemGps = searchParams.get('origem') === 'gps'
-
   return (
     <div className={styles.layout}>
       <Header />
@@ -149,22 +190,22 @@ function ExplorarConteudo() {
       <div className={styles.barraTopo}>
         <div className={styles.barraTopoInner}>
           <FiltrosBusca
-              filtros={filtros}
-              onChange={handleFiltrosChange}
-              onLocalSelecionado={handleLocalSelecionado}
-            />
+            filtros={filtros}
+            onChange={handleFiltrosChange}
+            onLocalSelecionado={handleLocalSelecionado}
+          />
           <div className={styles.toggleVista}>
             <button
               className={`${styles.btnVista} ${vistaAtiva === 'lista' ? styles.vistaAtiva : ''}`}
               onClick={() => setVistaAtiva('lista')}
             >
-              {"\uD83D\uDCCB"} Lista
+              📋 Lista
             </button>
             <button
               className={`${styles.btnVista} ${vistaAtiva === 'mapa' ? styles.vistaAtiva : ''}`}
               onClick={() => setVistaAtiva('mapa')}
             >
-              {"\uD83D\uDDFA\uFE0F"} Mapa
+              🗺️ Mapa
             </button>
           </div>
         </div>
@@ -176,6 +217,10 @@ function ExplorarConteudo() {
           <div className={styles.listaHeader}>
             {carregando ? (
               <span className={styles.carregando}>Buscando imóveis...</span>
+            ) : isFavoritos ? (
+              <span className={styles.resultados} style={{ color: '#b91c1c' }}>
+                <strong>❤️ {totalResultados}</strong> {totalResultados === 1 ? 'imóvel favorito' : 'imóveis favoritos'}
+              </span>
             ) : (
               <span className={styles.resultados}>
                 <strong>{totalResultados}</strong> {totalResultados === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
@@ -185,7 +230,7 @@ function ExplorarConteudo() {
           </div>
 
           {/* Banner de contexto de localização quando pesquisado puramente por GPS sem cidade */}
-          {!carregando && isOrigemGps && !filtros.cidade && totalResultados > 0 && (
+          {!carregando && isOrigemGps && !filtros.cidade && totalResultados > 0 && !isFavoritos && (
             <div style={{
               background: '#eff6ff',
               border: '1px solid #bfdbfe',
@@ -210,6 +255,35 @@ function ExplorarConteudo() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className={`${styles.skeletonCard} skeleton`} />
               ))}
+            </div>
+          ) : precisaLoginFavoritos ? (
+            <div className={styles.semResultados}>
+              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>🔒</span>
+              <h3>Acesse sua conta para ver seus favoritos</h3>
+              <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
+                Você precisa estar conectado para salvar e visualizar sua lista personalizada de imóveis favoritos em qualquer dispositivo.
+              </p>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                <Link href="/login?next=/explorar?favoritos=true" className="btn btn-primario btn-sm">
+                  Entrar na Conta
+                </Link>
+                <Link href="/explorar" className="btn btn-outline btn-sm">
+                  Ver Todos no Mapa
+                </Link>
+              </div>
+            </div>
+          ) : isFavoritos && imoveis.length === 0 ? (
+            <div className={styles.semResultados}>
+              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>🤍</span>
+              <h3>Nenhum imóvel favoritado ainda</h3>
+              <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
+                Quando você encontrar um imóvel que gostou pelo mapa ou lista, clique no ícone de coração <strong>❤️</strong> para salvá-lo aqui e compará-lo depois.
+              </p>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                <Link href="/explorar" className="btn btn-primario btn-sm">
+                  🗺️ Explorar Imóveis no Mapa
+                </Link>
+              </div>
             </div>
           ) : imoveis.length === 0 ? (
             <div className={styles.semResultados}>
@@ -263,6 +337,7 @@ function ExplorarConteudo() {
             centroInicial={centroInicial}
             cidadeFiltro={filtros.cidade}
             isOrigemGps={isOrigemGps}
+            isFavoritos={isFavoritos}
           />
         </div>
       </div>

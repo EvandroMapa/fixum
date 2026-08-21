@@ -72,12 +72,18 @@ export default function ModalBuscaCidade({ negociacao, onFechar }: Props) {
       (err) => {
         setGeoCarregando(false)
         if (err.code === err.PERMISSION_DENIED) {
-          setGeoErro('Permissão de localização negada')
+          setGeoErro('Permissão de localização negada pelo navegador.')
+        } else if (err.code === err.TIMEOUT) {
+          setGeoErro('Tempo esgotado ao buscar GPS. Tente novamente em local aberto.')
         } else {
-          setGeoErro('Não foi possível obter sua localização')
+          setGeoErro('Não foi possível obter sua localização com precisão.')
         }
       },
-      { timeout: 8000 }
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 7000,
+      }
     )
   }
 

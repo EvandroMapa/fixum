@@ -146,6 +146,24 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
     onChange({ ...filtros, quartos_min: filtros.quartos_min === q ? undefined : q })
   }
 
+  function handleLimparTipo(e: React.MouseEvent) {
+    e.stopPropagation()
+    onChange({ ...filtros, tipo: undefined })
+    if (modalAberto === 'tipo') setModalAberto(null)
+  }
+
+  function handleLimparPreco(e: React.MouseEvent) {
+    e.stopPropagation()
+    onChange({ ...filtros, preco_min: undefined, preco_max: undefined })
+    if (modalAberto === 'preco') setModalAberto(null)
+  }
+
+  function handleLimparQuartos(e: React.MouseEvent) {
+    e.stopPropagation()
+    onChange({ ...filtros, quartos_min: undefined })
+    if (modalAberto === 'quartos') setModalAberto(null)
+  }
+
   function limparFiltros() {
     onChange({})
     setModalAberto(null)
@@ -323,8 +341,20 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               className={`${styles.btnFiltro} ${filtros.tipo?.length ? styles.ativo : ''}`}
               onClick={abrirTipo}
             >
-              Tipo {filtros.tipo?.length ? `(${filtros.tipo.length})` : ''}
-              <span className={styles.setinha}>▾</span>
+              <span>Tipo {filtros.tipo?.length ? `(${filtros.tipo.length})` : ''}</span>
+              {filtros.tipo?.length ? (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  className={styles.btnLimparIndividual}
+                  onClick={handleLimparTipo}
+                  title="Limpar tipos selecionados"
+                >
+                  ✕
+                </span>
+              ) : (
+                <span className={styles.setinha}>▾</span>
+              )}
             </button>
 
             {modalAberto === 'tipo' && !isMobile && (
@@ -349,8 +379,20 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               className={`${styles.btnFiltro} ${(filtros.preco_min || filtros.preco_max) ? styles.ativo : ''}`}
               onClick={() => setModalAberto(modalAberto === 'preco' ? null : 'preco')}
             >
-              {precoChipLabel}
-              <span className={styles.setinha}>▾</span>
+              <span>{precoChipLabel}</span>
+              {(filtros.preco_min || filtros.preco_max) ? (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  className={styles.btnLimparIndividual}
+                  onClick={handleLimparPreco}
+                  title="Limpar faixa de preço"
+                >
+                  ✕
+                </span>
+              ) : (
+                <span className={styles.setinha}>▾</span>
+              )}
             </button>
 
             {modalAberto === 'preco' && !isMobile && (
@@ -369,8 +411,20 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               className={`${styles.btnFiltro} ${filtros.quartos_min ? styles.ativo : ''}`}
               onClick={() => setModalAberto(modalAberto === 'quartos' ? null : 'quartos')}
             >
-              Quartos {filtros.quartos_min ? `${filtros.quartos_min}+` : ''}
-              <span className={styles.setinha}>▾</span>
+              <span>Quartos {filtros.quartos_min ? `(${filtros.quartos_min}+)` : ''}</span>
+              {filtros.quartos_min ? (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  className={styles.btnLimparIndividual}
+                  onClick={handleLimparQuartos}
+                  title="Limpar filtro de quartos"
+                >
+                  ✕
+                </span>
+              ) : (
+                <span className={styles.setinha}>▾</span>
+              )}
             </button>
 
             {modalAberto === 'quartos' && !isMobile && (
@@ -383,10 +437,10 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
             )}
           </div>
 
-          {/* Limpar filtros */}
+          {/* Limpar todos os filtros */}
           {temFiltrosAtivos && (
-            <button className={styles.btnLimpar} onClick={limparFiltros}>
-              ✕ Limpar
+            <button className={styles.btnLimpar} onClick={limparFiltros} title="Limpar todos os filtros">
+              ✕ Limpar Tudo
             </button>
           )}
         </div>
@@ -411,7 +465,19 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
           onClick={() => setModalAberto('tipo')}
         >
           <span>Tipo {filtros.tipo?.length ? `(${filtros.tipo.length})` : ''}</span>
-          <span className={styles.setinha}>▾</span>
+          {filtros.tipo?.length ? (
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.btnLimparIndividual}
+              onClick={handleLimparTipo}
+              title="Limpar tipos"
+            >
+              ✕
+            </span>
+          ) : (
+            <span className={styles.setinha}>▾</span>
+          )}
         </button>
 
         {/* Chip Preço */}
@@ -421,7 +487,19 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
           onClick={() => setModalAberto('preco')}
         >
           <span>{precoChipLabel}</span>
-          <span className={styles.setinha}>▾</span>
+          {(filtros.preco_min || filtros.preco_max) ? (
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.btnLimparIndividual}
+              onClick={handleLimparPreco}
+              title="Limpar preço"
+            >
+              ✕
+            </span>
+          ) : (
+            <span className={styles.setinha}>▾</span>
+          )}
         </button>
 
         {/* Chip Quartos */}
@@ -430,14 +508,31 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
           className={`${styles.chipMobile} ${filtros.quartos_min ? styles.chipMobileAtivo : ''}`}
           onClick={() => setModalAberto('quartos')}
         >
-          <span>{filtros.quartos_min ? `${filtros.quartos_min}+ quartos` : 'Quartos'}</span>
-          <span className={styles.setinha}>▾</span>
+          <span>Quartos {filtros.quartos_min ? `(${filtros.quartos_min}+)` : ''}</span>
+          {filtros.quartos_min ? (
+            <span
+              role="button"
+              tabIndex={0}
+              className={styles.btnLimparIndividual}
+              onClick={handleLimparQuartos}
+              title="Limpar quartos"
+            >
+              ✕
+            </span>
+          ) : (
+            <span className={styles.setinha}>▾</span>
+          )}
         </button>
 
-        {/* Chip Limpar */}
+        {/* Limpar Todos no Mobile */}
         {temFiltrosAtivos && (
-          <button type="button" className={styles.chipLimparMobile} onClick={limparFiltros}>
-            ✕ Limpar
+          <button
+            type="button"
+            className={styles.chipLimparMobile}
+            onClick={limparFiltros}
+            title="Limpar todos os filtros"
+          >
+            ✕ Limpar Tudo
           </button>
         )}
       </div>

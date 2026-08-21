@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import LinhaTempoRevisao from "@/components/painel/LinhaTempoRevisao"
 import styles from "./page.module.css"
 
 interface DadosImovel {
@@ -81,8 +82,13 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   const [buscandoCep, setBuscandoCep] = useState(false)
   const inputFotoRef = useRef<HTMLInputElement>(null)
   const [salvando, setSalvando] = useState(false)
+  const [reenviando, setReenviando] = useState(false)
   const [erro, setErro] = useState("")
   const [sucesso, setSucesso] = useState(false)
+  const [imovelCompleto, setImovelCompleto] = useState<any>(null)
+  const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
+  const [modalReenvioAberto, setModalReenvioAberto] = useState(false)
+  const [recadoReenvio, setRecadoReenvio] = useState("")
   const [fotos, setFotos] = useState<FotoPreview[]>([])
   const [fotosRemovidas, setFotosRemovidas] = useState<string[]>([])
   const [dados, setDados] = useState<DadosImovel>({
@@ -154,6 +160,8 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       }
 
       try {
+        setUsuarioLogado(user)
+
         const { data: imovel, error } = await supabase
           .from("imoveis")
           .select("*, fotos_imovel(id, url, principal, ordem)")
@@ -181,10 +189,12 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
             .order("ordem", { ascending: true })
 
           imovelSimples.fotos_imovel = fotosData || []
+          setImovelCompleto(imovelSimples)
           preencherDados(imovelSimples)
           return
         }
 
+        setImovelCompleto(imovel)
         preencherDados(imovel)
       } catch (err: any) {
         console.error("Erro ao carregar imóvel:", err)
@@ -363,6 +373,52 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
     }
   }
 
+  async function handleSalvarEReenviar() {
+    setReenviando(true)
+    setErro("")
+    setSucesso(false)
+
+    try {
+      // 1. Salva os dados normais
+      await salvar()
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("Não autenticado")
+
+      const imobiliariaId = user.user_metadata?.imobiliaria_id || imovelCompleto?.anunciante_id
+
+      // 2. Grava evento de resposta no histórico de moderação e notifica gestor
+      await fetch('/api/painel/imoveis/revisar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imovelId: id,
+          autorId: user.id,
+          autorNome: user.user_metadata?.nome || user.email,
+          autorPapel: 'corretor',
+          tipoEvento: 'resposta_corretor',
+          mensagem: recadoReenvio.trim() || 'Ajustes concluídos pelo corretor.',
+          imobiliariaId,
+          corretorId: user.id,
+          imovelTitulo: dados.titulo,
+        }),
+      })
+
+      setSucesso(true)
+      setModalReenvioAberto(false)
+      setTimeout(() => {
+        router.push("/painel?aba=imoveis")
+      }, 1500)
+    } catch (e: unknown) {
+      console.error("Erro ao reenviar para revisão:", e)
+      setErro(e instanceof Error ? e.message : "Erro ao reenviar para revisão.")
+    } finally {
+      setReenviando(false)
+    }
+  }
+
   if (carregando) {
     return (
       <div className={styles.pagina}>
@@ -372,6 +428,8 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       </div>
     )
   }
+
+  const temAjustesPendentes = !!imovelCompleto?.descricao_motivo_rejeicao
 
   return (
     <div className={styles.pagina}>
@@ -386,6 +444,32 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       <main className={styles.main}>
         <div className={styles.card}>
           <div className={styles.etapaConteudo}>
+            {/* ── BANNER DE MODERAÇÃO E AJUSTES SOLICITADOS PELO GESTOR ── */}
+            {temAjustesPendentes && (
+              <div style={{
+                background: '#fffbeb',
+                border: '1.5px solid #fde68a',
+                borderRadius: '0.75rem',
+                padding: '1.25rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.85rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#92400e', fontWeight: 800, fontSize: '0.95rem' }}>
+                  <span>⚠️</span>
+                  <span>Ajustes Solicitados pela Gestão da Imobiliária</span>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: '#78350f', lineHeight: 1.5 }}>
+                  O gestor solicitou correções neste anúncio. Faça as alterações necessárias no formulário abaixo e, ao terminar, clique em <strong>"Reenviar para Revisão"</strong>.
+                </p>
+                <LinhaTempoRevisao
+                  imovelId={id}
+                  motivoRejeicaoAtual={imovelCompleto?.descricao_motivo_rejeicao}
+                />
+              </div>
+            )}
+
             {sucesso && (
               <div style={{
                 background: "#ecfdf5",
@@ -397,7 +481,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 fontSize: "0.85rem",
                 fontWeight: 600,
               }}>
-                ✅ Imóvel atualizado com sucesso!
+                ✅ {reenviando || modalReenvioAberto ? "Imóvel reenviado para a revisão do gestor com sucesso!" : "Imóvel atualizado com sucesso!"}
               </div>
             )}
 
@@ -484,6 +568,10 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                     }
                   }}
                   maxLength={9}
+                  name="imovel_d_cep"
+                  autoComplete="one-time-code"
+                  data-lpignore="true"
+                  data-form-type="other"
                 />
                 {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.8rem", color: "#64748b" }}>Buscando...</span>}
               </div>
@@ -497,6 +585,10 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   className={styles.input}
                   value={dados.cidade}
                   onChange={(e) => atualizar("cidade", e.target.value)}
+                  name="imovel_d_cidade"
+                  autoComplete="one-time-code"
+                  data-lpignore="true"
+                  data-form-type="other"
                 />
               </div>
               <div className={styles.grupo}>
@@ -506,6 +598,10 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   value={dados.estado}
                   onChange={(e) => atualizar("estado", e.target.value.toUpperCase())}
                   maxLength={2}
+                  name="imovel_d_uf"
+                  autoComplete="one-time-code"
+                  data-lpignore="true"
+                  data-form-type="other"
                 />
               </div>
             </div>
@@ -518,6 +614,10 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   className={styles.input}
                   value={dados.bairro}
                   onChange={(e) => atualizar("bairro", e.target.value)}
+                  name="imovel_d_bairro"
+                  autoComplete="one-time-code"
+                  data-lpignore="true"
+                  data-form-type="other"
                 />
               </div>
               <div className={styles.grupo}>
@@ -526,6 +626,10 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   className={styles.input}
                   value={dados.endereco}
                   onChange={(e) => atualizar("endereco", e.target.value)}
+                  name="imovel_d_logradouro"
+                  autoComplete="one-time-code"
+                  data-lpignore="true"
+                  data-form-type="other"
                 />
               </div>
             </div>
@@ -644,20 +748,78 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
               )}
             </div>
 
-            {/* Botões Salvar */}
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid #e2e8f0" }}>
-              <Link href="/painel?aba=imoveis" className="btn btn-outline" style={{ height: "38px", fontSize: "0.85rem" }}>
-                Voltar
-              </Link>
-              <button
-                type="button"
-                className={`btn btn-primario ${salvando ? styles.btnCarregando : ""}`}
-                onClick={salvar}
-                disabled={salvando}
-                style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700 }}
-              >
-                {salvando ? "Salvando..." : "💾 Salvar Alterações"}
-              </button>
+            {/* Botões Salvar / Reenviar */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid #e2e8f0" }}>
+              {modalReenvioAberto && (
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1.5px solid #cbd5e1',
+                  borderRadius: '0.75rem',
+                  padding: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  animation: 'fadeIn 0.2s ease'
+                }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b' }}>
+                    💬 Descreva brevemente as correções feitas (opcional):
+                  </span>
+                  <textarea
+                    style={{
+                      width: '100%',
+                      padding: '0.65rem 0.75rem',
+                      borderRadius: '0.5rem',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.85rem',
+                      fontFamily: 'inherit',
+                      resize: 'vertical',
+                      minHeight: '65px'
+                    }}
+                    placeholder="Ex: Fotos da fachada adicionadas e valor do condomínio corrigido..."
+                    value={recadoReenvio}
+                    onChange={(e) => setRecadoReenvio(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+              )}
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", flexWrap: "wrap" }}>
+                <Link href="/painel?aba=imoveis" className="btn btn-outline" style={{ height: "38px", fontSize: "0.85rem" }}>
+                  Voltar
+                </Link>
+
+                <button
+                  type="button"
+                  className={`btn btn-outline ${salvando ? styles.btnCarregando : ""}`}
+                  onClick={salvar}
+                  disabled={salvando || reenviando}
+                  style={{ height: "38px", fontSize: "0.85rem", fontWeight: 600 }}
+                >
+                  {salvando ? "Salvando..." : "💾 Salvar Rascunho"}
+                </button>
+
+                {!modalReenvioAberto ? (
+                  <button
+                    type="button"
+                    className="btn btn-primario"
+                    onClick={() => setModalReenvioAberto(true)}
+                    disabled={salvando || reenviando}
+                    style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#059669', borderColor: '#059669' }}
+                  >
+                    📤 Reenviar para Revisão do Gestor
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-primario"
+                    onClick={handleSalvarEReenviar}
+                    disabled={salvando || reenviando}
+                    style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#059669', borderColor: '#059669' }}
+                  >
+                    {reenviando ? "Reenviando..." : "✅ Confirmar e Notificar Gestor"}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

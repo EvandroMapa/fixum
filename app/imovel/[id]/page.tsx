@@ -17,16 +17,33 @@ export default async function PaginaImovel({ params }: Props) {
     .eq('id', id)
     .single()
 
-  if (error || !imovel) {
-    notFound()
-  }
+  // Perfil do anunciante e Imobiliária - tolerante a erro
+  const anuncianteId = imovel.anunciante_id || imovel.usuario_id
+  let perfil: any = null
+  let imobiliariaNome = ''
 
-  // Perfil do anunciante - tolerante a erro
-  const { data: perfil } = await supabase
-    .from('perfis')
-    .select('id, nome, tipo, foto_url, telefone, whatsapp')
-    .eq('id', imovel.usuario_id)
-    .maybeSingle()
+  if (anuncianteId) {
+    const { data: p } = await supabase
+      .from('perfis')
+      .select('id, nome, tipo, foto_url, telefone, whatsapp, creci, email')
+      .eq('id', anuncianteId)
+      .maybeSingle()
+    perfil = p
+
+    // Se for corretor, descobrir a imobiliária dele
+    if (p?.tipo === 'corretor') {
+      const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId).catch(() => ({ data: null }))
+      const imobId = userData?.user?.user_metadata?.imobiliaria_id
+      if (imobId) {
+        const { data: imobPerfil } = await supabase.from('perfis').select('nome').eq('id', imobId).maybeSingle()
+        if (imobPerfil?.nome) {
+          imobiliariaNome = imobPerfil.nome
+        }
+      }
+    } else if (p?.tipo === 'imobiliaria') {
+      imobiliariaNome = p.nome
+    }
+  }
 
   // Caracteristicas - tolerante a erro
   const { data: caracteristicas } = await supabase
@@ -46,7 +63,7 @@ export default async function PaginaImovel({ params }: Props) {
     ...imovel,
     fotos_imovel: imovel.fotos_imovel ?? [],
     caracteristicas_imovel: caracteristicas ?? [],
-    perfis: perfil ?? undefined,
+    perfis: perfil ? { ...perfil, imobiliaria_nome: imobiliariaNome } : undefined,
   }
 
   return <PaginaImovelCliente imovel={imovelCompleto} historico={historico ?? []} />

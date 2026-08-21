@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { PLANOS_OFICIAIS, formatarMoeda } from '@/lib/planos'
 import { CONFIG_PADRAO } from '@/lib/constants'
 import { isSessaoAdminValida, encerrarSessaoAdmin } from '@/lib/admin-auth'
+import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import styles from './page.module.css'
 
 type AbaAdmin = 'metricas' | 'anunciantes' | 'imoveis' | 'financeiro' | 'configuracoes'
@@ -74,6 +75,7 @@ export default function AdminPage() {
   const [emailContato, setEmailContato] = useState(CONFIG_PADRAO.EMAIL_CONTATO)
   const [salvandoConfig, setSalvandoConfig] = useState(false)
   const [msgConfig, setMsgConfig] = useState<string | null>(null)
+  const { confirmar } = useConfirm()
 
   useEffect(() => {
     carregarDadosAdmin()
@@ -220,7 +222,15 @@ export default function AdminPage() {
 
   // Excluir Imóvel como Admin
   async function handleExcluirImovel(id: string, titulo: string) {
-    if (!confirm(`Tem certeza que deseja remover o anúncio "${titulo}" da plataforma?`)) return
+    const confirmou = await confirmar({
+      titulo: 'Remover Anúncio da Plataforma?',
+      mensagem: `Tem certeza que deseja remover o anúncio "${titulo}" da plataforma Fixum como Administrador?`,
+      icone: '🗑️',
+      textoBotaoConfirmar: 'Sim, Remover',
+      tipo: 'perigo',
+      destrutivo: true,
+    })
+    if (!confirmou) return
     const supabase = createClient()
 
     setImoveis((prev) => prev.filter((i) => i.id !== id))

@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
+import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import LogoGota from '@/components/ui/LogoGota'
 import styles from './Header.module.css'
 
@@ -13,16 +14,37 @@ export default function Header() {
   const [menuAberto, setMenuAberto] = useState(false)
   const [dropdownAberto, setDropdownAberto] = useState(false)
   const [usuario, setUsuario] = useState<User | null>(null)
+  const [nomeUsuario, setNomeUsuario] = useState<string>('')
+  const [favoritosLista, setFavoritosLista] = useState<{ id: string; negociacao: string }[]>([])
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const router = useRouter()
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const isFavoritosAtivo = pathname.startsWith('/explorar') && searchParams?.get('favoritos') === 'true'
+  const negociacaoAtual = searchParams?.get('negociacao')
+
+  // Calcular contagem de favoritos da modalidade atual
+  const totalFavoritos = (() => {
+    if (negociacaoAtual === 'aluguel') {
+      return favoritosLista.filter((f) => f.negociacao === 'aluguel').length
+    }
+    if (negociacaoAtual === 'venda') {
+      return favoritosLista.filter((f) => f.negociacao === 'venda').length
+    }
+    if (pathname.startsWith('/explorar')) {
+      return favoritosLista.filter((f) => f.negociacao === 'venda').length
+    }
+    return favoritosLista.length
+  })()
 
   // Na home page: header transparente ate rolar
   // Em outras paginas: sempre solido
   const naHome = pathname === '/'
   const noExplorar = pathname === '/explorar' || pathname.startsWith('/explorar?') || pathname.startsWith('/explorar/')
+  const naPaginaImovel = pathname.startsWith('/imovel/')
   const solido = !naHome || scrolled
-  const ocultarNav = noExplorar
+  const ocultarNav = noExplorar || naPaginaImovel
 
   useEffect(() => {
     if (!naHome) return
@@ -31,14 +53,75 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [naHome])
 
-  // Carregar usuário logado
+  // Carregar usuário logado, nome de perfil e lista detalhada de favoritos
   useEffect(() => {
     const sb = createClient()
-    sb.auth.getSession().then(({ data: { session } }) => setUsuario(session?.user ?? null))
+
+    async function carregarDadosUsuario(user: User | null) {
+      setUsuario(user)
+      if (!user) {
+        setNomeUsuario('')
+        setFavoritosLista([])
+        return
+      }
+      const nomeMeta = user.user_metadata?.nome || user.user_metadata?.full_name
+      if (nomeMeta) setNomeUsuario(nomeMeta)
+
+      try {
+        const { data } = await sb.from('perfis').select('nome').eq('id', user.id).maybeSingle()
+        if (data?.nome) {
+          setNomeUsuario(data.nome)
+        } else if (!nomeMeta) {
+          setNomeUsuario(user.email?.split('@')[0] || 'Usuário')
+        }
+
+        // Buscar lista de favoritos com a modalidade (venda/aluguel) do imóvel
+        const { data: favs } = await sb
+          .from('favoritos')
+          .select('id, imoveis!inner(negociacao)')
+          .eq('usuario_id', user.id)
+
+        const lista = (favs ?? []).map((f: any) => ({
+          id: f.id,
+          negociacao: f.imoveis?.negociacao || 'venda',
+        }))
+        setFavoritosLista(lista)
+      } catch {
+        if (!nomeMeta) setNomeUsuario(user.email?.split('@')[0] || 'Usuário')
+      }
+    }
+
+    sb.auth.getSession().then(({ data: { session } }) => carregarDadosUsuario(session?.user ?? null))
     const { data: { subscription } } = sb.auth.onAuthStateChange((_e, session) => {
-      setUsuario(session?.user ?? null)
+      carregarDadosUsuario(session?.user ?? null)
     })
     return () => subscription.unsubscribe()
+  }, [])
+
+  // Atualizar contador em tempo real quando o usuário favoritar/desfavoritar no mapa ou cards
+  useEffect(() => {
+    const sb = createClient()
+    async function recarregarFavoritos() {
+      const { data: { session } } = await sb.auth.getSession()
+      if (!session?.user) return
+      const { data: favs } = await sb
+        .from('favoritos')
+        .select('id, imoveis!inner(negociacao)')
+        .eq('usuario_id', session.user.id)
+
+      const lista = (favs ?? []).map((f: any) => ({
+        id: f.id,
+        negociacao: f.imoveis?.negociacao || 'venda',
+      }))
+      setFavoritosLista(lista)
+    }
+
+    function handleFavoritoAtualizado() {
+      recarregarFavoritos()
+    }
+
+    window.addEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
+    return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [])
 
   // Fechar dropdown ao clicar fora
@@ -58,6 +141,9 @@ export default function Header() {
     setDropdownAberto(false)
     router.push('/')
   }
+
+  const inicialAvatar = obterIniciaisUsuario(nomeUsuario || usuario?.user_metadata?.nome, usuario?.email)
+  const gradienteAvatar = obterGradienteUsuario(usuario?.id || usuario?.email || nomeUsuario)
 
   return (
     <header className={`${styles.header} ${solido ? styles.solido : ''}`}>
@@ -83,14 +169,16 @@ export default function Header() {
 
         {/* Acoes */}
         <div className={styles.acoes}>
-          <Link
-            href="/para-imobiliarias"
-            className={styles.btnImobiliaria}
-            title="Conheça nossos planos corporativos para imobiliárias e redes"
-          >
-            <span>🏢</span>
-            <span>Para Imobiliárias</span>
-          </Link>
+          {!naPaginaImovel && (
+            <Link
+              href="/para-imobiliarias"
+              className={styles.btnImobiliaria}
+              title="Conheça nossos planos corporativos para imobiliárias e redes"
+            >
+              <span>🏢</span>
+              <span>Para Imobiliárias</span>
+            </Link>
+          )}
 
           <Link
             href={usuario ? '/painel/novo-imovel' : '/login?next=/painel/novo-imovel'}
@@ -99,6 +187,32 @@ export default function Header() {
             Anunciar
           </Link>
 
+          {/* Botão de Favoritos com Toggle e Badge — exibido apenas para usuário logado e fora da página de detalhes do imóvel */}
+          {usuario && !pathname.startsWith('/imovel/') && (() => {
+            const negociacaoAtual = searchParams?.get('negociacao')
+            const hrefFavoritos = isFavoritosAtivo
+              ? (negociacaoAtual ? `/explorar?negociacao=${negociacaoAtual}` : '/explorar')
+              : (negociacaoAtual ? `/explorar?favoritos=true&negociacao=${negociacaoAtual}` : '/explorar?favoritos=true')
+
+            return (
+              <Link
+                href={hrefFavoritos}
+                className={`${styles.btnFavoritos} ${isFavoritosAtivo ? styles.btnFavoritosAtivo : ''}`}
+                title={
+                  isFavoritosAtivo
+                    ? '❤️ Favoritos ativos. Clique para ver todos os imóveis.'
+                    : totalFavoritos > 0
+                    ? `${totalFavoritos} imóvel(is) nos favoritos. Clique para filtrar.`
+                    : 'Meus Imóveis Favoritos'
+                }
+                aria-label="Imóveis Favoritos"
+              >
+                <span className={styles.iconeFavorito}>❤️</span>
+                {totalFavoritos > 0 && <span className={styles.badgeFavoritos}>{totalFavoritos}</span>}
+              </Link>
+            )
+          })()}
+
           {usuario ? (
             // Avatar + Dropdown do usuário logado
             <div className={styles.avatarWrap} ref={dropdownRef}>
@@ -106,21 +220,22 @@ export default function Header() {
                 className={styles.avatar}
                 onClick={() => setDropdownAberto(!dropdownAberto)}
                 aria-label="Menu do usuário"
-                title={usuario.email ?? 'Usuário'}
+                title={nomeUsuario || usuario.email || 'Minha Conta'}
+                style={{ background: gradienteAvatar }}
               >
-                {(usuario.user_metadata?.nome || usuario.email || 'U')[0].toUpperCase()}
+                {inicialAvatar}
               </button>
               {dropdownAberto && (
                 <div className={styles.dropdown}>
-                  <div className={styles.dropdownEmail}>{usuario.email}</div>
+                  <div className={styles.dropdownUsuario}>
+                    <div className={styles.dropdownNome}>{nomeUsuario || 'Minha Conta'}</div>
+                    <div className={styles.dropdownEmail}>{usuario.email}</div>
+                  </div>
                   <Link href="/painel" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
                     🏠 Meu Painel
                   </Link>
                   <Link href="/painel?aba=plano" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
                     💳 Meu Plano
-                  </Link>
-                  <Link href="/painel/favoritos" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
-                    ❤️ Favoritos
                   </Link>
                   <hr className={styles.dropdownDivider} />
                   <button className={styles.dropdownSair} onClick={handleSair}>
@@ -130,45 +245,14 @@ export default function Header() {
               )}
             </div>
           ) : (
-            /* Dropdown de Entrada Rápida */
-            <div className={styles.avatarWrap} ref={dropdownRef}>
-              <button
-                type="button"
-                className="btn btn-primario btn-sm"
-                onClick={() => setDropdownAberto(!dropdownAberto)}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-              >
-                <span>Entrar</span>
-                <span style={{ fontSize: '0.65rem' }}>▼</span>
-              </button>
-              {dropdownAberto && (
-                <div className={styles.dropdown} style={{ minWidth: '240px' }}>
-                  <Link
-                    href="/login?tipo=usuario"
-                    className={styles.dropdownItem}
-                    onClick={() => setDropdownAberto(false)}
-                  >
-                    <span>👤</span>
-                    <div>
-                      <div style={{ fontWeight: 700, color: '#0f172a' }}>Minha Conta</div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Buscar imóveis e favoritos</div>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/login?tipo=imobiliaria"
-                    className={styles.dropdownItem}
-                    onClick={() => setDropdownAberto(false)}
-                    style={{ background: '#f8fafc', marginTop: '4px', borderRadius: '8px' }}
-                  >
-                    <span>🏢</span>
-                    <div>
-                      <div style={{ fontWeight: 700, color: '#1d4ed8' }}>Painel Imobiliário</div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Imobiliárias & Corretores</div>
-                    </div>
-                  </Link>
-                </div>
-              )}
-            </div>
+            /* Botão de Entrada Direto e Infalível */
+            <Link
+              href="/login"
+              className="btn btn-primario btn-sm"
+              style={{ fontWeight: 700, textDecoration: 'none' }}
+            >
+              Entrar
+            </Link>
           )}
 
           <button className={styles.menuBurger} onClick={() => setMenuAberto(!menuAberto)} aria-label="Menu">
@@ -189,9 +273,8 @@ export default function Header() {
           </Link>
           <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imóvel</Link>
           <hr style={{ margin: '8px 0', borderColor: '#f1f5f9' }} />
-          <Link href="/login?tipo=usuario" onClick={() => setMenuAberto(false)}>👤 Entrar como Usuário</Link>
-          <Link href="/login?tipo=imobiliaria" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
-            🏢 Painel da Imobiliária
+          <Link href="/login" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
+            🔑 Entrar na Conta
           </Link>
           <Link href="/cadastro" onClick={() => setMenuAberto(false)}>Criar Conta</Link>
         </div>
