@@ -69,7 +69,7 @@ function ExplorarConteudo() {
           .select('imovel_id')
           .eq('usuario_id', session.user.id)
 
-        idsFavoritos = (favs ?? []).map((f) => f.imovel_id).filter(Boolean)
+        idsFavoritos = (favs ?? []).map((f: any) => f.imovel_id).filter(Boolean)
 
         if (idsFavoritos.length === 0) {
           setImoveis([])
@@ -81,7 +81,7 @@ function ExplorarConteudo() {
 
       let query = supabase
         .from('imoveis')
-        .select(`*, fotos_imovel (id, url, principal, ordem)`)
+        .select(`*, fotos_imovel (id, url, principal, ordem), perfis:anunciante_id (id, nome, tipo, foto_url)`)
         .in('status', ['publicado', 'ativo'])
         .order('destaque', { ascending: false })
         .order('created_at', { ascending: false })
@@ -104,7 +104,7 @@ function ExplorarConteudo() {
       if (filtrosAtivos.preco_max) query = query.lte('preco', filtrosAtivos.preco_max)
       if (filtrosAtivos.quartos_min) query = query.gte('quartos', filtrosAtivos.quartos_min)
       if (filtrosAtivos.cidade) {
-        query = query.or(`cidade.ilike.%${filtrosAtivos.cidade}%,bairro.ilike.%${filtrosAtivos.cidade}%`)
+        query = query.or(`cidade.ilike.%${filtrosAtivos.cidade}%,bairro.ilike.%${filtrosAtivos.cidade}%,codigo.ilike.%${filtrosAtivos.cidade}%`)
       }
 
       // Filtro por bounds do mapa (pesquisar nesta area) quando não estiver filtrando favoritos
@@ -121,10 +121,54 @@ function ExplorarConteudo() {
       const { data, error } = await query
       if (error) throw error
 
-      const imoveisComFotos = (data ?? []).map((i: Record<string, unknown>) => ({
-        ...i,
-        fotos: (i.fotos_imovel as Record<string, unknown>[]) ?? [],
-      })) as unknown as Imovel[]
+      // Buscar imobiliárias para resolver o branding oficial
+      const { data: todosPerfisList } = await supabase
+        .from('perfis')
+        .select('id, nome, tipo, foto_url')
+
+      const todosPerfis = todosPerfisList ?? []
+      const imobiliarias = todosPerfis.filter((p: any) => p.tipo === 'imobiliaria')
+
+      // Montar mapa: id do membro → perfil da imobiliária dona
+      // Buscar vínculo real via API (auth.admin.listUsers no server)
+      const mapaMembroParaImob = new Map<string, any>()
+      try {
+        for (const imob of imobiliarias) {
+          const res = await fetch(`/api/corretores?imobiliaria_id=${imob.id}`)
+          if (res.ok) {
+            const json = await res.json()
+            const membros = json.corretores || []
+            for (const m of membros) {
+              mapaMembroParaImob.set(m.id, imob)
+            }
+          }
+          // A própria imobiliária também
+          mapaMembroParaImob.set(imob.id, imob)
+        }
+      } catch {}
+
+      const imoveisComFotos = (data ?? []).map((i: Record<string, unknown>) => {
+        const perfilOriginal = (i.perfis as any) || null
+        const anuncianteId = (i.anunciante_id as string) || ''
+
+        // Se o anunciante pertence a uma imobiliária, usar branding da imobiliária
+        let anuncianteFinal = perfilOriginal
+        if (mapaMembroParaImob.has(anuncianteId)) {
+          const imobDona = mapaMembroParaImob.get(anuncianteId)
+          anuncianteFinal = {
+            id: imobDona.id,
+            nome: imobDona.nome,
+            tipo: 'imobiliaria',
+            foto_url: imobDona.foto_url,
+          }
+        }
+
+        return {
+          ...i,
+          fotos: (i.fotos_imovel as Record<string, unknown>[]) ?? [],
+          anunciante: anuncianteFinal,
+        }
+      }) as unknown as Imovel[]
 
       setImoveis(imoveisComFotos)
       setTotalResultados(imoveisComFotos.length)

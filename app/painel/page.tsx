@@ -17,7 +17,9 @@ import ModalLimiteAtingido from '@/components/painel/ModalLimiteAtingido'
 import ModalUpgradePlano from '@/components/painel/ModalUpgradePlano'
 import ModalConfigSeguranca from '@/components/painel/ModalConfigSeguranca'
 import ModalNovoImovel from '@/components/painel/ModalNovoImovel'
+import ModalConfiguracoes from '@/components/painel/ModalConfiguracoes'
 import MenuNotificacoes from '@/components/painel/MenuNotificacoes'
+import MenuUsuarioTopbar from '@/components/painel/MenuUsuarioTopbar'
 import styles from './page.module.css'
 
 type Aba = 'dashboard' | 'imoveis' | 'leads' | 'corretores' | 'plano'
@@ -57,6 +59,7 @@ function PainelConteudo() {
   const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
   const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
   const [modalSegurancaAberto, setModalSegurancaAberto] = useState(false)
+  const [modalConfiguracoesAberto, setModalConfiguracoesAberto] = useState(false)
   const [planoAlvoUpgrade, setPlanoAlvoUpgrade] = useState<Plano | null>(null)
   const [ultimoEventoChat, setUltimoEventoChat] = useState<any>(null)
 
@@ -500,18 +503,6 @@ function PainelConteudo() {
             </button>
           ) : null}
 
-          {/* Ver Portal no Mapa em Nova Aba */}
-          <a
-            href="/explorar"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.btnVerPortal}
-            title="Visualizar mapa público em nova aba"
-          >
-            <span>🌐 Ver Mapa Público</span>
-            <span style={{ fontSize: '0.75rem' }}>↗</span>
-          </a>
-
           {/* Notificações Corporativas */}
           <MenuNotificacoes
             usuarioId={usuarioId}
@@ -533,24 +524,18 @@ function PainelConteudo() {
             + Novo Imóvel
           </button>
 
-          {/* Avatar com 2 Iniciais Inteligentes e Cor Única Determinística */}
-          <div
-            className={styles.avatarTopbarDireita}
-            style={{ background: obterGradienteUsuario(usuarioId || usuarioEmail || usuarioNome) }}
-            title={`${usuarioNome || 'Usuário'}${usuarioEmail ? ` • ${usuarioEmail}` : ''}`}
-          >
-            {obterIniciaisUsuario(usuarioNome, usuarioEmail)}
-          </div>
-
-          {/* Botão Sair */}
-          <button
-            type="button"
-            className={styles.btnSairTopbar}
-            onClick={handleSair}
-            title="Encerrar sessão"
-          >
-            🚪 Sair
-          </button>
+          {/* Menu Dropdown no Avatar do Usuário */}
+          <MenuUsuarioTopbar
+            usuarioId={usuarioId}
+            usuarioNome={usuarioNome}
+            usuarioEmail={usuarioEmail}
+            isImobiliaria={isImobiliaria}
+            isCorretor={isCorretor}
+            imobiliariaDona={imobiliariaDona}
+            onAbrirConfiguracoes={() => setModalConfiguracoesAberto(true)}
+            onAbrirSeguranca={() => setModalSegurancaAberto(true)}
+            onSair={handleSair}
+          />
         </div>
       </header>
 
@@ -574,39 +559,6 @@ function PainelConteudo() {
                 <span>{item.label}</span>
               </button>
             ))}
-
-            <div style={{ marginTop: 'auto', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <button
-                type="button"
-                className={styles.sidebarItem}
-                onClick={() => setModalSegurancaAberto(true)}
-                title="Segurança & 2FA"
-              >
-                <span>🛡️</span>
-                <span>Segurança & 2FA</span>
-              </button>
-
-              <a
-                href="/explorar"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.sidebarItem}
-                style={{ color: '#94a3b8' }}
-              >
-                <span>🌐</span>
-                <span>Portal no Mapa ↗</span>
-              </a>
-
-              <button
-                type="button"
-                className={styles.sidebarItem}
-                onClick={handleSair}
-                style={{ color: '#f87171' }}
-              >
-                <span>🚪</span>
-                <span>Sair da Conta</span>
-              </button>
-            </div>
           </nav>
         </aside>
 
@@ -868,6 +820,17 @@ function PainelConteudo() {
           aberto={modalSegurancaAberto}
           onFechar={() => setModalSegurancaAberto(false)}
           usuarioEmail={usuarioEmail}
+        />
+
+        {/* Modal de Configurações da Conta e Preferências de Códigos */}
+        <ModalConfiguracoes
+          aberto={modalConfiguracoesAberto}
+          onFechar={() => setModalConfiguracoesAberto(false)}
+          usuarioId={usuarioId}
+          usuarioNome={usuarioNome}
+          isImobiliaria={isImobiliaria}
+          isCorretor={isCorretor}
+          imobiliariaDona={imobiliariaDona}
         />
 
         {/* Modal de Cadastro de Novo Imóvel (com Workspace visível atrás) */}

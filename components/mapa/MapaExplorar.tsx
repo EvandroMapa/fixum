@@ -232,11 +232,11 @@ export default function MapaExplorar({
             .select('imovel_id')
             .eq('usuario_id', session.user.id)
 
-          const ids = (data ?? []).map((f) => f.imovel_id).filter(Boolean)
+          const ids = (data ?? []).map((f: any) => f.imovel_id).filter(Boolean)
           favoritosSetRef.current = new Set(ids)
 
           // Atualiza marcadores existentes no mapa caso já estejam renderizados
-          ids.forEach((id) => {
+          ids.forEach((id: string) => {
             const item = marcadoresMapRef.current.get(id)
             if (item) {
               item.btnHeart.innerHTML = ''
@@ -459,9 +459,20 @@ export default function MapaExplorar({
               </div>
               ${localidade ? `<div style="font-size:12px;color:#64748b;margin-bottom:${detalhes ? '6px' : '0'};">${localidade}</div>` : ''}
               ${detalhes ? `<div style="font-size:11.5px;color:#94a3b8;">${detalhes}</div>` : ''}
-              <div style="margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
-                <span style="font-size:11px;color:#64748b;">Toque para ver detalhes</span>
-                <span style="font-size:11px;font-weight:700;color:#1a56db;">Ver imóvel →</span>
+              <div style="margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                <div style="display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;">
+                  ${i.anunciante?.foto_url ? `
+                    <img src="${i.anunciante.foto_url}" alt="Logo" style="width:18px;height:18px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #cbd5e1;" />
+                  ` : `
+                    <div style="width:18px;height:18px;border-radius:50%;background:#eff6ff;color:#2563eb;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                      ${(i.anunciante?.nome || 'FX').slice(0, 2).toUpperCase()}
+                    </div>
+                  `}
+                  <span style="font-size:11px;font-weight:700;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    ${i.anunciante?.nome || 'Imobiliária'}
+                  </span>
+                </div>
+                ${i.codigo ? `<span style="font-size:10px;font-weight:800;color:#1e40af;background:#dbeafe;border:1px solid #bfdbfe;padding:1px 5px;border-radius:4px;white-space:nowrap;flex-shrink:0;">Ref: ${i.codigo}</span>` : '<span style="font-size:11px;font-weight:700;color:#1a56db;flex-shrink:0;">Ver →</span>'}
               </div>
             </div>
           </a>

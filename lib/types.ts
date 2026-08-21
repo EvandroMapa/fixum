@@ -87,6 +87,7 @@ export interface FotoImovel {
 export interface Imovel {
   id: string
   titulo: string
+  codigo?: string
   descricao?: string
   tipo: TipoImovel
   negociacao: TipoNegociacao
@@ -102,10 +103,15 @@ export interface Imovel {
   iptu?: number
   endereco: string
   cidade: string
+  estado?: string
   bairro?: string
+  cep?: string
   latitude: number
   longitude: number
   endereco_publico: boolean
+  aceita_pets?: boolean
+  mobiliado?: boolean
+  descricao_motivo_rejeicao?: string | null
   status: StatusImovel
   anunciante_id: string
   destaque: boolean

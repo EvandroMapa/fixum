@@ -35,7 +35,7 @@ export default function ModalConfigSeguranca({
       setCarregando(true)
       try {
         const { data } = await supabase.auth.mfa.listFactors()
-        const totpAtivo = data?.totp?.find((f) => f.status === 'verified')
+        const totpAtivo = data?.totp?.find((f: any) => f.status === 'verified')
         if (totpAtivo) {
           setTemMfaAtivo(true)
           setFatorId(totpAtivo.id)

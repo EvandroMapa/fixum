@@ -12,6 +12,21 @@ import styles from './page.module.css'
 
 const MapaImovel = dynamic(() => import('@/components/mapa/MapaImovel'), { ssr: false })
 
+function IconeWhatsApp({ size = 15 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'inline-block', verticalAlign: 'middle' }}
+    >
+      <path d="M12.031 2c-5.508 0-9.984 4.477-9.984 9.984 0 1.761.458 3.479 1.328 4.996L2 22l5.166-1.355a9.945 9.945 0 004.865 1.258h.004c5.508 0 9.984-4.477 9.984-9.984 0-2.668-1.039-5.176-2.926-7.063A9.927 9.927 0 0012.031 2zm0 18.293h-.003a8.272 8.272 0 01-4.221-1.151l-.303-.18-3.136.822.837-3.056-.197-.314a8.27 8.27 0 01-1.268-4.43c0-4.57 3.719-8.289 8.292-8.289 2.215 0 4.297.863 5.863 2.43 1.566 1.566 2.428 3.649 2.428 5.864 0 4.571-3.719 8.29-8.291 8.29zm4.542-6.205c-.249-.125-1.472-.726-1.7-.809-.228-.083-.394-.125-.56.125-.166.249-.643.809-.788.975-.145.166-.29.187-.539.062-.249-.125-1.052-.388-2.003-1.236-.74-.66-1.24-1.476-1.385-1.725-.145-.249-.015-.384.11-.508.112-.111.249-.29.373-.435.125-.145.166-.249.249-.415.083-.166.042-.311-.021-.435-.062-.125-.56-1.349-.768-1.847-.202-.486-.407-.42-.56-.428l-.477-.008c-.166 0-.435.062-.663.311-.228.249-.871.851-.871 2.075 0 1.224.892 2.407 1.016 2.573.125.166 1.756 2.681 4.254 3.759.594.257 1.059.41 1.421.525.598.19 1.142.163 1.572.099.479-.071 1.472-.602 1.68-1.183.208-.581.208-1.079.145-1.183-.062-.104-.228-.166-.477-.291z" />
+    </svg>
+  )
+}
+
 const PONTOS_INTERESSE = [
   { icone: '🏫', label: 'Escolas e Creches' },
   { icone: '🏥', label: 'Hospitais e Clínicas' },
@@ -64,12 +79,15 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
   const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
   const [modalFoto, setModalFoto] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
+  const [codigoCopiado, setCodigoCopiado] = useState(false)
+
+  const codigoExibicao = imovel.codigo || null
 
   // Formulário de Lead / Contato
   const [formNome, setFormNome] = useState('')
   const [formTelefone, setFormTelefone] = useState('')
   const [formMensagem, setFormMensagem] = useState(
-    `Olá! Tenho interesse no imóvel "${imovel.titulo}" (Cód: ${imovel.id.slice(0, 8).toUpperCase()}). Poderia me passar mais informações?`
+    `Olá! Tenho interesse no imóvel "${imovel.titulo}"${codigoExibicao ? ` (Cód: ${codigoExibicao})` : ''}. Poderia me passar mais informações?`
   )
   const [enviandoLead, setEnviandoLead] = useState(false)
   const [leadEnviado, setLeadEnviado] = useState(false)
@@ -135,26 +153,38 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
   }, [modalFoto])
 
   function handleWhatsApp() {
+    const cod = imovel.codigo || imovel.id.slice(0, 8).toUpperCase()
     const msg = encodeURIComponent(
-      `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${imovel.id.slice(0, 8).toUpperCase()}) em ${imovel.cidade}. Vi no FIXUM.`
+      `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Vi no FIXUM.`
     )
     const tel = anunciante?.whatsapp ?? anunciante?.telefone ?? '31988027152'
     window.open(`https://wa.me/55${tel.replace(/\D/g, '')}?text=${msg}`, '_blank')
   }
 
-  async function handleCompartilhar() {
-    if (typeof window !== 'undefined' && navigator.share) {
+  function handleCompartilharWhatsApp() {
+    const localTxt = `${imovel.cidade}${imovel.bairro ? ` - ${imovel.bairro}` : ''}`
+    const precoTxt = formatarPreco(imovel.preco, imovel.negociacao)
+    const url = typeof window !== 'undefined' ? window.location.href : `https://fixum.com.br/imovel/${imovel.id}`
+    const refTexto = imovel.codigo ? `\nRef: ${imovel.codigo}` : ''
+    const texto = encodeURIComponent(
+      `*FIXUM Imóveis*\n\n*${imovel.titulo}*${refTexto}\n${localTxt}\n${precoTxt}\n\nConfira as fotos e detalhes no FIXUM:\n${url}`
+    )
+    window.open(`https://wa.me/?text=${texto}`, '_blank')
+  }
+
+  async function handleCopiarLink() {
+    const url = typeof window !== 'undefined' ? window.location.href : `https://fixum.com.br/imovel/${imovel.id}`
+    if (typeof window !== 'undefined') {
       try {
-        await navigator.share({
-          title: imovel.titulo,
-          text: `Confira este imóvel no FIXUM: ${imovel.titulo}`,
-          url: window.location.href,
-        })
+        await navigator.clipboard.writeText(url)
       } catch {
-        /* cancelado */
+        const input = document.createElement('input')
+        input.value = url
+        document.body.appendChild(input)
+        input.select()
+        document.execCommand('copy')
+        document.body.removeChild(input)
       }
-    } else if (typeof window !== 'undefined') {
-      await navigator.clipboard.writeText(window.location.href)
       setLinkCopiado(true)
       setTimeout(() => setLinkCopiado(false), 2500)
     }
@@ -228,11 +258,21 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
             <button
               type="button"
               className={styles.btnAcaoTopo}
-              onClick={handleCompartilhar}
-              title="Compartilhar link do imóvel"
+              onClick={handleCompartilharWhatsApp}
+              title="Compartilhar este imóvel no WhatsApp"
+              style={{ color: '#16a34a', borderColor: '#bbf7d0', background: '#f0fdf4' }}
+            >
+              <IconeWhatsApp size={14} />
+              <span className={styles.txtAcao}>WhatsApp</span>
+            </button>
+            <button
+              type="button"
+              className={styles.btnAcaoTopo}
+              onClick={handleCopiarLink}
+              title="Copiar link do imóvel"
             >
               🔗
-              <span className={styles.txtAcao}>{linkCopiado ? 'Link Copiado!' : 'Compartilhar'}</span>
+              <span className={styles.txtAcao}>{linkCopiado ? '✓ Copiado!' : 'Copiar Link'}</span>
             </button>
           </div>
         </div>
@@ -358,6 +398,25 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                   <span className={`${styles.tagBadge} styles.tagDestaque`}>
                     ⭐ Destaque
                   </span>
+                )}
+                {codigoExibicao && (
+                  <div className={styles.badgeCodigoImovel} title="Código do imóvel para referência">
+                    <span>🏷️ Cód. <strong>{codigoExibicao}</strong></span>
+                    <button
+                      type="button"
+                      className={styles.btnCopiarCodigo}
+                      onClick={() => {
+                        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                          navigator.clipboard.writeText(codigoExibicao)
+                          setCodigoCopiado(true)
+                          setTimeout(() => setCodigoCopiado(false), 2000)
+                        }
+                      }}
+                      title="Copiar código do anúncio"
+                    >
+                      {codigoCopiado ? '✓ Copiado' : 'Copiar'}
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -516,28 +575,40 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
               ═══════════════════════════════════════════════════════════════ */}
           <div className={styles.colunaLateral}>
             <div className={styles.cardContatoSticky}>
-              {/* Identificação do Anunciante */}
-              <div className={styles.boxAnuncianteInfo}>
-                <div className={styles.anuncianteAvatarWrapper}>
-                  {anunciante?.foto_url ? (
-                    <img src={anunciante.foto_url} alt={anunciante.nome} className={styles.anuncianteAvatarImg} />
-                  ) : (
+              {/* Banner de Destaque da Imobiliária */}
+              {anunciante?.foto_url ? (
+                <div className={styles.bannerImobiliaria}>
+                  <div className={styles.bannerImobLogoWrapper}>
+                    <img src={anunciante.foto_url} alt={anunciante.nome} className={styles.bannerImobLogoImg} />
+                  </div>
+                  <div className={styles.bannerImobTextos}>
+                    <span className={styles.bannerImobNome}>{anunciante?.nome || 'Imobiliária Parceira'}</span>
+                    {anunciante?.imobiliaria_nome && anunciante.imobiliaria_nome !== anunciante.nome && (
+                      <span className={styles.bannerImobSubtitulo}>{anunciante.imobiliaria_nome}</span>
+                    )}
+                    <span className={styles.bannerImobSelo}>
+                      <span>✓</span> Imobiliária Verificada
+                    </span>
+                  </div>
+                  {anunciante?.creci && (
+                    <span className={styles.bannerImobCreci}>CRECI {anunciante.creci}</span>
+                  )}
+                </div>
+              ) : (
+                <div className={styles.boxAnuncianteInfo}>
+                  <div className={styles.anuncianteAvatarWrapper}>
                     <div className={styles.anuncianteAvatarPlaceholder}>
                       {anunciante?.nome?.slice(0, 2).toUpperCase() || 'IM'}
                     </div>
-                  )}
-                </div>
-                <div className={styles.anuncianteTextos}>
-                  <div className={styles.anuncianteNome}>{anunciante?.nome || 'Gestão Imobiliária'}</div>
-                  <div className={styles.anuncianteImobiliariaBadge}>
-                    <span>🏢</span>
-                    <strong>{anunciante?.imobiliaria_nome || 'M2 Imóveis & Aço'}</strong>
                   </div>
-                  {anunciante?.creci && (
-                    <div className={styles.anuncianteCreci}>CRECI: {anunciante.creci}</div>
-                  )}
+                  <div className={styles.anuncianteTextos}>
+                    <div className={styles.anuncianteNome}>{anunciante?.nome || 'Gestão Imobiliária'}</div>
+                    {anunciante?.creci && (
+                      <div className={styles.anuncianteCreci}>CRECI: {anunciante.creci}</div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Botões de Ação Imediata */}
               <div className={styles.botoesContatoDireto}>
@@ -554,7 +625,7 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                     href={`tel:${anunciante.telefone}`}
                     className={styles.btnLigarDestaque}
                   >
-                    <span>📞</span> Ligar para o Corretor
+                    <span>📞</span> {anunciante?.tipo === 'imobiliaria' ? 'Ligar para a Imobiliária' : 'Ligar para o Corretor'}
                   </a>
                 )}
               </div>
@@ -616,7 +687,7 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
               {/* Código do Imóvel & Segurança */}
               <div className={styles.rodapeSegurancaCard}>
                 <div className={styles.codigoImovelPill}>
-                  Código: <strong>{imovel.id.slice(0, 8).toUpperCase()}</strong>
+                  Código: <strong>{imovel.codigo || imovel.id.slice(0, 8).toUpperCase()}</strong>
                 </div>
                 <p className={styles.avisoSeguro}>
                   🔒 Seus dados são protegidos e enviados com exclusividade para a equipe autorizada.

@@ -45,6 +45,8 @@ export default function ModalRevisaoImovel({
   if (!aberto || !imovel) return null
 
   async function handleAprovar() {
+    if (!imovel) return
+
     if (usoPlano.atingiuLimite) {
       await alertar({
         titulo: 'Cota Corporativa Atingida',
@@ -108,6 +110,8 @@ export default function ModalRevisaoImovel({
   }
 
   async function handleConfirmarRecusa() {
+    if (!imovel) return
+
     if (!motivoRecusa.trim()) {
       await alertar({
         titulo: 'Motivo Obrigatório',

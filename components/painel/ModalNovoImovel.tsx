@@ -7,6 +7,7 @@ import { calcularUsoPlano, obterProximoPlano } from "@/lib/planos"
 import { useConfirm } from "@/contexts/ModalConfirmacaoContext"
 import ModalLimiteAtingido from "@/components/painel/ModalLimiteAtingido"
 import ModalUpgradePlano from "@/components/painel/ModalUpgradePlano"
+import { gerarPrefixoSugerido } from "@/components/painel/ModalConfiguracoes"
 import styles from "./ModalNovoImovel.module.css"
 
 // -- Tipos ------------------------------------------------------------------
@@ -35,6 +36,7 @@ interface DadosImovel {
   iptu: string
   aceita_pets: boolean
   mobiliado: boolean
+  codigo?: string
 }
 
 interface FotoPreview {
@@ -100,7 +102,10 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
   const [buscandoCep, setBuscandoCep] = useState(false)
   const [usuarioId, setUsuarioId] = useState("")
   const [isCorretor, setIsCorretor] = useState(false)
+  const [isImobiliaria, setIsImobiliaria] = useState(false)
   const [imobiliariaNome, setImobiliariaNome] = useState("")
+  const [prefixoImovel, setPrefixoImovel] = useState("FX")
+  const [modoCodigo, setModoCodigo] = useState<'automatico' | 'proprio'>('automatico')
   const [assinatura, setAssinatura] = useState<Assinatura | null>(null)
   const [imoveisAtivosCount, setImoveisAtivosCount] = useState(0)
 
@@ -119,6 +124,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
     tipo: "apartamento",
     negociacao: "venda",
     titulo: "",
+    codigo: "",
     descricao: "",
     preco: "",
     area: "",
@@ -155,7 +161,23 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
       const imobId = meta.imobiliaria_id
       const imobNome = meta.imobiliaria_nome || meta.nome_imobiliaria || ''
       setIsCorretor(tipoAnunciante === 'corretor' && !!imobId)
+      setIsImobiliaria(tipoAnunciante === 'imobiliaria')
       setImobiliariaNome(imobNome)
+
+      const prefixoSug = gerarPrefixoSugerido(imobNome || meta.nome || meta.full_name || '')
+      setPrefixoImovel(prefixoSug)
+
+      // Carregar preferências de código do localStorage / perfil
+      if (typeof window !== 'undefined') {
+        const salvo = localStorage.getItem(`config_imoveis_${user.id}`)
+        if (salvo) {
+          try {
+            const parsed = JSON.parse(salvo)
+            if (parsed.prefixo) setPrefixoImovel(parsed.prefixo)
+            if (parsed.modoCodigo) setModoCodigo(parsed.modoCodigo)
+          } catch {}
+        }
+      }
 
       try {
         const res = await fetch('/api/painel/cota')
@@ -294,7 +316,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
     return map[tipo] || 'apartamento'
   }
 
-  async function salvar(statusDesejado: 'publicado' | 'pausado' = 'publicado') {
+  async function salvar(statusDesejado: 'publicado' | 'pausado' | 'rascunho' | 'ativo' | 'em_analise' = 'publicado') {
     setSalvando(true)
     setErro("")
 
@@ -337,6 +359,12 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         statusFinal = 'ativo'
       }
 
+      // Gerar ou formatar código de referência do imóvel
+      let codigoFinal = dados.codigo?.trim().toUpperCase() || ''
+      if (!codigoFinal && (isCorretor || isImobiliaria)) {
+        codigoFinal = `${prefixoImovel}-${Math.floor(1000 + Math.random() * 9000)}`
+      }
+
       const { data: imovel, error: erroImovel } = await supabase
         .from("imoveis")
         .insert({
@@ -344,6 +372,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
           tipo: normalizarTipoParaBanco(dados.tipo),
           negociacao: dados.negociacao,
           titulo: dados.titulo,
+          codigo: codigoFinal || null,
           descricao: dados.descricao || null,
           preco: precoNumerico,
           area: areaNumerica,
@@ -565,6 +594,23 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                   />
                 </div>
               </div>
+
+              {/* Campo Código de Referência (visível para Corretores e Imobiliárias no modo próprio) */}
+              {(isCorretor || isImobiliaria) && modoCodigo === 'proprio' && (
+                <div className={styles.grupo} style={{ marginBottom: '10px' }}>
+                  <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>Código do Anúncio / Referência Interna</span>
+                    <span style={{ fontSize: '0.725rem', color: '#64748b', fontWeight: 'normal' }}>Opcional (CRM)</span>
+                  </label>
+                  <input
+                    className={styles.input}
+                    value={dados.codigo || ''}
+                    onChange={(e) => atualizar("codigo", e.target.value.toUpperCase())}
+                    placeholder={`Ex: ${prefixoImovel}-0142, AP100`}
+                    maxLength={20}
+                  />
+                </div>
+              )}
 
               <div className={styles.grid3}>
                 <div className={styles.grupo}>

@@ -257,7 +257,7 @@ export default function AbaImoveis({
     const negociados = imoveis.filter((i) => i.status === 'vendido' || i.status === 'alugado').length
     const totalVenda = imoveis.filter((i) => i.negociacao === 'venda').length
     const totalAluguel = imoveis.filter((i) => i.negociacao === 'aluguel').length
-    const totalTemporada = imoveis.filter((i) => i.negociacao === 'temporada').length
+    const totalTemporada = imoveis.filter((i) => (i.negociacao as string) === 'temporada').length
     const totalLeads = leads.length
     return { total, ativos, emRevisao, pausados, negociados, totalVenda, totalAluguel, totalTemporada, totalLeads }
   }, [imoveis, leads])
@@ -292,7 +292,7 @@ export default function AbaImoveis({
     const total = base.length
     const venda = base.filter((i) => i.negociacao === 'venda').length
     const aluguel = base.filter((i) => i.negociacao === 'aluguel').length
-    const temporada = base.filter((i) => i.negociacao === 'temporada').length
+    const temporada = base.filter((i) => (i.negociacao as string) === 'temporada').length
     return { total, venda, aluguel, temporada }
   }, [imoveis, filtroCorretores, filtroStatus])
 
@@ -311,9 +311,10 @@ export default function AbaImoveis({
           const bairro = (imovel.bairro || '').toLowerCase()
           const cidade = (imovel.cidade || '').toLowerCase()
           const tipo = (labelTipoImovel(imovel.tipo) || '').toLowerCase()
+          const codigo = (imovel.codigo || '').toLowerCase()
           const idCurto = imovel.id.substring(0, 8).toLowerCase()
 
-          if (!titulo.includes(termo) && !bairro.includes(termo) && !cidade.includes(termo) && !tipo.includes(termo) && !idCurto.includes(termo)) {
+          if (!titulo.includes(termo) && !bairro.includes(termo) && !cidade.includes(termo) && !tipo.includes(termo) && !codigo.includes(termo) && !idCurto.includes(termo)) {
             return false
           }
         }
@@ -458,10 +459,26 @@ export default function AbaImoveis({
     })
   }
 
+function IconeWhatsApp({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'inline-block', verticalAlign: 'middle' }}
+    >
+      <path d="M12.031 2c-5.508 0-9.984 4.477-9.984 9.984 0 1.761.458 3.479 1.328 4.996L2 22l5.166-1.355a9.945 9.945 0 004.865 1.258h.004c5.508 0 9.984-4.477 9.984-9.984 0-2.668-1.039-5.176-2.926-7.063A9.927 9.927 0 0012.031 2zm0 18.293h-.003a8.272 8.272 0 01-4.221-1.151l-.303-.18-3.136.822.837-3.056-.197-.314a8.27 8.27 0 01-1.268-4.43c0-4.57 3.719-8.289 8.292-8.289 2.215 0 4.297.863 5.863 2.43 1.566 1.566 2.428 3.649 2.428 5.864 0 4.571-3.719 8.29-8.291 8.29zm4.542-6.205c-.249-.125-1.472-.726-1.7-.809-.228-.083-.394-.125-.56.125-.166.249-.643.809-.788.975-.145.166-.29.187-.539.062-.249-.125-1.052-.388-2.003-1.236-.74-.66-1.24-1.476-1.385-1.725-.145-.249-.015-.384.11-.508.112-.111.249-.29.373-.435.125-.145.166-.249.249-.415.083-.166.042-.311-.021-.435-.062-.125-.56-1.349-.768-1.847-.202-.486-.407-.42-.56-.428l-.477-.008c-.166 0-.435.062-.663.311-.228.249-.871.851-.871 2.075 0 1.224.892 2.407 1.016 2.573.125.166 1.756 2.681 4.254 3.759.594.257 1.059.41 1.421.525.598.19 1.142.163 1.572.099.479-.071 1.472-.602 1.68-1.183.208-.581.208-1.079.145-1.183-.062-.104-.228-.166-.477-.291z" />
+    </svg>
+  )
+}
+
   function compartilharWhatsApp(imovel: Imovel) {
     const url = `${window.location.origin}/imovel/${imovel.id}`
+    const refTexto = imovel.codigo ? `\nRef: ${imovel.codigo}` : ''
     const texto = encodeURIComponent(
-      `Olá! Confira este imóvel no Fixum:\n\n🏠 *${imovel.titulo}*\n📍 ${imovel.cidade} ${imovel.bairro ? `- ${imovel.bairro}` : ''}\n💰 ${formatarPreco(imovel.preco, imovel.negociacao)}\n\nVeja as fotos e detalhes: ${url}`
+      `*FIXUM Imóveis*\n\n*${imovel.titulo}*${refTexto}\n${imovel.cidade}${imovel.bairro ? ` - ${imovel.bairro}` : ''}\n${formatarPreco(imovel.preco, imovel.negociacao)}\n\nConfira as fotos e detalhes no FIXUM:\n${url}`
     )
     window.open(`https://wa.me/?text=${texto}`, '_blank')
   }
@@ -594,7 +611,7 @@ export default function AbaImoveis({
       </div>
 
       {/* ── BANNER DE ALERTA DE IMÓVEIS AGUARDANDO REVISÃO PARA GESTORES ── */}
-      {isImobiliaria && statsGerais.emRevisao > 0 && filtroStatus !== 'em_analise' && (
+      {isImobiliaria && statsGerais.emRevisao > 0 && !filtroStatus.includes('em_analise') && (
         <div style={{
           background: 'linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%)',
           border: '1.5px solid #fde68a',
@@ -909,7 +926,7 @@ export default function AbaImoveis({
                             ? `⏸️ Pausados (${contagensStatus.pausados})`
                             : filtroStatus[0] === 'vendido'
                               ? `🏷️ Negociados (${contagensStatus.negociados})`
-                              : `📝 Rascunhos (${contagensStatus.rascunhos})`
+                              : `📝 Em Revisão (${contagensStatus.emRevisao})`
                       : `🏷️ ${filtroStatus.length} status (${filtroStatus.reduce((acc, st) => {
                           if (st === 'em_analise') return acc + contagensStatus.emRevisao
                           if (st === 'ativo') return acc + contagensStatus.ativos
@@ -1471,9 +1488,16 @@ export default function AbaImoveis({
                 {/* ── CORPO DO CARD ── */}
                 <div className={styles.cardCorpo}>
                   <div className={styles.cardHeaderInfo}>
-                    <span className={styles.cardTagTipo}>
-                      {labelTipoImovel(imovel.tipo)}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '6px' }}>
+                      <span className={styles.cardTagTipo}>
+                        {labelTipoImovel(imovel.tipo)}
+                      </span>
+                      {imovel.codigo && (
+                        <span style={{ fontSize: '0.675rem', fontWeight: 800, color: '#334155', background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '1px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>
+                          Ref: {imovel.codigo}
+                        </span>
+                      )}
+                    </div>
                     <h3 className={styles.cardTitulo} title={imovel.titulo}>
                       {imovel.titulo}
                     </h3>
@@ -1651,9 +1675,9 @@ export default function AbaImoveis({
                         className={styles.btnAcaoIcone}
                         onClick={() => compartilharWhatsApp(imovel)}
                         title="Compartilhar no WhatsApp"
-                        style={{ color: '#16a34a' }}
+                        style={{ color: '#16a34a', borderColor: '#bbf7d0', background: '#f0fdf4' }}
                       >
-                        💬
+                        <IconeWhatsApp size={16} />
                       </button>
                     </div>
 
@@ -1872,9 +1896,9 @@ export default function AbaImoveis({
                           className={styles.btnAcaoIcone}
                           onClick={() => compartilharWhatsApp(imovel)}
                           title="Compartilhar no WhatsApp"
-                          style={{ color: '#16a34a' }}
+                          style={{ color: '#16a34a', borderColor: '#bbf7d0', background: '#f0fdf4' }}
                         >
-                          📱
+                          <IconeWhatsApp size={15} />
                         </button>
                         <button
                           type="button"

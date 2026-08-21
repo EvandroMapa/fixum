@@ -87,14 +87,37 @@ export async function GET(req: Request) {
 // POST: Ações de equipe (Desvincular ou Alterar Papel: promover a gestor / rebaixar a corretor)
 export async function POST(req: Request) {
   try {
-    const { acao, corretor_id, novo_papel, imobiliaria_id } = await req.json()
-    if (!corretor_id) {
-      return NextResponse.json({ error: 'corretor_id é obrigatório.' }, { status: 400 })
-    }
+    const body = await req.json()
+    const { acao, corretor_id, novo_papel, imobiliaria_id, foto_url } = body
 
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
       auth: { autoRefreshToken: false, persistSession: false },
     })
+
+    // Ação: Sincronizar Logo da Imobiliária para todos os membros da equipe
+    if (acao === 'sincronizar_logo') {
+      if (!imobiliaria_id) {
+        return NextResponse.json({ error: 'imobiliaria_id é obrigatório.' }, { status: 400 })
+      }
+
+      const { data: usersData } = await supabase.auth.admin.listUsers()
+      const membros = (usersData?.users || []).filter(
+        (u) => u.user_metadata?.imobiliaria_id === imobiliaria_id || u.id === imobiliaria_id
+      )
+
+      for (const m of membros) {
+        await supabase
+          .from('perfis')
+          .update({ foto_url: foto_url || null })
+          .eq('id', m.id)
+      }
+
+      return NextResponse.json({ success: true, total: membros.length })
+    }
+
+    if (!corretor_id) {
+      return NextResponse.json({ error: 'corretor_id é obrigatório.' }, { status: 400 })
+    }
 
     const { data: userData, error: getError } = await supabase.auth.admin.getUserById(corretor_id)
     if (getError || !userData.user) {

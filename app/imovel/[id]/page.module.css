@@ -304,6 +304,44 @@
 .tagMobiliado { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
 .tagDestaque { background: #fefce8; color: #a16207; border: 1px solid #fef08a; }
 
+.badgeCodigoImovel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 0.725rem;
+  font-weight: 700;
+  padding: 2px 6px 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+.badgeCodigoImovel strong {
+  color: #0f172a;
+  font-weight: 800;
+  font-family: monospace;
+}
+
+.btnCopiarCodigo {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btnCopiarCodigo:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
 .titulo {
   font-size: 1.5rem;
   font-weight: 800;
@@ -554,7 +592,108 @@
   gap: 1rem;
 }
 
-/* Identificação Anunciante */
+/* ═══ BANNER DE DESTAQUE DA IMOBILIÁRIA ═══ */
+.bannerImobiliaria {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 1.25rem 1rem;
+  margin: -1.25rem -1.25rem 0 -1.25rem;
+  border-radius: 1rem 1rem 0 0;
+  background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fe 40%, #f8faff 100%);
+  border-bottom: 1px solid #dbeafe;
+  position: relative;
+  overflow: hidden;
+}
+
+.bannerImobiliaria::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(26, 86, 219, 0.06) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.bannerImobLogoWrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #dbeafe;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  box-shadow: 0 4px 16px rgba(26, 86, 219, 0.12), 0 0 0 4px rgba(26, 86, 219, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bannerImobiliaria:hover .bannerImobLogoWrapper {
+  transform: scale(1.04);
+  box-shadow: 0 6px 24px rgba(26, 86, 219, 0.18), 0 0 0 6px rgba(26, 86, 219, 0.06);
+}
+
+.bannerImobLogoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.bannerImobTextos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.bannerImobNome {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.bannerImobSubtitulo {
+  font-size: 0.75rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.bannerImobSelo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  padding: 2.5px 10px;
+  border-radius: 999px;
+  margin-top: 2px;
+}
+
+.bannerImobSelo span {
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.bannerImobCreci {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Identificação Anunciante (fallback sem logo) */
 .boxAnuncianteInfo {
   display: flex;
   align-items: center;
@@ -562,22 +701,25 @@
 }
 
 .anuncianteAvatarWrapper {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
   overflow: hidden;
-  background: #eff6ff;
-  border: 1.5px solid #bfdbfe;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  padding: 2.5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .anuncianteAvatarImg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .anuncianteAvatarPlaceholder {
@@ -1003,5 +1145,15 @@
 
   .breadcrumbDesktop {
     display: none;
+  }
+
+  .bannerImobLogoWrapper {
+    width: 60px;
+    height: 60px;
+    padding: 4px;
+  }
+
+  .bannerImobNome {
+    font-size: 0.95rem;
   }
 }

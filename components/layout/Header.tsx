@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -9,7 +9,7 @@ import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import LogoGota from '@/components/ui/LogoGota'
 import styles from './Header.module.css'
 
-export default function Header() {
+function HeaderConteudo() {
   const [scrolled, setScrolled] = useState(false)
   const [menuAberto, setMenuAberto] = useState(false)
   const [dropdownAberto, setDropdownAberto] = useState(false)
@@ -91,8 +91,8 @@ export default function Header() {
       }
     }
 
-    sb.auth.getSession().then(({ data: { session } }) => carregarDadosUsuario(session?.user ?? null))
-    const { data: { subscription } } = sb.auth.onAuthStateChange((_e, session) => {
+    sb.auth.getSession().then(({ data }: any) => carregarDadosUsuario(data?.session?.user ?? null))
+    const { data: { subscription } } = sb.auth.onAuthStateChange((_e: any, session: any) => {
       carregarDadosUsuario(session?.user ?? null)
     })
     return () => subscription.unsubscribe()
@@ -280,5 +280,13 @@ export default function Header() {
         </div>
       )}
     </header>
+  )
+}
+
+export default function Header() {
+  return (
+    <Suspense fallback={<header className={styles.header} />}>
+      <HeaderConteudo />
+    </Suspense>
   )
 }

@@ -31,6 +31,7 @@ interface DadosImovel {
   iptu: string
   aceita_pets: boolean
   mobiliado: boolean
+  codigo?: string
 }
 
 interface FotoPreview {
@@ -245,6 +246,7 @@ export default function ModalEditarImovel({
         iptu: imovel.iptu ? String(imovel.iptu) : '',
         aceita_pets: imovel.aceita_pets || false,
         mobiliado: imovel.mobiliado || false,
+        codigo: imovel.codigo || '',
       })
 
       const fotosExistentes: FotoPreview[] = (imovel.fotos_imovel || [])
@@ -396,6 +398,7 @@ export default function ModalEditarImovel({
           tipo: normalizarTipoParaBanco(dados.tipo),
           negociacao: dados.negociacao,
           titulo: dados.titulo,
+          codigo: dados.codigo?.trim().toUpperCase() || null,
           descricao: dados.descricao || null,
           preco: precoNum,
           area: areaNum,
@@ -662,6 +665,23 @@ export default function ModalEditarImovel({
                     />
                   </div>
                 </div>
+
+                {/* Campo Código de Referência Interna */}
+                {(isCorretor || !!dados.codigo) && (
+                  <div className={styles.grupo} style={{ marginBottom: '10px' }}>
+                    <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span>Código do Anúncio / Referência Interna</span>
+                      <span style={{ fontSize: '0.725rem', color: '#64748b', fontWeight: 'normal' }}>Opcional (CRM)</span>
+                    </label>
+                    <input
+                      className={styles.input}
+                      value={dados.codigo || ''}
+                      onChange={(e) => atualizar('codigo', e.target.value.toUpperCase())}
+                      placeholder="Ex: VF-0142, AP100"
+                      maxLength={20}
+                    />
+                  </div>
+                )}
 
                 <div className={styles.grid3}>
                   <div className={styles.grupo}>

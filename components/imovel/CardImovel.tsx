@@ -213,6 +213,32 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
           📍 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade}
         </div>
 
+        {/* Anunciante / Imobiliária & Código Ref */}
+        <div className={styles.blocoAnuncianteCard}>
+          <div className={styles.anuncianteInfo}>
+            {imovel.anunciante?.foto_url ? (
+              <img
+                src={imovel.anunciante.foto_url}
+                alt={imovel.anunciante.nome}
+                className={styles.anuncianteLogoImg}
+              />
+            ) : (
+              <div className={styles.anuncianteIniciais}>
+                {imovel.anunciante?.nome?.slice(0, 2).toUpperCase() || '🏢'}
+              </div>
+            )}
+            <span className={styles.anuncianteNome}>
+              {imovel.anunciante?.nome || 'Imobiliária Parceira'}
+            </span>
+          </div>
+
+          {imovel.codigo && (
+            <span className={styles.badgeCodigoCard} title="Código de Referência">
+              Ref: {imovel.codigo}
+            </span>
+          )}
+        </div>
+
         {/* Rodapé */}
         <div className={styles.rodapeCard}>
           <Link
