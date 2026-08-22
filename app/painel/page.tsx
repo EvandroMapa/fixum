@@ -517,10 +517,12 @@ function PainelConteudo() {
           <button
             type="button"
             onClick={() => setModalNovoImovelAberto(true)}
-            className="btn btn-primario btn-sm"
-            style={{ fontWeight: 700, cursor: 'pointer' }}
+            className={styles.btnNovoImovelTopbar}
+            title="Cadastrar Novo Imóvel"
           >
-            + Novo Imóvel
+            <span>+</span>
+            <span className={styles.textoNovoDesktop}>Novo Imóvel</span>
+            <span className={styles.textoNovoMobile}>Imóvel</span>
           </button>
 
           {/* Menu Dropdown no Avatar do Usuário */}

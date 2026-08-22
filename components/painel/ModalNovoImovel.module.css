@@ -577,3 +577,63 @@
   margin-top: 6px;
   text-align: center;
 }
+
+/* ── REGRAS RESPONSIVAS MOBILE (< 768px) ── */
+@media (max-width: 768px) {
+  .overlay {
+    padding: 6px;
+    align-items: flex-end;
+  }
+
+  .modalCard {
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .etapaConteudo {
+    padding: 12px 14px;
+  }
+
+  .gridTipos {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .grid2,
+  .grid3,
+  .gridTituloPreco,
+  .gridEnderecoBairro {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .input,
+  .textarea {
+    font-size: 16px !important;
+  }
+
+  .progresso {
+    padding: 6px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+  }
+
+  .progresso::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navegacao {
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .btnAvancar,
+  .btnPublicar,
+  .btnVoltar2 {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

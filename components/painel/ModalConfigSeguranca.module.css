@@ -299,3 +299,39 @@
   from { transform: translateY(15px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* ── RESPONSIVIDADE MOBILE (< 768px) ── */
+@media (max-width: 768px) {
+  .overlay {
+    padding: 6px;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+    padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .cabecalho {
+    margin-bottom: 1rem;
+  }
+
+  .cabecalho h2 {
+    font-size: 1.2rem;
+  }
+
+  .secaoCard {
+    padding: 1rem 0.85rem;
+  }
+
+  .qrCodeImg {
+    width: 140px;
+    height: 140px;
+  }
+
+  .inputCodigo {
+    width: 160px;
+    font-size: 1.25rem;
+  }
+}

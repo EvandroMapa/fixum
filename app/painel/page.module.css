@@ -148,6 +148,37 @@
   margin-left: 4px;
 }
 
+.btnNovoImovelTopbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #1a56db, #2563eb);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.825rem;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(26, 86, 219, 0.25);
+}
+
+.btnNovoImovelTopbar:hover {
+  background: linear-gradient(135deg, #1e40af, #1a56db);
+  box-shadow: 0 4px 12px rgba(26, 86, 219, 0.35);
+  transform: translateY(-1px);
+}
+
+.textoNovoDesktop {
+  display: inline;
+}
+
+.textoNovoMobile {
+  display: none;
+}
+
 .btnVerPortal {
   display: inline-flex;
   align-items: center;
@@ -599,6 +630,20 @@
 
   .badgePlanoTopbar {
     display: none;
+  }
+
+  .btnNovoImovelTopbar {
+    padding: 6px 10px;
+    font-size: 0.775rem;
+    gap: 3px;
+  }
+
+  .textoNovoDesktop {
+    display: none;
+  }
+
+  .textoNovoMobile {
+    display: inline;
   }
 
   .painel {

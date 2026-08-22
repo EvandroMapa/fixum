@@ -1118,8 +1118,13 @@
 
 /* RESPONSIVIDADE */
 @media (max-width: 900px) {
+  .pagina {
+    padding: calc(var(--altura-header, 64px) + 0.75rem) 1rem calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+
   .layout {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .colunaLateral {
@@ -1128,7 +1133,8 @@
 
   .mosaicoFotos {
     grid-template-columns: 1fr;
-    height: 300px;
+    height: 240px;
+    border-radius: 14px;
   }
 
   .mosaicoFotosLaterais {
@@ -1137,10 +1143,30 @@
 
   .especificacoesGrid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .gridCaracteristicas {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .gridPontos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
   }
 
   .barraContatoMobile {
     display: flex;
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .btnWhatsAppMobile {
+    min-height: 44px;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.85rem;
+    border-radius: 10px;
   }
 
   .breadcrumbDesktop {
