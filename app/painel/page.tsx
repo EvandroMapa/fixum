@@ -545,19 +545,21 @@ function PainelConteudo() {
         <aside className={styles.sidebar}>
           <nav className={styles.sidebarNav}>
             {[
-              { id: 'dashboard', icone: '📊', label: 'Dashboard' },
-              { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis' },
-              { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}` },
-              ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores' }] : []),
-              ...(!isCorretor ? [{ id: 'plano', icone: '💳', label: 'Meu Plano' }] : []),
+              { id: 'dashboard', icone: '📊', label: 'Dashboard', labelMobile: 'Início' },
+              { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis', labelMobile: 'Imóveis' },
+              { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}`, labelMobile: `Leads${stats.leadsNovos > 0 ? ` (${stats.leadsNovos})` : ''}` },
+              ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores', labelMobile: 'Equipe' }] : []),
+              ...(!isCorretor ? [{ id: 'plano', icone: '💳', label: 'Meu Plano', labelMobile: 'Plano' }] : []),
             ].map((item) => (
               <button
                 key={item.id}
                 className={`${styles.sidebarItem} ${abaAtiva === item.id ? styles.sidebarItemAtivo : ''}`}
                 onClick={() => trocarAba(item.id as Aba)}
+                title={item.label}
               >
-                <span>{item.icone}</span>
-                <span>{item.label}</span>
+                <span className={styles.sidebarIcone}>{item.icone}</span>
+                <span className={styles.sidebarTextoDesktop}>{item.label}</span>
+                <span className={styles.sidebarTextoMobile}>{item.labelMobile}</span>
               </button>
             ))}
           </nav>
