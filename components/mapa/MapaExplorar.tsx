@@ -434,7 +434,7 @@ export default function MapaExplorar({
         const popupEl = document.createElement('div')
         popupEl.style.cssText = 'font-family:system-ui,-apple-system,sans-serif;width:270px;overflow:hidden;border-radius:16px;cursor:pointer;'
         popupEl.innerHTML = `
-          <a href="/imovel/${i.id}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;display:block;">
+          <a href="/imovel/${i.id}" style="text-decoration:none;color:inherit;display:block;">
             ${fotoUrl ? `
               <div style="position:relative;height:160px;overflow:hidden;border-radius:12px 12px 0 0;">
                 <img src="${fotoUrl}" alt="${i.titulo || ''}"

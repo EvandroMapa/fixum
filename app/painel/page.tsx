@@ -440,16 +440,15 @@ function PainelConteudo() {
       {/* ── TOPBAR CORPORATIVO DO PAINEL ── */}
       <header className={styles.topbar}>
         <div className={styles.topbarEsquerda}>
-          <button
-            type="button"
+          <Link
+            href="/explorar"
             className={styles.logoPainel}
-            onClick={() => trocarAba('dashboard')}
-            title="Ir para o Dashboard"
+            title="Voltar ao Mapa"
           >
             <LogoGota size={30} />
             <span className={styles.logoTexto}>FIXUM</span>
             <span className={styles.badgePro}>WORKSPACE</span>
-          </button>
+          </Link>
 
           <div className={styles.divisorVertical} />
 

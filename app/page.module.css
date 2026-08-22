@@ -599,16 +599,166 @@
 /* ===== RESPONSIVO ===== */
 @media (max-width: 1024px) {
   .gridPassos { grid-template-columns: 1fr; gap: 16px; }
-  .ctaConteudo { grid-template-columns: 1fr; }
-  .anuncieConteudo { grid-template-columns: 1fr; }
+  .ctaConteudo { grid-template-columns: 1fr; gap: 40px; }
+  .anuncieConteudo { grid-template-columns: 1fr; gap: 40px; }
   .footerGrid { grid-template-columns: 1fr 1fr; gap: 32px; }
 }
 
-@media (max-width: 640px) {
-  .heroStats { flex-wrap: wrap; gap: 24px; }
-  .heroStat { border-right: none; padding: 0 20px; }
-  .heroBotoes { flex-direction: column; align-items: center; }
-  .footerGrid { grid-template-columns: 1fr; }
-  .ctaBotoes { flex-direction: column; }
-  .anuncieBotoes { flex-direction: column; }
+@media (max-width: 768px) {
+  .hero {
+    padding: calc(var(--altura-header) + 40px) 16px 90px;
+    min-height: auto;
+  }
+
+  .heroBadge {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    margin-bottom: 20px;
+  }
+
+  .heroTitulo {
+    font-size: clamp(1.85rem, 6.5vw, 2.5rem);
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .heroSubtitulo {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    padding: 0 4px;
+  }
+
+  .heroStats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .heroStat {
+    border-right: none;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+  }
+
+  .heroStat strong {
+    font-size: 1.35rem;
+  }
+
+  .heroStat span {
+    font-size: 0.675rem;
+  }
+
+  .secao {
+    padding: 64px 0;
+  }
+
+  .secaoTopo {
+    margin-bottom: 36px;
+  }
+
+  .secaoTitulo {
+    font-size: 1.625rem;
+  }
+
+  .secaoDesc {
+    font-size: 0.95rem;
+  }
+
+  .passo {
+    padding: 24px 20px;
+  }
+
+  .passoNum {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .secaoCta {
+    padding: 64px 0;
+  }
+
+  .ctaTexto h2 {
+    font-size: 1.75rem;
+    margin-bottom: 12px;
+  }
+
+  .ctaTexto p {
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+
+  .ctaBotoes {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .ctaBotoes > a {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .mapaMockup {
+    height: 240px;
+  }
+
+  .secaoAnuncie {
+    padding: 64px 0;
+  }
+
+  .anuncieTexto h2 {
+    font-size: 1.625rem;
+  }
+
+  .anuncieTexto p {
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+
+  .anuncieBotoes {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .anuncieBotoes > a {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .anuncieCard {
+    padding: 20px 16px;
+  }
+
+  .anuncieCardHeader {
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .anuncieCardFoto {
+    width: 52px;
+    height: 52px;
+  }
+
+  .footer {
+    padding: 48px 0 24px;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-bottom: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroStat strong {
+    font-size: 1.2rem;
+  }
 }

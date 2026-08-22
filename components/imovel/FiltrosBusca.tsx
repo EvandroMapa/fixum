@@ -60,6 +60,8 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
   const [isMobile, setIsMobile] = useState(false)
   const btnTipoRef = useRef<HTMLButtonElement>(null)
   const dropTipoRef = useRef<HTMLDivElement>(null)
+  const dropQuartosRef = useRef<HTMLDivElement>(null)
+  const dropPrecoRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -74,12 +76,17 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
   useEffect(() => {
     if (isMobile) return
     function fechar(e: MouseEvent) {
+      const target = e.target as Node
+      // Se clicou dentro do dropdown de tipo ou do botão de tipo, não fecha
       if (
-        dropTipoRef.current && !dropTipoRef.current.contains(e.target as Node) &&
-        btnTipoRef.current && !btnTipoRef.current.contains(e.target as Node)
-      ) {
-        setModalAberto(null)
-      }
+        dropTipoRef.current?.contains(target) ||
+        btnTipoRef.current?.contains(target)
+      ) return
+      // Se clicou dentro do dropdown de quartos, não fecha
+      if (dropQuartosRef.current?.contains(target)) return
+      // Se clicou dentro do dropdown de preço, não fecha
+      if (dropPrecoRef.current?.contains(target)) return
+      setModalAberto(null)
     }
     document.addEventListener('mousedown', fechar)
     return () => document.removeEventListener('mousedown', fechar)
@@ -396,11 +403,8 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
             </button>
 
             {modalAberto === 'preco' && !isMobile && (
-              <div className={styles.dropdown}>
+              <div className={styles.dropdownPrecoContainer} ref={dropPrecoRef}>
                 {conteudoPreco}
-                <button className={styles.btnAplicar} onClick={() => setModalAberto(null)}>
-                  ✕ Fechar
-                </button>
               </div>
             )}
           </div>
@@ -428,11 +432,8 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
             </button>
 
             {modalAberto === 'quartos' && !isMobile && (
-              <div className={styles.dropdown}>
+              <div className={styles.dropdownQuartosContainer} ref={dropQuartosRef}>
                 {conteudoQuartos}
-                <button className={styles.btnAplicar} onClick={() => setModalAberto(null)}>
-                  ✕ Fechar
-                </button>
               </div>
             )}
           </div>

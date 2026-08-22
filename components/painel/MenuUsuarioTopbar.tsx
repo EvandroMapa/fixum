@@ -127,17 +127,14 @@ export default function MenuUsuarioTopbar({
               <span>Segurança & 2FA</span>
             </button>
 
-            <a
+            <Link
               href="/explorar"
-              target="_blank"
-              rel="noopener noreferrer"
               className={styles.itemMenu}
               onClick={() => setAberto(false)}
             >
-              <span className={styles.iconeItem}>🌐</span>
-              <span>Ver Portal no Mapa</span>
-              <span style={{ fontSize: '0.7rem', color: '#94a3b8', marginLeft: 'auto' }}>↗</span>
-            </a>
+              <span className={styles.iconeItem}>🗺️</span>
+              <span>Voltar ao Mapa</span>
+            </Link>
 
             <div className={styles.divisor} />
 

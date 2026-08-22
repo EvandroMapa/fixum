@@ -113,15 +113,20 @@
 }
 
 /* Responsivo mobile */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .wrapper {
     flex-direction: column;
     width: 100%;
+    gap: 10px;
   }
 
-  .wrapper > * {
+  .wrapper > a,
+  .wrapper > button {
     width: 100%;
     justify-content: center;
+    min-height: 48px;
+    font-size: 0.95rem !important;
+    border-radius: 12px !important;
   }
 
   .dropdown {
