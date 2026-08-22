@@ -568,6 +568,39 @@
 }
 
 @media (max-width: 768px) {
+  .topbar {
+    height: 56px;
+    padding: 0 12px;
+  }
+
+  .topbarEsquerda {
+    gap: 8px;
+  }
+
+  .logoTexto {
+    font-size: 1.15rem;
+  }
+
+  .badgePro {
+    display: none;
+  }
+
+  .divisorVertical {
+    display: none;
+  }
+
+  .usuarioPerfilTopbar {
+    display: none;
+  }
+
+  .topbarDireita {
+    gap: 6px;
+  }
+
+  .badgePlanoTopbar {
+    display: none;
+  }
+
   .painel {
     grid-template-columns: 1fr;
   }
@@ -580,10 +613,12 @@
     height: auto;
     flex-direction: row;
     align-items: center;
-    padding: var(--espaco-3) var(--espaco-4);
-    z-index: var(--z-header);
-    border-top: 1px solid var(--cor-borda);
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+    z-index: 1000;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
     border-right: none;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
   }
 
   .sidebarLogo,
@@ -595,21 +630,43 @@
     flex-direction: row;
     flex: 1;
     justify-content: space-around;
+    gap: 2px;
   }
 
   .sidebarItem {
     flex-direction: column;
-    font-size: var(--texto-xs);
-    gap: var(--espaco-1);
-    padding: var(--espaco-2);
-    min-width: 60px;
+    font-size: 10.5px;
+    gap: 2px;
+    padding: 6px 4px;
+    min-width: 52px;
     justify-content: center;
     align-items: center;
+    border-radius: 8px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .sidebarItem span:first-child {
+    font-size: 16px;
   }
 
   .conteudo {
-    padding: var(--espaco-5) var(--espaco-4);
-    padding-bottom: 80px;
+    padding: 16px 12px calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .secao h1 {
+    font-size: 1.35rem;
+    margin-bottom: 2px;
+  }
+
+  .subtitulo {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+
+  .gridStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .imovelRow {
@@ -627,6 +684,14 @@
 
   .leadCard {
     grid-template-columns: 40px 1fr;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .leadAvatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
   }
 
   .leadAcoes {

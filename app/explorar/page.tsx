@@ -190,9 +190,19 @@ function ExplorarConteudo() {
     }))
   }, [searchParams])
 
-  // Ao mudar filtros: reutiliza os bounds atuais do mapa (mantém área visível)
+  // Ao mudar filtros ou alternar modo de favoritos: busca imóveis mantendo a área visível do mapa
   useEffect(() => {
     buscarImoveis(filtros, boundsAtualRef.current)
+  }, [filtros, buscarImoveis])
+
+  // Listener para sincronização instantânea ao favoritar/desfavoritar em tempo real
+  useEffect(() => {
+    function handleFavoritoAtualizado() {
+      buscarImoveis(filtros, boundsAtualRef.current)
+    }
+
+    window.addEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
+    return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [filtros, buscarImoveis])
 
   // Chamado pelo mapa automaticamente ao mover/zoom manual
