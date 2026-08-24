@@ -647,20 +647,10 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
 
       {/* ── ALERTA DE COTA SE ATINGIU LIMITE ── */}
       {usoPlano.atingiuLimite && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1.5px solid #fecaca',
-          borderRadius: '0.875rem',
-          padding: '1rem 1.25rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1rem',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className={styles.alertaCotaAtingida}>
+          <div className={styles.alertaCotaConteudo}>
             <span style={{ fontSize: '1.25rem' }}>⚠️</span>
-            <span style={{ fontSize: '0.875rem', color: '#991b1b', fontWeight: 600 }}>
+            <span className={styles.alertaCotaTexto}>
               {isCorretor
                 ? 'A cota corporativa da imobiliária atingiu o limite de anúncios ativos. Novos anúncios revisados precisarão de vagas liberadas.'
                 : `Você atingiu o limite de ${usoPlano.limiteMaximo} imóvel(is) ativo(s) do plano ${usoPlano.plano.nome}. Faça upgrade para publicar mais.`}
@@ -669,7 +659,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
           {!isCorretor && proximoPlano && (
             <button
               type="button"
-              className="btn btn-primario btn-sm"
+              className={`btn btn-primario btn-sm ${styles.btnAlertaUpgrade}`}
               onClick={() => onDispararUpgrade(proximoPlano)}
             >
               ⚡ Upgrade para {proximoPlano.nome}

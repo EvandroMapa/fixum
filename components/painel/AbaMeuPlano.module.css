@@ -568,6 +568,15 @@
   .container {
     gap: 1.5rem;
   }
+  .cabecalhoAba {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .btnUpgradePrincipal {
+    width: 100%;
+    justify-content: center;
+  }
   .cardStatusPrincipal,
   .secaoTodosPlanos,
   .secaoFaturas,

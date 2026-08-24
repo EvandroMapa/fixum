@@ -380,6 +380,83 @@
   justify-content: space-between;
 }
 
+/* Card de Resumo do Plano (Dashboard) */
+.cardPlanoResumo {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.planoResumoInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.planoResumoBadgeContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.planoResumoTag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #0f4c81;
+  background: #eff6ff;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.planoResumoContador {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.planoResumoBarraTrilho {
+  width: 100%;
+  max-width: 260px;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.planoResumoBarraPreenchimento {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.planoResumoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btnPlanoAcao {
+  white-space: nowrap;
+}
+
 /* Stats */
 .gridStats {
   display: grid;
@@ -766,9 +843,75 @@
     margin-bottom: 16px;
   }
 
+  .cardPlanoResumo {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 14px 12px !important;
+    gap: 12px !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .planoResumoInfo {
+    width: 100% !important;
+  }
+
+  .planoResumoBadgeContainer {
+    gap: 6px !important;
+  }
+
+  .planoResumoContador {
+    font-size: 0.8rem !important;
+  }
+
+  .planoResumoBarraTrilho {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .planoResumoAcoes {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .btnPlanoAcao {
+    width: 100% !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 12px !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+    white-space: normal !important;
+  }
+
   .gridStats {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+  }
+
+  .statCard {
+    padding: 12px 14px;
+    gap: 4px;
+    border-radius: 12px;
+  }
+
+  .statIcone {
+    font-size: 1.3rem;
+  }
+
+  .statValor {
+    font-size: 1.6rem;
+  }
+
+  .statLabel {
+    font-size: 0.75rem;
   }
 
   .imovelRow {
@@ -800,3 +943,15 @@
     display: none;
   }
 }
+
+@media (max-width: 420px) {
+  .planoResumoAcoes {
+    grid-template-columns: 1fr !important;
+  }
+
+  .btnPlanoAcao {
+    font-size: 0.825rem !important;
+    padding: 9px 12px !important;
+  }
+}
+

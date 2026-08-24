@@ -576,52 +576,42 @@ function PainelConteudo() {
 
               {/* Banner de Plano e Capacidade (Apenas para gestor imobiliária / anunciante dono) */}
               {!isCorretor && (
-                <div style={{
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '1rem',
-                  padding: '1.25rem',
-                  marginBottom: '1.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '1rem',
-                  flexWrap: 'wrap'
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#0f4c81', background: '#eff6ff', padding: '2px 8px', borderRadius: '999px' }}>
+                <div className={styles.cardPlanoResumo}>
+                  <div className={styles.planoResumoInfo}>
+                    <div className={styles.planoResumoBadgeContainer}>
+                      <span className={styles.planoResumoTag}>
                         Plano {usoPlano.plano.nome}
                       </span>
-                      <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                      <span className={styles.planoResumoContador}>
                         • {usoPlano.imoveisAtivos} de {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
                       </span>
                     </div>
-                    <div style={{ width: '220px', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
-                      <div style={{
-                        width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
-                        height: '100%',
-                        backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
-                        borderRadius: '999px'
-                      }} />
+                    <div className={styles.planoResumoBarraTrilho}>
+                      <div
+                        className={styles.planoResumoBarraPreenchimento}
+                        style={{
+                          width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
+                          backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
+                        }}
+                      />
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
-                      className="btn btn-outline btn-sm"
-                      onClick={() => trocarAba('plano')}
-                    >
-                      Ver Detalhes do Plano
-                    </button>
+                  <div className={styles.planoResumoAcoes}>
                     {proximoPlano && (
                       <button
-                        className="btn btn-primario btn-sm"
+                        className={`btn btn-primario btn-sm ${styles.btnPlanoAcao}`}
                         onClick={() => dispararUpgrade(proximoPlano)}
                       >
                         ⚡ Fazer Upgrade
                       </button>
                     )}
+                    <button
+                      className={`btn btn-outline btn-sm ${styles.btnPlanoAcao}`}
+                      onClick={() => trocarAba('plano')}
+                    >
+                      Ver Detalhes do Plano
+                    </button>
                   </div>
                 </div>
               )}

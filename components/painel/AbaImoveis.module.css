@@ -1024,3 +1024,53 @@
   justify-content: space-between;
 }
 
+/* ALERTA DE COTA ATINGIDA */
+.alertaCotaAtingida {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 0.875rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.alertaCotaConteudo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.alertaCotaTexto {
+  font-size: 0.875rem;
+  color: #991b1b;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.btnAlertaUpgrade {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .alertaCotaAtingida {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .btnAlertaUpgrade {
+    width: 100% !important;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+
