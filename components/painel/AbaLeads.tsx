@@ -84,7 +84,7 @@ export default function AbaLeads({
           }
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: string) => {
         console.log('[REALTIME-LEADS] Status da inscrição:', status)
       })
 

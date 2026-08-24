@@ -245,7 +245,7 @@ function PainelConteudo() {
           setUltimoEventoChat(payload.new)
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: string) => {
         console.log('[REALTIME-PAINEL] Status do canal:', status)
       })
 
