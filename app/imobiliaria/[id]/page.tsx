@@ -72,14 +72,29 @@ export default async function PaginaImobiliaria({ params }: Props) {
     const membros = (allUsers?.users || []).filter(
       (u) => u.user_metadata?.imobiliaria_id === id && u.id !== id
     )
-    corretores = membros.map((u) => ({
-      id: u.id,
-      nome: u.user_metadata?.nome || u.user_metadata?.full_name || u.email?.split('@')[0] || 'Corretor',
-      email: u.email,
-      telefone: u.user_metadata?.telefone || null,
-      creci: u.user_metadata?.creci || null,
-      foto_url: u.user_metadata?.foto_url || null,
-    }))
+    const idsMembros = membros.map((m) => m.id)
+    let perfisCorretores: any[] = []
+    if (idsMembros.length > 0) {
+      const { data: pc } = await supabase
+        .from('perfis')
+        .select('id, nome, email, telefone, whatsapp, creci, foto_url')
+        .in('id', idsMembros)
+      perfisCorretores = pc || []
+    }
+    const mapaPerfis = new Map(perfisCorretores.map((p) => [p.id, p]))
+
+    corretores = membros.map((u) => {
+      const p = mapaPerfis.get(u.id)
+      return {
+        id: u.id,
+        nome: p?.nome || u.user_metadata?.nome || u.user_metadata?.full_name || u.email?.split('@')[0] || 'Corretor',
+        email: p?.email || u.email,
+        telefone: p?.telefone || u.user_metadata?.telefone || null,
+        whatsapp: p?.whatsapp || u.user_metadata?.whatsapp || null,
+        creci: p?.creci || u.user_metadata?.creci || null,
+        foto_url: p?.foto_url || u.user_metadata?.foto_url || null,
+      }
+    })
     idsAnunciantes = Array.from(new Set([id, ...corretores.map((c) => c.id)]))
   } catch {}
 
@@ -94,7 +109,11 @@ export default async function PaginaImobiliaria({ params }: Props) {
       .order('destaque', { ascending: false })
       .order('created_at', { ascending: false })
 
-    imoveis = listaImoveis || []
+    imoveis = (listaImoveis || []).map((im: any) => ({
+      ...im,
+      fotos: im.fotos_imovel ?? [],
+      anunciante: perfil,
+    }))
   } catch {}
 
   return (

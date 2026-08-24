@@ -621,14 +621,14 @@
 .bannerImobLogoWrapper {
   width: 72px;
   height: 72px;
-  border-radius: 50%;
+  border-radius: 16px;
   background: #ffffff;
   border: 2px solid #dbeafe;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
+  padding: 6px;
   box-shadow: 0 4px 16px rgba(26, 86, 219, 0.12), 0 0 0 4px rgba(26, 86, 219, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -642,7 +642,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  border-radius: 50%;
+  border-radius: 8px;
 }
 
 .bannerImobTextos {

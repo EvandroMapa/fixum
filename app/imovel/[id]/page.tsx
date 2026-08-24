@@ -187,6 +187,7 @@ export default async function PaginaImovel({ params }: Props) {
     outrosImoveis = (outros || []).map((o: any) => ({
       ...o,
       fotos: o.fotos_imovel ?? [],
+      anunciante: perfil,
     }))
     totalImoveisImobiliaria = (count || 0) + 1
   } catch {}

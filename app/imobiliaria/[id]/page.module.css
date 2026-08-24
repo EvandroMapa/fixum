@@ -16,7 +16,7 @@
 .heroBanner {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f4c81 100%);
   color: white;
-  padding: 2.5rem 1.25rem;
+  padding: 2.25rem 1.25rem;
   position: relative;
   overflow: hidden;
   box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.3);
@@ -28,9 +28,9 @@
   position: absolute;
   top: -50%;
   right: -10%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -56,29 +56,31 @@
 }
 
 .logoWrapper {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: white;
-  border: 3px solid #60a5fa;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  min-width: 120px;
+  max-width: 160px;
+  height: 94px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  padding: 10px 14px;
   flex-shrink: 0;
-  padding: 4px;
 }
 
 .logoImg {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
-  border-radius: 50%;
+  display: block;
 }
 
 .logoPlaceholder {
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #1e40af;
 }
@@ -92,19 +94,20 @@
 .badgeVerificado {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(59, 130, 246, 0.2);
-  border: 1px solid rgba(147, 197, 253, 0.4);
+  gap: 5px;
+  background: rgba(59, 130, 246, 0.25);
+  border: 1px solid rgba(147, 197, 253, 0.45);
   color: #bfdbfe;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 100px;
   width: fit-content;
+  margin-bottom: 2px;
 }
 
 .nomeImobiliaria {
-  font-size: 1.75rem;
+  font-size: 1.9rem;
   font-weight: 800;
   color: white;
   margin: 0;
@@ -114,15 +117,19 @@
 .detalhesImobiliaria {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #cbd5e1;
   flex-wrap: wrap;
 }
 
 .creciBadge {
-  color: #cbd5e1;
-  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8rem;
 }
 
 .heroAcoes {
@@ -140,18 +147,19 @@
   color: white;
   font-size: 0.9rem;
   font-weight: 700;
-  padding: 10px 18px;
+  padding: 11px 20px;
   border-radius: 10px;
   text-decoration: none;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
   transition: all 0.2s ease;
 }
 
 .btnWhatsAppHero:hover {
   background: #20ba59;
   transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45);
 }
 
 .btnTelefoneHero {
@@ -160,17 +168,17 @@
   gap: 8px;
   background: rgba(255, 255, 255, 0.12);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   font-size: 0.9rem;
   font-weight: 700;
-  padding: 10px 16px;
+  padding: 11px 18px;
   border-radius: 10px;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .btnTelefoneHero:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .btnCompartilharHero {
@@ -181,7 +189,7 @@
   color: #cbd5e1;
   border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 0.85rem;
-  padding: 10px 14px;
+  padding: 11px 16px;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -197,7 +205,7 @@
    ═══════════════════════════════════════════════════════════════ */
 .gridStats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -211,18 +219,25 @@
   align-items: center;
   gap: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cardStat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
 .statIcone {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   border-radius: 12px;
   background: #eff6ff;
   border: 1px solid #dbeafe;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  flex-shrink: 0;
 }
 
 .statTextos {
@@ -231,115 +246,238 @@
 }
 
 .statValor {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: #0f172a;
   line-height: 1.1;
 }
 
 .statLabel {
-  font-size: 0.775rem;
+  font-size: 0.78rem;
   color: #64748b;
   font-weight: 600;
+  margin-top: 2px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SEÇÃO DO MAPA DE ATUAÇÃO
+   BANNER DE ATALHO PARA O MAPA INTERATIVO
    ═══════════════════════════════════════════════════════════════ */
-.secaoMapa {
-  background: white;
-  border: 1px solid #e2e8f0;
+.bannerMapaAtalho {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1.5px solid #bfdbfe;
   border-radius: 1rem;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.cabecalhoSecao {
+.bannerMapaAtalho:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+}
+
+.bannerMapaInfo {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1;
+  min-width: 260px;
+}
+
+.bannerMapaIcone {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+}
+
+.bannerMapaTitulo {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0 0 3px 0;
+}
+
+.bannerMapaSubtitulo {
+  font-size: 0.85rem;
+  color: #3b82f6;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.btnAbrirMapaCompleto {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1d4ed8;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnAbrirMapaCompleto:hover {
+  background: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEÇÃO DE PORTFÓLIO DE IMÓVEIS COM FILTROS ORGANIZADOS
+   ═══════════════════════════════════════════════════════════════ */
+.secaoImoveis {
+  margin-bottom: 2.5rem;
+}
+
+.cabecalhoPortfolio {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
 }
 
-.tituloSecao {
-  font-size: 1.25rem;
+.tituloPortfolio {
+  font-size: 1.35rem;
   font-weight: 800;
   color: #0f172a;
   margin: 0;
 }
 
-.subtituloSecao {
+.subtituloPortfolio {
   font-size: 0.85rem;
   color: #64748b;
-  margin: 2px 0 0 0;
+  margin: 3px 0 0 0;
 }
 
-.btnAbrirMapaCompleto {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #eff6ff;
-  border: 1.5px solid #bfdbfe;
-  color: #1d4ed8;
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 8px 14px;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.btnAbrirMapaCompleto:hover {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.mapaWrapper {
-  height: 320px;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SEÇÃO DE PORTFÓLIO DE IMÓVEIS COM FILTROS
-   ═══════════════════════════════════════════════════════════════ */
-.secaoImoveis {
-  margin-bottom: 2rem;
-}
-
-.filtrosPortfolio {
+.controleOrdenacao {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 1.25rem;
-  flex-wrap: wrap;
 }
 
-.btnFiltroRapido {
-  padding: 8px 16px;
-  border-radius: 100px;
+.labelOrdenacao {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.selectOrdenacao {
+  padding: 7px 14px;
+  border-radius: 8px;
   border: 1px solid #cbd5e1;
   background: white;
+  color: #1e293b;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.barraFiltros {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.segmentedNegociacao {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  width: fit-content;
+  gap: 4px;
+  flex-wrap: wrap;
+  border: 1px solid #e2e8f0;
+}
+
+.btnSegmented {
+  padding: 8px 20px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
   color: #475569;
   font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnSegmented:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: #1d4ed8;
+}
+
+.btnSegmentedAtivo {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.25);
+}
+
+.btnSegmentedAtivo:hover {
+  background: #1e40af;
+  color: #ffffff;
+}
+
+.chipsTiposWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.chipTipo {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btnFiltroRapido:hover {
-  border-color: #94a3b8;
-  background: #f8fafc;
+.chipTipo:hover {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
-.btnFiltroRapidoAtivo {
-  background: #0f172a;
-  color: white;
-  border-color: #0f172a;
+.chipTipoAtivo {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1);
 }
 
 .gridImoveis {
@@ -352,7 +490,7 @@
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 1rem;
-  padding: 3rem 1.5rem;
+  padding: 3.5rem 1.5rem;
   text-align: center;
   color: #64748b;
 }
@@ -376,7 +514,7 @@
 
 .gridCorretores {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
 }
 
@@ -384,24 +522,33 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #f1f5f9;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
   background: #f8fafc;
+  flex-wrap: wrap;
+  transition: all 0.15s ease;
+}
+
+.cardCorretor:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .avatarCorretor {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  color: #334155;
+  font-weight: 800;
+  color: #1e40af;
   overflow: hidden;
   flex-shrink: 0;
+  border: 2px solid #dbeafe;
 }
 
 .avatarCorretorImg {
@@ -414,10 +561,11 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
 }
 
 .nomeCorretor {
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: #0f172a;
   white-space: nowrap;
@@ -427,7 +575,77 @@
 
 .creciCorretor {
   font-size: 0.75rem;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.emailCorretor {
+  font-size: 0.72rem;
   color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btnWhatsCorretor {
+  width: 100%;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btnWhatsCorretor:hover {
+  background: #25d366;
+  border-color: #25d366;
+  color: white;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INFORMAÇÕES INSTITUCIONAIS & SEGURANÇA
+   ═══════════════════════════════════════════════════════════════ */
+.secaoInstitucional {
+  margin-top: 2rem;
+}
+
+.boxInstitucional {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  color: #0369a1;
+}
+
+.boxInstitucional h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: #0c4a6e;
+}
+
+.boxInstitucional p {
+  font-size: 0.85rem;
+  margin: 0;
+  color: #0369a1;
+  line-height: 1.5;
+}
+
+.boxInstIcone {
+  font-size: 1.75rem;
+  flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -435,7 +653,7 @@
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .heroBanner {
-    padding: 1.75rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .heroInner {
@@ -470,7 +688,39 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .bannerMapaAtalho {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .btnAbrirMapaCompleto {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cabecalhoPortfolio {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .segmentedNegociacao {
+    width: 100%;
+  }
+
+  .btnSegmented {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+  }
+
   .gridImoveis {
+    grid-template-columns: 1fr;
+  }
+
+  .gridCorretores {
     grid-template-columns: 1fr;
   }
 }

@@ -741,7 +741,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                     className={styles.btnEnviarLead}
                     disabled={enviandoLead}
                   >
-                    {enviandoLead ? 'Enviando...' : '✉️ Enviar Proposta'}
+                    {enviandoLead ? 'Enviando...' : '✉️ Obter Mais Informações'}
                   </button>
                 </form>
               )}
