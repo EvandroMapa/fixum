@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import PaginaImovelCliente from './PaginaImovelCliente'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -103,7 +103,7 @@ export default async function PaginaImovel({ params }: Props) {
       // Se for corretor, descobrir a imobiliária dele e SEMPRE usar o branding dela
       if (p?.tipo === 'corretor') {
         try {
-          if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          if (SERVICE_KEY) {
             const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId)
             const imobId = userData?.user?.user_metadata?.imobiliaria_id
             if (imobId) {
