@@ -54,6 +54,7 @@ function ExplorarConteudo() {
   })()
   // Guarda os bounds atuais do mapa — ao mudar filtros, mantém a área visível
   const boundsAtualRef = useRef<mapboxgl.LngLatBounds | null>(null)
+  const idsImobiliariaCacheRef = useRef<Record<string, string[]>>({})
 
   const supabase = createClient()
 
@@ -88,22 +89,28 @@ function ExplorarConteudo() {
         }
       }
 
-      // Se estiver filtrando por imobiliária, descobrir os IDs da equipe dela
+      // Se estiver filtrando por imobiliária, descobrir os IDs da equipe dela (com cache local)
       let idsAnunciantesImob: string[] | null = null
       if (imobiliariaId) {
-        try {
-          const resImob = await fetch(`/api/imobiliarias/${imobiliariaId}`)
-          if (resImob.ok) {
-            const dadosImob = await resImob.json()
-            if (dadosImob.imobiliaria?.nome) {
-              setNomeImobiliaria(dadosImob.imobiliaria.nome)
+        if (idsImobiliariaCacheRef.current[imobiliariaId]) {
+          idsAnunciantesImob = idsImobiliariaCacheRef.current[imobiliariaId]
+        } else {
+          try {
+            const resImob = await fetch(`/api/imobiliarias/${imobiliariaId}`)
+            if (resImob.ok) {
+              const dadosImob = await resImob.json()
+              if (dadosImob.imobiliaria?.nome) {
+                setNomeImobiliaria(dadosImob.imobiliaria.nome)
+              }
+              if (dadosImob.idsAnunciantes?.length > 0) {
+                idsAnunciantesImob = dadosImob.idsAnunciantes
+                idsImobiliariaCacheRef.current[imobiliariaId] = dadosImob.idsAnunciantes
+              }
             }
-            if (dadosImob.idsAnunciantes?.length > 0) {
-              idsAnunciantesImob = dadosImob.idsAnunciantes
-            }
+          } catch {
+            idsAnunciantesImob = [imobiliariaId]
+            idsImobiliariaCacheRef.current[imobiliariaId] = [imobiliariaId]
           }
-        } catch {
-          idsAnunciantesImob = [imobiliariaId]
         }
       }
 
@@ -135,12 +142,9 @@ function ExplorarConteudo() {
       if (filtrosAtivos.preco_min) query = query.gte('preco', filtrosAtivos.preco_min)
       if (filtrosAtivos.preco_max) query = query.lte('preco', filtrosAtivos.preco_max)
       if (filtrosAtivos.quartos_min) query = query.gte('quartos', filtrosAtivos.quartos_min)
-      if (filtrosAtivos.cidade && !imobiliariaId) {
-        query = query.or(`cidade.ilike.%${filtrosAtivos.cidade}%,bairro.ilike.%${filtrosAtivos.cidade}%,codigo.ilike.%${filtrosAtivos.cidade}%`)
-      }
 
-      // Filtro por bounds do mapa (pesquisar nesta area) quando não estiver filtrando favoritos ou imobiliária
-      if (bounds && !filtrosAtivos.cidade && !isFavoritos && !imobiliariaId) {
+      // Filtro por bounds do mapa (pesquisar na área visível ao dar zoom / arrastar)
+      if (bounds && !isFavoritos) {
         const sw = bounds.getSouthWest()
         const ne = bounds.getNorthEast()
         query = query
@@ -148,6 +152,8 @@ function ExplorarConteudo() {
           .lte('latitude', ne.lat)
           .gte('longitude', sw.lng)
           .lte('longitude', ne.lng)
+      } else if (filtrosAtivos.cidade && !imobiliariaId) {
+        query = query.or(`cidade.ilike.%${filtrosAtivos.cidade}%,bairro.ilike.%${filtrosAtivos.cidade}%,codigo.ilike.%${filtrosAtivos.cidade}%`)
       }
 
       const { data, error } = await query
@@ -202,14 +208,6 @@ function ExplorarConteudo() {
 
       setImoveis(imoveisComFotos)
       setTotalResultados(imoveisComFotos.length)
-
-      // Se estiver filtrando por imobiliária e houver imóveis válidos, voar para o primeiro imóvel
-      if (imobiliariaId && imoveisComFotos.length > 0) {
-        const imovelComCoord = imoveisComFotos.find((im) => im.latitude && im.longitude)
-        if (imovelComCoord && imovelComCoord.latitude && imovelComCoord.longitude) {
-          setVoarPara([imovelComCoord.longitude, imovelComCoord.latitude])
-        }
-      }
     } catch (err) {
       console.error('Erro ao buscar imoveis:', err)
     } finally {
@@ -250,13 +248,7 @@ function ExplorarConteudo() {
     boundsAtualRef.current = bounds // salva para reusar ao trocar filtros
 
     if (isInteracaoUsuario) {
-      setFiltros((f) => {
-        if (f.cidade) {
-          return { ...f, cidade: undefined }
-        }
-        return f
-      })
-      buscarImoveis({ ...filtros, cidade: undefined }, bounds)
+      buscarImoveis(filtros, bounds)
     }
   }, [filtros, buscarImoveis])
 

@@ -5,7 +5,8 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
 import CardImovel from '@/components/imovel/CardImovel'
-import { type Imovel } from '@/lib/types'
+import SecaoEntorno from '@/components/imovel/SecaoEntorno'
+import { type Imovel, type PontoInteresse } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel } from '@/lib/utils'
 import { useFavorito } from '@/hooks/useFavorito'
 import { createClient } from '@/lib/supabase/client'
@@ -27,17 +28,6 @@ function IconeWhatsApp({ size = 15 }: { size?: number }) {
     </svg>
   )
 }
-
-const PONTOS_INTERESSE = [
-  { icone: '🏫', label: 'Escolas e Creches' },
-  { icone: '🏥', label: 'Hospitais e Clínicas' },
-  { icone: '🛒', label: 'Supermercados' },
-  { icone: '💊', label: 'Farmácias' },
-  { icone: '🍽️', label: 'Restaurantes e Cafés' },
-  { icone: '🏋️', label: 'Academias' },
-  { icone: '🏦', label: 'Bancos e Caixas' },
-  { icone: '🚌', label: 'Transporte Público' },
-]
 
 const CARACTERISTICAS_ICONES: Record<string, string> = {
   suite: '🛏️',
@@ -95,6 +85,10 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
   )
   const [enviandoLead, setEnviandoLead] = useState(false)
   const [leadEnviado, setLeadEnviado] = useState(false)
+
+  // Conveniências do Entorno & Mapa
+  const [poisEntorno, setPoisEntorno] = useState<PontoInteresse[]>([])
+  const [poiSelecionadoId, setPoiSelecionadoId] = useState<string | null>(null)
 
   const touchStartX = useRef<number | null>(null)
   const touchEndX = useRef<number | null>(null)
@@ -562,21 +556,22 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                   lng={imovel.longitude}
                   titulo={imovel.titulo}
                   publico={false}
+                  pois={poisEntorno}
+                  poiSelecionadoId={poiSelecionadoId}
+                  onSelecionarPoi={(poi) => setPoiSelecionadoId(poi.id)}
                 />
               </div>
             </div>
 
-            {/* O Que Tem no Entorno */}
+            {/* O Que Tem no Entorno Inteligente */}
             <div className={styles.secaoDetalhe}>
-              <h2 className={styles.secaoSubtitulo}>🏘️ O que tem no entorno?</h2>
-              <div className={styles.gridPontos}>
-                {PONTOS_INTERESSE.map((p) => (
-                  <div key={p.label} className={styles.pontoCard}>
-                    <span className={styles.pontoIcone}>{p.icone}</span>
-                    <span className={styles.pontoLabel}>{p.label}</span>
-                  </div>
-                ))}
-              </div>
+              <SecaoEntorno
+                lat={imovel.latitude}
+                lng={imovel.longitude}
+                onPoisCarregados={setPoisEntorno}
+                poiSelecionadoId={poiSelecionadoId}
+                onSelecionarPoi={(poi) => setPoiSelecionadoId(poi.id)}
+              />
             </div>
 
             {/* ═══════════════════════════════════════════════════════════════

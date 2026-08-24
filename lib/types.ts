@@ -277,3 +277,17 @@ export interface UsoPlano {
   vagasRestantes: number
 }
 
+// ── PONTOS DE INTERESSE / ENTORNO ─────────────────────────────────
+export interface PontoInteresse {
+  id: string
+  nome: string
+  categoria: string
+  icone: string
+  distanciaMetros: number
+  distanciaFormatada: string
+  tempoPe: string
+  lat: number
+  lng: number
+}
+
+

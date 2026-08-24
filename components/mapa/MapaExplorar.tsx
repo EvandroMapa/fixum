@@ -65,6 +65,7 @@ export default function MapaExplorar({
   const [mapaPronto, setMapaPronto] = useState(false)
   const [mostrarBannerDistante, setMostrarBannerDistante] = useState(false)
   const fitInicialExecutadoRef = useRef(false)
+  const isAnimandoProgramaticoRef = useRef(false)
 
   // Ref para evitar stale closure no listener do moveend
   const onPesquisarRef = useRef(onPesquisarNaArea)
@@ -101,7 +102,9 @@ export default function MapaExplorar({
     mapa.on('load', () => setMapaPronto(true))
 
     mapa.on('moveend', (e) => {
-      // SÓ pesquisa automaticamente se o movimento veio de arrasto/scroll manual do usuário
+      // Ignora se for uma animação programática inicial (fitBounds / flyTo do sistema)
+      if (isAnimandoProgramaticoRef.current) return
+
       const isInteracaoUsuario = Boolean((e as unknown as { originalEvent?: unknown }).originalEvent)
       if (isInteracaoUsuario) {
         onPesquisarRef.current?.(mapa.getBounds()!, true)
@@ -151,9 +154,11 @@ export default function MapaExplorar({
     if (cidadeFiltro || !centroInicial) {
       setMostrarBannerDistante(false)
       if (mapaRef.current) {
+        isAnimandoProgramaticoRef.current = true
         const bounds = new mapboxgl.LngLatBounds()
         imoveisValidos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
         mapaRef.current.fitBounds(bounds, { padding: 60, duration: 900, maxZoom: 13 })
+        mapaRef.current.once('idle', () => { isAnimandoProgramaticoRef.current = false })
       }
       return
     }
@@ -170,10 +175,12 @@ export default function MapaExplorar({
       } else {
         setMostrarBannerDistante(false)
         if (mapaRef.current) {
+          isAnimandoProgramaticoRef.current = true
           const bounds = new mapboxgl.LngLatBounds()
           bounds.extend(centroInicial)
           imoveisProximos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
           mapaRef.current.fitBounds(bounds, { padding: 70, duration: 1000, maxZoom: 14 })
+          mapaRef.current.once('idle', () => { isAnimandoProgramaticoRef.current = false })
         }
       }
     }
@@ -208,12 +215,14 @@ export default function MapaExplorar({
   // Voar para coordenadas quando o usuário seleciona uma sugestão do autocomplete
   useEffect(() => {
     if (!mapaPronto || !mapaRef.current || !voarPara) return
+    isAnimandoProgramaticoRef.current = true
     mapaRef.current.flyTo({
       center: voarPara,
       zoom: 13,
       duration: 1400,
       essential: true,
     })
+    mapaRef.current.once('idle', () => { isAnimandoProgramaticoRef.current = false })
   }, [voarPara, mapaPronto])
 
   // Cache local em memória de IDs favoritados para renderização síncrona instantânea (sem piscar)
