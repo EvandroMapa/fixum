@@ -554,6 +554,29 @@ export default function PaginaImovelCliente({ imovel, historico }: Props) {
                   publico={true}
                 />
               </div>
+
+              <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${imovel.endereco || ''}, ${imovel.bairro || ''}, ${imovel.cidade || ''} - ${imovel.estado || 'MG'}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline btn-sm"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', padding: '6px 12px' }}
+                >
+                  🗺️ Abrir no Google Maps
+                </a>
+                {imovel.latitude && imovel.longitude && (
+                  <a
+                    href={`https://www.waze.com/ul?ll=${imovel.latitude},${imovel.longitude}&navigate=yes`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline btn-sm"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', padding: '6px 12px' }}
+                  >
+                    🚗 Traçar rota no Waze
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* O Que Tem no Entorno */}

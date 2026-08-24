@@ -219,12 +219,32 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
       const data = await res.json()
       if (!data.erro) {
+        let latEncontrada = ''
+        let lngEncontrada = ''
+        const query = encodeURIComponent(`${data.logradouro ? data.logradouro + ', ' : ''}${data.bairro || ''}, ${data.localidade}, ${data.uf}, Brasil`)
+        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+        if (token) {
+          try {
+            const geo = await fetch(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&language=pt&limit=1&country=BR`
+            )
+            const geoData = await geo.json()
+            if (geoData.features?.length > 0) {
+              const [lng, lat] = geoData.features[0].center
+              latEncontrada = String(lat)
+              lngEncontrada = String(lng)
+            }
+          } catch {}
+        }
+
         setDados((prev) => ({
           ...prev,
           endereco: data.logradouro || prev.endereco,
           bairro: data.bairro || prev.bairro,
           cidade: data.localidade || prev.cidade,
           estado: data.uf || prev.estado,
+          latitude: latEncontrada || prev.latitude,
+          longitude: lngEncontrada || prev.longitude,
         }))
       }
     } catch {
@@ -326,8 +346,25 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
       const precoNumerico = Number(String(dados.preco).replace(/\D/g, "")) || 0
       const areaNumerica = Number(String(dados.area).replace(/\D/g, "")) || 0
-      const latNumerica = dados.latitude ? parseFloat(String(dados.latitude)) : null
-      const lngNumerica = dados.longitude ? parseFloat(String(dados.longitude)) : null
+      let latNumerica = dados.latitude ? parseFloat(String(dados.latitude)) : null
+      let lngNumerica = dados.longitude ? parseFloat(String(dados.longitude)) : null
+
+      // Geocodificação de resgate se não tiver coordenadas
+      if (!latNumerica || !lngNumerica || (latNumerica === 0 && lngNumerica === 0)) {
+        try {
+          const termo = [dados.endereco, dados.bairro, dados.cidade, dados.estado, 'Brasil'].filter(Boolean).join(', ')
+          const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+          if (token) {
+            const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(termo)}.json?access_token=${token}&country=BR&limit=1`)
+            const json = await res.json()
+            if (json.features?.length > 0) {
+              const [lng, lat] = json.features[0].center
+              latNumerica = lat
+              lngNumerica = lng
+            }
+          }
+        } catch {}
+      }
 
       const { data: perfilExistente } = await supabase
         .from('perfis')

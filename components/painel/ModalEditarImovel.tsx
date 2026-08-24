@@ -392,6 +392,25 @@ export default function ModalEditarImovel({
       const condNum = parseFloat(dados.condominio.replace(/\D/g, '')) || null
       const iptuNum = parseFloat(dados.iptu.replace(/\D/g, '')) || null
 
+      let latNum = parseFloat(dados.latitude) || null
+      let lngNum = parseFloat(dados.longitude) || null
+
+      if (!latNum || !lngNum || (latNum === 0 && lngNum === 0)) {
+        try {
+          const termo = [dados.endereco, dados.bairro, dados.cidade, dados.estado, 'Brasil'].filter(Boolean).join(', ')
+          const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+          if (token) {
+            const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(termo)}.json?access_token=${token}&country=BR&limit=1`)
+            const json = await res.json()
+            if (json.features?.length > 0) {
+              const [lng, lat] = json.features[0].center
+              latNum = lat
+              lngNum = lng
+            }
+          }
+        } catch {}
+      }
+
       const { error: erroImovel } = await supabase
         .from('imoveis')
         .update({
@@ -410,8 +429,8 @@ export default function ModalEditarImovel({
           cidade: dados.cidade,
           estado: dados.estado || null,
           cep: dados.cep || null,
-          latitude: parseFloat(dados.latitude) || 0,
-          longitude: parseFloat(dados.longitude) || 0,
+          latitude: latNum,
+          longitude: lngNum,
           condominio: condNum,
           iptu: iptuNum,
           aceita_pets: !!dados.aceita_pets,
