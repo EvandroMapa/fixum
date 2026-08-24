@@ -1,0 +1,1091 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  width: 100%;
+  max-width: 960px;
+  height: 90vh;
+  max-height: 720px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   1. CABEÇALHO FIXO
+   ═══════════════════════════════════════════════════════════════ */
+.cabecalho {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.tituloBloco {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarLead {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(29, 78, 216, 0.25);
+  flex-shrink: 0;
+}
+
+.linhaNome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nomeLead {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.badgeTemperatura {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+
+.temp_quente {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.temp_morno {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.temp_frio {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+}
+
+.badgeEtapa {
+  font-size: 0.72rem;
+  color: #475569;
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.badgeEtapa strong {
+  text-transform: capitalize;
+  color: #0f172a;
+}
+
+.dataLead {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.btnFechar {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: #64748b;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btnFechar:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. BARRA DE ABAS FIXA
+   ═══════════════════════════════════════════════════════════════ */
+.navAbas {
+  display: flex;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 1.25rem;
+  gap: 6px;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.tabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.tabBtn:hover {
+  color: #0f172a;
+}
+
+.tabBtnAtivo {
+  color: #1d4ed8;
+  border-bottom-color: #1d4ed8;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3. CONTEÚDO COM SCROLL INDEPENDENTE
+   ═══════════════════════════════════════════════════════════════ */
+.conteudoAba {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+  background: #ffffff;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.conteudoAba::-webkit-scrollbar {
+  width: 6px;
+}
+
+.conteudoAba::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ABA 1: VISÃO GERAL COMPACTA
+   ═══════════════════════════════════════════════════════════════ */
+.gridGeralCompacto {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.colunaGeralEsquerda,
+.colunaGeralDireita {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alertaContato {
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contatoOk {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.contatoPendente {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.contatoAlerta {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.contatoCritico {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.alertaIcone {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.alertaTextos strong {
+  font-size: 0.84rem;
+  display: block;
+}
+
+.alertaTextos p {
+  font-size: 0.75rem;
+  margin: 2px 0 0 0;
+  opacity: 0.9;
+}
+
+.subtituloCard {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.cardDadosCompacto,
+.cardImovelCompacto {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.gridContato {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.itemContato {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.labelContato {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.valorContato {
+  font-size: 0.84rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.selectCorretor {
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #0f172a;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.caixaMensagem {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.labelMensagem {
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.textoMensagem {
+  font-size: 0.8rem;
+  color: #334155;
+  margin: 3px 0 0 0;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+/* DESTAQUES DE PROPOSTA E VISITA NA ABA GERAL */
+.destaquePropostaGeral {
+  margin-top: 10px;
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.destaquePropostaIcone {
+  font-size: 1.2rem;
+}
+
+.destaquePropostaTextos {
+  display: flex;
+  flex-direction: column;
+}
+
+.destaquePropostaLabel {
+  font-size: 0.68rem;
+  color: #92400e;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.destaquePropostaValor {
+  font-size: 1rem;
+  color: #b45309;
+  font-weight: 800;
+}
+
+.destaqueVisitaGeral {
+  margin-top: 8px;
+  background: #f5f3ff;
+  border: 1.5px solid #ddd6fe;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.destaqueVisitaIcone {
+  font-size: 1.2rem;
+}
+
+.destaqueVisitaTextos {
+  display: flex;
+  flex-direction: column;
+}
+
+.destaqueVisitaLabel {
+  font-size: 0.68rem;
+  color: #6d28d9;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.destaqueVisitaValor {
+  font-size: 0.92rem;
+  color: #5b21b6;
+  font-weight: 800;
+}
+
+/* CARD DO IMÓVEL COMPACTO */
+.imovelWrapperCompacto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.imovelThumbWrapper {
+  width: 100%;
+  height: 110px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
+.imovelThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imovelInfoCompacto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.imovelTituloCompacto {
+  font-size: 0.88rem;
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.imovelLocalCompacto {
+  font-size: 0.74rem;
+  color: #64748b;
+}
+
+.imovelPrecoCompacto {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1d4ed8;
+}
+
+.imovelCodigoBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: #475569;
+  padding: 1px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.linkImovelDestaque {
+  font-size: 0.78rem;
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.linkImovelDestaque:hover {
+  text-decoration: underline;
+}
+
+.cardImovelVazio {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  color: #64748b;
+}
+
+.cardImovelVazio span {
+  font-size: 1.75rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.cardImovelVazio p {
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   4. RODAPÉ FIXO DE AÇÕES RÁPIDAS
+   ═══════════════════════════════════════════════════════════════ */
+.rodapeFixoAcoes {
+  padding: 12px 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.botoesRodapeGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1.1fr 1.1fr 1fr;
+  gap: 10px;
+}
+
+.btnWhatsFixo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #25d366;
+  color: white;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnWhatsFixo:hover {
+  background: #20ba59;
+}
+
+.btnAcaoSecundarioFixo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnAcaoSecundarioFixo:hover {
+  background: #f1f5f9;
+}
+
+.btnAcaoPerdaFixo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btnAcaoPerdaFixo:hover {
+  background: #ffe4e6;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MINI OVERLAYS DE PROPOSTA E PERDA
+   ═══════════════════════════════════════════════════════════════ */
+.miniOverlayAcao {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.miniCardAcao {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.textoMiniAcao {
+  font-size: 0.82rem;
+  color: #475569;
+  margin: 0;
+}
+
+.inputFormAcao {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.inputFormAcao:focus {
+  border-color: #3b82f6;
+}
+
+.miniLinhaBotoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.btnCancelarMini {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnSalvarAcao {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnSalvarAcaoPerda {
+  background: #e11d48;
+  color: white;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ABA 2: LINHA DO TEMPO
+   ═══════════════════════════════════════════════════════════════ */
+.secaoTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formAnotacao {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.textareaAnotacao {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  resize: vertical;
+  outline: none;
+}
+
+.textareaAnotacao:focus {
+  border-color: #3b82f6;
+}
+
+.linhaBotaoAnotacao {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btnSalvarAnotacao {
+  background: #0f172a;
+  color: white;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.listaAtividades {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemAtividade {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.iconeAtividade {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.conteudoAtividade {
+  flex: 1;
+  min-width: 0;
+}
+
+.cabecalhoAtividade {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.autorAtividade {
+  font-size: 0.78rem;
+  color: #0f172a;
+}
+
+.dataAtividade {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.descricaoAtividade {
+  font-size: 0.78rem;
+  color: #334155;
+  margin: 2px 0 0 0;
+  line-height: 1.35;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ABA 3: AGENDA
+   ═══════════════════════════════════════════════════════════════ */
+.secaoAgenda {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formCompromisso {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gridFormCompromisso {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.campoFormComp {
+  display: flex;
+  flex-direction: column;
+}
+
+.labelFormAcao {
+  font-size: 0.72rem;
+  color: #475569;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.listaCompromissos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemCompromisso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+}
+
+.compConcluido {
+  background: #f8fafc;
+  opacity: 0.6;
+}
+
+.compAtrasado {
+  border-color: #fecaca;
+  background: #fffafa;
+}
+
+.compEsquerda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.checkboxComp {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #16a34a;
+}
+
+.compTextos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compTitulo {
+  font-size: 0.84rem;
+  color: #0f172a;
+}
+
+.tituloRiscado {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.compMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.badgeAtrasado {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #dc2626;
+  background: #fee2e2;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.compDireita {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnLembrarWhats {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnLembrarWhats:hover {
+  background: #25d366;
+  color: white;
+}
+
+.btnExcluirComp {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 4px;
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ABA 4: ANEXOS
+   ═══════════════════════════════════════════════════════════════ */
+.secaoAnexos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.topoUploadAnexo {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.infoUpload h3 {
+  margin: 0 0 2px 0;
+}
+
+.textoUpload {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.btnUploadAnexo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.gridAnexos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.cardAnexoItem {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconeAnexoWrapper {
+  font-size: 1.4rem;
+  width: 36px;
+  height: 36px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.infoAnexoItem {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.nomeAnexoItem {
+  font-size: 0.78rem;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metaAnexoItem {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.acoesAnexoItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btnBaixarAnexo {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.btnExcluirAnexo {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.75rem;
+}
+
+.vazioAnexos,
+.vazioTimeline {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #64748b;
+  grid-column: 1 / -1;
+}
+
+.vazioAnexos span,
+.vazioTimeline span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.vazioAnexos h4 {
+  margin: 0 0 2px 0;
+  color: #0f172a;
+}
+
+.vazioAnexos p,
+.vazioTimeline p {
+  font-size: 0.76rem;
+  margin: 0;
+}
+
+.carregandoTimeline {
+  text-align: center;
+  padding: 1.5rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVIDADE MOBILE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .modal {
+    height: 96vh;
+    max-height: unset;
+  }
+
+  .gridGeralCompacto {
+    grid-template-columns: 1fr;
+  }
+
+  .gridContato {
+    grid-template-columns: 1fr;
+  }
+
+  .botoesRodapeGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .itemCompromisso {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .compDireita {
+    justify-content: flex-end;
+  }
+}

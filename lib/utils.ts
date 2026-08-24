@@ -16,6 +16,18 @@ export function formatarArea(area?: number): string {
   return `${area} m²`
 }
 
+export function formatarTelefone(tel?: string): string {
+  if (!tel) return ''
+  const limpo = tel.replace(/\D/g, '')
+  if (limpo.length === 11) {
+    return `(${limpo.slice(0, 2)}) ${limpo.slice(2, 7)}-${limpo.slice(7)}`
+  }
+  if (limpo.length === 10) {
+    return `(${limpo.slice(0, 2)}) ${limpo.slice(2, 6)}-${limpo.slice(6)}`
+  }
+  return tel
+}
+
 export function labelTipoImovel(tipo: string): string {
   const labels: Record<string, string> = {
     // Residencial

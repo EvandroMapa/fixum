@@ -123,16 +123,64 @@ export interface Imovel {
   imobiliaria?: Imobiliaria
 }
 
+export interface AtividadeLead {
+  id: string
+  lead_id: string
+  autor_id: string
+  autor_nome: string
+  tipo: 'criacao' | 'contato_whatsapp' | 'mudanca_status' | 'anotacao' | 'visita_agendada' | 'proposta' | 'reatribuicao'
+  descricao: string
+  created_at: string
+}
+
+export interface CompromissoLead {
+  id: string
+  lead_id: string
+  titulo: string
+  tipo: 'visita' | 'ligacao' | 'proposta' | 'reuniao' | 'outro'
+  data_hora: string
+  concluido: boolean
+  responsavel_id?: string
+  responsavel_nome?: string
+  responsavel_telefone?: string
+  created_at: string
+}
+
+export interface AnexoLead {
+  id: string
+  lead_id: string
+  nome_arquivo: string
+  tipo_arquivo: string
+  url: string
+  tamanho?: number
+  autor_id: string
+  autor_nome: string
+  created_at: string
+}
+
 export interface Lead {
   id: string
   imovel_id: string
+  corretor_id?: string
+  imobiliaria_id?: string
   nome: string
   email?: string
   telefone?: string
   mensagem?: string
   status: StatusLead
+  data_primeiro_contato?: string
+  data_ultimo_contato?: string
+  data_visita?: string
+  valor_proposta?: number
+  motivo_perda?: string
+  origem?: string
+  temperatura?: 'frio' | 'morno' | 'quente'
   created_at: string
   imovel?: Imovel
+  corretor_nome?: string
+  atividades?: AtividadeLead[]
+  compromissos?: CompromissoLead[]
+  anexos?: AnexoLead[]
 }
 
 export interface Favorito {

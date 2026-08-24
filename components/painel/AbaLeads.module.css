@@ -1,0 +1,887 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   1. GRID DE MÉTRICAS E KPIS
+   ═══════════════════════════════════════════════════════════════ */
+.gridMetricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.cardMetrica {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cardMetrica:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+.metricaAlerta {
+  border-color: #fecaca;
+  background: #fffafa;
+}
+
+.metricaIcone {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.metricaInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricaValor {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.metricaLabel {
+  font-size: 0.76rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. BARRA DE CONTROLE, FILTROS E BUSCA
+   ═══════════════════════════════════════════════════════════════ */
+.barraControle {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.filtrosEsquerda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.toggleVisualizacao {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid #e2e8f0;
+}
+
+.btnToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnToggle:hover {
+  color: #0f172a;
+}
+
+.btnToggleAtivo {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.25);
+}
+
+.btnRecarregarIcone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+}
+
+.btnRecarregarIcone:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.btnRecarregarIcone:disabled {
+  opacity: 0.8;
+  cursor: default;
+}
+
+.iconeGiro {
+  display: inline-block;
+  font-size: 0.95rem;
+  transition: transform 0.3s ease;
+}
+
+.girando {
+  animation: girar 0.6s linear infinite;
+}
+
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.selectFiltro {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.campoBuscaWrapper {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 10px;
+  min-width: 260px;
+  position: relative;
+}
+
+.iconeBusca {
+  font-size: 0.85rem;
+  margin-right: 6px;
+}
+
+.inputBusca {
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 0.82rem;
+  color: #0f172a;
+  outline: none;
+  width: 100%;
+}
+
+.btnLimparBusca {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3. KANBAN (FUNIL DE VENDAS COM ROLAGEM INTERNA)
+   ═══════════════════════════════════════════════════════════════ */
+.kanbanContainer {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 1.25rem;
+  align-items: stretch;
+  width: 100%;
+}
+
+.colunaKanban {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0px;
+  min-width: 170px;
+  height: calc(100vh - 280px);
+  max-height: 640px;
+  min-height: 440px;
+  transition: all 0.2s ease;
+}
+
+.colunaHover {
+  background: #eff6ff !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
+}
+
+/* COLUNA COLAPSADA (FECHADOS / PERDIDOS) */
+.colunaKanbanColapsada {
+  width: 44px;
+  min-width: 44px;
+  flex-shrink: 0;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-top: 4px solid #cbd5e1;
+  border-radius: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 3px;
+  cursor: pointer;
+  height: calc(100vh - 280px);
+  max-height: 640px;
+  min-height: 440px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.colunaKanbanColapsada:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.colapsada_fechado {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.colapsada_fechado .colapsadaBadge {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.colapsada_fechado .colapsadaTextoRotacionado span {
+  color: #166534;
+}
+
+.colapsada_perdido {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.colapsada_perdido .colapsadaBadge {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.colapsada_perdido .colapsadaTextoRotacionado span {
+  color: #991b1b;
+}
+
+.colapsadaTopo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.colapsadaIcone {
+  font-size: 1rem;
+}
+
+.colapsadaBadge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 100px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.colapsadaTextoRotacionado {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.colapsadaTextoRotacionado span {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #475569;
+  letter-spacing: 0.5px;
+}
+
+.colapsadaBotaoExpandir {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease;
+}
+
+.colunaKanbanColapsada:hover .colapsadaBotaoExpandir {
+  background: #1d4ed8;
+  color: #ffffff;
+  border-color: #1d4ed8;
+  transform: scale(1.1);
+}
+
+.colunaCabecalho {
+  padding: 8px 10px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  border-top: 3.5px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.colunaTituloWrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.colunaIcone {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.colunaTitulo {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.colunaAcoesTopo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.colunaContador {
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 100px;
+}
+
+.btnMinimizarColuna {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.btnMinimizarColuna:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.colunaCards {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.colunaCards::-webkit-scrollbar {
+  width: 5px;
+}
+
+.colunaCards::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+}
+
+.colunaVazia {
+  padding: 2rem 0.5rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARD DO KANBAN COMPACTO
+   ═══════════════════════════════════════════════════════════════ */
+.cardKanban {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  cursor: grab;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.cardKanban:hover {
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.08);
+}
+
+.cardKanban:active {
+  cursor: grabbing;
+}
+
+.cardArrastando {
+  opacity: 0.4;
+  transform: scale(0.96);
+  border: 2px dashed #3b82f6 !important;
+  box-shadow: none !important;
+}
+
+.cardTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.cardClienteInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardNome {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.cardTempo {
+  font-size: 0.65rem;
+  color: #94a3b8;
+}
+
+.badgeQuente {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* TAGS DE ALERTA DE 1º CONTATO COMPACTAS */
+.tagContato {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.tagContatoOk {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.tagContatoPendente {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.tagContatoAlerta {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.tagContatoCritico {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  animation: pulseCritico 2s infinite;
+}
+
+@keyframes pulseCritico {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* IMÓVEL NO CARD COMPACTO */
+.cardImovelInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+}
+
+.cardImovelThumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cardImovelTextos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cardImovelTitulo {
+  font-size: 0.7rem;
+  color: #334155;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.cardImovelPreco {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1d4ed8;
+}
+
+.cardDestaqueVisita {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #6d28d9;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.cardDestaqueProposta {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.cardDestaquePendente {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px dashed #f59e0b;
+  padding: 2px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s ease;
+}
+
+.cardDestaquePendente:hover {
+  background: #fde68a;
+  border-color: #d97706;
+}
+
+/* RODAPÉ DO CARD COMPACTO */
+.cardRodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 3px;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 1px;
+}
+
+.cardCorretorTag {
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btnWhatsCard {
+  background: #25d366;
+  color: white;
+  border: none;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btnWhatsCard:hover {
+  background: #20ba59;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   4. TABELA (MODO LISTA)
+   ═══════════════════════════════════════════════════════════════ */
+.tabelaContainer {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.tabelaWrapper {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.tabela th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  font-weight: 700;
+  color: #475569;
+  font-size: 0.78rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.trLinha {
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.trLinha:hover {
+  background: #f8fafc;
+}
+
+.tabela td {
+  padding: 14px 16px;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.tabelaCliente {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabelaAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbeafe;
+}
+
+.tabelaTelefone {
+  font-size: 0.74rem;
+  color: #64748b;
+  display: block;
+}
+
+.tabelaImovel {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabelaImovelTitulo {
+  font-weight: 700;
+  color: #0f172a;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabelaImovelPreco {
+  font-size: 0.75rem;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.badgeStatusContato {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.badgeOk {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.badgePendente {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.badgeAlerta {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.badgeCritico {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.tabelaCorretor {
+  font-size: 0.78rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.selectStatusTabela {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.tabelaData {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.btnVerLead {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnVerLead:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+.vazio {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: #64748b;
+}
+
+.vazio span {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.textoCinza {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVIDADE MOBILE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .barraControle {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .campoBuscaWrapper {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .gridMetricas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

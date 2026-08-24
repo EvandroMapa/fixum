@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
+import ModalEditarCorretor from './ModalEditarCorretor'
 import styles from './AbaCorretores.module.css'
 
 interface MembroEquipe {
@@ -27,6 +28,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
   const [carregando, setCarregando] = useState(true)
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [mensagemFeedback, setMensagemFeedback] = useState<{ texto: string; tipo: 'sucesso' | 'erro' } | null>(null)
+  const [corretorParaEditar, setCorretorParaEditar] = useState<MembroEquipe | null>(null)
   const { confirmar } = useConfirm()
 
   // Gerar link de convite exclusivo limpo
@@ -327,44 +329,52 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                         <strong>{c.total_imoveis || 0}</strong> imóvel(is)
                       </td>
                       <td style={{ textAlign: 'right' }}>
-                        {!isPrincipal ? (
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                            {isGestor ? (
-                              <button
-                                type="button"
-                                className="btn btn-outline btn-sm"
-                                style={{ fontSize: '0.75rem', padding: '4px 8px' }}
-                                onClick={() => handleAlterarPapel(c.id, c.nome, 'corretor')}
-                                title="Mudar cargo para Corretor"
-                              >
-                                👔 Tornar Corretor
-                              </button>
-                            ) : (
-                              <button
-                                type="button"
-                                className="btn btn-outline btn-sm"
-                                style={{ fontSize: '0.75rem', padding: '4px 8px', borderColor: '#bfdbfe', color: '#1d4ed8' }}
-                                onClick={() => handleAlterarPapel(c.id, c.nome, 'gestor')}
-                                title="Promover membro a Gestor com poder de aprovar anúncios"
-                              >
-                                🛡️ Promover a Gestor
-                              </button>
-                            )}
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            style={{ fontSize: '0.75rem', padding: '4px 8px' }}
+                            onClick={() => setCorretorParaEditar(c)}
+                            title="Editar dados cadastrais, telefone e CRECI"
+                          >
+                            ✏️ Editar
+                          </button>
 
-                            <button
-                              type="button"
-                              className={styles.btnDesvincular}
-                              onClick={() => handleDesvincular(c.id, c.nome)}
-                              title="Remover da equipe da imobiliária"
-                            >
-                              Desvincular
-                            </button>
-                          </div>
-                        ) : (
-                          <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontStyle: 'italic' }}>
-                            Administrador da Conta
-                          </span>
-                        )}
+                          {!isPrincipal ? (
+                            <>
+                              {isGestor ? (
+                                <button
+                                  type="button"
+                                  className="btn btn-outline btn-sm"
+                                  style={{ fontSize: '0.75rem', padding: '4px 8px' }}
+                                  onClick={() => handleAlterarPapel(c.id, c.nome, 'corretor')}
+                                  title="Mudar cargo para Corretor"
+                                >
+                                  👔 Tornar Corretor
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  className="btn btn-outline btn-sm"
+                                  style={{ fontSize: '0.75rem', padding: '4px 8px', borderColor: '#bfdbfe', color: '#1d4ed8' }}
+                                  onClick={() => handleAlterarPapel(c.id, c.nome, 'gestor')}
+                                  title="Promover membro a Gestor com poder de aprovar anúncios"
+                                >
+                                  🛡️ Promover a Gestor
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                className={styles.btnDesvincular}
+                                onClick={() => handleDesvincular(c.id, c.nome)}
+                                title="Remover da equipe da imobiliária"
+                              >
+                                Desvincular
+                              </button>
+                            </>
+                          ) : null}
+                        </div>
                       </td>
                     </tr>
                   )
@@ -374,6 +384,20 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
           </div>
         )}
       </div>
+
+      {/* Modal de Edição de Corretor */}
+      {corretorParaEditar && (
+        <ModalEditarCorretor
+          membro={corretorParaEditar}
+          onFechar={() => setCorretorParaEditar(null)}
+          onSalvo={(atualizado) => {
+            setMembros((prev) =>
+              prev.map((m) => (m.id === atualizado.id ? { ...m, ...atualizado } : m))
+            )
+            exibirToast(`Dados de ${atualizado.nome} atualizados com sucesso!`, 'sucesso')
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -124,6 +124,56 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Usuário não encontrado.' }, { status: 404 })
     }
 
+    // Ação: Editar Corretor (Nome, E-mail, Telefone, CRECI, Papel)
+    if (acao === 'editar_corretor') {
+      const { nome, email, telefone, creci, papel } = body
+
+      const authUpdatePayload: any = {}
+      const metaAtual = userData.user.user_metadata || {}
+      const metaNova = {
+        ...metaAtual,
+        ...(nome !== undefined ? { nome, full_name: nome } : {}),
+        ...(telefone !== undefined ? { telefone, whatsapp: telefone } : {}),
+        ...(creci !== undefined ? { creci } : {}),
+        ...(papel !== undefined ? { papel } : {}),
+      }
+
+      authUpdatePayload.user_metadata = metaNova
+      if (email && email !== userData.user.email) {
+        authUpdatePayload.email = email
+      }
+
+      await supabase.auth.admin.updateUserById(corretor_id, authUpdatePayload)
+
+      // Atualizar também na tabela perfis
+      const perfilUpdatePayload: Record<string, any> = {}
+      if (nome !== undefined) perfilUpdatePayload.nome = nome
+      if (email !== undefined) perfilUpdatePayload.email = email
+      if (telefone !== undefined) {
+        perfilUpdatePayload.telefone = telefone
+        perfilUpdatePayload.whatsapp = telefone
+      }
+      if (creci !== undefined) perfilUpdatePayload.creci = creci
+
+      if (Object.keys(perfilUpdatePayload).length > 0) {
+        try {
+          await supabase.from('perfis').update(perfilUpdatePayload).eq('id', corretor_id)
+        } catch {}
+      }
+
+      return NextResponse.json({
+        success: true,
+        membro: {
+          id: corretor_id,
+          nome: metaNova.nome,
+          email: email || userData.user.email,
+          telefone: metaNova.telefone,
+          creci: metaNova.creci,
+          papel: metaNova.papel || 'corretor',
+        },
+      })
+    }
+
     // Ação: Alterar Papel (Gestor / Corretor)
     if (acao === 'alterar_papel') {
       if (!novo_papel || !['gestor', 'corretor'].includes(novo_papel)) {

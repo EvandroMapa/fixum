@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useMemo, useCallback, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -13,6 +13,7 @@ import LogoGota from '@/components/ui/LogoGota'
 import AbaMeuPlano from '@/components/painel/AbaMeuPlano'
 import AbaCorretores from '@/components/painel/AbaCorretores'
 import AbaImoveis from '@/components/painel/AbaImoveis'
+import AbaLeads from '@/components/painel/AbaLeads'
 import ModalLimiteAtingido from '@/components/painel/ModalLimiteAtingido'
 import ModalUpgradePlano from '@/components/painel/ModalUpgradePlano'
 import ModalConfigSeguranca from '@/components/painel/ModalConfigSeguranca'
@@ -63,7 +64,7 @@ function PainelConteudo() {
   const [planoAlvoUpgrade, setPlanoAlvoUpgrade] = useState<Plano | null>(null)
   const [ultimoEventoChat, setUltimoEventoChat] = useState<any>(null)
 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     if (searchParams.get('novo') === '1') {
@@ -86,7 +87,7 @@ function PainelConteudo() {
     router.replace(`/painel?aba=${novaAba}`)
   }
 
-  async function carregarDados(silencioso = false) {
+  const carregarDados = useCallback(async (silencioso = false) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { window.location.href = '/login'; return }
     setUsuarioId(user.id)
@@ -194,18 +195,19 @@ function PainelConteudo() {
     }
 
     if (!silencioso) setCarregando(false)
-  }
+  }, [supabase])
 
   useEffect(() => {
     carregarDados()
-  }, [])
+  }, [carregarDados])
 
   // ── INSCRIÇÃO EM TEMPO REAL (SUPABASE REALTIME) ──
   useEffect(() => {
     if (!usuarioId) return
 
+    const canalNome = `painel-realtime-global`
     const canalPainel = supabase
-      .channel('painel-realtime-sync')
+      .channel(canalNome)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'imoveis' },
@@ -216,7 +218,8 @@ function PainelConteudo() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'leads' },
-        () => {
+        (payload: any) => {
+          console.log('[REALTIME-PAINEL] Lead atualizado/inserido:', payload)
           carregarDados(true)
         }
       )
@@ -242,12 +245,14 @@ function PainelConteudo() {
           setUltimoEventoChat(payload.new)
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('[REALTIME-PAINEL] Status do canal:', status)
+      })
 
     return () => {
       supabase.removeChannel(canalPainel)
     }
-  }, [usuarioId, supabase])
+  }, [usuarioId, supabase, carregarDados])
 
   const stats = {
     total: imoveis.length,
@@ -339,10 +344,6 @@ function PainelConteudo() {
     }
   }
 
-  async function alterarStatusLead(id: string, status: string) {
-    await supabase.from('leads').update({ status }).eq('id', id)
-    setLeads((prev) => prev.map((l) => l.id === id ? { ...l, status: status as Lead['status'] } : l))
-  }
 
   async function handleAtualizarAssinatura(novoPlano: Plano, metodo: MetodoPagamento) {
     if (!usuarioId) return
@@ -673,61 +674,17 @@ function PainelConteudo() {
             />
           )}
 
-          {/* ── LEADS ── */}
+          {/* ── CRM DE LEADS & FUNIL DE VENDAS ── */}
           {abaAtiva === 'leads' && (
-            <div className={styles.secao}>
-              <h1>Leads</h1>
-              <p className={styles.subtitulo}>Pessoas interessadas nos seus imóveis</p>
-
-              {leads.length === 0 ? (
-                <div className={styles.vazio}>
-                  <span>👥</span>
-                  <h3>Nenhum lead ainda</h3>
-                  <p>Quando alguém entrar em contato pelos seus imóveis, aparecerá aqui</p>
-                </div>
-              ) : (
-                <div className={styles.listaLeads}>
-                  {leads.map((lead) => (
-                    <div key={lead.id} className={styles.leadCard}>
-                      <div className={styles.leadAvatar}>
-                        {lead.nome.charAt(0).toUpperCase()}
-                      </div>
-                      <div className={styles.leadInfo}>
-                        <strong>{lead.nome}</strong>
-                        {lead.email && <span>📧 {lead.email}</span>}
-                        {lead.telefone && <span>📱 {lead.telefone}</span>}
-                        {lead.mensagem && <p className={styles.leadMensagem}>{lead.mensagem}</p>}
-                        <span className={styles.leadData}>
-                          {new Date(lead.created_at).toLocaleDateString('pt-BR')}
-                        </span>
-                      </div>
-                      <div className={styles.leadAcoes}>
-                        <select
-                          className="campo"
-                          value={lead.status}
-                          onChange={(e) => alterarStatusLead(lead.id, e.target.value)}
-                          style={{ fontSize: '0.75rem', padding: '6px 10px' }}
-                        >
-                          {['novo', 'em_contato', 'visita_agendada', 'proposta', 'negociacao', 'fechado', 'perdido'].map((s) => (
-                            <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
-                          ))}
-                        </select>
-                        {lead.telefone && (
-                          <a
-                            href={`https://wa.me/55${lead.telefone.replace(/\D/g, '')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-primario btn-sm"
-                          >
-                            💬 WhatsApp
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <AbaLeads
+              leads={leads}
+              usuarioId={usuarioId}
+              usuarioNome={usuarioNome}
+              isGestor={isGestor}
+              isImobiliaria={isImobiliaria}
+              listaCorretores={listaCorretoresFiltro}
+              onRecarregarDados={carregarDados}
+            />
           )}
 
           {/* ── EQUIPE DE CORRETORES (APENAS GESTOR DA IMOBILIÁRIA) ── */}

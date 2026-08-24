@@ -45,3 +45,5 @@ informa*.txt
 Projeto*
 scripts/
 scratch/
+data_*.json
+
