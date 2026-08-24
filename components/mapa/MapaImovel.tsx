@@ -39,8 +39,10 @@ export default function MapaImovel({ lat, lng, titulo, publico = true }: Props) 
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
       center: [finalLng, finalLat],
-      zoom: publico ? 15 : 13,
+      zoom: 14.5,
       interactive: true,
+      scrollZoom: false, // Evita que a rolagem da página reduza/aumente o mapa por acidente
+      dragRotate: false,
       attributionControl: false,
     })
 
@@ -50,34 +52,60 @@ export default function MapaImovel({ lat, lng, titulo, publico = true }: Props) 
       mapa.resize()
 
       if (coordenadasValidas) {
-        if (publico) {
+        if (publico === true) {
           // Marcador preciso
           new mapboxgl.Marker({ color: '#0f4c81' })
             .setLngLat([finalLng, finalLat])
             .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(titulo))
             .addTo(mapa)
         } else {
-          // Círculo aproximado (privacidade)
+          // Círculo de Área Aproximada (Privacidade total)
           mapa.addSource('area-aproximada', {
             type: 'geojson',
             data: {
               type: 'Feature',
               geometry: { type: 'Point', coordinates: [finalLng, finalLat] },
-              properties: {},
+              properties: {
+                title: 'Região aproximada do imóvel',
+              },
             },
           })
 
+          // Preenchimento da área com raio responsivo ao zoom
           mapa.addLayer({
             id: 'area-aproximada-fill',
             type: 'circle',
             source: 'area-aproximada',
             paint: {
-              'circle-radius': 80,
-              'circle-color': '#0f4c81',
-              'circle-opacity': 0.15,
+              'circle-radius': [
+                'interpolate',
+                ['exponential', 2],
+                ['zoom'],
+                10, 15,
+                12, 30,
+                14, 65,
+                16, 130,
+                18, 260,
+              ],
+              'circle-color': '#2563eb',
+              'circle-opacity': 0.16,
               'circle-stroke-width': 2,
-              'circle-stroke-color': '#0f4c81',
-              'circle-stroke-opacity': 0.4,
+              'circle-stroke-color': '#1d4ed8',
+              'circle-stroke-opacity': 0.55,
+            },
+          })
+
+          // Ponto central suave indicando o centro da região
+          mapa.addLayer({
+            id: 'area-aproximada-center',
+            type: 'circle',
+            source: 'area-aproximada',
+            paint: {
+              'circle-radius': 6,
+              'circle-color': '#1d4ed8',
+              'circle-stroke-width': 2.5,
+              'circle-stroke-color': '#ffffff',
+              'circle-opacity': 0.9,
             },
           })
         }

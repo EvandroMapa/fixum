@@ -1,0 +1,476 @@
+.container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding-bottom: 4rem;
+}
+
+.conteudoWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO / BANNER DA IMOBILIÁRIA
+   ═══════════════════════════════════════════════════════════════ */
+.heroBanner {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f4c81 100%);
+  color: white;
+  padding: 2.5rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.3);
+  margin-bottom: 2rem;
+}
+
+.heroBanner::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.heroInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.heroInfoPrincipal {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.logoWrapper {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #60a5fa;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.logoPlaceholder {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1e40af;
+}
+
+.textosImobiliaria {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.badgeVerificado {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  color: #bfdbfe;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 100px;
+  width: fit-content;
+}
+
+.nomeImobiliaria {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.detalhesImobiliaria {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  flex-wrap: wrap;
+}
+
+.creciBadge {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.heroAcoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btnWhatsAppHero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #25d366;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btnWhatsAppHero:hover {
+  background: #20ba59;
+  transform: translateY(-2px);
+}
+
+.btnTelefoneHero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btnTelefoneHero:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btnCompartilharHero {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnCompartilharHero:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ESTATÍSTICAS EM CARDS
+   ═══════════════════════════════════════════════════════════════ */
+.gridStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.cardStat {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.statIcone {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.statTextos {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValor {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: 0.775rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEÇÃO DO MAPA DE ATUAÇÃO
+   ═══════════════════════════════════════════════════════════════ */
+.secaoMapa {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.cabecalhoSecao {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.tituloSecao {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.subtituloSecao {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+.btnAbrirMapaCompleto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btnAbrirMapaCompleto:hover {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.mapaWrapper {
+  height: 320px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEÇÃO DE PORTFÓLIO DE IMÓVEIS COM FILTROS
+   ═══════════════════════════════════════════════════════════════ */
+.secaoImoveis {
+  margin-bottom: 2rem;
+}
+
+.filtrosPortfolio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.btnFiltroRapido {
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnFiltroRapido:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.btnFiltroRapidoAtivo {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+.gridImoveis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.vazioPortfolio {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.vazioIcone {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EQUIPE DE CORRETORES
+   ═══════════════════════════════════════════════════════════════ */
+.secaoEquipe {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.gridCorretores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.cardCorretor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.avatarCorretor {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #334155;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatarCorretorImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.infoCorretor {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nomeCorretor {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.creciCorretor {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVIDADE MOBILE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .heroBanner {
+    padding: 1.75rem 1rem;
+  }
+
+  .heroInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .heroInfoPrincipal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .nomeImobiliaria {
+    font-size: 1.4rem;
+  }
+
+  .heroAcoes {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btnWhatsAppHero,
+  .btnTelefoneHero,
+  .btnCompartilharHero {
+    justify-content: center;
+  }
+
+  .gridStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gridImoveis {
+    grid-template-columns: 1fr;
+  }
+}

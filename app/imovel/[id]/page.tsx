@@ -90,6 +90,8 @@ export default async function PaginaImovel({ params }: Props) {
   const anuncianteId = imovel.anunciante_id || imovel.usuario_id
   let perfil: any = null
   let imobiliariaNome = ''
+  let imobiliariaId = anuncianteId
+  let idsAnunciantes: string[] = [anuncianteId]
 
   if (anuncianteId) {
     try {
@@ -100,37 +102,94 @@ export default async function PaginaImovel({ params }: Props) {
         .maybeSingle()
       perfil = p
 
-      // Se for corretor, descobrir a imobiliária dele e SEMPRE usar o branding dela
-      if (p?.tipo === 'corretor') {
-        try {
-          if (SERVICE_KEY) {
-            const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId)
-            const imobId = userData?.user?.user_metadata?.imobiliaria_id
-            if (imobId) {
-              const { data: imobPerfil } = await supabase.from('perfis').select('id, nome, foto_url, telefone, whatsapp, creci, email').eq('id', imobId).maybeSingle()
-              if (imobPerfil) {
-                imobiliariaNome = imobPerfil.nome
-                // Substituir TUDO pelo perfil da imobiliária mãe
-                p.nome = imobPerfil.nome
-                p.tipo = 'imobiliaria'
-                p.foto_url = imobPerfil.foto_url || p.foto_url
-                p.telefone = imobPerfil.telefone || p.telefone
-                p.whatsapp = imobPerfil.whatsapp || p.whatsapp
-                p.creci = imobPerfil.creci || p.creci
-                p.email = imobPerfil.email || p.email
-              }
-            }
-          }
-        } catch {
-          // Ignora se não conseguir ler metadata administrativa
-        }
-      } else if (p?.tipo === 'imobiliaria') {
+      let imobIdParaBuscar: string | null = null
+
+      if (p?.tipo === 'imobiliaria') {
+        imobiliariaId = p.id
         imobiliariaNome = p.nome
+        imobIdParaBuscar = p.id
+      } else {
+        // Verificar se é corretor ou usuário com imobiliária vinculada
+        if (SERVICE_KEY) {
+          try {
+            const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId)
+            const meta = userData?.user?.user_metadata || {}
+            const idImobVinculada = meta.imobiliaria_id
+            if (idImobVinculada) {
+              imobIdParaBuscar = idImobVinculada
+              imobiliariaId = idImobVinculada
+            }
+          } catch {}
+        }
+      }
+
+      // Se tiver uma imobiliária mãe, carregar o perfil oficial dela
+      if (imobIdParaBuscar) {
+        const { data: imobPerfil } = await supabase
+          .from('perfis')
+          .select('id, nome, foto_url, telefone, whatsapp, creci, email')
+          .eq('id', imobIdParaBuscar)
+          .maybeSingle()
+
+        if (imobPerfil) {
+          imobiliariaNome = imobPerfil.nome
+          perfil = {
+            ...(perfil || {}),
+            ...imobPerfil,
+            id: imobPerfil.id,
+            nome: imobPerfil.nome,
+            imobiliaria_nome: imobPerfil.nome,
+            tipo: 'imobiliaria',
+          }
+        }
+      }
+
+      // Buscar todos os IDs de anunciantes vinculados a esta imobiliária
+      if (imobiliariaId && SERVICE_KEY) {
+        try {
+          const { data: allUsers } = await supabase.auth.admin.listUsers()
+          const corretoresDaImob = (allUsers?.users || []).filter(
+            (u) => u.user_metadata?.imobiliaria_id === imobiliariaId
+          )
+          idsAnunciantes = Array.from(new Set([imobiliariaId, ...corretoresDaImob.map((c) => c.id)]))
+        } catch {}
       }
     } catch {
       // Ignora erro no perfil
     }
   }
+
+  // Fallback caso não tenha encontrado perfil no banco
+  if (!perfil) {
+    perfil = {
+      id: anuncianteId,
+      nome: 'Imobiliária Parceira',
+      tipo: 'imobiliaria',
+      imobiliaria_nome: 'Imobiliária Parceira',
+    }
+  }
+
+  // Buscar outros imóveis da mesma imobiliária com a mesma negociação (venda ou aluguel)
+  let outrosImoveis: any[] = []
+  let totalImoveisImobiliaria = 1
+  try {
+    const { data: outros, count } = await supabase
+      .from('imoveis')
+      .select('*, fotos_imovel (id, url, principal, ordem)', { count: 'exact' })
+      .in('anunciante_id', idsAnunciantes)
+      .in('status', ['ativo', 'publicado'])
+      .eq('negociacao', imovel.negociacao)
+      .neq('id', id)
+      .order('destaque', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(6)
+
+    outrosImoveis = (outros || []).map((o: any) => ({
+      ...o,
+      fotos: o.fotos_imovel ?? [],
+    }))
+    totalImoveisImobiliaria = (count || 0) + 1
+  } catch {}
 
   // Caracteristicas - tolerante a erro
   let caracteristicas: any[] = []
@@ -162,9 +221,22 @@ export default async function PaginaImovel({ params }: Props) {
     ...imovel,
     fotos_imovel: imovel.fotos_imovel ?? [],
     caracteristicas_imovel: caracteristicas ?? [],
-    perfis: perfil ? { ...perfil, imobiliaria_nome: imobiliariaNome } : undefined,
+    perfis: perfil
+      ? {
+          ...perfil,
+          imobiliaria_id: imobiliariaId,
+          imobiliaria_nome: imobiliariaNome || perfil.nome,
+          total_imoveis: totalImoveisImobiliaria,
+        }
+      : undefined,
   }
 
-  return <PaginaImovelCliente imovel={imovelCompleto} historico={historico ?? []} />
+  return (
+    <PaginaImovelCliente
+      imovel={imovelCompleto}
+      historico={historico ?? []}
+      outrosImoveis={outrosImoveis}
+    />
+  )
 }
 

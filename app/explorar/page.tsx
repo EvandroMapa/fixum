@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
 import CardImovel from '@/components/imovel/CardImovel'
@@ -19,6 +19,7 @@ const MapaExplorar = dynamic(() => import('@/components/mapa/MapaExplorar'), {
 })
 
 function ExplorarConteudo() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const [imoveis, setImoveis] = useState<Imovel[]>([])
   const [carregando, setCarregando] = useState(true)
@@ -27,9 +28,17 @@ function ExplorarConteudo() {
   const [totalResultados, setTotalResultados] = useState(0)
   const [vistaAtiva, setVistaAtiva] = useState<'lista' | 'mapa'>('lista')
   const [voarPara, setVoarPara] = useState<[number, number] | null>(null)
-  const [filtros, setFiltros] = useState<TFiltros>({
-    negociacao: (searchParams.get('negociacao') as TFiltros['negociacao']) ?? 'venda',
-    cidade: searchParams.get('cidade') ?? searchParams.get('q') ?? undefined,
+  const imobiliariaId = searchParams.get('imobiliaria') || searchParams.get('imobiliaria_id') || null
+  const nomeImobParam = searchParams.get('nome') || ''
+  const [nomeImobiliaria, setNomeImobiliaria] = useState(nomeImobParam)
+
+  const [filtros, setFiltros] = useState<TFiltros>(() => {
+    const negParam = searchParams.get('negociacao')
+    const negociacaoInicial = negParam ? (negParam as TFiltros['negociacao']) : (imobiliariaId ? undefined : 'venda')
+    return {
+      negociacao: negociacaoInicial,
+      cidade: searchParams.get('cidade') ?? searchParams.get('q') ?? undefined,
+    }
   })
 
   const isFavoritos = searchParams.get('favoritos') === 'true'
@@ -79,13 +88,32 @@ function ExplorarConteudo() {
         }
       }
 
+      // Se estiver filtrando por imobiliária, descobrir os IDs da equipe dela
+      let idsAnunciantesImob: string[] | null = null
+      if (imobiliariaId) {
+        try {
+          const resImob = await fetch(`/api/imobiliarias/${imobiliariaId}`)
+          if (resImob.ok) {
+            const dadosImob = await resImob.json()
+            if (dadosImob.imobiliaria?.nome) {
+              setNomeImobiliaria(dadosImob.imobiliaria.nome)
+            }
+            if (dadosImob.idsAnunciantes?.length > 0) {
+              idsAnunciantesImob = dadosImob.idsAnunciantes
+            }
+          }
+        } catch {
+          idsAnunciantesImob = [imobiliariaId]
+        }
+      }
+
       let query = supabase
         .from('imoveis')
         .select(`*, fotos_imovel (id, url, principal, ordem), perfis:anunciante_id (id, nome, tipo, foto_url)`)
         .in('status', ['publicado', 'ativo'])
         .order('destaque', { ascending: false })
         .order('created_at', { ascending: false })
-        .limit(50)
+        .limit(60)
 
       if (isFavoritos) {
         if (idsFavoritos.length > 0) {
@@ -98,17 +126,21 @@ function ExplorarConteudo() {
         }
       }
 
+      if (idsAnunciantesImob && idsAnunciantesImob.length > 0) {
+        query = query.in('anunciante_id', idsAnunciantesImob)
+      }
+
       if (filtrosAtivos.negociacao) query = query.eq('negociacao', filtrosAtivos.negociacao)
       if (filtrosAtivos.tipo && filtrosAtivos.tipo.length > 0) query = query.in('tipo', filtrosAtivos.tipo)
       if (filtrosAtivos.preco_min) query = query.gte('preco', filtrosAtivos.preco_min)
       if (filtrosAtivos.preco_max) query = query.lte('preco', filtrosAtivos.preco_max)
       if (filtrosAtivos.quartos_min) query = query.gte('quartos', filtrosAtivos.quartos_min)
-      if (filtrosAtivos.cidade) {
+      if (filtrosAtivos.cidade && !imobiliariaId) {
         query = query.or(`cidade.ilike.%${filtrosAtivos.cidade}%,bairro.ilike.%${filtrosAtivos.cidade}%,codigo.ilike.%${filtrosAtivos.cidade}%`)
       }
 
-      // Filtro por bounds do mapa (pesquisar nesta area) quando não estiver filtrando favoritos
-      if (bounds && !filtrosAtivos.cidade && !isFavoritos) {
+      // Filtro por bounds do mapa (pesquisar nesta area) quando não estiver filtrando favoritos ou imobiliária
+      if (bounds && !filtrosAtivos.cidade && !isFavoritos && !imobiliariaId) {
         const sw = bounds.getSouthWest()
         const ne = bounds.getNorthEast()
         query = query
@@ -130,7 +162,6 @@ function ExplorarConteudo() {
       const imobiliarias = todosPerfis.filter((p: any) => p.tipo === 'imobiliaria')
 
       // Montar mapa: id do membro → perfil da imobiliária dona
-      // Buscar vínculo real via API (auth.admin.listUsers no server)
       const mapaMembroParaImob = new Map<string, any>()
       try {
         for (const imob of imobiliarias) {
@@ -142,7 +173,6 @@ function ExplorarConteudo() {
               mapaMembroParaImob.set(m.id, imob)
             }
           }
-          // A própria imobiliária também
           mapaMembroParaImob.set(imob.id, imob)
         }
       } catch {}
@@ -172,16 +202,26 @@ function ExplorarConteudo() {
 
       setImoveis(imoveisComFotos)
       setTotalResultados(imoveisComFotos.length)
+
+      // Se estiver filtrando por imobiliária e houver imóveis válidos, voar para o primeiro imóvel
+      if (imobiliariaId && imoveisComFotos.length > 0) {
+        const imovelComCoord = imoveisComFotos.find((im) => im.latitude && im.longitude)
+        if (imovelComCoord && imovelComCoord.latitude && imovelComCoord.longitude) {
+          setVoarPara([imovelComCoord.longitude, imovelComCoord.latitude])
+        }
+      }
     } catch (err) {
       console.error('Erro ao buscar imoveis:', err)
     } finally {
       setCarregando(false)
     }
-  }, [supabase, isFavoritos])
+  }, [supabase, isFavoritos, imobiliariaId])
 
   // Sincroniza estado de filtros com os parâmetros da URL
   useEffect(() => {
-    const negociacaoUrl = (searchParams.get('negociacao') as TFiltros['negociacao']) ?? 'venda'
+    const imobId = searchParams.get('imobiliaria') || searchParams.get('imobiliaria_id') || null
+    const negParam = searchParams.get('negociacao')
+    const negociacaoUrl = negParam ? (negParam as TFiltros['negociacao']) : (imobId ? undefined : 'venda')
     const cidadeUrl = searchParams.get('cidade') ?? searchParams.get('q') ?? undefined
     setFiltros((f) => ({
       ...f,
@@ -237,6 +277,10 @@ function ExplorarConteudo() {
     }, 50)
   }, [])
 
+  function handleLimparFiltroImobiliaria() {
+    router.push('/explorar')
+  }
+
   return (
     <div className={styles.layout}>
       <Header />
@@ -268,12 +312,41 @@ function ExplorarConteudo() {
       <div className={styles.conteudo}>
         {/* Lista */}
         <div className={`${styles.lista} ${vistaAtiva === 'mapa' ? styles.listaOculta : ''}`}>
+          {/* Banner de filtro exclusivo de imobiliária */}
+          {imobiliariaId && (
+            <div className={styles.bannerFiltroImobiliaria}>
+              <div className={styles.infoFiltroImob}>
+                <span className={styles.iconeFiltroImob}>🏢</span>
+                <div>
+                  <strong className={styles.nomeFiltroImob}>
+                    {nomeImobiliaria || 'Imobiliária Parceira'}
+                  </strong>
+                  <span className={styles.subFiltroImob}>
+                    Exibindo {totalResultados} {totalResultados === 1 ? 'imóvel desta empresa' : 'imóveis desta empresa'} no mapa
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={styles.btnLimparFiltroImob}
+                onClick={handleLimparFiltroImobiliaria}
+                title="Ver todos os imóveis da plataforma"
+              >
+                ✕ Ver todos os imóveis
+              </button>
+            </div>
+          )}
+
           <div className={styles.listaHeader}>
             {carregando ? (
               <span className={styles.carregando}>Buscando imóveis...</span>
             ) : isFavoritos ? (
               <span className={styles.resultados} style={{ color: '#b91c1c' }}>
                 <strong>❤️ {totalResultados}</strong> {totalResultados === 1 ? 'imóvel favorito' : 'imóveis favoritos'}
+              </span>
+            ) : imobiliariaId ? (
+              <span className={styles.resultados} style={{ color: '#1e40af' }}>
+                <strong>🏢 {totalResultados}</strong> {totalResultados === 1 ? 'imóvel desta imobiliária' : 'imóveis desta imobiliária'}
               </span>
             ) : (
               <span className={styles.resultados}>
