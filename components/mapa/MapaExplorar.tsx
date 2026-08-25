@@ -108,11 +108,30 @@ export default function MapaExplorar({
   useEffect(() => {
     if (!containerRef.current || mapaRef.current) return
 
+    let centroCalculado: [number, number] = centroInicial ?? [-43.7867, -20.6603]
+    let zoomCalculado: number = centroInicial ? 14 : 13
+    let veioDePosicaoSalva = false
+
+    if (typeof window !== 'undefined') {
+      try {
+        const salvoStr = sessionStorage.getItem('fixum_mapa_pos')
+        if (salvoStr) {
+          const salvo = JSON.parse(salvoStr)
+          if (Array.isArray(salvo.center) && typeof salvo.zoom === 'number') {
+            centroCalculado = salvo.center
+            zoomCalculado = salvo.zoom
+            veioDePosicaoSalva = true
+            fitInicialExecutadoRef.current = true // Não roda fitBounds agressivo, preserva onde o usuário estava
+          }
+        }
+      } catch {}
+    }
+
     const mapa = new mapboxgl.Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: centroInicial ?? [-43.7867, -20.6603], // Região de atuação (Lafaiete/Hub)
-      zoom: centroInicial ? 14 : 13,                 // Zoom 14 para GPS/localidade | Zoom 13 para visão urbana
+      center: centroCalculado,
+      zoom: zoomCalculado,
       attributionControl: false,
     })
 
@@ -134,9 +153,8 @@ export default function MapaExplorar({
 
     mapa.on('load', () => {
       setMapaPronto(true)
-      // Só dispara busca por bounds no load se NÃO houver filtro de cidade
-      // (quando há cidade, o useEffect de enquadramento cuida de buscar por texto e fazer fitBounds)
-      if (!cidadeFiltro) {
+      // Dispara a busca com os bounds da área restaurada ou visível
+      if (veioDePosicaoSalva || !cidadeFiltro) {
         onPesquisarRef.current?.(mapa.getBounds()!, false)
       }
     })
@@ -149,6 +167,17 @@ export default function MapaExplorar({
       })
 
       mapa.on('moveend', (e) => {
+        // Grava a posição contínua da câmera para que, ao abrir um imóvel e voltar, a posição seja 100% idêntica
+        if (typeof window !== 'undefined') {
+          try {
+            const center = mapa.getCenter()
+            sessionStorage.setItem('fixum_mapa_pos', JSON.stringify({
+              center: [center.lng, center.lat],
+              zoom: mapa.getZoom(),
+            }))
+          } catch {}
+        }
+
         // Ignora se for uma animação programática inicial (fitBounds / flyTo do sistema)
         if (isAnimandoProgramaticoRef.current) return
 

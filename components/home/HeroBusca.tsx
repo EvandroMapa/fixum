@@ -169,6 +169,7 @@ export default function HeroBusca() {
 
   // Geolocalização GPS do usuário
   function handleUsarGps() {
+    if (typeof window !== 'undefined') sessionStorage.removeItem('fixum_mapa_pos')
     if (!navigator.geolocation) {
       setGeoErro('Navegador sem suporte a GPS')
       return
@@ -205,6 +206,7 @@ export default function HeroBusca() {
 
   // Executar busca principal
   function executarBusca() {
+    if (typeof window !== 'undefined') sessionStorage.removeItem('fixum_mapa_pos')
     if (sugestaoSelecionada) {
       const [lng, lat] = sugestaoSelecionada.coords
       const params = new URLSearchParams({

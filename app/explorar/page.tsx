@@ -352,6 +352,15 @@ function ExplorarConteudo() {
     // Voa para as coordenadas do local selecionado no autocomplete
     setVoarPara(sugestao.coords)
 
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.setItem('fixum_mapa_pos', JSON.stringify({
+          center: sugestao.coords,
+          zoom: 13,
+        }))
+      } catch {}
+    }
+
     // Atualiza a URL para refletir a nova localidade
     try {
       const url = new URL(window.location.href)
