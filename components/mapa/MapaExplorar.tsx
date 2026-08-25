@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import Link from 'next/link'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { type Imovel } from '@/lib/types'
@@ -94,6 +95,7 @@ export default function MapaExplorar({
   const marcadoresMapRef = useRef<Map<string, { marcador: mapboxgl.Marker; popup: mapboxgl.Popup; inner: HTMLElement; btnHeart: HTMLButtonElement }>>(new Map())
   const [mapaPronto, setMapaPronto] = useState(false)
   const [mostrarBannerDistante, setMostrarBannerDistante] = useState(false)
+  const [imovelCardMobile, setImovelCardMobile] = useState<Imovel | null>(null)
   const fitInicialExecutadoRef = useRef(false)
   const isAnimandoProgramaticoRef = useRef(false)
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -139,19 +141,26 @@ export default function MapaExplorar({
       }
     })
 
-    mapa.on('moveend', (e) => {
-      // Ignora se for uma animação programática inicial (fitBounds / flyTo do sistema)
-      if (isAnimandoProgramaticoRef.current) return
+      mapa.on('click', (e) => {
+        const target = (e.originalEvent as MouseEvent)?.target as HTMLElement | undefined
+        if (!target?.closest(`.${styles.marcador}`)) {
+          setImovelCardMobile(null)
+        }
+      })
 
-      const isInteracaoUsuario = Boolean((e as unknown as { originalEvent?: unknown }).originalEvent)
-      if (isInteracaoUsuario) {
-        // Debounce de 300ms — evita disparar dezenas de queries durante arrasto contínuo
-        if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
-        debounceTimerRef.current = setTimeout(() => {
-          onPesquisarRef.current?.(mapa.getBounds()!, true)
-        }, 300)
-      }
-    })
+      mapa.on('moveend', (e) => {
+        // Ignora se for uma animação programática inicial (fitBounds / flyTo do sistema)
+        if (isAnimandoProgramaticoRef.current) return
+
+        const isInteracaoUsuario = Boolean((e as unknown as { originalEvent?: unknown }).originalEvent)
+        if (isInteracaoUsuario) {
+          // Debounce de 300ms — evita disparar dezenas de queries durante arrasto contínuo
+          if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
+          debounceTimerRef.current = setTimeout(() => {
+            onPesquisarRef.current?.(mapa.getBounds()!, true)
+          }, 300)
+        }
+      })
 
     mapaRef.current = mapa
     return () => { mapa.remove(); mapaRef.current = null }
@@ -442,12 +451,24 @@ export default function MapaExplorar({
 
         wrapper.addEventListener('click', (e) => {
           e.stopPropagation()
-          // Fechar todos os outros popups antes de abrir este
+          const isMobile = window.innerWidth < 768
+
+          if (isMobile) {
+            // No Mobile: abre o card flutuante no rodapé estilo Airbnb (sem balão cobrindo o mapa)
+            marcadoresMapRef.current.forEach(({ popup }) => {
+              if (popup.isOpen()) popup.remove()
+            })
+            setImovelCardMobile(i)
+            onSelecionarImovel?.(i.id)
+            return
+          }
+
+          // No Desktop: abre popup ancorado Mapbox normalmente
           marcadoresMapRef.current.forEach(({ popup, marcador }, otherId) => {
             if (otherId !== i.id && popup.isOpen()) marcador.togglePopup()
           })
 
-          // Auto-ajuste de câmera (Auto-Pan inteligente): garante que o popup nunca fique cortado em nenhuma borda
+          // Auto-ajuste de câmera (Auto-Pan inteligente) no desktop
           if (mapa && lng && lat) {
             const point = mapa.project([lng, lat])
             const containerH = mapa.getContainer().clientHeight
@@ -456,14 +477,12 @@ export default function MapaExplorar({
             let deltaY = 0
             let deltaX = 0
 
-            // Se estiver próximo à parte inferior (popup tem ~320px de altura)
             if (point.y > containerH - 340) {
               deltaY = point.y - (containerH - 340) + 40
             } else if (point.y < 130) {
               deltaY = point.y - 130
             }
 
-            // Se estiver próximo às laterais
             if (point.x < 160) {
               deltaX = point.x - 160
             } else if (point.x > containerW - 160) {
@@ -593,6 +612,18 @@ export default function MapaExplorar({
     })
   }, [imovelHover, imovelSelecionado])
 
+  // Sincronizar seleção externa no mobile
+  useEffect(() => {
+    if (!imovelSelecionado) {
+      setImovelCardMobile(null)
+      return
+    }
+    const enc = imoveis.find((im) => im.id === imovelSelecionado)
+    if (enc && typeof window !== 'undefined' && window.innerWidth < 768) {
+      setImovelCardMobile(enc)
+    }
+  }, [imovelSelecionado, imoveis])
+
   return (
     <div className={styles.wrapper}>
       <div ref={containerRef} className={styles.mapa} />
@@ -607,6 +638,57 @@ export default function MapaExplorar({
           >
             Ver {imoveis.length} {imoveis.length === 1 ? 'imóvel' : 'imóveis'} no mapa
           </button>
+        </div>
+      )}
+
+      {/* Card Flutuante no Rodapé para Mobile (Estilo Airbnb) */}
+      {imovelCardMobile && (
+        <div className={styles.cardFlutuanteMobile}>
+          <button
+            type="button"
+            className={styles.btnFecharCardMobile}
+            onClick={() => setImovelCardMobile(null)}
+            aria-label="Fechar prévia"
+          >
+            ✕
+          </button>
+          <Link href={`/imovel/${imovelCardMobile.id}`} className={styles.linkCardMobile}>
+            <div className={styles.fotoCardMobile}>
+              {imovelCardMobile.fotos?.find((f) => f.principal)?.url || imovelCardMobile.fotos?.[0]?.url ? (
+                <img
+                  src={imovelCardMobile.fotos?.find((f) => f.principal)?.url || imovelCardMobile.fotos?.[0]?.url}
+                  alt={imovelCardMobile.titulo || ''}
+                />
+              ) : (
+                <div className={styles.semFotoCardMobile}>Fixum</div>
+              )}
+              <span className={styles.precoBadgeMobile}>
+                {precoLabel(imovelCardMobile.preco || 0)}
+                {imovelCardMobile.negociacao === 'aluguel' ? '/mês' : ''}
+              </span>
+            </div>
+            <div className={styles.infoCardMobile}>
+              <h4 className={styles.tituloCardMobile}>{imovelCardMobile.titulo || 'Imóvel sem título'}</h4>
+              <p className={styles.localCardMobile}>
+                {(imovelCardMobile.bairro ? `${imovelCardMobile.bairro}, ` : '') + (imovelCardMobile.cidade || '')}
+              </p>
+              <p className={styles.detalhesCardMobile}>
+                {[
+                  imovelCardMobile.quartos ? `${imovelCardMobile.quartos} ${imovelCardMobile.quartos === 1 ? 'quarto' : 'quartos'}` : null,
+                  imovelCardMobile.area ? `${imovelCardMobile.area} m²` : null,
+                  imovelCardMobile.vagas ? `${imovelCardMobile.vagas} ${imovelCardMobile.vagas === 1 ? 'vaga' : 'vagas'}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ') || 'Consulte detalhes'}
+              </p>
+              <div className={styles.rodapeCardMobile}>
+                <span className={styles.anuncianteCardMobile}>
+                  {imovelCardMobile.anunciante?.nome || 'Imobiliária parceira'}
+                </span>
+                <span className={styles.btnVerCardMobile}>Ver imóvel →</span>
+              </div>
+            </div>
+          </Link>
         </div>
       )}
 
