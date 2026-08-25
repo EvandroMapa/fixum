@@ -496,58 +496,61 @@ export default function MapaExplorar({
 
         const negociacaoLabel = i.negociacao === 'aluguel' ? '/mês' : ''
 
+        const isMobile = window.innerWidth < 768
+        const popupW = isMobile ? 200 : 270
+        const fotoH = isMobile ? 90 : 160
+
         const popupEl = document.createElement('div')
-        popupEl.style.cssText = 'font-family:system-ui,-apple-system,sans-serif;width:270px;overflow:hidden;border-radius:16px;cursor:pointer;'
+        popupEl.style.cssText = `font-family:system-ui,-apple-system,sans-serif;width:${popupW}px;overflow:hidden;border-radius:${isMobile ? '12px' : '16px'};cursor:pointer;`
         popupEl.innerHTML = `
           <a href="/imovel/${i.id}" style="text-decoration:none;color:inherit;display:block;">
             ${fotoUrl ? `
-              <div style="position:relative;height:160px;overflow:hidden;border-radius:12px 12px 0 0;">
+              <div style="position:relative;height:${fotoH}px;overflow:hidden;border-radius:${isMobile ? '10px 10px 0 0' : '12px 12px 0 0'};">
                 <img src="${fotoUrl}" alt="${i.titulo || ''}"
-                  style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.3s;"
-                  onmouseover="this.style.transform='scale(1.04)'"
-                  onmouseout="this.style.transform='scale(1)'"
+                  style="width:100%;height:100%;object-fit:cover;display:block;"
                 />
                 <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.35) 0%,transparent 50%);pointer-events:none;"></div>
-                <div style="position:absolute;bottom:10px;left:12px;background:white;color:#1a56db;font-size:14px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:-0.02em;">
+                <div style="position:absolute;bottom:${isMobile ? '6px' : '10px'};left:${isMobile ? '8px' : '12px'};background:white;color:#1a56db;font-size:${isMobile ? '12px' : '14px'};font-weight:800;padding:${isMobile ? '2px 7px' : '3px 9px'};border-radius:20px;letter-spacing:-0.02em;">
                   ${label}${negociacaoLabel}
                 </div>
               </div>
             ` : `
-              <div style="height:80px;background:linear-gradient(135deg,#e0eaff,#c7d7f7);border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;">
-                <span style="font-size:14px;font-weight:800;color:#1a56db;">${label}${negociacaoLabel}</span>
+              <div style="height:${isMobile ? '48px' : '80px'};background:linear-gradient(135deg,#e0eaff,#c7d7f7);border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:${isMobile ? '12px' : '14px'};font-weight:800;color:#1a56db;">${label}${negociacaoLabel}</span>
               </div>
             `}
-            <div style="padding:12px 14px 14px;">
-              ${!fotoUrl ? '' : ''}
-              <div style="font-size:13px;font-weight:700;color:#0f172a;line-height:1.35;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            <div style="padding:${isMobile ? '8px 10px 10px' : '12px 14px 14px'};">
+              <div style="font-size:${isMobile ? '11px' : '13px'};font-weight:700;color:#0f172a;line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                 ${i.titulo || ''}
               </div>
-              ${localidade ? `<div style="font-size:12px;color:#64748b;margin-bottom:${detalhes ? '6px' : '0'};">${localidade}</div>` : ''}
-              ${detalhes ? `<div style="font-size:11.5px;color:#94a3b8;">${detalhes}</div>` : ''}
-              <div style="margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:6px;">
-                <div style="display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;">
-                  ${i.anunciante?.foto_url ? `
-                    <img src="${i.anunciante.foto_url}" alt="Logo" style="width:18px;height:18px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #cbd5e1;" />
-                  ` : `
-                    <div style="width:18px;height:18px;border-radius:50%;background:#eff6ff;color:#2563eb;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                      ${(i.anunciante?.nome || 'FX').slice(0, 2).toUpperCase()}
-                    </div>
-                  `}
-                  <span style="font-size:11px;font-weight:700;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                    ${i.anunciante?.nome || 'Imobiliária'}
-                  </span>
+              ${localidade ? `<div style="font-size:${isMobile ? '10px' : '12px'};color:#64748b;margin-bottom:${detalhes ? '4px' : '0'};">${localidade}</div>` : ''}
+              ${detalhes ? `<div style="font-size:${isMobile ? '10px' : '11.5px'};color:#94a3b8;">${detalhes}</div>` : ''}
+              ${!isMobile ? `
+                <div style="margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                  <div style="display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;">
+                    ${i.anunciante?.foto_url ? `
+                      <img src="${i.anunciante.foto_url}" alt="Logo" style="width:18px;height:18px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #cbd5e1;" />
+                    ` : `
+                      <div style="width:18px;height:18px;border-radius:50%;background:#eff6ff;color:#2563eb;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        ${(i.anunciante?.nome || 'FX').slice(0, 2).toUpperCase()}
+                      </div>
+                    `}
+                    <span style="font-size:11px;font-weight:700;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      ${i.anunciante?.nome || 'Imobiliária'}
+                    </span>
+                  </div>
+                  ${i.codigo ? `<span style="font-size:10px;font-weight:800;color:#1e40af;background:#dbeafe;border:1px solid #bfdbfe;padding:1px 5px;border-radius:4px;white-space:nowrap;flex-shrink:0;">Ref: ${i.codigo}</span>` : '<span style="font-size:11px;font-weight:700;color:#1a56db;flex-shrink:0;">Ver →</span>'}
                 </div>
-                ${i.codigo ? `<span style="font-size:10px;font-weight:800;color:#1e40af;background:#dbeafe;border:1px solid #bfdbfe;padding:1px 5px;border-radius:4px;white-space:nowrap;flex-shrink:0;">Ref: ${i.codigo}</span>` : '<span style="font-size:11px;font-weight:700;color:#1a56db;flex-shrink:0;">Ver →</span>'}
-              </div>
+              ` : ''}
             </div>
           </a>
         `
 
         const popup = new mapboxgl.Popup({
-          offset: 20,
+          offset: isMobile ? 14 : 20,
           closeButton: true,
-          closeOnClick: false,
-          maxWidth: '290px',
+          closeOnClick: true,
+          maxWidth: isMobile ? '220px' : '290px',
           className: 'fixum-popup',
         }).setDOMContent(popupEl)
 
