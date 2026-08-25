@@ -74,12 +74,17 @@ export default function HeroBusca() {
       const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${token}&language=pt&country=BR&limit=5`
       const res = await fetch(url)
       const data = await res.json()
-      const itens: Sugestao[] = (data.features ?? []).map((f: { id: string; place_name: string; text: string; center: [number, number] }) => ({
-        id: f.id,
-        nome: f.text,
-        nomeCompleto: f.place_name,
-        coords: f.center,
-      }))
+      const itens: Sugestao[] = (data.features ?? []).map((f: { id: string; place_name: string; text: string; center: [number, number] }) => {
+        const partes = (f.place_name || '').split(', ')
+        const nomePrincipal = f.text || partes[0] || ''
+        const detalhe = partes.length > 1 ? partes.slice(1).join(', ') : f.place_name
+        return {
+          id: f.id,
+          nome: nomePrincipal,
+          nomeCompleto: detalhe,
+          coords: f.center,
+        }
+      })
       setSugestoes(itens)
       if (itens.length > 0) {
         atualizarPosicaoDropdown()
