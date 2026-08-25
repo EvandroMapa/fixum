@@ -14,7 +14,7 @@
 }
 
 .btnVoltar {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 5px;
   color: #1e40af;
@@ -27,6 +27,7 @@
   border: 1px solid #cbd5e1;
   transition: all 0.15s ease;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .btnVoltar:hover {
@@ -1260,6 +1261,10 @@
     padding: 0.65rem 1.25rem;
     font-size: 0.85rem;
     border-radius: 10px;
+  }
+
+  .btnVoltar {
+    display: inline-flex;
   }
 
   .breadcrumbDesktop {
