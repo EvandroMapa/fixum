@@ -596,43 +596,68 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             </div>
 
             {/* ═══════════════════════════════════════════════════════════════
-                SEÇÃO: MAIS IMÓVEIS DESTA IMOBILIÁRIA
+                SEÇÃO: MAIS IMÓVEIS DESTA IMOBILIÁRIA (TARJA DE DESTAQUE)
                 ═══════════════════════════════════════════════════════════════ */}
             {outrosImoveis && outrosImoveis.length > 0 && (
-              <div className={styles.secaoDetalhe}>
-                <div className={styles.cabecalhoOutrosImoveis}>
-                  <div>
-                    <h2 className={styles.secaoSubtitulo}>
-                      🏢 Mais Imóveis {imovel.negociacao === 'venda' ? 'à Venda' : 'para Alugar'} de {nomeImobiliaria}
-                    </h2>
-                    <p className={styles.subtituloOutros}>
-                      Conheça outras opções de {imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} desta empresa
-                    </p>
+              <div className={styles.blocoOutrosImoveis}>
+                {/* Tarja Divisória de Alto Destaque */}
+                <div className={styles.tarjaDestaqueImobiliaria}>
+                  <div className={styles.tarjaGlowBackground} />
+                  <div className={styles.tarjaConteudo}>
+                    <div className={styles.tarjaIdentificacao}>
+                      {anunciante?.foto_url ? (
+                        <img
+                          src={anunciante.foto_url}
+                          alt={nomeImobiliaria}
+                          className={styles.tarjaLogoImg}
+                        />
+                      ) : (
+                        <div className={styles.tarjaLogoPlaceholder}>
+                          {nomeImobiliaria.slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                      <div className={styles.tarjaTextos}>
+                        <div className={styles.tarjaBadge}>
+                          <span>🏢 Portfólio Exclusivo</span>
+                        </div>
+                        <h2 className={styles.tarjaTitulo}>
+                          Mais Imóveis {imovel.negociacao === 'venda' ? 'à Venda' : 'para Alugar'} de {nomeImobiliaria}
+                        </h2>
+                        <p className={styles.tarjaSubtitulo}>
+                          Conheça outras opções de {imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} anunciadas por esta empresa
+                        </p>
+                      </div>
+                    </div>
+
+                    {imobiliariaId && (
+                      <Link
+                        href={`/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`}
+                        className={styles.tarjaBtnMapa}
+                      >
+                        <span className={styles.tarjaBtnIcone}>🗺️</span>
+                        <span>Ver no Mapa ({totalImoveisEmpresa})</span>
+                        <span className={styles.tarjaBtnSeta}>➔</span>
+                      </Link>
+                    )}
                   </div>
-                  {imobiliariaId && (
-                    <Link
-                      href={`/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`}
-                      className={styles.btnVerTodosMapaDesktop}
-                    >
-                      Ver no Mapa ({totalImoveisEmpresa}) ➔
-                    </Link>
-                  )}
                 </div>
 
+                {/* Grid de Imóveis da Mesma Imobiliária */}
                 <div className={styles.gridOutrosImoveis}>
                   {outrosImoveis.slice(0, 4).map((outro) => (
                     <CardImovel key={outro.id} imovel={outro} />
                   ))}
                 </div>
 
-                {imobiliariaId && (
-                  <div className={styles.rodapeOutrosImoveisMobile}>
+                {/* Rodapé Complementar com Link para o Mapa */}
+                {imobiliariaId && totalImoveisEmpresa > 4 && (
+                  <div className={styles.rodapeOutrosImoveis}>
                     <Link
                       href={`/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`}
-                      className="btn btn-outline btn-lg"
-                      style={{ width: '100%', justifyContent: 'center' }}
+                      className={styles.btnVerTodosCatalogo}
                     >
-                      🏢 Ver todos os {totalImoveisEmpresa} imóveis no mapa
+                      <span>🏢 Explorar todos os <strong>{totalImoveisEmpresa} imóveis</strong> de {nomeImobiliaria} no mapa</span>
+                      <span className={styles.btnVerTodosSeta}>➔</span>
                     </Link>
                   </div>
                 )}
