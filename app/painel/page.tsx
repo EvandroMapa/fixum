@@ -62,6 +62,7 @@ function PainelConteudo() {
   const [modalSegurancaAberto, setModalSegurancaAberto] = useState(false)
   const [modalConfiguracoesAberto, setModalConfiguracoesAberto] = useState(false)
   const [planoAlvoUpgrade, setPlanoAlvoUpgrade] = useState<Plano | null>(null)
+  const [usuarioTelefone, setUsuarioTelefone] = useState('')
   const [ultimoEventoChat, setUltimoEventoChat] = useState<any>(null)
 
   const supabase = useMemo(() => createClient(), [])
@@ -122,6 +123,7 @@ function PainelConteudo() {
     } else {
       setUsuarioNome(perfil?.nome ?? 'Usuário')
     }
+    setUsuarioTelefone(perfil?.telefone || meta?.telefone || '')
 
     const tipoFinal = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
     const ehImob = tipoFinal === 'imobiliaria'
@@ -739,6 +741,10 @@ function PainelConteudo() {
                 usoPlano={usoPlano}
                 faturas={faturas}
                 onAtualizarAssinatura={handleAtualizarAssinatura}
+                usuarioId={usuarioId}
+                usuarioNome={usuarioNome}
+                usuarioEmail={usuarioEmail}
+                usuarioTelefone={usuarioTelefone}
               />
             )
           )}
@@ -763,6 +769,10 @@ function PainelConteudo() {
           planoSugerido={planoAlvoUpgrade}
           imoveisAtivos={usoPlano.imoveisAtivos}
           onConfirmarPlano={handleAtualizarAssinatura}
+          usuarioId={usuarioId}
+          usuarioNome={usuarioNome}
+          usuarioEmail={usuarioEmail}
+          usuarioTelefone={usuarioTelefone}
         />
 
         {/* Modal de Configurações de Segurança e 2FA */}

@@ -10,12 +10,20 @@ interface AbaMeuPlanoProps {
   usoPlano: UsoPlano
   faturas: Fatura[]
   onAtualizarAssinatura: (novoPlano: Plano, metodo: MetodoPagamento) => Promise<void>
+  usuarioId?: string
+  usuarioNome?: string
+  usuarioEmail?: string
+  usuarioTelefone?: string
 }
 
 export default function AbaMeuPlano({
   usoPlano,
   faturas,
   onAtualizarAssinatura,
+  usuarioId = '',
+  usuarioNome = '',
+  usuarioEmail = '',
+  usuarioTelefone = '',
 }: AbaMeuPlanoProps) {
   const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
   const [planoAlvoModal, setPlanoAlvoModal] = useState<Plano | null>(null)
@@ -49,96 +57,66 @@ export default function AbaMeuPlano({
         </button>
       </div>
 
-      {/* ── CARD PRINCIPAL DE STATUS ── */}
-      <div className={styles.gridStatus}>
-        <div className={styles.cardStatusPrincipal}>
-          <div className={styles.cardStatusTopo}>
-            <div>
-              <span className={styles.tagStatusPlano}>Plano Atual</span>
-              <h2 className={styles.nomePlanoDestaque}>{plano.nome}</h2>
-            </div>
-            <div className={styles.precoPlanoDestaque}>
-              {plano.id === 'enterprise_plus' ? (
-                <span>Sob consulta</span>
-              ) : (
-                <>
-                  <span className={styles.valorPreco}>{formatarMoeda(plano.preco_mensal)}</span>
-                  {plano.preco_mensal > 0 && <span className={styles.periodoPreco}>/mês</span>}
-                </>
-              )}
-            </div>
+      {/* ── CARD PRINCIPAL DO PLANO ATUAL ── */}
+      <div className={styles.cardPlanoPrincipal}>
+        <div className={styles.planoPrincipalTopo}>
+          <div className={styles.planoInfoBasica}>
+            <span className={styles.badgePlanoAtual}>Plano Atual</span>
+            <h2 className={styles.nomePlanoAtual}>{plano.nome}</h2>
+            <p className={styles.descricaoPlanoAtual}>{plano.descricao}</p>
           </div>
-
-          <div className={styles.descricaoPlanoDestaque}>{plano.descricao}</div>
-
-          {/* Barra de Progresso de Ocupação */}
-          <div className={styles.secaoProgresso}>
-            <div className={styles.progressoInfo}>
-              <span>
-                <strong>{imoveisAtivos}</strong> de <strong>{limiteMaximo >= 99999 ? '∞' : limiteMaximo}</strong> vagas ativas utilizadas
-              </span>
-              <span className={styles.porcentagemTexto}>{porcentagemUso}%</span>
-            </div>
-
-            <div className={styles.trilhaProgresso}>
-              <div
-                className={styles.barraProgresso}
-                style={{ width: `${Math.min(100, Math.max(5, porcentagemUso))}%`, backgroundColor: corProgresso }}
-              />
-            </div>
-
-            <div className={styles.estatisticasUso}>
-              <span className={styles.tagMiniStat}>
-                ✅ {imoveisAtivos} publicado(s)
-              </span>
-              <span className={styles.tagMiniStat}>
-                ⏸️ {imoveisPausados} pausado(s)
-              </span>
-              <span className={styles.tagMiniStat}>
-                {atingiuLimite ? (
-                  <strong style={{ color: '#ef4444' }}>0 vagas restantes</strong>
-                ) : (
-                  <span>{vagasRestantes} vaga(s) disponível(is)</span>
-                )}
-              </span>
-            </div>
+          <div className={styles.planoPrecoBox}>
+            {plano.id === 'enterprise_plus' ? (
+              <span className={styles.valorSobConsulta}>Sob consulta</span>
+            ) : (
+              <>
+                <span className={styles.precoValor}>{formatarMoeda(plano.preco_mensal)}</span>
+                {plano.preco_mensal > 0 && <span className={styles.precoPeriodo}>/mês</span>}
+              </>
+            )}
           </div>
-
-          {atingiuLimite && (
-            <div className={styles.avisoLimite}>
-              <span>⚠️</span>
-              <p>
-                Você atingiu o limite de imóveis ativos do seu plano. Para ativar novos anúncios, faça upgrade ou pause anúncios existentes.
-              </p>
-            </div>
-          )}
         </div>
 
-        {/* Card de Upgrade Recomendado */}
-        {proximoPlano && (
-          <div className={styles.cardProximoPlano}>
-            <span className={styles.badgeProximo}>Próximo Nível</span>
-            <h3>{proximoPlano.nome}</h3>
-            <p className={styles.descricaoProximo}>
-              Aumente sua capacidade para até <strong>{proximoPlano.limite_imoveis_max} imóveis ativos</strong> simultâneos.
-            </p>
+        {/* Barra de Utilização */}
+        <div className={styles.secaoProgresso}>
+          <div className={styles.progressoRotulos}>
+            <span>
+              <strong>{imoveisAtivos}</strong> de{' '}
+              <strong>{limiteMaximo >= 99999 ? 'Ilimitados' : limiteMaximo}</strong> anúncios ativos utilizados
+            </span>
+            <span className={styles.progressoPorcentagem}>
+              {limiteMaximo >= 99999 ? 'Uso Livre' : `${porcentagemUso}%`}
+            </span>
+          </div>
 
-            <div className={styles.precoProximoBox}>
-              <span className={styles.precoProximoValor}>{formatarMoeda(proximoPlano.preco_mensal)}</span>
-              <span className={styles.precoProximoPeriodo}>/mês</span>
-            </div>
+          <div className={styles.barraTrilho}>
+            <div
+              className={styles.barraPreenchimento}
+              style={{
+                width: `${Math.min(porcentagemUso, 100)}%`,
+                backgroundColor: corProgresso,
+              }}
+            />
+          </div>
 
-            {proximoPlano.custo_unitario_max > 0 && (
-              <div className={styles.custoEfetivoTag}>
-                Custo de apenas {formatarMoeda(proximoPlano.custo_unitario_max)} por imóvel
-              </div>
+          <div className={styles.progressoDetalhes}>
+            <span>📦 {vagasRestantes >= 99999 ? 'Vagas ilimitadas' : `${vagasRestantes} vagas disponíveis`}</span>
+            {imoveisPausados > 0 && (
+              <span>⏸️ {imoveisPausados} {imoveisPausados === 1 ? 'imóvel pausado' : 'imóveis pausados'}</span>
             )}
+          </div>
+        </div>
 
-            <button
-              className={styles.btnContratarProximo}
-              onClick={() => abrirModalUpgrade(proximoPlano)}
-            >
-              Mudar para {proximoPlano.nome}
+        {/* Alerta de Limite Quase Esgotado ou Esgotado */}
+        {atingiuLimite && (
+          <div className={styles.alertaLimiteAtingido}>
+            <span>⚠️</span>
+            <div>
+              <strong>Você atingiu o limite de anúncios ativos do seu plano.</strong>
+              <p>Para publicar ou reativar novos imóveis, faça upgrade para um plano superior.</p>
+            </div>
+            <button className={styles.btnAlertaUpgrade} onClick={() => abrirModalUpgrade(proximoPlano || undefined)}>
+              Upgrade Agora
             </button>
           </div>
         )}
@@ -146,7 +124,7 @@ export default function AbaMeuPlano({
 
       {/* ── TODOS OS PLANOS DA TABELA OFICIAL ── */}
       <div className={styles.secaoTodosPlanos}>
-        <div className={styles.cabecalhoSecao}>
+        <div className={styles.secaoTitulo}>
           <h2>Tabela de Planos e Capacidade</h2>
           <p>Escolha o plano que melhor atende ao tamanho da sua carteira de imóveis</p>
         </div>
@@ -219,18 +197,18 @@ export default function AbaMeuPlano({
 
       {/* ── HISTÓRICO DE FATURAS ── */}
       <div className={styles.secaoFaturas}>
-        <div className={styles.cabecalhoSecao}>
-          <h2>Histórico de Pagamentos</h2>
-          <p>Visualize as faturas e cobranças das suas assinaturas</p>
+        <div className={styles.secaoTitulo}>
+          <h2>Histórico de Faturas e Pagamentos</h2>
+          <p>Acompanhe todos os lançamentos e comprovantes da sua conta</p>
         </div>
 
         {faturas.length === 0 ? (
-          <div className={styles.vazioFaturas}>
-            <span>🧾</span>
-            <p>Nenhuma fatura registrada até o momento.</p>
+          <div className={styles.faturasVazio}>
+            <span>📄</span>
+            <p>Nenhuma fatura emitida até o momento.</p>
           </div>
         ) : (
-          <div className={styles.tabelaFaturasWrapper}>
+          <div className={styles.tabelaWrapper}>
             <table className={styles.tabelaFaturas}>
               <thead>
                 <tr>
@@ -241,14 +219,25 @@ export default function AbaMeuPlano({
                 </tr>
               </thead>
               <tbody>
-                {faturas.map((fat) => (
-                  <tr key={fat.id}>
-                    <td>{new Date(fat.created_at).toLocaleDateString('pt-BR')}</td>
-                    <td><strong>{formatarMoeda(fat.valor)}</strong></td>
-                    <td className={styles.formaPag}>{fat.metodo_pagamento.toUpperCase()}</td>
+                {faturas.map((f) => (
+                  <tr key={f.id}>
+                    <td>{new Date(f.data_pagamento || f.created_at).toLocaleDateString('pt-BR')}</td>
+                    <td><strong>{formatarMoeda(f.valor)}</strong></td>
                     <td>
-                      <span className={`${styles.statusBadge} ${styles[`status_${fat.status}`]}`}>
-                        {fat.status === 'pago' ? 'Pago' : fat.status === 'pendente' ? 'Pendente' : fat.status}
+                      <span className={styles.metodoTag}>
+                        {f.metodo_pagamento === 'pix' ? '⚡ PIX' : f.metodo_pagamento === 'cartao' ? '💳 Cartão' : 'Grátis'}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`
+                          ${styles.statusBadge}
+                          ${f.status === 'pago' ? styles.statusPago : ''}
+                          ${f.status === 'pendente' ? styles.statusPendente : ''}
+                          ${f.status === 'atrasado' ? styles.statusAtrasado : ''}
+                        `}
+                      >
+                        {f.status === 'pago' ? '✓ Pago' : f.status === 'pendente' ? '⏳ Pendente' : '⚠️ Atrasado'}
                       </span>
                     </td>
                   </tr>
@@ -261,22 +250,26 @@ export default function AbaMeuPlano({
 
       {/* ── FAQ SOBRE OS PLANOS ── */}
       <div className={styles.secaoFaq}>
-        <h2>Dúvidas Frequentes</h2>
+        <div className={styles.secaoTitulo}>
+          <h2>Perguntas Frequentes</h2>
+          <p>Tire suas dúvidas sobre o funcionamento dos planos e cotas</p>
+        </div>
+
         <div className={styles.gridFaq}>
           <div className={styles.faqItem}>
-            <h4>O que conta como &quot;imóvel ativo&quot;?</h4>
+            <h4>Como funciona o limite de imóveis?</h4>
             <p>
-              Apenas imóveis com status <strong>publicado</strong> ou <strong>ativo</strong> consomem vagas do seu plano. Imóveis pausados ou em rascunho não contam.
+              O limite é contabilizado apenas sobre imóveis com status <strong>Ativo</strong> ou <strong>Publicado</strong>. Imóveis pausados ou rascunhos não ocupam vagas do seu plano.
             </p>
           </div>
           <div className={styles.faqItem}>
-            <h4>Como funciona o upgrade?</h4>
+            <h4>Posso fazer upgrade a qualquer momento?</h4>
             <p>
-              Ao fazer o upgrade, seu novo limite de anúncios ativos é liberado imediatamente para você cadastrar e reativar imóveis.
+              Sim! Ao fazer o upgrade, seu novo limite de anúncios é liberado imediatamente para cadastro e publicação de novos imóveis.
             </p>
           </div>
           <div className={styles.faqItem}>
-            <h4>Posso pausar um imóvel para liberar vaga?</h4>
+            <h4>Posso pausar um imóvel para cadastrar outro?</h4>
             <p>
               Sim! A qualquer momento você pode pausar anúncios que não estão em negociação para liberar vagas para novos imóveis sem custo adicional.
             </p>
@@ -298,6 +291,10 @@ export default function AbaMeuPlano({
         planoSugerido={planoAlvoModal}
         imoveisAtivos={imoveisAtivos}
         onConfirmarPlano={onAtualizarAssinatura}
+        usuarioId={usuarioId}
+        usuarioNome={usuarioNome}
+        usuarioEmail={usuarioEmail}
+        usuarioTelefone={usuarioTelefone}
       />
     </div>
   )

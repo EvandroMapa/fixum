@@ -5,6 +5,8 @@ import styles from './ModalUpgradePlano.module.css'
 import { Plano, SlugPlano, MetodoPagamento } from '@/lib/types'
 import { PLANOS_OFICIAIS, formatarMoeda, validarDowngrade } from '@/lib/planos'
 
+import ModalCheckoutPlano from './ModalCheckoutPlano'
+
 interface ModalUpgradePlanoProps {
   aberto: boolean
   onFechar: () => void
@@ -12,6 +14,10 @@ interface ModalUpgradePlanoProps {
   planoSugerido?: Plano | null
   imoveisAtivos: number
   onConfirmarPlano: (novoPlano: Plano, metodo: MetodoPagamento) => Promise<void>
+  usuarioId?: string
+  usuarioNome?: string
+  usuarioEmail?: string
+  usuarioTelefone?: string
 }
 
 export default function ModalUpgradePlano({
@@ -21,6 +27,10 @@ export default function ModalUpgradePlano({
   planoSugerido,
   imoveisAtivos,
   onConfirmarPlano,
+  usuarioId = '',
+  usuarioNome = '',
+  usuarioEmail = '',
+  usuarioTelefone = '',
 }: ModalUpgradePlanoProps) {
   const [planoSelecionadoId, setPlanoSelecionadoId] = useState<SlugPlano>(
     planoSugerido?.id || planoAtual.id
@@ -30,6 +40,7 @@ export default function ModalUpgradePlano({
   const [erro, setErro] = useState<string | null>(null)
   const [sucesso, setSucesso] = useState(false)
   const [mostrarTodosPlanos, setMostrarTodosPlanos] = useState(false)
+  const [checkoutAberto, setCheckoutAberto] = useState(false)
 
   useEffect(() => {
     if (planoSugerido) {
@@ -55,11 +66,17 @@ export default function ModalUpgradePlano({
       return
     }
 
+    // Se for plano pago, abre o checkout com PIX / Cartão
+    if (planoSelecionado.preco_mensal > 0) {
+      setCheckoutAberto(true)
+      return
+    }
+
     setCarregando(true)
     setErro(null)
 
     try {
-      await onConfirmarPlano(planoSelecionado, isGratis ? 'gratis' : metodoPagamento)
+      await onConfirmarPlano(planoSelecionado, 'gratis')
       setSucesso(true)
       setTimeout(() => {
         setSucesso(false)
@@ -215,38 +232,6 @@ export default function ModalUpgradePlano({
               </div>
             )}
 
-            {/* SELEÇÃO DO MÉTODO DE PAGAMENTO */}
-            {!isGratis && !isMesmoPlano && (
-              <div className={styles.secaoPagamento}>
-                <label className={styles.labelSecao}>Forma de Pagamento:</label>
-                <div className={styles.opcoesPagamento}>
-                  <button
-                    type="button"
-                    className={`${styles.opcaoPagamento} ${metodoPagamento === 'pix' ? styles.opcaoAtiva : ''}`}
-                    onClick={() => setMetodoPagamento('pix')}
-                  >
-                    <span className={styles.iconePagamento}>⚡</span>
-                    <div className={styles.infoPagamento}>
-                      <strong>Pix Automático</strong>
-                      <small>Liberação imediata dos anúncios</small>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`${styles.opcaoPagamento} ${metodoPagamento === 'cartao' ? styles.opcaoAtiva : ''}`}
-                    onClick={() => setMetodoPagamento('cartao')}
-                  >
-                    <span className={styles.iconePagamento}>💳</span>
-                    <div className={styles.infoPagamento}>
-                      <strong>Cartão de Crédito</strong>
-                      <small>Cobrança recorrente mensal</small>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Ações Finais */}
             <div className={styles.rodapeAcoes}>
               <button className={styles.btnCancelar} onClick={onFechar}>
@@ -267,11 +252,30 @@ export default function ModalUpgradePlano({
                     ? 'Processando...'
                     : isGratis
                     ? 'Ativar Plano Grátis'
-                    : `Contratar ${planoSelecionado.nome} — ${formatarMoeda(planoSelecionado.preco_mensal)}/mês`}
+                    : `Prosseguir para Pagamento (${formatarMoeda(planoSelecionado.preco_mensal)}/mês) ➔`}
                 </button>
               )}
             </div>
           </>
+        )}
+
+        {/* MODAL DE CHECKOUT REAL (PIX / CARTÃO ASAAS) */}
+        {checkoutAberto && (
+          <ModalCheckoutPlano
+            aberto={checkoutAberto}
+            onFechar={() => {
+              setCheckoutAberto(false)
+              onFechar()
+            }}
+            plano={planoSelecionado}
+            usuarioId={usuarioId}
+            usuarioNome={usuarioNome}
+            usuarioEmail={usuarioEmail}
+            usuarioTelefone={usuarioTelefone}
+            onPlanoAtivado={() => {
+              onConfirmarPlano(planoSelecionado, metodoPagamento)
+            }}
+          />
         )}
       </div>
     </div>

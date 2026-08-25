@@ -221,7 +221,7 @@ export type SlugPlano =
 
 export type StatusAssinatura = 'ativo' | 'pendente' | 'cancelado' | 'atrasado'
 export type MetodoPagamento = 'pix' | 'cartao' | 'gratis'
-export type StatusFatura = 'pago' | 'pendente' | 'falhou' | 'reembolsado'
+export type StatusFatura = 'pago' | 'pendente' | 'falhou' | 'reembolsado' | 'atrasado' | 'atrasada'
 
 export interface Plano {
   id: SlugPlano
