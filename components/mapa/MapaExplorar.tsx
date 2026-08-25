@@ -549,7 +549,7 @@ export default function MapaExplorar({
         const popup = new mapboxgl.Popup({
           offset: isMobile ? 14 : 20,
           closeButton: true,
-          closeOnClick: true,
+          closeOnClick: false,
           maxWidth: isMobile ? '220px' : '290px',
           className: 'fixum-popup',
         }).setDOMContent(popupEl)
