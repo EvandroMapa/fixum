@@ -50,9 +50,9 @@ export default function BuscaAutoComplete({
     const screenW = window.innerWidth
     const screenH = window.innerHeight
     const isMobile = screenW < 768
-    const width = isMobile ? Math.min(rect.width, screenW - 24) : Math.max(rect.width, 320)
+    const width = isMobile ? screenW - 24 : Math.max(rect.width, 360)
     const left = isMobile
-      ? Math.max(12, Math.min(rect.left, screenW - width - 12))
+      ? 12
       : Math.min(rect.left, screenW - width - 16)
 
     const alturaDropdown = 280

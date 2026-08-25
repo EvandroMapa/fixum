@@ -41,9 +41,9 @@ export default function HeroBusca() {
     const screenW = window.innerWidth
     const screenH = window.innerHeight
     const isMobile = screenW < 768
-    const width = isMobile ? Math.min(rect.width, screenW - 32) : Math.max(rect.width, 360)
+    const width = isMobile ? screenW - 24 : Math.max(rect.width, 380)
     const left = isMobile
-      ? Math.max(16, Math.min(rect.left, screenW - width - 16))
+      ? 12
       : rect.left
 
     // Altura estimada do dropdown (5 itens × ~56px + padding)
