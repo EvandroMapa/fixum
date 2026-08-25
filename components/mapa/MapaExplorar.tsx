@@ -20,6 +20,7 @@ interface Props {
   cidadeFiltro?: string
   isOrigemGps?: boolean
   isFavoritos?: boolean
+  carregando?: boolean
 }
 
 function precoLabel(preco: number): string {
@@ -45,6 +46,34 @@ function calcularDistanciaKm(lat1: number, lon1: number, lat2: number, lon2: num
   return R * c
 }
 
+// Dispersão sutil para imóveis com mesma coordenada (ex: mesmo prédio/condomínio)
+function aplicarDispersaoCoordenadas(imoveis: Imovel[]): { imovel: Imovel; lng: number; lat: number }[] {
+  const coordCount = new Map<string, number>()
+  return imoveis
+    .filter((i) => typeof i.latitude === 'number' && typeof i.longitude === 'number')
+    .map((i) => {
+      const chave = `${i.latitude!.toFixed(4)}_${i.longitude!.toFixed(4)}`
+      const index = coordCount.get(chave) || 0
+      coordCount.set(chave, index + 1)
+
+      if (index === 0) {
+        return { imovel: i, lng: i.longitude!, lat: i.latitude! }
+      }
+
+      // Pequeno deslocamento circular para que nenhum marcador fique 100% oculto atrás de outro
+      const angulo = (index * (2 * Math.PI)) / 6
+      const raio = 0.00018 * Math.ceil(index / 6)
+      const deltaLat = raio * Math.sin(angulo)
+      const deltaLng = raio * Math.cos(angulo)
+
+      return {
+        imovel: i,
+        lng: i.longitude! + deltaLng,
+        lat: i.latitude! + deltaLat,
+      }
+    })
+}
+
 export default function MapaExplorar({
   imoveis,
   imovelHover,
@@ -57,6 +86,7 @@ export default function MapaExplorar({
   cidadeFiltro,
   isOrigemGps,
   isFavoritos,
+  carregando,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapaRef = useRef<mapboxgl.Map | null>(null)
@@ -66,6 +96,7 @@ export default function MapaExplorar({
   const [mostrarBannerDistante, setMostrarBannerDistante] = useState(false)
   const fitInicialExecutadoRef = useRef(false)
   const isAnimandoProgramaticoRef = useRef(false)
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Ref para evitar stale closure no listener do moveend
   const onPesquisarRef = useRef(onPesquisarNaArea)
@@ -78,8 +109,8 @@ export default function MapaExplorar({
     const mapa = new mapboxgl.Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: centroInicial ?? [-43.9386, -20.3000], // Região de atuação (MG Central)
-      zoom: centroInicial ? 12 : 9,                  // Zoom 12 para cidade/GPS | Zoom 9 regional com imóveis
+      center: centroInicial ?? [-43.7867, -20.6603], // Região de atuação (Lafaiete/Hub)
+      zoom: centroInicial ? 14 : 13,                 // Zoom 14 para GPS/localidade | Zoom 13 para visão urbana
       attributionControl: false,
     })
 
@@ -99,7 +130,14 @@ export default function MapaExplorar({
 
     mapa.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right')
 
-    mapa.on('load', () => setMapaPronto(true))
+    mapa.on('load', () => {
+      setMapaPronto(true)
+      // Só dispara busca por bounds no load se NÃO houver filtro de cidade
+      // (quando há cidade, o useEffect de enquadramento cuida de buscar por texto e fazer fitBounds)
+      if (!cidadeFiltro) {
+        onPesquisarRef.current?.(mapa.getBounds()!, false)
+      }
+    })
 
     mapa.on('moveend', (e) => {
       // Ignora se for uma animação programática inicial (fitBounds / flyTo do sistema)
@@ -107,7 +145,11 @@ export default function MapaExplorar({
 
       const isInteracaoUsuario = Boolean((e as unknown as { originalEvent?: unknown }).originalEvent)
       if (isInteracaoUsuario) {
-        onPesquisarRef.current?.(mapa.getBounds()!, true)
+        // Debounce de 300ms — evita disparar dezenas de queries durante arrasto contínuo
+        if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current)
+        debounceTimerRef.current = setTimeout(() => {
+          onPesquisarRef.current?.(mapa.getBounds()!, true)
+        }, 300)
       }
     })
 
@@ -139,52 +181,59 @@ export default function MapaExplorar({
     }
   }, [centroInicial, mapaPronto])
 
-  // Enquadramento inteligente na montagem (seja por cidade/GPS ou abrangendo os imóveis ativos)
+  // Enquadramento suave na montagem: distingue GPS puro de busca por cidade
   useEffect(() => {
     if (!mapaPronto || fitInicialExecutadoRef.current) {
       return
     }
 
-    const imoveisValidos = imoveis.filter((i) => i.latitude && i.longitude)
-    if (imoveisValidos.length === 0) return
+    // Caso 1: Busca por cidade (com ou sem coordenadas do geocoding)
+    // → Enquadra nos imóveis reais encontrados, não no centro da cidade
+    if (cidadeFiltro) {
+      const imoveisValidos = imoveis.filter((i) => i.latitude && i.longitude)
+      if (carregando) return // Espera a busca terminar
+      fitInicialExecutadoRef.current = true
 
-    fitInicialExecutadoRef.current = true
-
-    // Caso 1: Filtro explícito de cidade ou busca geral sem GPS
-    if (cidadeFiltro || !centroInicial) {
-      setMostrarBannerDistante(false)
-      if (mapaRef.current) {
+      if (imoveisValidos.length > 0 && mapaRef.current) {
         isAnimandoProgramaticoRef.current = true
         const bounds = new mapboxgl.LngLatBounds()
         imoveisValidos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
-        mapaRef.current.fitBounds(bounds, { padding: 60, duration: 900, maxZoom: 13 })
-        mapaRef.current.once('idle', () => { isAnimandoProgramaticoRef.current = false })
+        mapaRef.current.fitBounds(bounds, { padding: 60, duration: 900, maxZoom: 15 })
+        mapaRef.current.once('idle', () => {
+          isAnimandoProgramaticoRef.current = false
+          // Após enquadrar, dispara busca com os bounds reais para sincronizar a lista
+          if (mapaRef.current) {
+            onPesquisarRef.current?.(mapaRef.current.getBounds()!, false)
+          }
+        })
+        setMostrarBannerDistante(false)
+      } else {
+        setMostrarBannerDistante(true)
       }
       return
     }
 
-    // Caso 2: Origem por GPS do usuário
-    if (centroInicial && isOrigemGps) {
-      const [userLng, userLat] = centroInicial
-      const imoveisProximos = imoveisValidos.filter(
-        (i) => calcularDistanciaKm(userLat, userLng, i.latitude!, i.longitude!) <= 50
-      )
-
-      if (imoveisProximos.length === 0) {
-        setMostrarBannerDistante(true)
-      } else {
-        setMostrarBannerDistante(false)
-        if (mapaRef.current) {
-          isAnimandoProgramaticoRef.current = true
-          const bounds = new mapboxgl.LngLatBounds()
-          bounds.extend(centroInicial)
-          imoveisProximos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
-          mapaRef.current.fitBounds(bounds, { padding: 70, duration: 1000, maxZoom: 14 })
-          mapaRef.current.once('idle', () => { isAnimandoProgramaticoRef.current = false })
-        }
+    // Caso 2: GPS puro (origem=gps, sem filtro de cidade)
+    // → Mantém câmera no centro do usuário com zoom 14
+    if (centroInicial) {
+      fitInicialExecutadoRef.current = true
+      if (!carregando) {
+        setMostrarBannerDistante(imoveis.length === 0)
       }
+      return
     }
-  }, [centroInicial, imoveis, mapaPronto, cidadeFiltro, isOrigemGps])
+  }, [centroInicial, imoveis, mapaPronto, cidadeFiltro, carregando])
+
+  // Atualiza exibição do banner distante quando a lista de imóveis da área for atualizada
+  useEffect(() => {
+    // Só avalia o banner APÓS o carregamento terminar
+    if (carregando) return
+    if (centroInicial && mapaPronto) {
+      setMostrarBannerDistante(imoveis.length === 0)
+    } else {
+      setMostrarBannerDistante(false)
+    }
+  }, [centroInicial, imoveis, mapaPronto, carregando])
 
   // Quando o modo de favoritos estiver ativo ou a lista de favoritos mudar: enquadrar todos os favoritos no mapa
   useEffect(() => {
@@ -198,17 +247,20 @@ export default function MapaExplorar({
   }, [isFavoritos, imoveis, mapaPronto])
 
   function handleEnquadrarTodosImoveis() {
-    if (!mapaRef.current || imoveis.length === 0) return
-    const bounds = new mapboxgl.LngLatBounds()
-    if (centroInicial) {
-      bounds.extend(centroInicial)
-    }
-    imoveis.forEach((i) => {
-      if (i.latitude && i.longitude) {
-        bounds.extend([i.longitude, i.latitude])
+    if (!mapaRef.current) return
+    isAnimandoProgramaticoRef.current = true
+    mapaRef.current.flyTo({
+      center: [-43.7867, -20.6603],
+      zoom: 13,
+      duration: 1600,
+      essential: true,
+    })
+    mapaRef.current.once('idle', () => {
+      isAnimandoProgramaticoRef.current = false
+      if (mapaRef.current) {
+        onPesquisarRef.current?.(mapaRef.current.getBounds()!, true)
       }
     })
-    mapaRef.current.fitBounds(bounds, { padding: 80, duration: 1500, maxZoom: 14 })
     setMostrarBannerDistante(false)
   }
 
@@ -222,7 +274,13 @@ export default function MapaExplorar({
       duration: 1400,
       essential: true,
     })
-    mapaRef.current.once('idle', () => { isAnimandoProgramaticoRef.current = false })
+    mapaRef.current.once('idle', () => {
+      isAnimandoProgramaticoRef.current = false
+      // Dispara busca com os bounds reais da nova posição para atualizar lista e marcadores
+      if (mapaRef.current) {
+        onPesquisarRef.current?.(mapaRef.current.getBounds()!, false)
+      }
+    })
   }, [voarPara, mapaPronto])
 
   // Cache local em memória de IDs favoritados para renderização síncrona instantânea (sem piscar)
@@ -314,9 +372,7 @@ export default function MapaExplorar({
     marcadoresMapRef.current.forEach(({ marcador }) => marcador.remove())
     marcadoresMapRef.current.clear()
 
-    imoveis
-      .filter((i) => i.latitude && i.longitude)
-      .forEach((i) => {
+    aplicarDispersaoCoordenadas(imoveis).forEach(({ imovel: i, lng, lat }) => {
         const label = precoLabel(i.preco || 0)
         const isFavoritado = favoritosSetRef.current.has(i.id)
 
@@ -392,8 +448,8 @@ export default function MapaExplorar({
           })
 
           // Auto-ajuste de câmera (Auto-Pan inteligente): garante que o popup nunca fique cortado em nenhuma borda
-          if (mapa && i.longitude && i.latitude) {
-            const point = mapa.project([i.longitude, i.latitude])
+          if (mapa && lng && lat) {
+            const point = mapa.project([lng, lat])
             const containerH = mapa.getContainer().clientHeight
             const containerW = mapa.getContainer().clientWidth
 
@@ -496,7 +552,7 @@ export default function MapaExplorar({
         }).setDOMContent(popupEl)
 
         const marcador = new mapboxgl.Marker({ element: wrapper })
-          .setLngLat([i.longitude!, i.latitude!])
+          .setLngLat([lng, lat])
           .setPopup(popup)
           .addTo(mapa)
 

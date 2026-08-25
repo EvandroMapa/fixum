@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import LogoGota from '@/components/ui/LogoGota'
-import BotoesHero from '@/components/home/BotoesHero'
+import HeroBusca from '@/components/home/HeroBusca'
 import styles from './page.module.css'
 
 const COMO_FUNCIONA = [
@@ -30,19 +30,18 @@ export default function HomePage() {
         <div className={styles.heroConteudo}>
           <div className={styles.heroBadge}>
             <span className={styles.heroBadgePonto} />
-            Plataforma imobiliaria com mapa interativo
+            Plataforma imobiliária centrada no mapa
           </div>
           <h1 className={styles.heroTitulo}>
-            Encontre o imovel<br />
-            <span className={styles.heroDestaque}>perfeito para voce</span>
+            Encontre o imóvel<br />
+            <span className={styles.heroDestaque}>perfeito para você</span>
           </h1>
           <p className={styles.heroSubtitulo}>
             Explore imóveis à venda e para alugar onde você quiser.
             Visualize tudo no mapa, filtre pelo que importa e fale direto com o anunciante.
           </p>
-          <div className={styles.heroBotoes}>
-            <BotoesHero />
-          </div>
+
+          <HeroBusca />
 
           <div className={styles.heroStats}>
             {STATS.map((s) => (

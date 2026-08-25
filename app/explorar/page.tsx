@@ -55,6 +55,11 @@ function ExplorarConteudo() {
   // Guarda os bounds atuais do mapa — ao mudar filtros, mantém a área visível
   const boundsAtualRef = useRef<mapboxgl.LngLatBounds | null>(null)
   const idsImobiliariaCacheRef = useRef<Record<string, string[]>>({})
+  // Cache do mapa membro→imobiliária (carregado 1x, evita N requests a cada arrasto)
+  const mapaBrandingRef = useRef<Map<string, any> | null>(null)
+  const brandingCarregandoRef = useRef(false)
+  // Flag para bloquear busca duplicada durante transição de flyTo (autocomplete)
+  const voandoParaRef = useRef(false)
 
   const supabase = createClient()
 
@@ -159,31 +164,41 @@ function ExplorarConteudo() {
       const { data, error } = await query
       if (error) throw error
 
-      // Buscar imobiliárias para resolver o branding oficial
-      const { data: todosPerfisList } = await supabase
-        .from('perfis')
-        .select('id, nome, tipo, foto_url')
+      // Resolver branding imobiliária → membro (com cache persistente)
+      let mapaMembroParaImob = mapaBrandingRef.current
+      if (!mapaMembroParaImob && !brandingCarregandoRef.current) {
+        brandingCarregandoRef.current = true
+        mapaMembroParaImob = new Map<string, any>()
+        try {
+          const { data: todosPerfisList } = await supabase
+            .from('perfis')
+            .select('id, nome, tipo, foto_url')
 
-      const todosPerfis = todosPerfisList ?? []
-      const imobiliarias = todosPerfis.filter((p: any) => p.tipo === 'imobiliaria')
+          const todosPerfis = todosPerfisList ?? []
+          const imobiliarias = todosPerfis.filter((p: any) => p.tipo === 'imobiliaria')
 
-      // Montar mapa: id do membro → perfil da imobiliária dona
-      const mapaMembroParaImob = new Map<string, any>()
-      try {
-        for (const imob of imobiliarias) {
-          const res = await fetch(`/api/corretores?imobiliaria_id=${imob.id}`)
-          if (res.ok) {
-            const json = await res.json()
-            const membros = json.corretores || []
-            for (const m of membros) {
-              mapaMembroParaImob.set(m.id, imob)
-            }
+          for (const imob of imobiliarias) {
+            try {
+              const res = await fetch(`/api/corretores?imobiliaria_id=${imob.id}`)
+              if (res.ok) {
+                const json = await res.json()
+                const membros = json.corretores || []
+                for (const m of membros) {
+                  mapaMembroParaImob.set(m.id, imob)
+                }
+              }
+            } catch {}
+            mapaMembroParaImob.set(imob.id, imob)
           }
-          mapaMembroParaImob.set(imob.id, imob)
-        }
-      } catch {}
+        } catch {}
+        mapaBrandingRef.current = mapaMembroParaImob
+        brandingCarregandoRef.current = false
+      }
 
-      const imoveisComFotos = (data ?? []).map((i: Record<string, unknown>) => {
+      // Se ainda está carregando em paralelo, usar mapa vazio temporário
+      if (!mapaMembroParaImob) mapaMembroParaImob = new Map()
+
+      let imoveisComFotos = (data ?? []).map((i: Record<string, unknown>) => {
         const perfilOriginal = (i.perfis as any) || null
         const anuncianteId = (i.anunciante_id as string) || ''
 
@@ -205,6 +220,21 @@ function ExplorarConteudo() {
           anunciante: anuncianteFinal,
         }
       }) as unknown as Imovel[]
+
+      // Se a busca foi por bounds, garantir que somente imóveis 100% contidos na área visível da tela sejam listados
+      if (bounds && !isFavoritos) {
+        const sw = bounds.getSouthWest()
+        const ne = bounds.getNorthEast()
+        imoveisComFotos = imoveisComFotos.filter((i) => {
+          if (typeof i.latitude !== 'number' || typeof i.longitude !== 'number') return false
+          return (
+            i.latitude >= sw.lat &&
+            i.latitude <= ne.lat &&
+            i.longitude >= sw.lng &&
+            i.longitude <= ne.lng
+          )
+        })
+      }
 
       setImoveis(imoveisComFotos)
       setTotalResultados(imoveisComFotos.length)
@@ -230,8 +260,13 @@ function ExplorarConteudo() {
 
   // Ao mudar filtros ou alternar modo de favoritos: busca imóveis mantendo a área visível do mapa
   useEffect(() => {
-    buscarImoveis(filtros, boundsAtualRef.current)
-  }, [filtros, buscarImoveis])
+    // Bloqueia durante transição de flyTo (a busca será feita ao pousar)
+    if (voandoParaRef.current) return
+    // Se há cidade ou favoritos ou já temos bounds do mapa, busca imediatamente
+    if (filtros.cidade || isFavoritos || boundsAtualRef.current) {
+      buscarImoveis(filtros, boundsAtualRef.current)
+    }
+  }, [filtros, isFavoritos, buscarImoveis])
 
   // Listener para sincronização instantânea ao favoritar/desfavoritar em tempo real
   useEffect(() => {
@@ -243,13 +278,35 @@ function ExplorarConteudo() {
     return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [filtros, buscarImoveis])
 
-  // Chamado pelo mapa automaticamente ao mover/zoom manual
+  // Chamado pelo mapa automaticamente no load e a cada arrasto/zoom (moveend)
   const handlePesquisarNaArea = useCallback((bounds: mapboxgl.LngLatBounds, isInteracaoUsuario?: boolean) => {
     boundsAtualRef.current = bounds // salva para reusar ao trocar filtros
+    voandoParaRef.current = false   // flyTo pousou, desbloqueia buscas por filtros
 
     if (isInteracaoUsuario) {
-      buscarImoveis(filtros, bounds)
+      // 1. Limpar parâmetros de cidade/GPS da URL silenciosamente no evento
+      try {
+        const url = new URL(window.location.href)
+        let alterouUrl = false
+        if (url.searchParams.has('cidade')) { url.searchParams.delete('cidade'); alterouUrl = true }
+        if (url.searchParams.has('lat')) { url.searchParams.delete('lat'); alterouUrl = true }
+        if (url.searchParams.has('lng')) { url.searchParams.delete('lng'); alterouUrl = true }
+        if (url.searchParams.has('origem')) { url.searchParams.delete('origem'); alterouUrl = true }
+        if (url.searchParams.has('q')) { url.searchParams.delete('q'); alterouUrl = true }
+        if (alterouUrl) {
+          window.history.replaceState(null, '', url.pathname + (url.search ? url.search : ''))
+        }
+      } catch {}
+
+      // 2. Se filtros tinha cidade, remove. O useEffect([filtros]) cuidará da busca se mudar
+      if (filtros.cidade) {
+        setFiltros((f) => ({ ...f, cidade: undefined }))
+        return
+      }
     }
+
+    // Busca sempre garantindo os bounds reais da tela
+    buscarImoveis(filtros, bounds)
   }, [filtros, buscarImoveis])
 
   function handleFiltrosChange(novosFiltros: TFiltros) {
@@ -257,8 +314,29 @@ function ExplorarConteudo() {
   }
 
   const handleLocalSelecionado = useCallback((sugestao: Sugestao) => {
+    // Flag: bloqueia useEffect([filtros]) até o flyTo pousar
+    voandoParaRef.current = true
+
+    // Limpa o filtro de cidade para não disparar busca duplicada via useEffect([filtros])
+    // A busca real acontece UMA ÚNICA VEZ quando o flyTo pousa (idle → onPesquisarNaArea)
+    setFiltros((f) => {
+      if (f.cidade) return { ...f, cidade: undefined }
+      return f
+    })
+
     // Voa para as coordenadas do local selecionado no autocomplete
     setVoarPara(sugestao.coords)
+
+    // Atualiza a URL para refletir a nova localidade
+    try {
+      const url = new URL(window.location.href)
+      url.searchParams.delete('cidade')
+      url.searchParams.delete('lat')
+      url.searchParams.delete('lng')
+      url.searchParams.delete('origem')
+      url.searchParams.delete('q')
+      window.history.replaceState(null, '', url.pathname + (url.search || ''))
+    } catch {}
   }, [])
 
   const handleSelecionarImovel = useCallback((id: string) => {
@@ -340,10 +418,13 @@ function ExplorarConteudo() {
               <span className={styles.resultados} style={{ color: '#1e40af' }}>
                 <strong>🏢 {totalResultados}</strong> {totalResultados === 1 ? 'imóvel desta imobiliária' : 'imóveis desta imobiliária'}
               </span>
+            ) : filtros.cidade ? (
+              <span className={styles.resultados}>
+                <strong>{totalResultados}</strong> {totalResultados === 1 ? 'imóvel encontrado' : 'imóveis encontrados'} em <strong>{filtros.cidade}</strong>
+              </span>
             ) : (
               <span className={styles.resultados}>
-                <strong>{totalResultados}</strong> {totalResultados === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
-                {filtros.cidade && ` em ${filtros.cidade}`}
+                <strong>{totalResultados}</strong> {totalResultados === 1 ? 'imóvel nesta área do mapa' : 'imóveis nesta área do mapa'}
               </span>
             )}
           </div>
@@ -407,11 +488,11 @@ function ExplorarConteudo() {
           ) : imoveis.length === 0 ? (
             <div className={styles.semResultados}>
               <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>📍</span>
-              <h3>Nenhum imóvel encontrado{filtros.cidade ? ` em ${filtros.cidade}` : ''}</h3>
+              <h3>Nenhum imóvel encontrado{filtros.cidade ? ` em ${filtros.cidade}` : ' nesta área do mapa'}</h3>
               <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
                 {filtros.cidade
-                  ? `Ainda não temos imóveis para ${filtros.negociacao === 'aluguel' ? 'alugar' : 'comprar'} cadastrados em ${filtros.cidade}. Você pode ser o primeiro a anunciar ou explorar outras cidades no mapa!`
-                  : 'Tente ajustar os filtros ou clique em "Pesquisar nesta área" no mapa.'}
+                  ? `Ainda não temos imóveis para ${filtros.negociacao === 'aluguel' ? 'alugar' : 'comprar'} cadastrados em ${filtros.cidade}. Você pode ser o primeiro a anunciar ou navegar pelo mapa para outras cidades!`
+                  : 'Nenhum imóvel ativo neste quadrante do mapa. Arraste o mapa, afaste o zoom ou ajuste os filtros para ver mais opções.'}
               </p>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Link href="/painel/novo-imovel" className="btn btn-primario btn-sm">
@@ -457,6 +538,7 @@ function ExplorarConteudo() {
             cidadeFiltro={filtros.cidade}
             isOrigemGps={isOrigemGps}
             isFavoritos={isFavoritos}
+            carregando={carregando}
           />
         </div>
       </div>
