@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
 import CardImovel from '@/components/imovel/CardImovel'
@@ -69,6 +70,10 @@ interface Props {
 }
 
 export default function PaginaImovelCliente({ imovel, historico, outrosImoveis = [] }: Props) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const origemParam = searchParams.get('origem')
+
   const [fotoAtiva, setFotoAtiva] = useState(0)
   const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
   const [modalFoto, setModalFoto] = useState(false)
@@ -226,18 +231,34 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
       <div className={styles.pagina}>
         {/* Barra superior de navegação / Ações */}
         <div className={styles.barraTopoImovel}>
-          <Link href="/explorar" className={styles.btnVoltar}>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                if (origemParam === 'mapa') {
+                  sessionStorage.setItem('fixum_vista_ativa', 'mapa')
+                }
+              }
+              if (typeof window !== 'undefined' && window.history.length > 1) {
+                router.back()
+              } else {
+                router.push(origemParam === 'mapa' ? '/explorar?vista=mapa' : '/explorar')
+              }
+            }}
+            className={styles.btnVoltar}
+            title={origemParam === 'mapa' ? 'Voltar para a busca no mapa' : 'Voltar para a lista de imóveis'}
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 18-6-6 6-6"/>
             </svg>
-            <span>Voltar ao Mapa</span>
-          </Link>
+            <span>{origemParam === 'mapa' ? 'Voltar ao Mapa' : 'Voltar aos Imóveis'}</span>
+          </button>
 
           {/* Breadcrumb visível apenas no desktop */}
           <div className={styles.breadcrumbDesktop}>
             <Link href="/">Início</Link>
             <span>›</span>
-            <Link href="/explorar">Explorar</Link>
+            <Link href={origemParam === 'mapa' ? '/explorar?vista=mapa' : '/explorar'}>Explorar</Link>
             <span>›</span>
             <span style={{ color: '#475569' }}>{imovel.cidade}</span>
             <span>›</span>

@@ -26,11 +26,36 @@ function ExplorarConteudo() {
   const [imovelHover, setImovelHover] = useState<string | null>(null)
   const [imovelSelecionado, setImovelSelecionado] = useState<string | null>(null)
   const [totalResultados, setTotalResultados] = useState(0)
-  const [vistaAtiva, setVistaAtiva] = useState<'lista' | 'mapa'>('lista')
+  const [vistaAtiva, setVistaAtiva] = useState<'lista' | 'mapa'>(() => {
+    const param = searchParams.get('vista')
+    if (param === 'mapa' || param === 'lista') return param
+    if (typeof window !== 'undefined') {
+      const salvo = sessionStorage.getItem('fixum_vista_ativa')
+      if (salvo === 'mapa' || salvo === 'lista') return salvo
+    }
+    return 'lista'
+  })
   const [voarPara, setVoarPara] = useState<[number, number] | null>(null)
   const imobiliariaId = searchParams.get('imobiliaria') || searchParams.get('imobiliaria_id') || null
   const nomeImobParam = searchParams.get('nome') || ''
   const [nomeImobiliaria, setNomeImobiliaria] = useState(nomeImobParam)
+
+  function handleAlternarVista(novaVista?: 'lista' | 'mapa') {
+    const destino = novaVista ?? (vistaAtiva === 'lista' ? 'mapa' : 'lista')
+    setVistaAtiva(destino)
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.setItem('fixum_vista_ativa', destino)
+        const url = new URL(window.location.href)
+        if (destino === 'mapa') {
+          url.searchParams.set('vista', 'mapa')
+        } else {
+          url.searchParams.delete('vista')
+        }
+        window.history.replaceState(null, '', url.pathname + (url.search || ''))
+      } catch {}
+    }
+  }
 
   const [filtros, setFiltros] = useState<TFiltros>(() => {
     const negParam = searchParams.get('negociacao')
@@ -547,7 +572,7 @@ function ExplorarConteudo() {
       <button
         type="button"
         className={styles.btnFlutuanteMobile}
-        onClick={() => setVistaAtiva(vistaAtiva === 'lista' ? 'mapa' : 'lista')}
+        onClick={() => handleAlternarVista()}
         aria-label={vistaAtiva === 'lista' ? 'Ver no mapa' : 'Ver lista de imóveis'}
       >
         {vistaAtiva === 'lista' ? (

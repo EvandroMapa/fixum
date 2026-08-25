@@ -522,7 +522,7 @@ export default function MapaExplorar({
         const popupEl = document.createElement('div')
         popupEl.style.cssText = `font-family:system-ui,-apple-system,sans-serif;width:${popupW}px;overflow:hidden;border-radius:${isMobile ? '12px' : '16px'};cursor:pointer;`
         popupEl.innerHTML = `
-          <a href="/imovel/${i.id}" style="text-decoration:none;color:inherit;display:block;">
+          <a href="/imovel/${i.id}?origem=mapa" style="text-decoration:none;color:inherit;display:block;">
             ${fotoUrl ? `
               <div style="position:relative;height:${fotoH}px;overflow:hidden;border-radius:${isMobile ? '10px 10px 0 0' : '12px 12px 0 0'};">
                 <img src="${fotoUrl}" alt="${i.titulo || ''}"
@@ -652,7 +652,15 @@ export default function MapaExplorar({
           >
             ✕
           </button>
-          <Link href={`/imovel/${imovelCardMobile.id}`} className={styles.linkCardMobile}>
+          <Link
+            href={`/imovel/${imovelCardMobile.id}?origem=mapa`}
+            className={styles.linkCardMobile}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem('fixum_vista_ativa', 'mapa')
+              }
+            }}
+          >
             <div className={styles.fotoCardMobile}>
               {imovelCardMobile.fotos?.find((f) => f.principal)?.url || imovelCardMobile.fotos?.[0]?.url ? (
                 <img
