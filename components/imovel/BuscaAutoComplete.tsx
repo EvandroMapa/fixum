@@ -31,7 +31,7 @@ export default function BuscaAutoComplete({
   const [carregando, setCarregando] = useState(false)
   const [aberto, setAberto] = useState(false)
   const [indiceAtivo, setIndiceAtivo] = useState(-1)
-  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 })
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, bottom: 0, left: 0, width: 0, abrirAcima: false })
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -48,16 +48,23 @@ export default function BuscaAutoComplete({
     if (!wrapperRef.current) return
     const rect = wrapperRef.current.getBoundingClientRect()
     const screenW = window.innerWidth
+    const screenH = window.innerHeight
     const isMobile = screenW < 768
-    const width = isMobile ? Math.min(rect.width, screenW - 24) : Math.max(rect.width, 280)
+    const width = isMobile ? Math.min(rect.width, screenW - 24) : Math.max(rect.width, 320)
     const left = isMobile
       ? Math.max(12, Math.min(rect.left, screenW - width - 12))
-      : rect.left + window.scrollX
+      : Math.min(rect.left, screenW - width - 16)
+
+    const alturaDropdown = 280
+    const espacoAbaixo = screenH - rect.bottom
+    const abrirAcima = espacoAbaixo < alturaDropdown && rect.top > alturaDropdown
 
     setDropdownPos({
-      top: rect.bottom + window.scrollY + 6,
+      top: rect.bottom + 6,
+      bottom: (screenH - rect.top) + 6,
       left,
       width,
+      abrirAcima,
     })
   }, [])
 
@@ -121,14 +128,30 @@ export default function BuscaAutoComplete({
   }, [aberto, atualizarPosicao])
 
   const dropdown = aberto && sugestoes.length > 0 && (
-    <ul className={styles.dropdown} role="listbox" style={{ position: 'fixed', top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width, zIndex: 10001 }}>
+    <ul
+      className={`${styles.dropdown} ${dropdownPos.abrirAcima ? styles.dropdownAcima : ''}`}
+      role="listbox"
+      style={{
+        position: 'fixed',
+        ...(dropdownPos.abrirAcima ? { bottom: dropdownPos.bottom } : { top: dropdownPos.top }),
+        left: dropdownPos.left,
+        width: dropdownPos.width,
+        zIndex: 10001,
+      }}
+    >
       {sugestoes.map((s, idx) => (
-        <li key={s.id} className={`${styles.item} ${idx === indiceAtivo ? styles.itemAtivo : ''}`}
-          onMouseDown={() => handleSelecionar(s)} onMouseEnter={() => setIndiceAtivo(idx)}
-          role="option" aria-selected={idx === indiceAtivo}>
+        <li
+          key={s.id}
+          className={`${styles.item} ${idx === indiceAtivo ? styles.itemAtivo : ''}`}
+          onMouseDown={() => handleSelecionar(s)}
+          onMouseEnter={() => setIndiceAtivo(idx)}
+          role="option"
+          aria-selected={idx === indiceAtivo}
+        >
           <span className={styles.itemIcone}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
             </svg>
           </span>
           <div className={styles.itemTexto}>
