@@ -66,26 +66,46 @@ export default function ModalUpgradePlano({
       return
     }
 
-    // Se for plano pago, abre o checkout com PIX / Cartão
-    if (planoSelecionado.preco_mensal > 0) {
-      setCheckoutAberto(true)
+    // Se for DOWNGRADE (redução de plano ou plano grátis), aplica diretamente sem cobrar novamente agora
+    if (isDowngrade || planoSelecionado.id === 'gratis') {
+      setCarregando(true)
+      setErro(null)
+
+      try {
+        const res = await fetch('/api/pagamentos/alterar-plano', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            usuarioId,
+            novoPlanoId: planoSelecionado.id,
+            tipo: 'downgrade',
+          }),
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Erro ao agendar redução de plano.')
+        }
+
+        await onConfirmarPlano(planoSelecionado, planoSelecionado.id === 'gratis' ? 'gratis' : 'cartao')
+        setSucesso(true)
+        setTimeout(() => {
+          setSucesso(false)
+          onFechar()
+        }, 2200)
+      } catch (e: unknown) {
+        setErro(e instanceof Error ? e.message : 'Erro ao atualizar plano.')
+      } finally {
+        setCarregando(false)
+      }
       return
     }
 
-    setCarregando(true)
-    setErro(null)
-
-    try {
-      await onConfirmarPlano(planoSelecionado, 'gratis')
-      setSucesso(true)
-      setTimeout(() => {
-        setSucesso(false)
-        onFechar()
-      }, 1500)
-    } catch (e: unknown) {
-      setErro(e instanceof Error ? e.message : 'Erro ao atualizar plano.')
-    } finally {
-      setCarregando(false)
+    // Se for UPGRADE (plano maior pago), abre o checkout para pagamento do novo plano
+    if (planoSelecionado.preco_mensal > 0) {
+      setCheckoutAberto(true)
+      return
     }
   }
 
@@ -232,6 +252,25 @@ export default function ModalUpgradePlano({
               </div>
             )}
 
+            {/* BANNER DE INFORMAÇÃO DE DOWNGRADE (SEM COBRANÇA AGORA) */}
+            {isDowngrade && (
+              <div style={{
+                background: 'rgba(59, 130, 246, 0.08)',
+                border: '1px solid rgba(59, 130, 246, 0.25)',
+                borderRadius: '10px',
+                padding: '12px 16px',
+                marginTop: '12px',
+                fontSize: '0.85rem',
+                color: '#1e293b',
+                lineHeight: '1.4'
+              }}>
+                <strong style={{ color: '#1d4ed8' }}>📉 Redução de Plano (Sem cobrança no ato):</strong>
+                <p style={{ margin: '4px 0 0', color: '#475569' }}>
+                  Você já possui este ciclo pago. Seu plano atual continuará ativo e, a partir da próxima renovação mensal, sua mensalidade será ajustada para <strong>{formatarMoeda(planoSelecionado.preco_mensal)}/mês</strong>. <strong>Custo agora: R$ 0,00.</strong>
+                </p>
+              </div>
+            )}
+
             {/* Ações Finais */}
             <div className={styles.rodapeAcoes}>
               <button className={styles.btnCancelar} onClick={onFechar}>
@@ -250,6 +289,8 @@ export default function ModalUpgradePlano({
                 >
                   {carregando
                     ? 'Processando...'
+                    : isDowngrade
+                    ? `📉 Confirmar Redução (R$ 0,00 Agora)`
                     : isGratis
                     ? 'Ativar Plano Grátis'
                     : `Prosseguir para Pagamento (${formatarMoeda(planoSelecionado.preco_mensal)}/mês) ➔`}
