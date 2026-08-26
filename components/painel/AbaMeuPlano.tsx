@@ -295,6 +295,8 @@ export default function AbaMeuPlano({
         usuarioNome={usuarioNome}
         usuarioEmail={usuarioEmail}
         usuarioTelefone={usuarioTelefone}
+        dataInicioAssinatura={usoPlano.assinatura?.data_inicio}
+        dataFimCiclo={usoPlano.assinatura?.data_fim_ciclo}
       />
     </div>
   )

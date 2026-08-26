@@ -768,6 +768,8 @@ function PainelConteudo() {
           usuarioNome={usuarioNome}
           usuarioEmail={usuarioEmail}
           usuarioTelefone={usuarioTelefone}
+          dataInicioAssinatura={usoPlano.assinatura?.data_inicio}
+          dataFimCiclo={usoPlano.assinatura?.data_fim_ciclo}
         />
 
         {/* Modal de Configurações de Segurança e 2FA */}

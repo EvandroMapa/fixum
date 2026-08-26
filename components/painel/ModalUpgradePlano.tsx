@@ -18,6 +18,8 @@ interface ModalUpgradePlanoProps {
   usuarioNome?: string
   usuarioEmail?: string
   usuarioTelefone?: string
+  dataInicioAssinatura?: string
+  dataFimCiclo?: string
 }
 
 export default function ModalUpgradePlano({
@@ -31,6 +33,8 @@ export default function ModalUpgradePlano({
   usuarioNome = '',
   usuarioEmail = '',
   usuarioTelefone = '',
+  dataInicioAssinatura,
+  dataFimCiclo,
 }: ModalUpgradePlanoProps) {
   const [planoSelecionadoId, setPlanoSelecionadoId] = useState<SlugPlano>(
     planoSugerido?.id || planoAtual.id
@@ -56,6 +60,17 @@ export default function ModalUpgradePlano({
   const isMesmoPlano = planoSelecionado.id === planoAtual.id
   const isDowngrade = planoSelecionado.ordem < planoAtual.ordem
   const isGratis = planoSelecionado.id === 'gratis'
+
+  // Cálculo do término do ciclo atual
+  const dataFimCalculada = (() => {
+    if (dataFimCiclo) {
+      return new Date(dataFimCiclo).toLocaleDateString('pt-BR')
+    }
+    const base = dataInicioAssinatura ? new Date(dataInicioAssinatura) : new Date()
+    const fim = new Date(base)
+    fim.setDate(fim.getDate() + 30)
+    return fim.toLocaleDateString('pt-BR')
+  })()
 
   // Validação de downgrade
   const validacao = validarDowngrade(planoSelecionado.id, imoveisAtivos)
@@ -264,10 +279,18 @@ export default function ModalUpgradePlano({
                 color: '#1e293b',
                 lineHeight: '1.4'
               }}>
-                <strong style={{ color: '#1d4ed8' }}>📉 Redução de Plano (Sem cobrança no ato):</strong>
-                <p style={{ margin: '4px 0 0', color: '#475569' }}>
-                  Você já possui este ciclo pago. Seu plano atual continuará ativo e, a partir da próxima renovação mensal, sua mensalidade será ajustada para <strong>{formatarMoeda(planoSelecionado.preco_mensal)}/mês</strong>. <strong>Custo agora: R$ 0,00.</strong>
+                <strong style={{ color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  📉 Redução de Plano (Sem cobrança no ato)
+                </strong>
+                <p style={{ margin: '6px 0 0', color: '#475569' }}>
+                  Você já possui o ciclo atual quitado até <strong>{dataFimCalculada}</strong>. Seu plano atual (<strong>{planoAtual.nome}</strong>) continuará 100% ativo até essa data.
                 </p>
+                <p style={{ margin: '4px 0 0', color: '#475569' }}>
+                  A partir de <strong>{dataFimCalculada}</strong>, sua assinatura será renovada no valor reduzido de <strong>{formatarMoeda(planoSelecionado.preco_mensal)}/mês</strong>.
+                </p>
+                <div style={{ marginTop: '8px', fontWeight: 600, color: '#16a34a' }}>
+                  ✓ Custo da alteração hoje: R$ 0,00
+                </div>
               </div>
             )}
 
