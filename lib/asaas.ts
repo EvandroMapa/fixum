@@ -299,14 +299,14 @@ export async function criarAssinaturaCartaoAsaas({
     'User-Agent': 'Fixum-Plataforma-Imobiliaria/1.0',
   }
 
-  const amanha = new Date()
-  amanha.setDate(amanha.getDate() + 1)
+  // Vencimento da primeira cobrança: HOJE (débito imediato no cartão)
+  const hoje = new Date().toISOString().split('T')[0]
 
   const payload = {
     customer: clienteId,
     billingType: 'CREDIT_CARD',
     value: valor,
-    nextDueDate: amanha.toISOString().split('T')[0],
+    nextDueDate: hoje,
     cycle: 'MONTHLY',
     description: descricao,
     externalReference: JSON.stringify({ usuarioId, planoId, tipo: 'assinatura_cartao' }),
