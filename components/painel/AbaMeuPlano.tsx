@@ -57,66 +57,119 @@ export default function AbaMeuPlano({
         </button>
       </div>
 
-      {/* ── CARD PRINCIPAL DO PLANO ATUAL ── */}
-      <div className={styles.cardPlanoPrincipal}>
-        <div className={styles.planoPrincipalTopo}>
-          <div className={styles.planoInfoBasica}>
-            <span className={styles.badgePlanoAtual}>Plano Atual</span>
-            <h2 className={styles.nomePlanoAtual}>{plano.nome}</h2>
-            <p className={styles.descricaoPlanoAtual}>{plano.descricao}</p>
-          </div>
-          <div className={styles.planoPrecoBox}>
-            {plano.id === 'enterprise_plus' ? (
-              <span className={styles.valorSobConsulta}>Sob consulta</span>
-            ) : (
-              <>
-                <span className={styles.precoValor}>{formatarMoeda(plano.preco_mensal)}</span>
-                {plano.preco_mensal > 0 && <span className={styles.precoPeriodo}>/mês</span>}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Barra de Utilização */}
-        <div className={styles.secaoProgresso}>
-          <div className={styles.progressoRotulos}>
-            <span>
-              <strong>{imoveisAtivos}</strong> de{' '}
-              <strong>{limiteMaximo >= 99999 ? 'Ilimitados' : limiteMaximo}</strong> anúncios ativos utilizados
+      {/* ── CARD HERO EXECUTIVO DO PLANO ATUAL ── */}
+      <div className={styles.heroPlano}>
+        <div className={styles.heroHeader}>
+          <div className={styles.heroBadges}>
+            <span className={styles.badgePlanoAtivo}>
+              <span className={styles.pontoVerde}></span> Plano Ativo: {plano.nome}
             </span>
-            <span className={styles.progressoPorcentagem}>
-              {limiteMaximo >= 99999 ? 'Uso Livre' : `${porcentagemUso}%`}
+            <span className={styles.badgeStatusAssinatura}>
+              {usoPlano.assinatura?.metodo_pagamento === 'cartao' ? '💳 Recorrência Cartão' : '⚡ Pagamento PIX'}
             </span>
           </div>
 
-          <div className={styles.barraTrilho}>
-            <div
-              className={styles.barraPreenchimento}
-              style={{
-                width: `${Math.min(porcentagemUso, 100)}%`,
-                backgroundColor: corProgresso,
-              }}
-            />
-          </div>
-
-          <div className={styles.progressoDetalhes}>
-            <span>📦 {vagasRestantes >= 99999 ? 'Vagas ilimitadas' : `${vagasRestantes} vagas disponíveis`}</span>
-            {imoveisPausados > 0 && (
-              <span>⏸️ {imoveisPausados} {imoveisPausados === 1 ? 'imóvel pausado' : 'imóveis pausados'}</span>
-            )}
+          <div className={styles.heroDataCiclo}>
+            <span>📅 Próxima Renovação:</span>
+            <strong>
+              {usoPlano.assinatura?.data_fim_ciclo
+                ? new Date(usoPlano.assinatura.data_fim_ciclo).toLocaleDateString('pt-BR')
+                : (() => {
+                    const base = usoPlano.assinatura?.data_inicio ? new Date(usoPlano.assinatura.data_inicio) : new Date()
+                    const fim = new Date(base)
+                    fim.setDate(fim.getDate() + 30)
+                    return fim.toLocaleDateString('pt-BR')
+                  })()}
+            </strong>
           </div>
         </div>
 
-        {/* Alerta de Limite Quase Esgotado ou Esgotado */}
-        {atingiuLimite && (
-          <div className={styles.alertaLimiteAtingido}>
-            <span>⚠️</span>
-            <div>
-              <strong>Você atingiu o limite de anúncios ativos do seu plano.</strong>
-              <p>Para publicar ou reativar novos imóveis, faça upgrade para um plano superior.</p>
+        <div className={styles.heroCorpo}>
+          <div className={styles.heroInfoPlano}>
+            <h2 className={styles.heroNomePlano}>{plano.nome}</h2>
+            <p className={styles.heroDescricaoPlano}>{plano.descricao}</p>
+          </div>
+
+          <div className={styles.heroPrecoEAcoes}>
+            <div className={styles.heroPrecoBox}>
+              {plano.id === 'enterprise_plus' ? (
+                <span className={styles.valorSobConsulta}>Sob consulta</span>
+              ) : (
+                <>
+                  <span className={styles.heroPrecoValor}>{formatarMoeda(plano.preco_mensal)}</span>
+                  {plano.preco_mensal > 0 && <span className={styles.heroPrecoPeriodo}>/mês</span>}
+                </>
+              )}
             </div>
-            <button className={styles.btnAlertaUpgrade} onClick={() => abrirModalUpgrade(proximoPlano || undefined)}>
-              Upgrade Agora
+
+            <button className={styles.btnHeroUpgrade} onClick={() => abrirModalUpgrade()}>
+              ⚡ Fazer Upgrade
+            </button>
+          </div>
+        </div>
+
+        {/* Grid de Métricas de Uso da Cota */}
+        <div className={styles.heroMetricasGrid}>
+          <div className={styles.metricaCard}>
+            <div className={styles.metricaTopo}>
+              <span className={styles.metricaLabel}>Anúncios Ativos no Mapa</span>
+              <span className={styles.metricaValorDestaque}>
+                {imoveisAtivos} <small>/ {limiteMaximo >= 99999 ? '∞' : limiteMaximo}</small>
+              </span>
+            </div>
+
+            <div className={styles.barraTrilho}>
+              <div
+                className={styles.barraPreenchimento}
+                style={{
+                  width: `${Math.min(porcentagemUso, 100)}%`,
+                  backgroundColor: corProgresso,
+                }}
+              />
+            </div>
+
+            <div className={styles.metricaRodape}>
+              <span>{limiteMaximo >= 99999 ? 'Uso Livre e Ilimitado' : `${porcentagemUso}% da cota utilizada`}</span>
+            </div>
+          </div>
+
+          <div className={styles.metricaCard}>
+            <div className={styles.metricaTopo}>
+              <span className={styles.metricaLabel}>Vagas Disponíveis</span>
+              <span className={styles.iconeMetrica}>📦</span>
+            </div>
+            <div className={styles.metricaNumeroGrande}>
+              {vagasRestantes >= 99999 ? 'Ilimitadas' : vagasRestantes}
+            </div>
+            <div className={styles.metricaRodape}>
+              <span>{vagasRestantes === 0 ? '⚠️ Limite atingido' : 'Prontas para novos anúncios'}</span>
+            </div>
+          </div>
+
+          <div className={styles.metricaCard}>
+            <div className={styles.metricaTopo}>
+              <span className={styles.metricaLabel}>Imóveis Pausados</span>
+              <span className={styles.iconeMetrica}>⏸️</span>
+            </div>
+            <div className={styles.metricaNumeroGrande}>
+              {imoveisPausados}
+            </div>
+            <div className={styles.metricaRodape}>
+              <span>Não consomem vagas ativas</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Alerta se atingiu limite */}
+        {atingiuLimite && (
+          <div className={styles.alertaLimiteHero}>
+            <span className={styles.alertaIcone}>⚠️</span>
+            <div className={styles.alertaTexto}>
+              <strong>Limite de Anúncios Ativos Atingido</strong>
+              <p>Você utilizou todas as {limiteMaximo} vagas do plano {plano.nome}. Para publicar novos imóveis, faça upgrade para o plano superior.</p>
+            </div>
+            <button className={styles.btnAlertaUpgradeHero} onClick={() => abrirModalUpgrade(proximoPlano || undefined)}>
+              Liberar Mais Vagas ➔
             </button>
           </div>
         )}
