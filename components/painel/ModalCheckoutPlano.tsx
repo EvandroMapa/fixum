@@ -42,6 +42,8 @@ export default function ModalCheckoutPlano({
   const [numeroCartao, setNumeroCartao] = useState('')
   const [validade, setValidade] = useState('')
   const [cvv, setCvv] = useState('')
+  const [cep, setCep] = useState('')
+  const [numeroEndereco, setNumeroEndereco] = useState('')
 
   // Estado do PIX Gerado
   const [dadosPix, setDadosPix] = useState<{
@@ -93,6 +95,11 @@ export default function ModalCheckoutPlano({
           .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
       )
     }
+  }
+
+  function handleCepChange(val: string) {
+    const limpo = val.replace(/\D/g, '').slice(0, 8)
+    setCep(limpo.replace(/^(\d{5})(\d)/, '$1-$2'))
   }
 
   function handleNumeroCartaoChange(val: string) {
@@ -180,8 +187,8 @@ export default function ModalCheckoutPlano({
       } else {
         // Cartão de Crédito
         const [mes, ano] = validade.split('/')
-        if (!mes || !ano || mes.length !== 2 || (ano.length !== 2 && ano.length !== 4)) {
-          throw new Error('Data de validade do cartão inválida. Use o formato MM/AA.')
+        if (!cep || cep.replace(/\D/g, '').length < 8) {
+          throw new Error('Informe o CEP do titular do cartão para validação antifraude.')
         }
 
         const res = await fetch('/api/pagamentos/criar-cobranca', {
@@ -205,6 +212,8 @@ export default function ModalCheckoutPlano({
               cvv,
               cpfCnpjTitular: cpfCnpj,
               telefoneTitular: telefone,
+              cepTitular: cep.replace(/\D/g, ''),
+              numeroEnderecoTitular: numeroEndereco || 'S/N',
             },
           }),
         })
@@ -461,6 +470,31 @@ export default function ModalCheckoutPlano({
                           onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
                           placeholder="123"
                           maxLength={4}
+                        />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGrid2}>
+                      <div className={styles.campo}>
+                        <label>CEP do Titular</label>
+                        <input
+                          type="text"
+                          required
+                          value={cep}
+                          onChange={(e) => handleCepChange(e.target.value)}
+                          placeholder="00000-000"
+                          maxLength={9}
+                        />
+                      </div>
+
+                      <div className={styles.campo}>
+                        <label>Nº do Endereço</label>
+                        <input
+                          type="text"
+                          required
+                          value={numeroEndereco}
+                          onChange={(e) => setNumeroEndereco(e.target.value)}
+                          placeholder="123 ou S/N"
                         />
                       </div>
                     </div>
