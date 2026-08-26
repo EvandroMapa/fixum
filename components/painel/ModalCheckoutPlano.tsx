@@ -48,6 +48,7 @@ export default function ModalCheckoutPlano({
     cobrancaId: string
     pixQrCode?: string
     pixCopiaCola?: string
+    invoiceUrl?: string
     valor: number
     vencimento: string
   } | null>(null)
@@ -287,39 +288,80 @@ export default function ModalCheckoutPlano({
               // TELA DO PIX GERADO
               <div className={styles.boxPix}>
                 <div className={styles.qrCodeWrapper}>
-                  {dadosPix.pixQrCode ? (
+                  {dadosPix.pixQrCode || dadosPix.pixCopiaCola ? (
                     <img
-                      src={dadosPix.pixQrCode}
+                      src={dadosPix.pixQrCode || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.pixCopiaCola || '')}`}
                       alt="QR Code PIX Fixum"
                       className={styles.qrCodeImg}
                     />
                   ) : (
-                    <div style={{ width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      QR Code indisponível
+                    <div style={{ width: 180, height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '10px', fontSize: '0.8rem', color: '#94a3b8' }}>
+                      <span>⚠️ QR Code aguardando emissão</span>
                     </div>
                   )}
                 </div>
 
-                <div className={styles.copiaColaWrapper}>
-                  <input
-                    type="text"
-                    readOnly
-                    value={dadosPix.pixCopiaCola || ''}
-                    className={styles.copiaColaInput}
-                  />
-                  <button
-                    type="button"
-                    className={styles.btnCopiarPix}
-                    onClick={handleCopiarPix}
-                  >
-                    {copiado ? '✓ Código Copiado!' : '📋 Copiar Código PIX'}
-                  </button>
-                </div>
+                {dadosPix.pixCopiaCola && (
+                  <div className={styles.copiaColaWrapper}>
+                    <input
+                      type="text"
+                      readOnly
+                      value={dadosPix.pixCopiaCola}
+                      className={styles.copiaColaInput}
+                    />
+                    <button
+                      type="button"
+                      className={styles.btnCopiarPix}
+                      onClick={handleCopiarPix}
+                    >
+                      {copiado ? '✓ Código Copiado!' : '📋 Copiar Código PIX'}
+                    </button>
+                  </div>
+                )}
+
+                {dadosPix.invoiceUrl && (
+                  <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                    <a
+                      href={dadosPix.invoiceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        color: '#38bdf8',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        textDecoration: 'underline',
+                      }}
+                    >
+                      🔗 Abrir Fatura Oficial no Asaas ↗
+                    </a>
+                  </div>
+                )}
 
                 <div className={styles.radarStatus}>
                   <span className={styles.pulsarPonto} />
                   <span>Aguardando pagamento no app do banco...</span>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDadosPix(null)
+                    if (pollingRef.current) clearInterval(pollingRef.current)
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#94a3b8',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    marginTop: '12px',
+                  }}
+                >
+                  ← Alterar dados ou método de pagamento
+                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className={styles.secaoForm}>

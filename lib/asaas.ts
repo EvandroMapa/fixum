@@ -78,13 +78,8 @@ export async function obterCredenciaisAsaas(): Promise<{ apiKey: string; apiUrl:
 export async function criarOuBuscarClienteAsaas(dados: DadosClienteAsaas): Promise<{ id: string; nome: string; email: string }> {
   const { apiKey, apiUrl } = await obterCredenciaisAsaas()
 
-  // Se não houver chave do Asaas configurada ainda (ambiente de dev inicial), simula cliente
   if (!apiKey || apiKey === 'mock_asaas_key') {
-    return {
-      id: `cus_mock_${dados.usuarioId.slice(0, 8)}`,
-      nome: dados.nome,
-      email: dados.email,
-    }
+    throw new Error('Chave de API do Asaas não configurada. Acesse o Painel Admin > Configurações Globais para configurar a chave.')
   }
 
   const headers = {
@@ -102,6 +97,10 @@ export async function criarOuBuscarClienteAsaas(dados: DadosClienteAsaas): Promi
       headers,
     })
 
+    if (resBusca.status === 401) {
+      throw new Error('Chave de API do Asaas não autorizada (HTTP 401). Verifique suas credenciais em Configurações Globais.')
+    }
+
     if (resBusca.ok) {
       const dataBusca = await resBusca.json()
       if (dataBusca.data && dataBusca.data.length > 0) {
@@ -112,7 +111,10 @@ export async function criarOuBuscarClienteAsaas(dados: DadosClienteAsaas): Promi
         }
       }
     }
-  } catch (err) {
+  } catch (err: any) {
+    if (err.message && err.message.includes('401')) {
+      throw err
+    }
     console.warn('[ASAAS] Erro ao buscar cliente existente, tentando criar novo:', err)
   }
 
@@ -133,10 +135,18 @@ export async function criarOuBuscarClienteAsaas(dados: DadosClienteAsaas): Promi
     body: JSON.stringify(payload),
   })
 
-  const dataCriar = await resCriar.json()
+  if (resCriar.status === 401) {
+    throw new Error('Chave de API do Asaas não autorizada (HTTP 401). Verifique suas credenciais no Painel Admin > Configurações Globais.')
+  }
+
+  const rawText = await resCriar.text()
+  let dataCriar: any = {}
+  try {
+    dataCriar = JSON.parse(rawText)
+  } catch {}
 
   if (!resCriar.ok) {
-    const msgErro = dataCriar.errors?.[0]?.description || 'Erro ao cadastrar cliente no gateway de pagamento.'
+    const msgErro = dataCriar.errors?.[0]?.description || 'Erro ao cadastrar cliente no Asaas.'
     throw new Error(`Asaas: ${msgErro}`)
   }
 
@@ -204,7 +214,15 @@ export async function criarCobrancaPixAsaas({
     body: JSON.stringify(payload),
   })
 
-  const data = await res.json()
+  if (res.status === 401) {
+    throw new Error('Chave de API do Asaas não autorizada (HTTP 401). Verifique suas credenciais em Configurações Globais.')
+  }
+
+  const rawText = await res.text()
+  let data: any = {}
+  try {
+    data = JSON.parse(rawText)
+  } catch {}
 
   if (!res.ok) {
     const msg = data.errors?.[0]?.description || 'Erro ao gerar cobrança PIX no Asaas.'
@@ -222,8 +240,12 @@ export async function criarCobrancaPixAsaas({
     })
     if (resPix.ok) {
       const dataPix = await resPix.json()
-      pixQrCode = dataPix.encodedImage ? `data:image/png;base64,${dataPix.encodedImage}` : ''
       pixCopiaCola = dataPix.payload || ''
+      if (dataPix.encodedImage) {
+        pixQrCode = `data:image/png;base64,${dataPix.encodedImage}`
+      } else if (pixCopiaCola) {
+        pixQrCode = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pixCopiaCola)}`
+      }
     }
   } catch (err) {
     console.error('[ASAAS] Erro ao obter QR Code do PIX:', err)
@@ -267,14 +289,8 @@ export async function criarAssinaturaCartaoAsaas({
 }> {
   const { apiKey, apiUrl } = await obterCredenciaisAsaas()
 
-  // Mock para desenvolvimento sem chave
   if (!apiKey || apiKey === 'mock_asaas_key') {
-    return {
-      assinaturaId: `sub_mock_${Date.now()}`,
-      status: 'ACTIVE',
-      valor,
-      proximaCobranca: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
-    }
+    throw new Error('Chave de API do Asaas não configurada. Acesse o Painel Admin > Configurações Globais.')
   }
 
   const headers = {
@@ -318,7 +334,15 @@ export async function criarAssinaturaCartaoAsaas({
     body: JSON.stringify(payload),
   })
 
-  const data = await res.json()
+  if (res.status === 401) {
+    throw new Error('Chave de API do Asaas não autorizada (HTTP 401). Verifique suas credenciais em Configurações Globais.')
+  }
+
+  const rawText = await res.text()
+  let data: any = {}
+  try {
+    data = JSON.parse(rawText)
+  } catch {}
 
   if (!res.ok) {
     const msg = data.errors?.[0]?.description || 'Erro ao processar assinatura no cartão de crédito.'
@@ -344,7 +368,7 @@ export async function consultarCobrancaAsaas(cobrancaId: string): Promise<{
 }> {
   const { apiKey, apiUrl } = await obterCredenciaisAsaas()
 
-  if (!apiKey || apiKey === 'mock_asaas_key' || cobrancaId.startsWith('pay_mock_')) {
+  if (!apiKey || apiKey === 'mock_asaas_key') {
     return {
       id: cobrancaId,
       status: 'PENDING',
@@ -363,7 +387,11 @@ export async function consultarCobrancaAsaas(cobrancaId: string): Promise<{
     headers,
   })
 
-  const data = await res.json()
+  const rawText = await res.text()
+  let data: any = {}
+  try {
+    data = JSON.parse(rawText)
+  } catch {}
 
   if (!res.ok) {
     throw new Error(data.errors?.[0]?.description || 'Erro ao consultar status da cobrança no Asaas.')
