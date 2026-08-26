@@ -1,0 +1,498 @@
+.containerAnalytics {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── BARRA DE FILTROS ── */
+.barraFiltros {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.filtroGrupo,
+.filtroPeriodo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.labelFiltro {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  min-width: 220px;
+}
+
+.iconeFiltro {
+  font-size: 1.1rem;
+}
+
+.botoesRegiao,
+.seletorPeriodo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btnRegiao,
+.btnPeriodo {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnRegiao:hover,
+.btnPeriodo:hover {
+  border-color: #38bdf8;
+  color: #f8fafc;
+}
+
+.btnRegiaoAtivo,
+.btnPeriodoAtivo {
+  background: #0284c7 !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+}
+
+/* ── BANNER DE ESCOPO ── */
+.bannerEscopo {
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #e0f2fe;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tagPeriodo {
+  background: #0369a1;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── GRID DE KPIS ── */
+.gridKpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.cardKpi {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cardKpi:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.kpiVerde { border-left: 4px solid #10b981; }
+.kpiAzul { border-left: 4px solid #38bdf8; }
+.kpiRoxo { border-left: 4px solid #a855f7; }
+.kpiDourado { border-left: 4px solid #f59e0b; }
+
+.kpiInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kpiTitulo {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpiNumero {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.kpiDesc {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.kpiIcone {
+  font-size: 2rem;
+  opacity: 0.9;
+}
+
+/* ── SEÇÃO HEADER ── */
+.secaoHeader {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.secaoTitulo {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.secaoSub {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+/* ── GRID DE CRESCIMENTO (NET GROWTH & CHURN) ── */
+.gridGrowth {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.cardGrowth {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.growthTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.growthBadgeVerde {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.growthBadgeVermelho {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.growthBadgeAzul {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.growthBadgeRoxo {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.growthIcone {
+  font-size: 1.3rem;
+}
+
+.growthValorVerde {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.growthValorVermelho {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+.growthValor {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.growthPositivo {
+  color: #10b981;
+}
+
+.growthNegativo {
+  color: #ef4444;
+}
+
+.growthSub {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.growthDuplo {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 4px;
+}
+
+.taxaValor {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f87171;
+}
+
+.taxaValorVerde {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #34d399;
+}
+
+.taxaSub {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.divisorVertical {
+  width: 1px;
+  height: 36px;
+  background: #334155;
+}
+
+/* ── GRID DE GRÁFICOS VISUAIS ── */
+.gridGraficos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+}
+
+.cardGrafico {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardGraficoTitulo {
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.listaBarras {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.itemBarra {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.itemBarraCabecalho {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.itemBarraNome {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.itemBarraValores {
+  color: #94a3b8;
+}
+
+.barraFundo {
+  width: 100%;
+  height: 10px;
+  background: #0f172a;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barraPreenchimento {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.barraPreenchimentoCancelamento {
+  height: 100%;
+  background: linear-gradient(90deg, #dc2626, #f87171);
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.vazio {
+  color: #64748b;
+  font-size: 0.85rem;
+  padding: 24px 0;
+  text-align: center;
+}
+
+/* ── RANKING DE CIDADES ── */
+.painelRanking {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rankingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rankingTitulo {
+  color: #f8fafc;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.tabelaWrapper {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.tabela th {
+  padding: 12px 14px;
+  color: #94a3b8;
+  font-weight: 600;
+  border-bottom: 1px solid #334155;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.tabela td {
+  padding: 14px;
+  color: #e2e8f0;
+  border-bottom: 1px solid #283548;
+}
+
+.cidadeCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badgePosicao {
+  background: #334155;
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badgeTaxa {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.taxaBaixa {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.taxaAlta {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.btnFiltrarCidade {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #38bdf8;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnFiltrarCidade:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+/* ── RESPONSIVIDADE (MOBILE-FIRST) ── */
+@media (max-width: 768px) {
+  .barraFiltros {
+    padding: 14px;
+  }
+  .filtroGrupo,
+  .filtroPeriodo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .gridGraficos {
+    grid-template-columns: 1fr;
+  }
+}

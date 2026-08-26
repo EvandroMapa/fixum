@@ -1,0 +1,546 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* ── CABEÇALHO ── */
+.cabecalho {
+  padding: 20px 24px;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: #0f172a;
+}
+
+.perfilTopo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.linhaNome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nome {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.sub {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 4px 0 0 0;
+}
+
+.badgeStatus {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.statusAtivo {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.statusSuspenso {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.badgeTipo {
+  background: #334155;
+  color: #cbd5e1;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.btnFechar {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.btnFechar:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+/* ── CORPO ── */
+.corpo {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* BANNER EQUIPE VINCULADA */
+.bannerEquipeVinculada {
+  background: rgba(2, 132, 199, 0.12);
+  border: 1.5px solid #0284c7;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bannerEquipeIcone {
+  font-size: 2rem;
+}
+
+.bannerEquipeTexto {
+  flex: 1;
+  min-width: 260px;
+}
+
+.bannerEquipeTexto strong {
+  color: #38bdf8;
+  font-size: 0.95rem;
+  display: block;
+}
+
+.bannerEquipeTexto p {
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}
+
+.btnVerImobiliariaDona {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnVerImobiliariaDona:hover {
+  background: #0369a1;
+}
+
+.gridCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.cardInfo {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardLabel {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.cardValor {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.cardValorPlano {
+  color: #38bdf8;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.cardValorPequeno {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.cardSub {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+/* ── SEÇÃO EQUIPE (IMOBILIÁRIA) ── */
+.secaoEquipe,
+.secaoContatos,
+.secaoPlano,
+.secaoNotas {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tabelaEquipeWrapper {
+  overflow-x: auto;
+}
+
+.tabelaEquipe {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.tabelaEquipe th {
+  padding: 8px 10px;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  border-bottom: 1px solid #334155;
+}
+
+.tabelaEquipe td {
+  padding: 10px;
+  border-bottom: 1px solid #1e293b;
+  color: #e2e8f0;
+}
+
+.btnVerCorretor {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #38bdf8;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnVerCorretor:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.secaoTitulo {
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.linhaAcoesContato {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btnWhats {
+  background: #059669;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btnWhats:hover {
+  background: #10b981;
+}
+
+.btnEmail {
+  background: #334155;
+  color: #f8fafc;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btnEmail:hover {
+  background: #475569;
+}
+
+.btnVerImoveis {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnVerImoveis:hover {
+  background: #0369a1;
+}
+
+.dadoVazio {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+/* ── GESTÃO DE PLANO ── */
+.secaoPlanoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btnEditarPlano {
+  background: #334155;
+  border: 1px solid #475569;
+  color: #38bdf8;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnEditarPlano:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+.formPlano {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.campoForm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.labelForm {
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+
+.selectForm,
+.inputForm {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.selectForm:focus,
+.inputForm:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.linhaBotoesPlano {
+  display: flex;
+  gap: 10px;
+}
+
+.btnSalvarPlano {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSalvarPlano:hover {
+  background: #1d4ed8;
+}
+
+.btnCancelarPlano {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ── ANOTAÇÕES ── */
+.textareaNotas {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.textareaNotas:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.btnSalvarNotas {
+  align-self: flex-end;
+  background: #334155;
+  border: 1px solid #475569;
+  color: #f8fafc;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSalvarNotas:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.msgSucesso {
+  color: #34d399;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ── RODAPÉ ── */
+.rodape {
+  padding: 16px 24px;
+  border-top: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0f172a;
+  gap: 12px;
+}
+
+.btnAcaoConta {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSuspender {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btnSuspender:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.btnReativar {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.btnReativar:hover {
+  background: #059669;
+  color: #ffffff;
+}
+
+.btnFecharRodape {
+  background: #334155;
+  border: none;
+  color: #f8fafc;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnFecharRodape:hover {
+  background: #475569;
+}

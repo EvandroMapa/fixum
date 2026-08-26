@@ -7,23 +7,39 @@ const ASAAS_WEBHOOK_TOKEN = process.env.ASAAS_WEBHOOK_TOKEN || ''
 
 export async function POST(req: Request) {
   try {
-    // 1. Validar token de autenticação do webhook se configurado
-    if (ASAAS_WEBHOOK_TOKEN) {
+    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+
+    // 1. Obter o token esperado (do .env ou do banco)
+    let tokenEsperado = ASAAS_WEBHOOK_TOKEN
+
+    if (!tokenEsperado) {
+      try {
+        const { data: configToken } = await supabase
+          .from('configuracoes_sistema')
+          .select('valor')
+          .eq('chave', 'asaas_webhook_token')
+          .single()
+        if (configToken?.valor) {
+          tokenEsperado = configToken.valor
+        }
+      } catch {}
+    }
+
+    // Validar token de autenticação do webhook se configurado
+    if (tokenEsperado) {
       const headerToken = req.headers.get('asaas-access-token')
-      if (headerToken !== ASAAS_WEBHOOK_TOKEN) {
+      if (headerToken !== tokenEsperado) {
         console.warn('[ASAAS-WEBHOOK] Token inválido recebido.')
         return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
       }
     }
 
     const payload = await req.json()
-    const { event, payment, subscription } = payload
+    const { event, payment, subscription, chargeback } = payload
 
-    console.log('[ASAAS-WEBHOOK] Evento recebido:', event, payment?.id || subscription?.id)
-
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    console.log('[ASAAS-WEBHOOK] Evento recebido:', event, payment?.id || subscription?.id || chargeback?.id)
 
     // 2. Tratar confirmação de pagamento (PIX ou Cartão)
     if (event === 'PAYMENT_RECEIVED' || event === 'PAYMENT_CONFIRMED') {
@@ -45,9 +61,14 @@ export async function POST(req: Request) {
             status: 'ativo',
             data_inicio: new Date().toISOString(),
             metodo_pagamento: payment.billingType === 'PIX' ? 'pix' : 'cartao',
+            asaas_subscription_id: subscription?.id || null,
+            asaas_customer_id: payment.customer || null,
           },
           { onConflict: 'usuario_id' }
         )
+
+        // Atualizar perfil
+        await supabase.from('perfis').update({ plano_id: planoId }).eq('id', usuarioId)
 
         // Gravar fatura paga
         await supabase.from('faturas').insert({
@@ -57,6 +78,9 @@ export async function POST(req: Request) {
           metodo_pagamento: payment.billingType === 'PIX' ? 'pix' : 'cartao',
           data_vencimento: payment.dueDate || new Date().toISOString(),
           data_pagamento: payment.paymentDate || new Date().toISOString(),
+          asaas_payment_id: payment.id,
+          asaas_customer_id: payment.customer,
+          asaas_invoice_url: payment.invoiceUrl,
         })
 
         console.log(`[ASAAS-WEBHOOK] Plano ${planoId} ativado com sucesso para o usuário ${usuarioId}`)
@@ -70,13 +94,70 @@ export async function POST(req: Request) {
         if (refObj.usuarioId) {
           await supabase
             .from('assinaturas')
-            .update({ status: 'atrasada' })
+            .update({ status: 'atrasado' })
             .eq('usuario_id', refObj.usuarioId)
         }
       } catch {}
     }
 
-    // 4. Tratar cancelamento de assinatura
+    // 4. Tratar estorno / devolução (Refund)
+    if (event === 'PAYMENT_REFUNDED') {
+      let usuarioId = ''
+      try {
+        const refObj = JSON.parse(payment.externalReference || '{}')
+        usuarioId = refObj.usuarioId
+      } catch {}
+
+      if (payment.id) {
+        await supabase
+          .from('faturas')
+          .update({
+            status: 'reembolsado',
+            estornado_em: new Date().toISOString(),
+            motivo_estorno: 'Reembolso confirmado no gateway Asaas',
+          })
+          .eq('asaas_payment_id', payment.id)
+
+        if (usuarioId) {
+          await supabase
+            .from('assinaturas')
+            .update({ plano_id: 'gratis', status: 'ativo', metodo_pagamento: 'gratis' })
+            .eq('usuario_id', usuarioId)
+          await supabase.from('perfis').update({ plano_id: 'gratis' }).eq('id', usuarioId)
+        }
+      }
+    }
+
+    // 5. Tratar contestação / Chargeback
+    if (event === 'PAYMENT_CHARGEBACK_REQUESTED' || event === 'PAYMENT_CHARGEBACK_DISPUTE') {
+      let usuarioId = ''
+      try {
+        const refObj = JSON.parse(payment.externalReference || '{}')
+        usuarioId = refObj.usuarioId
+      } catch {}
+
+      // Atualiza status da fatura para 'em_disputa'
+      if (payment?.id) {
+        await supabase
+          .from('faturas')
+          .update({ status: 'em_disputa' })
+          .eq('asaas_payment_id', payment.id)
+
+        // Cria ou atualiza disputa
+        if (usuarioId) {
+          await supabase.from('contestacoes_disputas').insert({
+            asaas_payment_id: payment.id,
+            usuario_id: usuarioId,
+            valor: payment.value || 0,
+            motivo_bandeira: chargeback?.reason || 'Contestação solicitada pelo titular do cartão',
+            status_disputa: 'aberta',
+            data_limite_defesa: chargeback?.disputeDueDate || null,
+          })
+        }
+      }
+    }
+
+    // 6. Tratar cancelamento de assinatura
     if (event === 'SUBSCRIPTION_DELETED') {
       try {
         const refObj = JSON.parse(subscription.externalReference || '{}')
@@ -88,9 +169,12 @@ export async function POST(req: Request) {
               plano_id: 'gratis',
               status: 'ativo',
               metodo_pagamento: 'gratis',
+              motivo_cancelamento: 'Assinatura cancelada no gateway de pagamento',
+              cancelado_em: new Date().toISOString(),
             },
             { onConflict: 'usuario_id' }
           )
+          await supabase.from('perfis').update({ plano_id: 'gratis' }).eq('id', refObj.usuarioId)
         }
       } catch {}
     }

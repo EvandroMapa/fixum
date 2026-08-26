@@ -1,15 +1,13 @@
 /**
  * Módulo de Integração com o Asaas (Gateway Oficial de Pagamentos do Fixum)
  * Suporta Sandbox (ambiente de testes) e Produção.
+ * As credenciais podem ser carregadas das variáveis de ambiente (.env) ou da tabela configuracoes_sistema no Supabase.
  */
 
-const ASAAS_API_URL = process.env.ASAAS_API_URL || (
-  process.env.NODE_ENV === 'production' && !process.env.ASAAS_SANDBOX
-    ? 'https://api.asaas.com/v3'
-    : 'https://sandbox.asaas.com/api/v3'
-)
+import { createClient } from '@supabase/supabase-js'
 
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY || ''
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
 
 export interface DadosClienteAsaas {
   usuarioId: string
@@ -36,11 +34,41 @@ export interface DadosCartaoCredito {
   numeroEnderecoTitular?: string
 }
 
-function obterHeaders(): HeadersInit {
+/**
+ * Obtém dinamicamente as credenciais ativas do Asaas (banco ou variáveis de ambiente)
+ */
+export async function obterCredenciaisAsaas(): Promise<{ apiKey: string; apiUrl: string; isSandbox: boolean }> {
+  let apiKey = process.env.ASAAS_API_KEY || ''
+  let modo = process.env.ASAAS_MODO || (process.env.NODE_ENV === 'production' && !process.env.ASAAS_SANDBOX ? 'producao' : 'sandbox')
+
+  try {
+    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+
+    const { data: configs } = await supabase.from('configuracoes_sistema').select('*')
+    if (configs) {
+      const configKey = configs.find((c) => c.chave === 'asaas_api_key')
+      const configModo = configs.find((c) => c.chave === 'asaas_modo')
+
+      if (configKey?.valor && configKey.valor.trim()) {
+        apiKey = configKey.valor.trim()
+      }
+      if (configModo?.valor) {
+        modo = configModo.valor
+      }
+    }
+  } catch (err) {
+    console.warn('[ASAAS] Aviso ao buscar credenciais do banco:', err)
+  }
+
+  const isSandbox = modo === 'sandbox'
+  const apiUrl = isSandbox ? 'https://sandbox.asaas.com/api/v3' : 'https://api.asaas.com/v3'
+
   return {
-    'Content-Type': 'application/json',
-    'access_token': ASAAS_API_KEY,
-    'User-Agent': 'Fixum-Plataforma-Imobiliaria/1.0',
+    apiKey,
+    apiUrl,
+    isSandbox,
   }
 }
 
@@ -48,8 +76,10 @@ function obterHeaders(): HeadersInit {
  * Cria ou busca um cliente existente no Asaas pelo CPF/CNPJ ou Email
  */
 export async function criarOuBuscarClienteAsaas(dados: DadosClienteAsaas): Promise<{ id: string; nome: string; email: string }> {
+  const { apiKey, apiUrl } = await obterCredenciaisAsaas()
+
   // Se não houver chave do Asaas configurada ainda (ambiente de dev inicial), simula cliente
-  if (!ASAAS_API_KEY || ASAAS_API_KEY === 'mock_asaas_key') {
+  if (!apiKey || apiKey === 'mock_asaas_key') {
     return {
       id: `cus_mock_${dados.usuarioId.slice(0, 8)}`,
       nome: dados.nome,
@@ -57,13 +87,19 @@ export async function criarOuBuscarClienteAsaas(dados: DadosClienteAsaas): Promi
     }
   }
 
+  const headers = {
+    'Content-Type': 'application/json',
+    'access_token': apiKey,
+    'User-Agent': 'Fixum-Plataforma-Imobiliaria/1.0',
+  }
+
   const cpfCnpjLimpo = dados.cpfCnpj.replace(/\D/g, '')
 
   // 1. Tentar buscar cliente existente pelo CPF/CNPJ ou email
   try {
-    const resBusca = await fetch(`${ASAAS_API_URL}/customers?cpfCnpj=${cpfCnpjLimpo}`, {
+    const resBusca = await fetch(`${apiUrl}/customers?cpfCnpj=${cpfCnpjLimpo}`, {
       method: 'GET',
-      headers: obterHeaders(),
+      headers,
     })
 
     if (resBusca.ok) {
@@ -91,9 +127,9 @@ export async function criarOuBuscarClienteAsaas(dados: DadosClienteAsaas): Promi
     notificationDisabled: false,
   }
 
-  const resCriar = await fetch(`${ASAAS_API_URL}/customers`, {
+  const resCriar = await fetch(`${apiUrl}/customers`, {
     method: 'POST',
-    headers: obterHeaders(),
+    headers,
     body: JSON.stringify(payload),
   })
 
@@ -135,8 +171,10 @@ export async function criarCobrancaPixAsaas({
   pixQrCode?: string
   pixCopiaCola?: string
 }> {
+  const { apiKey, apiUrl } = await obterCredenciaisAsaas()
+
   // Mock para desenvolvimento sem chave
-  if (!ASAAS_API_KEY || ASAAS_API_KEY === 'mock_asaas_key') {
+  if (!apiKey || apiKey === 'mock_asaas_key') {
     const mockId = `pay_mock_${Date.now()}`
     return {
       cobrancaId: mockId,
@@ -146,6 +184,12 @@ export async function criarCobrancaPixAsaas({
       pixQrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020126580014br.gov.bcb.pix0136fixum-mock-key5204000053039865405' + valor + '5802BR5915FIXUM_IMOVEIS6009LAFAIETE62070503***6304',
       pixCopiaCola: `00020126580014br.gov.bcb.pix0136fixum-mock-key5204000053039865405${valor.toFixed(2)}5802BR5915FIXUM_IMOVEIS6009LAFAIETE62070503***6304`,
     }
+  }
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'access_token': apiKey,
+    'User-Agent': 'Fixum-Plataforma-Imobiliaria/1.0',
   }
 
   // Vencimento em 1 dia
@@ -163,9 +207,9 @@ export async function criarCobrancaPixAsaas({
     postalService: false,
   }
 
-  const res = await fetch(`${ASAAS_API_URL}/payments`, {
+  const res = await fetch(`${apiUrl}/payments`, {
     method: 'POST',
-    headers: obterHeaders(),
+    headers,
     body: JSON.stringify(payload),
   })
 
@@ -181,9 +225,9 @@ export async function criarCobrancaPixAsaas({
   let pixCopiaCola = ''
 
   try {
-    const resPix = await fetch(`${ASAAS_API_URL}/payments/${data.id}/pixQrCode`, {
+    const resPix = await fetch(`${apiUrl}/payments/${data.id}/pixQrCode`, {
       method: 'GET',
-      headers: obterHeaders(),
+      headers,
     })
     if (resPix.ok) {
       const dataPix = await resPix.json()
@@ -230,14 +274,22 @@ export async function criarAssinaturaCartaoAsaas({
   valor: number
   proximaCobranca: string
 }> {
+  const { apiKey, apiUrl } = await obterCredenciaisAsaas()
+
   // Mock para desenvolvimento sem chave
-  if (!ASAAS_API_KEY || ASAAS_API_KEY === 'mock_asaas_key') {
+  if (!apiKey || apiKey === 'mock_asaas_key') {
     return {
       assinaturaId: `sub_mock_${Date.now()}`,
       status: 'ACTIVE',
       valor,
       proximaCobranca: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
     }
+  }
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'access_token': apiKey,
+    'User-Agent': 'Fixum-Plataforma-Imobiliaria/1.0',
   }
 
   const amanha = new Date()
@@ -269,9 +321,9 @@ export async function criarAssinaturaCartaoAsaas({
     remoteIp: remoteIp || '127.0.0.1',
   }
 
-  const res = await fetch(`${ASAAS_API_URL}/subscriptions`, {
+  const res = await fetch(`${apiUrl}/subscriptions`, {
     method: 'POST',
-    headers: obterHeaders(),
+    headers,
     body: JSON.stringify(payload),
   })
 
@@ -299,7 +351,9 @@ export async function consultarCobrancaAsaas(cobrancaId: string): Promise<{
   valor: number
   dataPagamento?: string
 }> {
-  if (!ASAAS_API_KEY || ASAAS_API_KEY === 'mock_asaas_key' || cobrancaId.startsWith('pay_mock_')) {
+  const { apiKey, apiUrl } = await obterCredenciaisAsaas()
+
+  if (!apiKey || apiKey === 'mock_asaas_key' || cobrancaId.startsWith('pay_mock_')) {
     return {
       id: cobrancaId,
       status: 'PENDING',
@@ -307,9 +361,15 @@ export async function consultarCobrancaAsaas(cobrancaId: string): Promise<{
     }
   }
 
-  const res = await fetch(`${ASAAS_API_URL}/payments/${cobrancaId}`, {
+  const headers = {
+    'Content-Type': 'application/json',
+    'access_token': apiKey,
+    'User-Agent': 'Fixum-Plataforma-Imobiliaria/1.0',
+  }
+
+  const res = await fetch(`${apiUrl}/payments/${cobrancaId}`, {
     method: 'GET',
-    headers: obterHeaders(),
+    headers,
   })
 
   const data = await res.json()
