@@ -96,41 +96,36 @@ function PainelConteudo() {
 
     const { data: perfil } = await supabase
       .from('perfis')
-      .select('id, nome, tipo, telefone, creci')
+      .select('id, nome, tipo_anunciante, telefone, creci, plano_id')
       .eq('id', user.id)
       .maybeSingle()
 
     const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
     const meta = user.user_metadata || {}
-    const metaTipo = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
+    const metaTipo = perfil?.tipo_anunciante || meta.tipo || meta.tipo_anunciante || searchTipo || 'proprietario'
     const imobId = meta.imobiliaria_id || null
 
-    if ((!perfil || !perfil.tipo) && metaTipo) {
-      const nomeFinal = perfil?.nome || meta.full_name || meta.name || meta.nome || user.email?.split('@')[0] || 'Imobiliária'
+    const nomeFinal = perfil?.nome || meta.full_name || meta.name || meta.nome || user.email?.split('@')[0] || 'Anunciante'
+    setUsuarioNome(nomeFinal)
+
+    if (!perfil || !perfil.tipo_anunciante) {
       await supabase.from('perfis').upsert({
         id: user.id,
         nome: nomeFinal,
         email: user.email!,
-        tipo: metaTipo,
+        tipo_anunciante: metaTipo,
         telefone: meta.telefone || null,
       })
-      setUsuarioNome(nomeFinal)
-      setIsImobiliaria(metaTipo === 'imobiliaria')
-      setIsCorretor(metaTipo === 'corretor' || !!imobId)
-    } else if (!perfil || !perfil.tipo) {
-      window.location.href = '/completar-perfil'
-      return
-    } else {
-      setUsuarioNome(perfil?.nome ?? 'Usuário')
     }
+
     setUsuarioTelefone(perfil?.telefone || meta?.telefone || '')
 
-    const tipoFinal = perfil?.tipo || meta.tipo || meta.tipo_anunciante || searchTipo
+    const tipoFinal = perfil?.tipo_anunciante || metaTipo
     const ehImob = tipoFinal === 'imobiliaria'
-    const ehCorretor = tipoFinal === 'corretor' || !!imobId
+    const ehCorretorVinculado = !!imobId
 
     setIsImobiliaria(ehImob)
-    setIsCorretor(ehCorretor)
+    setIsCorretor(ehCorretorVinculado)
 
     if (imobId) {
       const { data: imobData } = await supabase
