@@ -76,8 +76,10 @@ export default function AdminPage() {
   const [whatsSuporte, setWhatsSuporte] = useState(CONFIG_PADRAO.WHATSAPP_SUPORTE)
   const [emailContato, setEmailContato] = useState(CONFIG_PADRAO.EMAIL_CONTATO)
   const [asaasApiKey, setAsaasApiKey] = useState('')
+  const [asaasWebhookToken, setAsaasWebhookToken] = useState('')
   const [asaasModo, setAsaasModo] = useState<'producao' | 'sandbox'>('producao')
   const [mostrarApiKey, setMostrarApiKey] = useState(false)
+  const [mostrarWebhookToken, setMostrarWebhookToken] = useState(false)
   const [testandoAsaas, setTestandoAsaas] = useState(false)
   const [statusAsaas, setStatusAsaas] = useState<{ ok: boolean; msg: string } | null>(null)
   const [salvandoConfig, setSalvandoConfig] = useState(false)
@@ -147,6 +149,7 @@ export default function AdminPage() {
           if (c.chave === 'whatsapp_suporte') setWhatsSuporte(c.valor)
           if (c.chave === 'email_contato') setEmailContato(c.valor)
           if (c.chave === 'asaas_api_key') setAsaasApiKey(c.valor)
+          if (c.chave === 'asaas_webhook_token') setAsaasWebhookToken(c.valor)
           if (c.chave === 'asaas_modo') setAsaasModo(c.valor as 'producao' | 'sandbox')
         })
       }
@@ -448,6 +451,7 @@ export default function AdminPage() {
       { chave: 'whatsapp_suporte', valor: whatsSuporte, descricao: 'WhatsApp suporte Fixum' },
       { chave: 'email_contato', valor: emailContato, descricao: 'E-mail de contato Fixum' },
       { chave: 'asaas_api_key', valor: asaasApiKey.trim(), descricao: 'Chave de API do Asaas' },
+      { chave: 'asaas_webhook_token', valor: asaasWebhookToken.trim(), descricao: 'Token de autenticação do Webhook Asaas' },
       { chave: 'asaas_modo', valor: asaasModo, descricao: 'Ambiente do Asaas (producao/sandbox)' },
     ], { onConflict: 'chave' })
 
@@ -455,7 +459,7 @@ export default function AdminPage() {
     if (error) {
       setMsgConfig('⚠️ As configurações foram salvas em memória.')
     } else {
-      setMsgConfig('✅ Configurações e credenciais do Asaas salvas com sucesso no banco de dados!')
+      setMsgConfig('✅ Configurações, Chave de API e Token do Webhook salvos com sucesso no banco de dados!')
     }
   }
 
@@ -1374,6 +1378,26 @@ export default function AdminPage() {
                           placeholder="Cole sua chave que começa com $aact_..."
                           className={styles.inputForm}
                           required
+                        />
+                      </div>
+
+                      <div className={styles.grupoInput}>
+                        <label className={styles.labelForm}>
+                          <span>Token de Segurança do Webhook (Webhook Token):</span>
+                          <button
+                            type="button"
+                            onClick={() => setMostrarWebhookToken(!mostrarWebhookToken)}
+                            style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                          >
+                            {mostrarWebhookToken ? '🙈 Ocultar Token' : '👁️ Mostrar Token'}
+                          </button>
+                        </label>
+                        <input
+                          type={mostrarWebhookToken ? 'text' : 'password'}
+                          value={asaasWebhookToken}
+                          onChange={(e) => setAsaasWebhookToken(e.target.value)}
+                          placeholder="Cole o token do webhook que começa com whsec_..."
+                          className={styles.inputForm}
                         />
                       </div>
 

@@ -173,17 +173,8 @@ export async function criarCobrancaPixAsaas({
 }> {
   const { apiKey, apiUrl } = await obterCredenciaisAsaas()
 
-  // Mock para desenvolvimento sem chave
   if (!apiKey || apiKey === 'mock_asaas_key') {
-    const mockId = `pay_mock_${Date.now()}`
-    return {
-      cobrancaId: mockId,
-      status: 'PENDING',
-      valor,
-      vencimento: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-      pixQrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=00020126580014br.gov.bcb.pix0136fixum-mock-key5204000053039865405' + valor + '5802BR5915FIXUM_IMOVEIS6009LAFAIETE62070503***6304',
-      pixCopiaCola: `00020126580014br.gov.bcb.pix0136fixum-mock-key5204000053039865405${valor.toFixed(2)}5802BR5915FIXUM_IMOVEIS6009LAFAIETE62070503***6304`,
-    }
+    throw new Error('Chave de API do Asaas não configurada. Acesse o Painel Admin > Configurações Globais para configurar a chave.')
   }
 
   const headers = {
