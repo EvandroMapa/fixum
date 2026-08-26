@@ -204,7 +204,7 @@ export async function criarCobrancaPixAsaas({
     value: valor,
     dueDate,
     description: descricao,
-    externalReference: JSON.stringify({ usuarioId, planoId, tipo: 'pix' }),
+    externalReference: `${usuarioId}:${planoId}:pix`,
     postalService: false,
   }
 
@@ -309,7 +309,7 @@ export async function criarAssinaturaCartaoAsaas({
     nextDueDate: hoje,
     cycle: 'MONTHLY',
     description: descricao,
-    externalReference: JSON.stringify({ usuarioId, planoId, tipo: 'assinatura_cartao' }),
+    externalReference: `${usuarioId}:${planoId}:cartao`,
     creditCard: {
       holderName: cartao.nomeTitular,
       number: cartao.numeroCartao.replace(/\D/g, ''),

@@ -41,17 +41,26 @@ export async function POST(req: Request) {
 
     console.log('[ASAAS-WEBHOOK] Evento recebido:', event, payment?.id || subscription?.id || chargeback?.id)
 
+    function extrairDadosReferencia(extRef?: string): { usuarioId: string; planoId: string } {
+      if (!extRef) return { usuarioId: '', planoId: '' }
+      if (extRef.includes(':')) {
+        const partes = extRef.split(':')
+        return { usuarioId: partes[0] || '', planoId: partes[1] || '' }
+      }
+      try {
+        const obj = JSON.parse(extRef)
+        return { usuarioId: obj.usuarioId || obj.u || '', planoId: obj.planoId || obj.p || '' }
+      } catch {
+        return { usuarioId: '', planoId: '' }
+      }
+    }
+
+    const { usuarioId, planoId } = extrairDadosReferencia(
+      payment?.externalReference || subscription?.externalReference || chargeback?.externalReference
+    )
+
     // 2. Tratar confirmação de pagamento (PIX ou Cartão)
     if (event === 'PAYMENT_RECEIVED' || event === 'PAYMENT_CONFIRMED') {
-      let usuarioId = ''
-      let planoId = ''
-
-      try {
-        const refObj = JSON.parse(payment.externalReference || '{}')
-        usuarioId = refObj.usuarioId
-        planoId = refObj.planoId
-      } catch {}
-
       if (usuarioId && planoId) {
         // Ativar assinatura
         await supabase.from('assinaturas').upsert(
@@ -89,24 +98,16 @@ export async function POST(req: Request) {
 
     // 3. Tratar fatura vencida / não paga
     if (event === 'PAYMENT_OVERDUE') {
-      try {
-        const refObj = JSON.parse(payment.externalReference || '{}')
-        if (refObj.usuarioId) {
-          await supabase
-            .from('assinaturas')
-            .update({ status: 'atrasado' })
-            .eq('usuario_id', refObj.usuarioId)
-        }
-      } catch {}
+      if (usuarioId) {
+        await supabase
+          .from('assinaturas')
+          .update({ status: 'atrasado' })
+          .eq('usuario_id', usuarioId)
+      }
     }
 
     // 4. Tratar estorno / devolução (Refund)
     if (event === 'PAYMENT_REFUNDED') {
-      let usuarioId = ''
-      try {
-        const refObj = JSON.parse(payment.externalReference || '{}')
-        usuarioId = refObj.usuarioId
-      } catch {}
 
       if (payment.id) {
         await supabase
