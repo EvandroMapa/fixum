@@ -14,6 +14,7 @@ interface MembroEquipe {
   telefone?: string
   creci?: string
   papel: 'gestor_principal' | 'gestor' | 'corretor'
+  avatar_url?: string | null
   created_at: string
   total_imoveis?: number
 }
@@ -285,18 +286,22 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                     <tr key={c.id}>
                       <td>
                         <div className={styles.corretorInfo}>
-                          <div
-                            className={styles.corretorAvatar}
-                            style={{
-                              background: isPrincipal
-                                ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                                : obterGradienteUsuario(c.id || c.email || c.nome),
-                              color: '#ffffff',
-                              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-                            }}
-                          >
-                            {isPrincipal ? '👑' : obterIniciaisUsuario(c.nome, c.email)}
-                          </div>
+                          {c.avatar_url ? (
+                            <img src={c.avatar_url} alt={c.nome} className={styles.corretorAvatarImg} />
+                          ) : (
+                            <div
+                              className={styles.corretorAvatar}
+                              style={{
+                                background: isPrincipal
+                                  ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                                  : obterGradienteUsuario(c.id || c.email || c.nome),
+                                color: '#ffffff',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                              }}
+                            >
+                              {isPrincipal ? '👑' : obterIniciaisUsuario(c.nome, c.email)}
+                            </div>
+                          )}
                           <div>
                             <div className={styles.corretorNome}>
                               {c.nome} {isPrincipal ? '(Você / Titular)' : ''}

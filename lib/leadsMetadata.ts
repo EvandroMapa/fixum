@@ -12,6 +12,11 @@ export interface LeadMetadata {
   corretor_nome?: string | null
   motivo_perda?: string | null
   temperatura?: 'quente' | 'morno' | 'frio' | null
+  status_homologacao?: 'pendente' | 'aprovado' | 'rejeitado' | null
+  homologado_por_id?: string | null
+  homologado_por_nome?: string | null
+  data_homologacao?: string | null
+  motivo_rejeicao_homologacao?: string | null
 }
 
 export function lerTodosMetadadosLeads(): Record<string, LeadMetadata> {

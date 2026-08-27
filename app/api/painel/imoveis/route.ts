@@ -34,7 +34,7 @@ export async function GET(req: Request) {
 
     let idsAnunciantes: string[] = [usuarioId]
     const mapaNomes: Record<string, string> = { [usuarioId]: meta.nome || meta.full_name || 'Usuário' }
-    const listaCorretores: { id: string; nome: string }[] = []
+    const listaCorretores: { id: string; nome: string; avatar_url?: string | null }[] = []
 
     if (isGestor && imobiliariaId) {
       // Buscar todos os membros e corretores vinculados a esta imobiliária
@@ -46,9 +46,10 @@ export async function GET(req: Request) {
       idsAnunciantes = Array.from(new Set([imobiliariaId, ...membros.map((m) => m.id)]))
       membros.forEach((c) => {
         const nomeCorretor = c.user_metadata?.nome || c.user_metadata?.full_name || c.email?.split('@')[0] || 'Corretor'
+        const avatarCorretor = c.user_metadata?.avatar_url || c.user_metadata?.foto_url || null
         mapaNomes[c.id] = nomeCorretor
         if (c.id !== imobiliariaId) {
-          listaCorretores.push({ id: c.id, nome: nomeCorretor })
+          listaCorretores.push({ id: c.id, nome: nomeCorretor, avatar_url: avatarCorretor })
         }
       })
     }
@@ -128,8 +129,11 @@ export async function GET(req: Request) {
       const leadsTratados = (leadsData || []).map((l: any) => {
         const metaLocal = todosMetadados[l.id] || {}
         const imovelRel = mapaImoveisObj[l.imovel_id] || null
-        const corretorIdFinal = l.corretor_id || metaLocal.corretor_id || imovelRel?.anunciante_id || usuarioId
-        const corretorNomeFinal = metaLocal.corretor_nome || mapaNomes[corretorIdFinal] || 'Equipe Fixum'
+
+        // Se for imobiliária/gestor, só tem corretor se for explicitamente atribuído.
+        // Se for corretor autônomo anunciante direto, é atribuído a si mesmo.
+        const corretorIdFinal = metaLocal.corretor_id || (!isGestor && !isCorretorVinculado ? usuarioId : null)
+        const corretorNomeFinal = metaLocal.corretor_nome || (corretorIdFinal ? (mapaNomes[corretorIdFinal] || 'Corretor') : null)
 
         return {
           ...l,
@@ -139,6 +143,11 @@ export async function GET(req: Request) {
           data_ultimo_contato: l.data_ultimo_contato ?? metaLocal.data_ultimo_contato ?? null,
           motivo_perda: l.motivo_perda ?? metaLocal.motivo_perda ?? null,
           temperatura: l.temperatura ?? metaLocal.temperatura ?? 'morno',
+          status_homologacao: l.status_homologacao ?? metaLocal.status_homologacao ?? (l.status === 'fechado' ? 'pendente' : undefined),
+          homologado_por_id: l.homologado_por_id ?? metaLocal.homologado_por_id ?? null,
+          homologado_por_nome: l.homologado_por_nome ?? metaLocal.homologado_por_nome ?? null,
+          data_homologacao: l.data_homologacao ?? metaLocal.data_homologacao ?? null,
+          motivo_rejeicao_homologacao: l.motivo_rejeicao_homologacao ?? metaLocal.motivo_rejeicao_homologacao ?? null,
           corretor_id: corretorIdFinal,
           corretor_nome: corretorNomeFinal,
           imovel: imovelRel ? {

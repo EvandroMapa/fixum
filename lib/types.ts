@@ -128,7 +128,7 @@ export interface AtividadeLead {
   lead_id: string
   autor_id: string
   autor_nome: string
-  tipo: 'criacao' | 'contato_whatsapp' | 'mudanca_status' | 'anotacao' | 'visita_agendada' | 'proposta' | 'reatribuicao'
+  tipo: 'criacao' | 'contato_whatsapp' | 'mudanca_status' | 'anotacao' | 'visita_agendada' | 'proposta' | 'reatribuicao' | 'homologacao_venda' | 'rejeicao_homologacao'
   descricao: string
   created_at: string
 }
@@ -175,6 +175,11 @@ export interface Lead {
   motivo_perda?: string
   origem?: string
   temperatura?: 'frio' | 'morno' | 'quente'
+  status_homologacao?: 'pendente' | 'aprovado' | 'rejeitado'
+  homologado_por_id?: string
+  homologado_por_nome?: string
+  data_homologacao?: string
+  motivo_rejeicao_homologacao?: string
   created_at: string
   imovel?: Imovel
   corretor_nome?: string

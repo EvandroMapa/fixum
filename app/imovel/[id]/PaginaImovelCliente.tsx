@@ -215,15 +215,31 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
     setEnviandoLead(true)
     try {
-      const supabase = createClient()
-      await supabase.from('leads').insert({
-        imovel_id: imovel.id,
-        nome: formNome,
-        telefone: formTelefone,
-        mensagem: formMensagem,
-        status: 'novo',
+      const res = await fetch('/api/painel/leads/criar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imovel_id: imovel.id,
+          nome: formNome,
+          telefone: formTelefone,
+          mensagem: formMensagem,
+        }),
       })
-      setLeadEnviado(true)
+
+      if (res.ok) {
+        setLeadEnviado(true)
+      } else {
+        // Fallback direto no Supabase caso a rota falhe
+        const supabase = createClient()
+        await supabase.from('leads').insert({
+          imovel_id: imovel.id,
+          nome: formNome,
+          telefone: formTelefone,
+          mensagem: formMensagem,
+          status: 'novo',
+        })
+        setLeadEnviado(true)
+      }
     } catch (err) {
       console.error('Erro ao enviar mensagem:', err)
     } finally {

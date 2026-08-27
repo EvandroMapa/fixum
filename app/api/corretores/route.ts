@@ -28,6 +28,7 @@ export async function GET(req: Request) {
       telefone: donoMeta.telefone || '',
       creci: donoMeta.creci || 'Não informado',
       papel: 'gestor_principal' as const,
+      avatar_url: donoMeta.avatar_url || donoMeta.foto_url || null,
       created_at: donoData.user.created_at,
     } : null
 
@@ -46,12 +47,24 @@ export async function GET(req: Request) {
         telefone: u.user_metadata?.telefone || '',
         creci: u.user_metadata?.creci || 'Não informado',
         papel: (u.user_metadata?.papel as 'gestor' | 'corretor') || 'corretor',
+        avatar_url: u.user_metadata?.avatar_url || u.user_metadata?.foto_url || null,
         created_at: u.created_at,
       }))
 
     const todosMembros = gestorTitular ? [gestorTitular, ...membros] : membros
 
-    // 3. Contagem de imóveis por membro
+    // 4. Buscar preferências de distribuição de leads da imobiliária
+    const { data: perfilImob } = await supabase
+      .from('perfis')
+      .select('regra_distribuicao_leads, whatsapp_destino')
+      .eq('id', imobiliariaId)
+      .maybeSingle()
+
+    const configDistribuicao = {
+      regra: perfilImob?.regra_distribuicao_leads || 'captador',
+      whatsapp_destino: perfilImob?.whatsapp_destino || 'corretor',
+    }
+
     if (todosMembros.length > 0) {
       const ids = todosMembros.map((c) => c.id)
       const { data: imoveis } = await supabase
@@ -75,24 +88,46 @@ export async function GET(req: Request) {
         corretores: formatados,
         gestores: listaGestores,
         gestorTitular,
+        config_distribuicao: configDistribuicao,
       })
     }
 
-    return NextResponse.json({ corretores: [], gestores: [], gestorTitular })
+    return NextResponse.json({ corretores: [], gestores: [], gestorTitular, config_distribuicao: configDistribuicao })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Erro ao buscar equipe.' }, { status: 500 })
   }
 }
 
-// POST: Ações de equipe (Desvincular ou Alterar Papel: promover a gestor / rebaixar a corretor)
+// POST: Ações de equipe (Desvincular, Alterar Papel, Sincronizar Logo ou Salvar Regra de Distribuição)
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { acao, corretor_id, novo_papel, imobiliaria_id, foto_url } = body
+    const { acao, corretor_id, novo_papel, imobiliaria_id, foto_url, regra, whatsapp_destino } = body
 
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
       auth: { autoRefreshToken: false, persistSession: false },
     })
+
+    // Ação: Salvar Regra de Distribuição de Leads da Imobiliária
+    if (acao === 'salvar_regra_distribuicao') {
+      if (!imobiliaria_id) {
+        return NextResponse.json({ error: 'imobiliaria_id é obrigatório.' }, { status: 400 })
+      }
+
+      try {
+        await supabase
+          .from('perfis')
+          .update({
+            regra_distribuicao_leads: regra || 'captador',
+            whatsapp_destino: whatsapp_destino || 'corretor',
+          })
+          .eq('id', imobiliaria_id)
+      } catch (errDb) {
+        console.error('Erro ao atualizar regra no Supabase:', errDb)
+      }
+
+      return NextResponse.json({ success: true, regra, whatsapp_destino })
+    }
 
     // Ação: Sincronizar Logo da Imobiliária para todos os membros da equipe
     if (acao === 'sincronizar_logo') {
@@ -124,9 +159,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Usuário não encontrado.' }, { status: 404 })
     }
 
-    // Ação: Editar Corretor (Nome, E-mail, Telefone, CRECI, Papel)
+    // Ação: Editar Corretor (Nome, E-mail, Telefone, CRECI, Papel, Avatar/Foto)
     if (acao === 'editar_corretor') {
-      const { nome, email, telefone, creci, papel } = body
+      const { nome, email, telefone, creci, papel, avatar_url } = body
 
       const authUpdatePayload: any = {}
       const metaAtual = userData.user.user_metadata || {}
@@ -136,6 +171,7 @@ export async function POST(req: Request) {
         ...(telefone !== undefined ? { telefone, whatsapp: telefone } : {}),
         ...(creci !== undefined ? { creci } : {}),
         ...(papel !== undefined ? { papel } : {}),
+        ...(avatar_url !== undefined ? { avatar_url, foto_url: avatar_url } : {}),
       }
 
       authUpdatePayload.user_metadata = metaNova
@@ -154,6 +190,10 @@ export async function POST(req: Request) {
         perfilUpdatePayload.whatsapp = telefone
       }
       if (creci !== undefined) perfilUpdatePayload.creci = creci
+      if (avatar_url !== undefined) {
+        perfilUpdatePayload.avatar_url = avatar_url
+        perfilUpdatePayload.foto_url = avatar_url
+      }
 
       if (Object.keys(perfilUpdatePayload).length > 0) {
         try {
@@ -170,6 +210,7 @@ export async function POST(req: Request) {
           telefone: metaNova.telefone,
           creci: metaNova.creci,
           papel: metaNova.papel || 'corretor',
+          avatar_url: metaNova.avatar_url || null,
         },
       })
     }

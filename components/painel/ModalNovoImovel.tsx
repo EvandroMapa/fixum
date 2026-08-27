@@ -158,26 +158,62 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
       setUsuarioId(user.id)
       const meta = user.user_metadata || {}
       const tipoAnunciante = meta.tipo || meta.tipo_anunciante || 'particular'
-      const imobId = meta.imobiliaria_id
+      const imobId = meta.imobiliaria_id || null
       const imobNome = meta.imobiliaria_nome || meta.nome_imobiliaria || ''
-      setIsCorretor(tipoAnunciante === 'corretor' && !!imobId)
-      setIsImobiliaria(tipoAnunciante === 'imobiliaria')
+      const ehCorretorVinculado = !!imobId
+      const ehImobiliaria = tipoAnunciante === 'imobiliaria'
+
+      setIsCorretor(ehCorretorVinculado || tipoAnunciante === 'corretor')
+      setIsImobiliaria(ehImobiliaria)
       setImobiliariaNome(imobNome)
 
-      const prefixoSug = gerarPrefixoSugerido(imobNome || meta.nome || meta.full_name || '')
-      setPrefixoImovel(prefixoSug)
+      let prefixoFinal = gerarPrefixoSugerido(imobNome || meta.nome || meta.full_name || '')
+      let modoFinal: 'automatico' | 'proprio' = 'automatico'
 
-      // Carregar preferências de código do localStorage / perfil
-      if (typeof window !== 'undefined') {
-        const salvo = localStorage.getItem(`config_imoveis_${user.id}`)
-        if (salvo) {
-          try {
-            const parsed = JSON.parse(salvo)
-            if (parsed.prefixo) setPrefixoImovel(parsed.prefixo)
-            if (parsed.modoCodigo) setModoCodigo(parsed.modoCodigo)
-          } catch {}
+      // Se for corretor vinculado à imobiliária, a regra de prefixo e modo de código VEM DA IMOBILIÁRIA
+      if (ehCorretorVinculado && imobId) {
+        try {
+          const { data: imobPerfil } = await supabase
+            .from('perfis')
+            .select('prefixo_codigo, tipo_codigo_imovel, nome')
+            .eq('id', imobId)
+            .maybeSingle()
+
+          if (imobPerfil) {
+            if (imobPerfil.prefixo_codigo) prefixoFinal = imobPerfil.prefixo_codigo
+            if (imobPerfil.tipo_codigo_imovel) modoFinal = imobPerfil.tipo_codigo_imovel as any
+            if (imobPerfil.nome) setImobiliariaNome(imobPerfil.nome)
+          }
+        } catch (e) {
+          console.error('Erro ao buscar perfil da imobiliária para código:', e)
+        }
+      } else {
+        // Se for imobiliária ou corretor independente, buscar do perfil do usuário / localStorage
+        try {
+          const { data: userPerfil } = await supabase
+            .from('perfis')
+            .select('prefixo_codigo, tipo_codigo_imovel')
+            .eq('id', user.id)
+            .maybeSingle()
+
+          if (userPerfil) {
+            if (userPerfil.prefixo_codigo) prefixoFinal = userPerfil.prefixo_codigo
+            if (userPerfil.tipo_codigo_imovel) modoFinal = userPerfil.tipo_codigo_imovel as any
+          } else if (typeof window !== 'undefined') {
+            const salvo = localStorage.getItem(`config_imoveis_${user.id}`)
+            if (salvo) {
+              const parsed = JSON.parse(salvo)
+              if (parsed.prefixo) prefixoFinal = parsed.prefixo
+              if (parsed.modoCodigo) modoFinal = parsed.modoCodigo
+            }
+          }
+        } catch (e) {
+          console.error('Erro ao buscar perfil de código do usuário:', e)
         }
       }
+
+      setPrefixoImovel(prefixoFinal)
+      setModoCodigo(modoFinal)
 
       try {
         const res = await fetch('/api/painel/cota')

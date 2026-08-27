@@ -245,10 +245,15 @@
 /* PAINEL LAYOUT */
 .painel {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 230px 1fr;
   height: calc(100vh - 64px);
   overflow: hidden;
   background: var(--cor-fundo);
+  transition: grid-template-columns 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.painelRecolhido {
+  grid-template-columns: 64px 1fr;
 }
 
 /* SIDEBAR */
@@ -257,11 +262,38 @@
   border-right: none;
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem 0.85rem;
   gap: 1rem;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   flex-shrink: 0;
+  transition: padding 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebarRecolhida {
+  padding: 1.25rem 0.4rem;
+  align-items: center;
+}
+
+.sidebarRecolhida .sidebarItem {
+  justify-content: center;
+  padding: 10px 0;
+  gap: 0;
+}
+
+.sidebarRecolhida .sidebarTextoDesktop {
+  display: none;
+}
+
+.sidebarRecolhida .textoFixar {
+  display: none;
+}
+
+.sidebarRecolhida .btnFixarSidebar {
+  justify-content: center;
+  padding: 8px 0;
+  width: 100%;
 }
 
 .sidebarNav {
@@ -317,6 +349,44 @@
   display: none;
 }
 
+.sidebarRodapeFixar {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.btnFixarSidebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.btnFixarSidebar:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.iconeFixar {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.textoFixar {
+  white-space: nowrap;
+}
+
 .sidebarBottom {
   display: flex;
   flex-direction: column;
@@ -350,7 +420,7 @@
 
 /* CONTEÚDO */
 .conteudo {
-  padding: 1.5rem;
+  padding: 1rem 1.25rem;
   height: 100%;
   overflow-y: auto;
   background: #f1f5f9;

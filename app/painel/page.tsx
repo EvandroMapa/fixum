@@ -14,6 +14,7 @@ import AbaMeuPlano from '@/components/painel/AbaMeuPlano'
 import AbaCorretores from '@/components/painel/AbaCorretores'
 import AbaImoveis from '@/components/painel/AbaImoveis'
 import AbaLeads from '@/components/painel/AbaLeads'
+import AbaDesempenho from '@/components/painel/AbaDesempenho'
 import ModalLimiteAtingido from '@/components/painel/ModalLimiteAtingido'
 import ModalUpgradePlano from '@/components/painel/ModalUpgradePlano'
 import ModalConfigSeguranca from '@/components/painel/ModalConfigSeguranca'
@@ -23,14 +24,14 @@ import MenuNotificacoes from '@/components/painel/MenuNotificacoes'
 import MenuUsuarioTopbar from '@/components/painel/MenuUsuarioTopbar'
 import styles from './page.module.css'
 
-type Aba = 'dashboard' | 'imoveis' | 'leads' | 'corretores' | 'plano'
+type Aba = 'dashboard' | 'imoveis' | 'leads' | 'corretores' | 'desempenho' | 'plano'
 
 function PainelConteudo() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const abaParam = searchParams.get('aba') as Aba | null
 
-  const abaInicial: Aba = (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'plano'].includes(abaParam))
+  const abaInicial: Aba = (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'desempenho', 'plano'].includes(abaParam))
     ? abaParam
     : 'dashboard'
 
@@ -72,6 +73,25 @@ function PainelConteudo() {
   const [usuarioTelefone, setUsuarioTelefone] = useState('')
   const [ultimoEventoChat, setUltimoEventoChat] = useState<any>(null)
 
+  // Estado da Sidebar Lateral (Fixa ou Recolhida)
+  const [sidebarFixa, setSidebarFixa] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const salvo = localStorage.getItem('fixum_sidebar_fixa')
+      return salvo !== null ? salvo === 'true' : true
+    }
+    return true
+  })
+
+  function alternarSidebar() {
+    setSidebarFixa((prev) => {
+      const proximo = !prev
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('fixum_sidebar_fixa', String(proximo))
+      }
+      return proximo
+    })
+  }
+
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
@@ -81,7 +101,7 @@ function PainelConteudo() {
   }, [searchParams])
 
   useEffect(() => {
-    if (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'plano'].includes(abaParam)) {
+    if (abaParam && ['dashboard', 'imoveis', 'leads', 'corretores', 'desempenho', 'plano'].includes(abaParam)) {
       if (abaParam === 'plano' && isCorretor && imobiliariaDona) {
         setAbaAtiva('dashboard')
       } else {
@@ -605,15 +625,16 @@ function PainelConteudo() {
         </div>
       </header>
 
-      <div className={styles.painel}>
+      <div className={`${styles.painel} ${!sidebarFixa ? styles.painelRecolhido : ''}`}>
         {/* Sidebar */}
-        <aside className={styles.sidebar}>
+        <aside className={`${styles.sidebar} ${!sidebarFixa ? styles.sidebarRecolhida : ''}`}>
           <nav className={styles.sidebarNav}>
             {[
               { id: 'dashboard', icone: '📊', label: 'Dashboard', labelMobile: 'Início' },
               { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis', labelMobile: 'Imóveis' },
               { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}`, labelMobile: `Leads${stats.leadsNovos > 0 ? ` (${stats.leadsNovos})` : ''}` },
               ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores', labelMobile: 'Equipe' }] : []),
+              ...(!isProprietario ? [{ id: 'desempenho', icone: '📈', label: 'Desempenho & Ranking', labelMobile: 'Ranking' }] : []),
               ...(!isCorretorEquipe ? [{ id: 'plano', icone: '💳', label: isProprietario ? 'Meu Anúncio' : 'Meu Plano', labelMobile: isProprietario ? 'Anúncio' : 'Plano' }] : []),
             ].map((item) => (
               <button
@@ -628,6 +649,19 @@ function PainelConteudo() {
               </button>
             ))}
           </nav>
+
+          {/* Botão de Fixar / Recolher Menu Lateral */}
+          <div className={styles.sidebarRodapeFixar}>
+            <button
+              type="button"
+              className={styles.btnFixarSidebar}
+              onClick={alternarSidebar}
+              title={sidebarFixa ? 'Recolher menu lateral (mais espaço para o CRM)' : 'Fixar menu lateral expandido'}
+            >
+              <span className={styles.iconeFixar}>{sidebarFixa ? '◀' : '▶'}</span>
+              <span className={styles.textoFixar}>{sidebarFixa ? 'Recolher Menu' : 'Fixar'}</span>
+            </button>
+          </div>
         </aside>
 
         {/* Conteúdo */}
@@ -794,6 +828,7 @@ function PainelConteudo() {
               isImobiliaria={isImobiliaria}
               listaCorretores={listaCorretoresFiltro}
               onRecarregarDados={carregarDados}
+              onAtualizarLeads={(novosLeads) => setLeads(novosLeads)}
             />
           )}
 
@@ -802,6 +837,24 @@ function PainelConteudo() {
             <AbaCorretores
               imobiliariaId={usuarioId}
               imobiliariaNome={usuarioNome}
+            />
+          )}
+
+          {/* ── DESEMPENHO & RANKING (BI FIXUM) ── */}
+          {abaAtiva === 'desempenho' && (
+            <AbaDesempenho
+              leads={leads}
+              imoveis={imoveis}
+              usuarioId={usuarioId}
+              usuarioNome={usuarioNome}
+              isImobiliaria={isImobiliaria}
+              isGestor={isGestor}
+              isCorretor={isCorretor}
+              isCorretorAutonomo={isCorretorAutonomo}
+              isCorretorEquipe={isCorretorEquipe}
+              listaCorretores={listaCorretoresFiltro}
+              onNavegarAba={(aba) => trocarAba(aba as Aba)}
+              onRecarregarDados={carregarDados}
             />
           )}
 

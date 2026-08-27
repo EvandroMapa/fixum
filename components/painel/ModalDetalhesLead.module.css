@@ -180,6 +180,98 @@
   border-bottom-color: #1d4ed8;
 }
 
+/* ── BANNER DE HOMOLOGAÇÃO DE VENDA ── */
+.bannerHomologacaoPendente {
+  background: #fefce8;
+  border-bottom: 1.5px solid #fef08a;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.bannerHomologacaoInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.iconeBannerHomologacao {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.bannerHomologacaoInfo strong {
+  font-size: 0.86rem;
+  color: #854d0e;
+  display: block;
+}
+
+.bannerHomologacaoInfo p {
+  font-size: 0.76rem;
+  color: #a16207;
+  margin: 2px 0 0 0;
+  line-height: 1.35;
+}
+
+.bannerHomologacaoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btnAprovarHomologacao {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
+  transition: all 0.15s ease;
+}
+
+.btnAprovarHomologacao:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+}
+
+.btnRecusarHomologacao {
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnRecusarHomologacao:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.bannerHomologacaoAprovada {
+  background: #f0fdf4;
+  border-bottom: 1px solid #bbf7d0;
+  color: #15803d;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    3. CONTEÚDO COM SCROLL INDEPENDENTE
    ═══════════════════════════════════════════════════════════════ */

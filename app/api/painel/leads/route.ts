@@ -98,6 +98,11 @@ export async function PATCH(req: Request) {
       valor_proposta,
       motivo_perda,
       temperatura,
+      status_homologacao,
+      homologado_por_id,
+      homologado_por_nome,
+      data_homologacao,
+      motivo_rejeicao_homologacao,
       mensagem_atividade,
     } = body
 
@@ -105,7 +110,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'lead_id é obrigatório.' }, { status: 400 })
     }
 
-    // 1. Salvar metadados enriquecidos (proposta, visita, corretor, temperatura, etc.)
+    // 1. Salvar metadados enriquecidos (proposta, visita, corretor, temperatura, homologação, etc.)
     const metaSalva: Record<string, any> = {}
     if (valor_proposta !== undefined) metaSalva.valor_proposta = valor_proposta
     if (data_visita !== undefined) metaSalva.data_visita = data_visita
@@ -113,6 +118,12 @@ export async function PATCH(req: Request) {
     if (corretor_nome !== undefined) metaSalva.corretor_nome = corretor_nome
     if (motivo_perda !== undefined) metaSalva.motivo_perda = motivo_perda
     if (temperatura !== undefined) metaSalva.temperatura = temperatura
+    if (status_homologacao !== undefined) metaSalva.status_homologacao = status_homologacao
+    if (homologado_por_id !== undefined) metaSalva.homologado_por_id = homologado_por_id
+    if (homologado_por_nome !== undefined) metaSalva.homologado_por_nome = homologado_por_nome
+    if (data_homologacao !== undefined) metaSalva.data_homologacao = data_homologacao
+    if (motivo_rejeicao_homologacao !== undefined) metaSalva.motivo_rejeicao_homologacao = motivo_rejeicao_homologacao
+
     if (primeiro_contato) {
       metaSalva.data_primeiro_contato = new Date().toISOString()
     }
@@ -146,7 +157,13 @@ export async function PATCH(req: Request) {
     let tipoAtividade = 'mudanca_status'
     let descricaoAtividade = mensagem_atividade || ''
 
-    if (primeiro_contato) {
+    if (status_homologacao === 'aprovado') {
+      tipoAtividade = 'homologacao_venda'
+      descricaoAtividade = descricaoAtividade || `🏆 Venda homologada e aprovada pelo Gestor ${autorNome}.`
+    } else if (status_homologacao === 'rejeitado') {
+      tipoAtividade = 'rejeicao_homologacao'
+      descricaoAtividade = descricaoAtividade || `⚠️ Homologação de venda rejeitada pelo Gestor ${autorNome}.`
+    } else if (primeiro_contato) {
       tipoAtividade = 'contato_whatsapp'
       descricaoAtividade = descricaoAtividade || 'Primeiro contato realizado via WhatsApp.'
     } else if (corretor_id !== undefined && corretor_nome) {

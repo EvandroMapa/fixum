@@ -14,7 +14,7 @@ interface Props {
   isImobiliaria: boolean
   listaCorretores: { id: string; nome: string }[]
   onFechar: () => void
-  onAtualizarLead: () => void
+  onAtualizarLead: (leadAtualizado?: Partial<Lead>) => void
 }
 
 type AbaModal = 'geral' | 'timeline' | 'agenda' | 'anexos'
@@ -105,6 +105,26 @@ export default function ModalDetalhesLead({
     carregarAnexos()
   }, [lead.id])
 
+  // ── FECHAR COM A TECLA ESC ──
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        if (modalPropostaAberto) {
+          setModalPropostaAberto(false)
+          return
+        }
+        if (modalPerdaAberto) {
+          setModalPerdaAberto(false)
+          return
+        }
+        onFechar()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onFechar, modalPropostaAberto, modalPerdaAberto])
+
   // ── SALVAR ANOTAÇÃO ──
   async function handleAdicionarAnotacao(e: React.FormEvent) {
     e.preventDefault()
@@ -161,13 +181,33 @@ export default function ModalDetalhesLead({
       })
       if (res.ok) {
         await carregarAtividades()
-        onAtualizarLead()
+        onAtualizarLead({ ...lead, ...payload })
       }
     } catch (err) {
       console.error('Erro ao atualizar lead:', err)
     } finally {
       setProcessandoAcao(false)
     }
+  }
+
+  // ── REATRIBUIR CORRETOR OU RETORNAR À TRIAGEM ──
+  async function handleReatribuirCorretor(novoCorretorId: string) {
+    if (!novoCorretorId) {
+      await handleAtualizarCampo({
+        corretor_id: null,
+        corretor_nome: null,
+        mensagem_atividade: `Lead desvinculado e retornado para a Fila de Triagem por ${usuarioNome}.`,
+      })
+      return
+    }
+
+    const corretor = listaCorretores.find((c) => c.id === novoCorretorId)
+    if (!corretor) return
+    await handleAtualizarCampo({
+      corretor_id: corretor.id,
+      corretor_nome: corretor.nome,
+      mensagem_atividade: `Lead atribuído ao corretor ${corretor.nome} por ${usuarioNome}.`,
+    })
   }
 
   // ── AÇÕES RÁPIDAS (RODAPÉ) ──
@@ -208,16 +248,6 @@ export default function ModalDetalhesLead({
       mensagem_atividade: `Lead marcado como Perdido. Motivo: "${motivoPerdaInput}" (${usuarioNome}).`,
     })
     setModalPerdaAberto(false)
-  }
-
-  async function handleReatribuirCorretor(novoCorretorId: string) {
-    const corretorAlvo = listaCorretores.find((c) => c.id === novoCorretorId)
-    const nomeCorretor = corretorAlvo ? corretorAlvo.nome : 'Corretor'
-    await handleAtualizarCampo({
-      corretor_id: novoCorretorId,
-      corretor_nome: nomeCorretor,
-      mensagem_atividade: `Lead reatribuído para o corretor ${nomeCorretor} por ${usuarioNome}.`,
-    })
   }
 
   // ── GESTÃO DE COMPROMISSOS (AGENDA) ──
@@ -441,6 +471,65 @@ export default function ModalDetalhesLead({
           </button>
         </div>
 
+        {/* ── BANNER DE HOMOLOGAÇÃO DE VENDA (QUANDO FECHADO) ── */}
+        {lead.status === 'fechado' && (
+          lead.status_homologacao === 'pendente' ? (
+            <div className={styles.bannerHomologacaoPendente}>
+              <div className={styles.bannerHomologacaoInfo}>
+                <span className={styles.iconeBannerHomologacao}>⏳</span>
+                <div>
+                  <strong>Fechamento de Negócio Aguardando Homologação do Gestor</strong>
+                  <p>
+                    {lead.corretor_nome ? `O corretor ${lead.corretor_nome}` : 'Um corretor da equipe'} marcou este lead como venda fechada.
+                    {isGestor || isImobiliaria
+                      ? ' Como gestor, confirme a validação da venda para oficializar o VGV e comissão no ranking.'
+                      : ' O gestor da imobiliária precisa homologar esta venda para ela ser computada no ranking oficial.'}
+                  </p>
+                </div>
+              </div>
+              {(isGestor || isImobiliaria) && (
+                <div className={styles.bannerHomologacaoAcoes}>
+                  <button
+                    type="button"
+                    className={styles.btnAprovarHomologacao}
+                    disabled={processandoAcao}
+                    onClick={() =>
+                      handleAtualizarCampo({
+                        status_homologacao: 'aprovado',
+                        homologado_por_id: usuarioId,
+                        homologado_por_nome: usuarioNome,
+                        data_homologacao: new Date().toISOString(),
+                        mensagem_atividade: `🏆 Venda homologada e aprovada pelo Gestor ${usuarioNome}.`,
+                      })
+                    }
+                  >
+                    ✓ Homologar Venda
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.btnRecusarHomologacao}
+                    disabled={processandoAcao}
+                    onClick={() =>
+                      handleAtualizarCampo({
+                        status: 'proposta',
+                        status_homologacao: 'rejeitado',
+                        motivo_rejeicao_homologacao: 'Retornado para negociação pelo gestor',
+                        mensagem_atividade: `⚠️ Homologação de venda recusada pelo Gestor ${usuarioNome}. Lead retornado para a etapa de Proposta.`,
+                      })
+                    }
+                  >
+                    ✕ Recusar / Voltar
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={styles.bannerHomologacaoAprovada}>
+              <span>🏆 Venda homologada e confirmada por {lead.homologado_por_nome || 'Gestor'} em {lead.data_homologacao ? new Date(lead.data_homologacao).toLocaleDateString('pt-BR') : 'data recente'}.</span>
+            </div>
+          )
+        )}
+
         {/* ═══════════════════════════════════════════════════════════════
             3. CONTEÚDO PRINCIPAL (COMPACTO E SEM SCROLL EXCESSIVO)
             ═══════════════════════════════════════════════════════════════ */}
@@ -498,14 +587,15 @@ export default function ModalDetalhesLead({
                           onChange={(e) => handleReatribuirCorretor(e.target.value)}
                           disabled={processandoAcao}
                         >
+                          <option value="">⚡ Sem Corretor (Fila de Triagem)</option>
                           {listaCorretores.map((c) => (
                             <option key={c.id} value={c.id}>
-                              {c.nome}
+                              👔 {c.nome}
                             </option>
                           ))}
                         </select>
                       ) : (
-                        <span className={styles.valorContato}>👔 {lead.corretor_nome || usuarioNome}</span>
+                        <span className={styles.valorContato}>👔 {lead.corretor_nome || 'Sem Corretor (Triagem)'}</span>
                       )}
                     </div>
                   </div>
