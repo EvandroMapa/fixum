@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { enviarCodigoOtpEmail } from '@/lib/email'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
@@ -25,43 +26,83 @@ export async function POST(req: Request) {
     }
 
     const usuario = authData.users.find((u) => (u.email || '').toLowerCase() === emailLimpo)
-    if (!usuario) {
-      return NextResponse.json({ error: 'Usuário não encontrado para o e-mail informado.' }, { status: 404 })
-    }
 
     // ── AÇÃO 1: ENVIAR CÓDIGO OTP POR E-MAIL ──
     if (acao === 'enviar') {
+      // ── VALIDAÇÃO PRÉVIA: Impedir envio de código se a conta já existir ──
+      if (motivo === 'cadastro') {
+        if (emailLimpo === 'admin@fixum.com.br' || emailLimpo.endsWith('@fixum.com.br')) {
+          return NextResponse.json({
+            error: 'Este e-mail institucional é reservado para a administração da Fixum. Acesse /admin/login.',
+          }, { status: 403 })
+        }
+
+        if (usuario) {
+          return NextResponse.json({
+            error: 'Este e-mail já está cadastrado na Fixum. Por favor, faça login, recupere sua senha ou informe outro e-mail válido.',
+          }, { status: 409 })
+        }
+      }
+
+      if (motivo === 'criar_operador') {
+        if (usuario) {
+          return NextResponse.json({
+            error: `O e-mail "${emailLimpo}" já possui cadastro no sistema.`,
+          }, { status: 409 })
+        }
+      }
+
       // Gerar código de 6 dígitos numéricos
       const codigoGerado = Math.floor(100000 + Math.random() * 900000).toString()
       const tempoExpiracao = Date.now() + 10 * 60 * 1000 // 10 minutos de validade
 
-      // Salvar nos metadados do usuário
-      const metaAtual = usuario.user_metadata || {}
-      await supabase.auth.admin.updateUserById(usuario.id, {
-        user_metadata: {
-          ...metaAtual,
-          otp_code: codigoGerado,
-          otp_expires: tempoExpiracao,
-          otp_motivo: motivo || 'seguranca',
-        },
-      })
+      if (usuario) {
+        // Salvar nos metadados do usuário existente
+        const metaAtual = usuario.user_metadata || {}
+        await supabase.auth.admin.updateUserById(usuario.id, {
+          user_metadata: {
+            ...metaAtual,
+            otp_code: codigoGerado,
+            otp_expires: tempoExpiracao,
+            otp_motivo: motivo || 'seguranca',
+          },
+        })
+      }
 
-      // Registrar auditoria para rastreabilidade
+      // Registrar auditoria / pendência de verificação para rastreabilidade
       try {
         await supabase.from('logs_auditoria_admin').insert({
           admin_email: emailLimpo,
-          tipo_acao: 'ENVIO_OTP_EMAIL',
-          entidade: 'auth.users',
-          entidade_id: usuario.id,
-          justificativa: `Envio de código OTP para motivo: ${motivo || 'seguranca'}`,
+          tipo_acao: usuario ? 'ENVIO_OTP_EMAIL' : 'OTP_PENDENTE_NOVO_OPERADOR',
+          entidade: usuario ? 'auth.users' : 'novo_operador',
+          entidade_id: usuario ? usuario.id : null,
+          dados_novos: {
+            codigo: codigoGerado,
+            expires_at: tempoExpiracao,
+            motivo: motivo || 'criar_operador',
+          },
+          justificativa: `Envio de código OTP para ${emailLimpo} (motivo: ${motivo || 'seguranca'})`,
           created_at: new Date().toISOString(),
         })
       } catch {}
+
+      // Disparar e-mail real via Resend
+      const envioEmail = await enviarCodigoOtpEmail({
+        email: emailLimpo,
+        codigo: codigoGerado,
+        motivo,
+        nome: usuario?.user_metadata?.nome,
+      })
+
+      if (!envioEmail.sucesso) {
+        console.warn('Aviso de envio de e-mail (Resend):', envioEmail.error)
+      }
 
       return NextResponse.json({
         sucesso: true,
         mensagem: `Código de verificação enviado com sucesso para ${emailLimpo}.`,
         enviadoPara: emailLimpo,
+        emailEntregue: envioEmail.sucesso,
         // Retornamos preview para testes imediatos em desenvolvimento
         codigoPreview: codigoGerado,
       })
@@ -74,37 +115,65 @@ export async function POST(req: Request) {
       }
 
       const codigoLimpo = codigo.toString().replace(/\D/g, '')
-      const meta = usuario.user_metadata || {}
 
-      if (!meta.otp_code || !meta.otp_expires) {
-        return NextResponse.json({ error: 'Nenhum código ativo encontrado. Solicite um novo código.' }, { status: 400 })
+      // Se o usuário já existe no Auth
+      if (usuario) {
+        const meta = usuario.user_metadata || {}
+
+        if (!meta.otp_code || !meta.otp_expires) {
+          return NextResponse.json({ error: 'Nenhum código ativo encontrado. Solicite um novo código.' }, { status: 400 })
+        }
+
+        if (Date.now() > meta.otp_expires) {
+          return NextResponse.json({ error: 'O código de verificação expirou. Solicite um novo código.' }, { status: 400 })
+        }
+
+        if (meta.otp_code !== codigoLimpo) {
+          return NextResponse.json({ error: 'Código de verificação incorreto. Verifique os números recebidos.' }, { status: 400 })
+        }
+
+        // Código válido: limpar código usado
+        await supabase.auth.admin.updateUserById(usuario.id, {
+          user_metadata: {
+            ...meta,
+            otp_code: null,
+            otp_expires: null,
+            two_factor_enabled: motivo === 'ativar_2fa' ? true : meta.two_factor_enabled,
+            email_verificado_fixum: true,
+          },
+        })
+
+        if (motivo === 'ativar_2fa') {
+          try {
+            await supabase.from('perfis').update({
+              two_factor_enabled: true,
+            }).eq('id', usuario.id)
+          } catch {}
+        }
+
+        return NextResponse.json({ sucesso: true, mensagem: 'Código validado com sucesso!' })
       }
 
-      if (Date.now() > meta.otp_expires) {
-        return NextResponse.json({ error: 'O código de verificação expirou. Solicite um novo código.' }, { status: 400 })
+      // Se o usuário ainda NÃO existe (novo operador sendo cadastrado)
+      const { data: logsOtp } = await supabase
+        .from('logs_auditoria_admin')
+        .select('*')
+        .eq('admin_email', emailLimpo)
+        .eq('tipo_acao', 'OTP_PENDENTE_NOVO_OPERADOR')
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      const ultimoOtp = logsOtp?.[0]
+      if (!ultimoOtp || !ultimoOtp.dados_novos) {
+        return NextResponse.json({ error: 'Nenhum código ativo encontrado para este e-mail. Solicite um novo código.' }, { status: 400 })
       }
 
-      if (meta.otp_code !== codigoLimpo) {
-        return NextResponse.json({ error: 'Código de verificação incorreto. Verifique os números recebidos.' }, { status: 400 })
+      if (Date.now() > (ultimoOtp.dados_novos.expires_at || 0)) {
+        return NextResponse.json({ error: 'O código de confirmação expirou. Solicite um novo código.' }, { status: 400 })
       }
 
-      // Código válido: limpar código usado
-      await supabase.auth.admin.updateUserById(usuario.id, {
-        user_metadata: {
-          ...meta,
-          otp_code: null,
-          otp_expires: null,
-          two_factor_enabled: motivo === 'ativar_2fa' ? true : meta.two_factor_enabled,
-          email_verificado_fixum: true,
-        },
-      })
-
-      if (motivo === 'ativar_2fa') {
-        try {
-          await supabase.from('perfis').update({
-            two_factor_enabled: true,
-          }).eq('id', usuario.id)
-        } catch {}
+      if (ultimoOtp.dados_novos.codigo !== codigoLimpo) {
+        return NextResponse.json({ error: 'Código de verificação de 6 dígitos incorreto.' }, { status: 400 })
       }
 
       return NextResponse.json({ sucesso: true, mensagem: 'Código validado com sucesso!' })
@@ -112,6 +181,10 @@ export async function POST(req: Request) {
 
     // ── AÇÃO 3: DESATIVAR 2FA ──
     if (acao === 'desativar_2fa') {
+      if (!usuario) {
+        return NextResponse.json({ error: 'Usuário não encontrado.' }, { status: 404 })
+      }
+
       const metaAtual = usuario.user_metadata || {}
       await supabase.auth.admin.updateUserById(usuario.id, {
         user_metadata: {

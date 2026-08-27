@@ -12,6 +12,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'E-mail e senha são obrigatórios.' }, { status: 400 })
     }
 
+    const emailLimpo = email.trim().toLowerCase()
+
+    // ── PROTEÇÃO INSTITUCIONAL: Impedir cadastro de e-mails administrativos como clientes no portal ──
+    if (emailLimpo === 'admin@fixum.com.br' || emailLimpo.endsWith('@fixum.com.br')) {
+      return NextResponse.json({
+        error: 'Este e-mail institucional é exclusivo da administração da Fixum. Para acessar o sistema executivo, utilize a rota /admin/login.',
+      }, { status: 403 })
+    }
+
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
       auth: { autoRefreshToken: false, persistSession: false },
     })

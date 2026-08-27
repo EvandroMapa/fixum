@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import InputSenha from '@/components/ui/InputSenha'
-import styles from './ModalEstornoFatura.module.css'
+import styles from './ModalNovoOperador.module.css'
 import { OperadorAdmin } from '@/app/api/admin/operadores/route'
 
 interface ModalAlterarSenhaOperadorProps {
@@ -80,14 +80,14 @@ export default function ModalAlterarSenhaOperador({
   return (
     <div className={styles.overlay} onClick={onFechar}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.cabecalho} style={{ background: '#0f172a' }}>
-          <div className={styles.iconeAlerta} style={{ background: 'rgba(245, 158, 11, 0.2)' }}>
+        <div className={styles.cabecalho}>
+          <div className={styles.iconeTopo} style={{ background: 'rgba(245, 158, 11, 0.18)', borderColor: 'rgba(245, 158, 11, 0.35)' }}>
             🔑
           </div>
           <div>
             <h2 className={styles.titulo}>Redefinir Senha de Operador</h2>
             <p className={styles.subtitulo}>
-              Operador: <strong>{operador.nome}</strong> ({operador.email})
+              Operador: <strong style={{ color: '#ffffff' }}>{operador.nome}</strong> ({operador.email})
             </p>
           </div>
         </div>
@@ -103,13 +103,13 @@ export default function ModalAlterarSenhaOperador({
           <div className={styles.grupoCampo}>
             <label className={styles.label}>
               <span>Nova Senha</span>
-              <span className={styles.obrigatorio}>* (Mínimo 6 dígitos)</span>
+              <span className={styles.obrigatorio}>* Mínimo 6 dígitos</span>
             </label>
             <InputSenha
               name="nova-senha-operador"
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
-              placeholder="••••••••••••"
+              placeholder="Digite a nova senha"
               className={styles.input}
               estiloDark={true}
               required
@@ -120,22 +120,22 @@ export default function ModalAlterarSenhaOperador({
           <div className={styles.grupoCampo}>
             <label className={styles.label}>
               <span>Motivo / Justificativa da Alteração</span>
-              <span className={styles.obrigatorio}>* (Auditoria)</span>
+              <span className={styles.obrigatorio}>* Registro de Auditoria</span>
             </label>
             <input
               type="text"
               className={styles.input}
               value={justificativa}
               onChange={(e) => setJustificativa(e.target.value)}
-              placeholder="Ex: Solicitação de troca pelo operador ou rotação periódica"
+              placeholder="Ex: Rotação periódica ou solicitação do operador"
               required
             />
           </div>
 
-          <div className={styles.grupoCampo}>
+          <div className={styles.grupoCampo} style={{ marginTop: '4px' }}>
             <label className={styles.label}>
               <span>Chave Secreta Master (PIN de Autorização)</span>
-              <span className={styles.obrigatorio}>*</span>
+              <span className={styles.obrigatorio}>* Obrigatório</span>
             </label>
             <InputSenha
               name="admin-pin-redefinir-senha"
@@ -160,10 +160,10 @@ export default function ModalAlterarSenhaOperador({
             <button
               type="submit"
               className={styles.btnConfirmar}
-              style={{ background: '#f59e0b', color: '#0f172a', fontWeight: 800 }}
+              style={{ background: 'linear-gradient(135deg, #d97706, #b45309)' }}
               disabled={carregando}
             >
-              {carregando ? 'Salvando...' : 'Salvar Nova Senha'}
+              {carregando ? 'Alterando...' : '🔑 Confirmar Nova Senha'}
             </button>
           </div>
         </form>

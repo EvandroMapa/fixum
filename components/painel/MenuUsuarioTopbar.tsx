@@ -115,20 +115,7 @@ export default function MenuUsuarioTopbar({
               }}
             >
               <span className={styles.iconeItem}>⚙️</span>
-              <span>Configurações</span>
-              <span className={styles.tagDestaque}>Novo</span>
-            </button>
-
-            <button
-              type="button"
-              className={styles.itemMenu}
-              onClick={() => {
-                setAberto(false)
-                onAbrirSeguranca()
-              }}
-            >
-              <span className={styles.iconeItem}>🛡️</span>
-              <span>Segurança & 2FA</span>
+              <span>Configurações da Conta</span>
             </button>
 
             <Link

@@ -40,7 +40,7 @@ export default function PlanosPage() {
             </p>
 
             <div className={styles.heroAcoes}>
-              <Link href="/cadastro" className="btn btn-primario btn-lg">
+              <Link href="/cadastro?tipo=proprietario" className="btn btn-primario btn-lg">
                 Começar Grátis com 1 Imóvel
               </Link>
               <a href="#simulador" className="btn btn-outline btn-lg">
@@ -297,12 +297,22 @@ export default function PlanosPage() {
                     </ul>
 
                     <div className={styles.cardPlanoBtnWrapper}>
-                      <Link
-                        href={isGratis ? '/cadastro' : `/cadastro?plano=${p.id}&ciclo=${periodicidade}`}
-                        className={`btn ${isDestaque ? 'btn-primario' : 'btn-outline'} ${styles.btnCardPlano}`}
-                      >
-                        {isGratis ? 'Começar Grátis' : `Contratar ${p.nome}`}
-                      </Link>
+                      {(() => {
+                        const ehPlanoImob = p.limite_imoveis_min >= 51
+                        const tipoDestino = isGratis ? 'proprietario' : ehPlanoImob ? 'imobiliaria' : 'corretor'
+                        const urlDestino = isGratis
+                          ? `/cadastro?tipo=${tipoDestino}`
+                          : `/cadastro?tipo=${tipoDestino}&plano=${p.id}&ciclo=${periodicidade}`
+
+                        return (
+                          <Link
+                            href={urlDestino}
+                            className={`btn ${isDestaque ? 'btn-primario' : 'btn-outline'} ${styles.btnCardPlano}`}
+                          >
+                            {isGratis ? 'Começar Grátis' : `Contratar ${p.nome}`}
+                          </Link>
+                        )
+                      })()}
                     </div>
                   </div>
                 )

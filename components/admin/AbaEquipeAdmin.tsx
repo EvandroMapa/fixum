@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { OperadorAdmin } from '@/app/api/admin/operadores/route'
 import ModalNovoOperador from './ModalNovoOperador'
 import ModalAlterarSenhaOperador from './ModalAlterarSenhaOperador'
+import ModalEditarOperador from './ModalEditarOperador'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import styles from '@/app/admin/page.module.css'
@@ -24,6 +25,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
   // Modais
   const [modalNovoAberto, setModalNovoAberto] = useState(false)
   const [operadorParaSenha, setOperadorParaSenha] = useState<OperadorAdmin | null>(null)
+  const [operadorParaEditar, setOperadorParaEditar] = useState<OperadorAdmin | null>(null)
 
   const carregarOperadores = useCallback(async () => {
     setCarregando(true)
@@ -416,6 +418,26 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
 
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                        {/* Editar Operador */}
+                        <button
+                          type="button"
+                          onClick={() => setOperadorParaEditar(op)}
+                          className={styles.btnAcaoTabela}
+                          title="Editar Cadastro e Permissões"
+                          style={{
+                            background: '#1e293b',
+                            border: '1px solid #334155',
+                            color: '#38bdf8',
+                            borderRadius: '8px',
+                            padding: '6px 10px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          ✏️ Editar
+                        </button>
+
                         {/* Redefinir Senha */}
                         <button
                           type="button"
@@ -493,6 +515,14 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
         aberto={modalNovoAberto}
         onFechar={() => setModalNovoAberto(false)}
         onOperadorCriado={carregarOperadores}
+        adminEmailLogado={adminEmailLogado}
+      />
+
+      <ModalEditarOperador
+        aberto={!!operadorParaEditar}
+        operador={operadorParaEditar}
+        onFechar={() => setOperadorParaEditar(null)}
+        onOperadorSalvo={carregarOperadores}
         adminEmailLogado={adminEmailLogado}
       />
 

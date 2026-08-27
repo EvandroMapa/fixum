@@ -37,8 +37,10 @@ function ExplorarConteudo() {
   })
   const [voarPara, setVoarPara] = useState<[number, number] | null>(null)
   const imobiliariaId = searchParams.get('imobiliaria') || searchParams.get('imobiliaria_id') || null
-  const nomeImobParam = searchParams.get('nome') || ''
-  const [nomeImobiliaria, setNomeImobiliaria] = useState(nomeImobParam)
+  const anuncianteId = searchParams.get('anunciante') || searchParams.get('corretor') || null
+  const nomeParam = searchParams.get('nome') || ''
+  const [nomeFiltroAnunciante, setNomeFiltroAnunciante] = useState(nomeParam)
+  const [nomeImobiliaria, setNomeImobiliaria] = useState(nomeParam)
 
   function handleAlternarVista(novaVista?: 'lista' | 'mapa') {
     const destino = novaVista ?? (vistaAtiva === 'lista' ? 'mapa' : 'lista')
@@ -59,7 +61,7 @@ function ExplorarConteudo() {
 
   const [filtros, setFiltros] = useState<TFiltros>(() => {
     const negParam = searchParams.get('negociacao')
-    const negociacaoInicial = negParam ? (negParam as TFiltros['negociacao']) : (imobiliariaId ? undefined : 'venda')
+    const negociacaoInicial = negParam ? (negParam as TFiltros['negociacao']) : (imobiliariaId || anuncianteId ? undefined : 'venda')
     return {
       negociacao: negociacaoInicial,
       cidade: searchParams.get('cidade') ?? searchParams.get('q') ?? undefined,
@@ -163,7 +165,9 @@ function ExplorarConteudo() {
         }
       }
 
-      if (idsAnunciantesImob && idsAnunciantesImob.length > 0) {
+      if (anuncianteId) {
+        query = query.eq('anunciante_id', anuncianteId)
+      } else if (idsAnunciantesImob && idsAnunciantesImob.length > 0) {
         query = query.in('anunciante_id', idsAnunciantesImob)
       }
 
@@ -416,17 +420,17 @@ function ExplorarConteudo() {
       <div className={styles.conteudo}>
         {/* Lista */}
         <div className={`${styles.lista} ${vistaAtiva === 'mapa' ? styles.listaOculta : ''}`}>
-          {/* Banner de filtro exclusivo de imobiliária */}
-          {imobiliariaId && (
+          {/* Banner de filtro exclusivo de imobiliária ou corretor */}
+          {(imobiliariaId || anuncianteId) && (
             <div className={styles.bannerFiltroImobiliaria}>
               <div className={styles.infoFiltroImob}>
-                <span className={styles.iconeFiltroImob}>🏢</span>
+                <span className={styles.iconeFiltroImob}>{imobiliariaId ? '🏢' : '👔'}</span>
                 <div>
                   <strong className={styles.nomeFiltroImob}>
-                    {nomeImobiliaria || 'Imobiliária Parceira'}
+                    {nomeFiltroAnunciante || nomeImobiliaria || (imobiliariaId ? 'Imobiliária Parceira' : 'Corretor Credenciado')}
                   </strong>
                   <span className={styles.subFiltroImob}>
-                    Exibindo {totalResultados} {totalResultados === 1 ? 'imóvel desta empresa' : 'imóveis desta empresa'} no mapa
+                    Exibindo {totalResultados} {totalResultados === 1 ? 'imóvel anunciado' : 'imóveis anunciados'} no mapa
                   </span>
                 </div>
               </div>

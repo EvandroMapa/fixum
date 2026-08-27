@@ -198,8 +198,9 @@ function PainelConteudo() {
       console.error('Erro ao buscar cota e assinatura:', e)
     }
 
-    // ── CARREGAMENTO DE FATURAS (Apenas para Imobiliária / Dono da conta) ──
-    if (ehImob) {
+    // ── CARREGAMENTO DE FATURAS (Imobiliárias e Corretores Autônomos Titulares) ──
+    const ehTitularCobranca = ehImob || !imobId
+    if (ehTitularCobranca) {
       try {
         const { data: faturasData } = await supabase
           .from('faturas')

@@ -99,9 +99,9 @@ export async function POST(req: Request) {
       auth: { autoRefreshToken: false, persistSession: false },
     })
 
-    // ── AÇÃO 1: CRIAR NOVO OPERADOR ADMINISTRATIVO ──
+    // ── AÇÃO 1: CRIAR NOVO OPERADOR ADMINISTRATIVO (COM CÓDIGO OTP) ──
     if (acao === 'criar') {
-      const { nome, email, senha, cargo } = body
+      const { nome, email, senha, cargo, codigoOtp } = body
       if (!nome || !email || !senha || !cargo) {
         return NextResponse.json({ error: 'Todos os campos são obrigatórios.' }, { status: 400 })
       }
@@ -111,6 +111,34 @@ export async function POST(req: Request) {
       }
 
       const emailLimpo = email.trim().toLowerCase()
+      const emailAdminOrigem = (adminEmail || 'admin@fixum.com.br').trim().toLowerCase()
+
+      // Validação do Código OTP enviado ao e-mail informado do Novo Operador
+      if (codigoOtp) {
+        const codigoLimpo = codigoOtp.toString().replace(/\D/g, '')
+
+        // Buscar registro de OTP pendente para o e-mail do novo operador
+        const { data: logsOtp } = await supabase
+          .from('logs_auditoria_admin')
+          .select('*')
+          .eq('admin_email', emailLimpo)
+          .eq('tipo_acao', 'OTP_PENDENTE_NOVO_OPERADOR')
+          .order('created_at', { ascending: false })
+          .limit(1)
+
+        const ultimoOtp = logsOtp?.[0]
+        if (!ultimoOtp || !ultimoOtp.dados_novos) {
+          return NextResponse.json({ error: 'Nenhum código OTP ativo para este e-mail. Solicite um novo envio.' }, { status: 400 })
+        }
+
+        if (Date.now() > (ultimoOtp.dados_novos.expires_at || 0)) {
+          return NextResponse.json({ error: 'O código de confirmação expirou. Solicite um novo código.' }, { status: 400 })
+        }
+
+        if (ultimoOtp.dados_novos.codigo !== codigoLimpo) {
+          return NextResponse.json({ error: 'Código de verificação de 6 dígitos incorreto.' }, { status: 400 })
+        }
+      }
 
       // Criar usuário no Auth
       const { data: novoAuth, error: errAuth } = await supabase.auth.admin.createUser({
@@ -145,12 +173,12 @@ export async function POST(req: Request) {
 
       // Auditoria
       await supabase.from('logs_auditoria_admin').insert({
-        admin_email: adminEmail || 'admin@fixum.com.br',
+        admin_email: emailAdminOrigem,
         tipo_acao: 'CRIAR_OPERADOR_ADMIN',
         entidade: 'perfis',
         entidade_id: userId,
         dados_novos: { nome, email: emailLimpo, cargo },
-        justificativa: `Criação do operador administrativo ${nome} (${cargo})`,
+        justificativa: `Criação do operador administrativo ${nome} (${cargo}) com autorização OTP`,
         created_at: new Date().toISOString(),
       })
 
@@ -240,6 +268,65 @@ export async function POST(req: Request) {
         entidade_id: operadorId,
         dados_anteriores: { email: usuarioAlvo?.user?.email },
         justificativa: justificativa || 'Exclusão de operador administrativo',
+        created_at: new Date().toISOString(),
+      })
+
+      return NextResponse.json({ sucesso: true })
+    }
+
+    // ── AÇÃO 5: EDITAR DADOS DO OPERADOR ──
+    if (acao === 'editar') {
+      const { operadorId, nome, email, cargo, status_conta, justificativa } = body
+      if (!operadorId || !nome || !email || !cargo) {
+        return NextResponse.json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' }, { status: 400 })
+      }
+
+      const emailLimpo = email.trim().toLowerCase()
+
+      // Proteger conta raiz contra mudança de cargo indevida
+      const { data: usuarioAlvo } = await supabase.auth.admin.getUserById(operadorId)
+      const isRaiz = usuarioAlvo?.user?.email === 'admin@fixum.com.br'
+
+      const cargoFinal = isRaiz ? 'master' : cargo
+      const statusFinal = isRaiz ? 'ativo' : (status_conta || 'ativo')
+
+      // Atualizar no Auth
+      const updateAuthPayload: any = {
+        user_metadata: {
+          ...usuarioAlvo?.user?.user_metadata,
+          nome: nome.trim(),
+          cargo: cargoFinal,
+          tipo: 'admin',
+          is_admin: true,
+        },
+      }
+
+      if (usuarioAlvo?.user?.email !== emailLimpo && !isRaiz) {
+        updateAuthPayload.email = emailLimpo
+        updateAuthPayload.email_confirm = true
+      }
+
+      const { error: errUpdateAuth } = await supabase.auth.admin.updateUserById(operadorId, updateAuthPayload)
+      if (errUpdateAuth) {
+        return NextResponse.json({ error: `Erro ao atualizar dados no Auth: ${errUpdateAuth.message}` }, { status: 400 })
+      }
+
+      // Atualizar no banco (perfis)
+      await supabase.from('perfis').update({
+        nome: nome.trim(),
+        email: isRaiz ? 'admin@fixum.com.br' : emailLimpo,
+        cargo_admin: cargoFinal,
+        status_conta: statusFinal,
+      }).eq('id', operadorId)
+
+      // Registrar auditoria
+      await supabase.from('logs_auditoria_admin').insert({
+        admin_email: adminEmail || 'admin@fixum.com.br',
+        tipo_acao: 'EDITAR_OPERADOR_ADMIN',
+        entidade: 'perfis',
+        entidade_id: operadorId,
+        dados_novos: { nome, email: emailLimpo, cargo: cargoFinal, status_conta: statusFinal },
+        justificativa: justificativa || `Edição de cadastro do operador ${nome}`,
         created_at: new Date().toISOString(),
       })
 

@@ -1,22 +1,64 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import { PLANOS_OFICIAIS, formatarMoeda } from '@/lib/planos'
 import { linkWhatsAppComercial } from '@/lib/constants'
+import { createClient } from '@/lib/supabase/client'
+import { Plano } from '@/lib/types'
 import styles from './page.module.css'
 
 export default function ParaImobiliariasPage() {
   const [qtdImoveis, setQtdImoveis] = useState<number>(100)
+  const [planos, setPlanos] = useState<Plano[]>(PLANOS_OFICIAIS)
+
+  // Carregar planos dinâmicos atualizados pelo Admin
+  useEffect(() => {
+    async function carregarPlanosVivos() {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from('planos')
+          .select('*')
+          .eq('ativo', true)
+          .order('ordem', { ascending: true })
+
+        if (!error && data && data.length > 0) {
+          setPlanos(data as Plano[])
+        }
+      } catch (err) {
+        console.error('Falha ao carregar planos em tempo real:', err)
+      }
+    }
+    carregarPlanosVivos()
+  }, [])
 
   // Filtrar planos corporativos (a partir de 21 imóveis)
-  const planosCorporativos = PLANOS_OFICIAIS.filter((p) => p.limite_imoveis_min >= 21)
+  const planosCorporativos = useMemo(() => {
+    const filtrados = planos.filter((p) => p.limite_imoveis_min >= 21)
+    return filtrados.length > 0 ? filtrados : PLANOS_OFICIAIS.filter((p) => p.limite_imoveis_min >= 21)
+  }, [planos])
 
   // Encontrar plano corporativo recomendado pelo simulador
-  const planoRecomendado =
-    planosCorporativos.find((p) => qtdImoveis <= p.limite_imoveis_max) ||
-    planosCorporativos[planosCorporativos.length - 1]
+  const planoRecomendado = useMemo(() => {
+    return (
+      planosCorporativos.find((p) => qtdImoveis <= p.limite_imoveis_max) ||
+      planosCorporativos[planosCorporativos.length - 1]
+    )
+  }, [planosCorporativos, qtdImoveis])
+
+  // Menor custo por imóvel calculado dinamicamente conforme definido pela administração
+  const menorCustoUnitario = useMemo(() => {
+    const planosComCusto = planos.filter(
+      (p) => p.ativo !== false && p.limite_imoveis_max > 0 && p.preco_mensal > 0
+    )
+    if (planosComCusto.length === 0) return 1.95
+    const custos = planosComCusto.map((p) => {
+      return p.custo_unitario_max || (p.preco_mensal / p.limite_imoveis_max)
+    })
+    return Math.min(...custos)
+  }, [planos])
 
   const faixasImobiliaria = [50, 100, 200, 500, 1000]
 
@@ -66,13 +108,15 @@ export default function ParaImobiliariasPage() {
           </div>
         </section>
 
-        {/* ── NÚMEROS E DIFERENCIAIS B2B ── */}
+        {/* ── NÚMEROS E DIFERENCIAIS B2B DINÂMICOS ── */}
         <section className={styles.secaoDiferenciais}>
           <div className={styles.container}>
             <div className={styles.gridDiferenciais}>
               <div className={styles.cardDiferencial}>
                 <span className={styles.iconeDiferencial}>💰</span>
-                <span className={styles.destaqueDiferencial}>A partir de R$ 1,20</span>
+                <span className={styles.destaqueDiferencial}>
+                  A partir de {formatarMoeda(menorCustoUnitario)}
+                </span>
                 <h4>Custo por Imóvel</h4>
                 <p>Quanto maior sua carteira, menor o custo de cada anúncio ativo.</p>
               </div>
@@ -159,9 +203,9 @@ export default function ParaImobiliariasPage() {
                         <strong>{formatarMoeda(planoRecomendado.preco_mensal)}</strong>
                         <small>/mês</small>
                       </div>
-                      {planoRecomendado.custo_unitario_max > 0 && (
+                      {(planoRecomendado.custo_unitario_max > 0 || (planoRecomendado.preco_mensal / planoRecomendado.limite_imoveis_max) > 0) && (
                         <span className={styles.custoUnitarioBadge}>
-                          Equivalente a apenas {formatarMoeda(planoRecomendado.custo_unitario_max)} por imóvel
+                          Equivalente a apenas {formatarMoeda(planoRecomendado.custo_unitario_max || (planoRecomendado.preco_mensal / planoRecomendado.limite_imoveis_max))} por imóvel
                         </span>
                       )}
                     </>
@@ -181,7 +225,7 @@ export default function ParaImobiliariasPage() {
           </div>
         </section>
 
-        {/* ── TABELA DE PLANOS CORPORATIVOS ── */}
+        {/* ── TABELA DE PLANOS CORPORATIVOS DINÂMICOS ── */}
         <section className={styles.secaoPlanos}>
           <div className={styles.container}>
             <div className={styles.secaoHeaderCentral}>
@@ -192,6 +236,7 @@ export default function ParaImobiliariasPage() {
             <div className={styles.gridPlanos}>
               {planosCorporativos.map((plano) => {
                 const isDestaque = plano.id === 'imobiliaria'
+                const custoUnitario = plano.custo_unitario_max || (plano.preco_mensal / (plano.limite_imoveis_max || 1))
 
                 return (
                   <div
@@ -224,9 +269,9 @@ export default function ParaImobiliariasPage() {
                       )}
                     </div>
 
-                    {plano.custo_unitario_max > 0 && (
+                    {custoUnitario > 0 && (
                       <span className={styles.badgeCustoUnitario}>
-                        {formatarMoeda(plano.custo_unitario_max)} / imóvel / mês
+                        {formatarMoeda(custoUnitario)} / imóvel / mês
                       </span>
                     )}
 
@@ -250,79 +295,6 @@ export default function ParaImobiliariasPage() {
                   </div>
                 )
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* ── FAQ IMOBILIÁRIAS ── */}
-        <section className={styles.secaoFaq}>
-          <div className={styles.container}>
-            <div className={styles.secaoHeaderCentral}>
-              <h2>Dúvidas de Imobiliárias & Redes</h2>
-              <p>Perguntas frequentes sobre faturamento corporativo e operação</p>
-            </div>
-
-            <div className={styles.gridFaq}>
-              <div className={styles.faqCard}>
-                <h4>Como funciona o cadastro de corretores da minha equipe?</h4>
-                <p>
-                  O administrador da imobiliária pode convidar corretores para a equipe. Eles cadastram imóveis sob o nome da imobiliária e compartilham o limite do plano corporativo.
-                </p>
-              </div>
-
-              <div className={styles.faqCard}>
-                <h4>Como funciona a emissão de nota fiscal e faturamento?</h4>
-                <p>
-                  Emitimos nota fiscal mensal para a sua pessoa jurídica (CNPJ) com opção de pagamento via Pix recorrente ou cartão corporativo.
-                </p>
-              </div>
-
-              <div className={styles.faqCard}>
-                <h4>Posso pausar imóveis que foram reservados?</h4>
-                <p>
-                  Sim! Ao pausar um imóvel vendido ou alugado, a vaga é liberada instantaneamente no seu plano para um novo anúncio, sem você perder as fotos ou o histórico.
-                </p>
-              </div>
-
-              <div className={styles.faqCard}>
-                <h4>Possuem integração com CRM imobiliário?</h4>
-                <p>
-                  Nossa equipe de engenharia está disponibilizando integrações via feed XML / API para sincronização automática de estoques de grandes imobiliárias.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── CTA FINAL IMOBILIÁRIA ── */}
-        <section className={styles.ctaFinal}>
-          <div className={styles.container}>
-            <div className={styles.cardCta}>
-              <h2>Pronto para transformar a visibilidade da sua imobiliária?</h2>
-              <p>
-                Cadastre sua empresa hoje mesmo ou entre em contato com nossa equipe comercial para condições personalizadas.
-              </p>
-              <div className={styles.ctaBotoes}>
-                <Link href="/cadastro?tipo=imobiliaria" className="btn btn-primario btn-lg">
-                  Cadastrar Imobiliária Agora
-                </Link>
-                <Link
-                  href="/painel"
-                  className="btn btn-outline btn-lg"
-                  style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', borderColor: '#ffffff' }}
-                >
-                  🔑 Já sou Parceiro (Entrar)
-                </Link>
-                <a
-                  href={linkWhatsAppComercial(undefined, 'Olá! Gostaria de uma proposta comercial para minha imobiliária.')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline btn-lg"
-                  style={{ background: 'rgba(255,255,255,0.1)', color: '#ffffff', borderColor: '#ffffff' }}
-                >
-                  💬 WhatsApp Comercial
-                </a>
-              </div>
             </div>
           </div>
         </section>

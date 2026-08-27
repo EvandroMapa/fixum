@@ -103,9 +103,22 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
   const fotos = imovel.fotos_imovel ?? []
   const caracteristicas = imovel.caracteristicas_imovel?.map((c) => c.caracteristica) ?? []
   const anunciante = imovel.perfis
-  const imobiliariaId = anunciante?.imobiliaria_id || anunciante?.id
-  const nomeImobiliaria = anunciante?.imobiliaria_nome || anunciante?.nome || 'Imobiliária'
+  const isImob = anunciante?.tipo === 'imobiliaria' || !!anunciante?.imobiliaria_id
+  const isCorretorAutonomo = anunciante?.tipo === 'corretor' && !anunciante?.imobiliaria_id
+  const isProprietario = anunciante?.tipo === 'proprietario'
+
+  const imobiliariaId = isImob ? (anunciante?.imobiliaria_id || anunciante?.id) : null
+  const anuncianteId = anunciante?.id
+
+  const nomeAnunciante = anunciante?.nome || (isCorretorAutonomo ? 'Corretor Autônomo' : isProprietario ? 'Proprietário Direto' : 'Anunciante')
+  const nomeImobiliaria = isImob ? (anunciante?.imobiliaria_nome || anunciante?.nome || 'Imobiliária') : nomeAnunciante
   const totalImoveisEmpresa = anunciante?.total_imoveis || (outrosImoveis?.length ? outrosImoveis.length + 1 : 1)
+
+  const seloAnunciante = isImob
+    ? 'Imobiliária Verificada'
+    : isCorretorAutonomo
+    ? 'Corretor Credenciado'
+    : 'Proprietário Direto'
 
   const fotoAtual = fotos[fotoAtiva]?.url ?? '/placeholder-imovel.jpg'
 
@@ -596,7 +609,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             </div>
 
             {/* ═══════════════════════════════════════════════════════════════
-                SEÇÃO: MAIS IMÓVEIS DESTA IMOBILIÁRIA (TARJA DE DESTAQUE)
+                SEÇÃO: MAIS IMÓVEIS DESTE ANUNCIANTE (TARJA DE DESTAQUE)
                 ═══════════════════════════════════════════════════════════════ */}
             {outrosImoveis && outrosImoveis.length > 0 && (
               <div className={styles.blocoOutrosImoveis}>
@@ -608,41 +621,46 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                       {anunciante?.foto_url ? (
                         <img
                           src={anunciante.foto_url}
-                          alt={nomeImobiliaria}
+                          alt={isImob ? nomeImobiliaria : nomeAnunciante}
                           className={styles.tarjaLogoImg}
                         />
                       ) : (
                         <div className={styles.tarjaLogoPlaceholder}>
-                          {nomeImobiliaria.slice(0, 2).toUpperCase()}
+                          {(isImob ? nomeImobiliaria : nomeAnunciante).slice(0, 2).toUpperCase()}
                         </div>
                       )}
                       <div className={styles.tarjaTextos}>
                         <div className={styles.tarjaBadge}>
-                          <span>🏢 Portfólio Exclusivo</span>
+                          <span>{isImob ? '🏢 Portfólio Exclusivo' : isCorretorAutonomo ? '👔 Carteira do Corretor' : '🏡 Mais Imóveis'}</span>
                         </div>
                         <h2 className={styles.tarjaTitulo}>
-                          Mais Imóveis {imovel.negociacao === 'venda' ? 'à Venda' : 'para Alugar'} de {nomeImobiliaria}
+                          Mais Imóveis {imovel.negociacao === 'venda' ? 'à Venda' : 'para Alugar'} de {isImob ? nomeImobiliaria : nomeAnunciante}
                         </h2>
                         <p className={styles.tarjaSubtitulo}>
-                          Conheça outras opções de {imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} anunciadas por esta empresa
+                          {isImob
+                            ? `Conheça outras opções de ${imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} anunciadas por esta empresa`
+                            : isCorretorAutonomo
+                            ? `Conheça outros imóveis de ${imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} anunciados por este corretor credenciado`
+                            : `Outras opções de imóveis disponíveis`}
                         </p>
                       </div>
                     </div>
 
-                    {imobiliariaId && (
-                      <Link
-                        href={`/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`}
-                        className={styles.tarjaBtnMapa}
-                      >
-                        <span className={styles.tarjaBtnIcone}>🗺️</span>
-                        <span>Ver no Mapa ({totalImoveisEmpresa})</span>
-                        <span className={styles.tarjaBtnSeta}>➔</span>
-                      </Link>
-                    )}
+                    <Link
+                      href={isImob
+                        ? `/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`
+                        : `/explorar?anunciante=${anuncianteId}&nome=${encodeURIComponent(nomeAnunciante)}&negociacao=${imovel.negociacao}`
+                      }
+                      className={styles.tarjaBtnMapa}
+                    >
+                      <span className={styles.tarjaBtnIcone}>🗺️</span>
+                      <span>Ver no Mapa ({totalImoveisEmpresa})</span>
+                      <span className={styles.tarjaBtnSeta}>➔</span>
+                    </Link>
                   </div>
                 </div>
 
-                {/* Grid de Imóveis da Mesma Imobiliária */}
+                {/* Grid de Imóveis do Mesmo Anunciante */}
                 <div className={styles.gridOutrosImoveis}>
                   {outrosImoveis.slice(0, 4).map((outro) => (
                     <CardImovel key={outro.id} imovel={outro} />
@@ -650,13 +668,16 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                 </div>
 
                 {/* Rodapé Complementar com Link para o Mapa */}
-                {imobiliariaId && totalImoveisEmpresa > 4 && (
+                {totalImoveisEmpresa > 4 && (
                   <div className={styles.rodapeOutrosImoveis}>
                     <Link
-                      href={`/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`}
+                      href={isImob
+                        ? `/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`
+                        : `/explorar?anunciante=${anuncianteId}&nome=${encodeURIComponent(nomeAnunciante)}&negociacao=${imovel.negociacao}`
+                      }
                       className={styles.btnVerTodosCatalogo}
                     >
-                      <span>🏢 Explorar todos os <strong>{totalImoveisEmpresa} imóveis</strong> de {nomeImobiliaria} no mapa</span>
+                      <span>{isImob ? '🏢' : '👔'} Explorar todos os <strong>{totalImoveisEmpresa} imóveis</strong> de {isImob ? nomeImobiliaria : nomeAnunciante} no mapa</span>
                       <span className={styles.btnVerTodosSeta}>➔</span>
                     </Link>
                   </div>
@@ -670,24 +691,24 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               ═══════════════════════════════════════════════════════════════ */}
           <div className={styles.colunaLateral}>
             <div className={styles.cardContatoSticky}>
-              {/* Banner de Destaque da Imobiliária */}
+              {/* Banner de Destaque do Anunciante */}
               <div className={styles.bannerImobiliaria}>
                 <div className={styles.bannerImobLogoWrapper}>
                   {anunciante?.foto_url ? (
-                    <img src={anunciante.foto_url} alt={nomeImobiliaria} className={styles.bannerImobLogoImg} />
+                    <img src={anunciante.foto_url} alt={isImob ? nomeImobiliaria : nomeAnunciante} className={styles.bannerImobLogoImg} />
                   ) : (
-                    <div className={styles.anuncianteAvatarPlaceholder} style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1d4ed8' }}>
-                      {nomeImobiliaria.slice(0, 2).toUpperCase()}
+                    <div className={styles.anuncianteAvatarPlaceholder} style={{ fontSize: '1.2rem', fontWeight: 800, color: isImob ? '#1d4ed8' : '#047857' }}>
+                      {(isImob ? nomeImobiliaria : nomeAnunciante).slice(0, 2).toUpperCase()}
                     </div>
                   )}
                 </div>
                 <div className={styles.bannerImobTextos}>
-                  <span className={styles.bannerImobNome}>{nomeImobiliaria}</span>
-                  {anunciante?.nome && anunciante.nome !== nomeImobiliaria && (
+                  <span className={styles.bannerImobNome}>{isImob ? nomeImobiliaria : nomeAnunciante}</span>
+                  {isImob && anunciante?.nome && anunciante.nome !== nomeImobiliaria && (
                     <span className={styles.bannerImobSubtitulo}>Corretor: {anunciante.nome}</span>
                   )}
                   <span className={styles.bannerImobSelo}>
-                    <span>✓</span> Imobiliária Verificada
+                    <span>✓</span> {seloAnunciante}
                   </span>
                 </div>
                 {anunciante?.creci && (
@@ -710,28 +731,31 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                     href={`tel:${anunciante.telefone}`}
                     className={styles.btnLigarDestaque}
                   >
-                    <span>📞</span> {anunciante?.tipo === 'imobiliaria' ? 'Ligar para a Imobiliária' : 'Ligar para o Corretor'}
+                    <span>📞</span> {isImob ? 'Ligar para a Imobiliária' : isCorretorAutonomo ? 'Ligar para o Corretor' : 'Ligar para o Proprietário'}
                   </a>
                 )}
               </div>
 
-              {/* Atalho para Ver Outros Imóveis da Imobiliária */}
-              {imobiliariaId && (
-                <div className={styles.blocoOutrosImoveisCard}>
-                  <Link
-                    href={`/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`}
-                    className={styles.btnVerTodosImoveisImob}
-                  >
-                    <span>🏢</span> Ver outros imóveis de {imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} desta imobiliária ({totalImoveisEmpresa})
-                  </Link>
+              {/* Atalho para Ver Outros Imóveis */}
+              <div className={styles.blocoOutrosImoveisCard}>
+                <Link
+                  href={isImob
+                    ? `/explorar?imobiliaria=${imobiliariaId}&nome=${encodeURIComponent(nomeImobiliaria)}&negociacao=${imovel.negociacao}`
+                    : `/explorar?anunciante=${anuncianteId}&nome=${encodeURIComponent(nomeAnunciante)}&negociacao=${imovel.negociacao}`
+                  }
+                  className={styles.btnVerTodosImoveisImob}
+                >
+                  <span>{isImob ? '🏢' : '👔'}</span> Ver outros imóveis de {imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} de {isImob ? nomeImobiliaria : nomeAnunciante} ({totalImoveisEmpresa})
+                </Link>
+                {isImob && imobiliariaId && (
                   <Link
                     href={`/imobiliaria/${imobiliariaId}`}
                     className={styles.linkPerfilImob}
                   >
                     Ver página oficial da imobiliária
                   </Link>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Formulário de Envio de Mensagem / Lead */}
               <div className={styles.divisorContato} />
