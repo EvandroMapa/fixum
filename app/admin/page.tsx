@@ -851,15 +851,15 @@ export default function AdminPage() {
                 bloquearTelaAdmin()
                 setTelaBloqueada(true)
               }}
-              className={styles.pocketBtnAcao}
-              title="Bloquear com PIN"
+              className={styles.pocketBtnIcone}
+              title="Bloquear painel com PIN Master"
             >
-              🔒 Bloquear
+              🔒
             </button>
             <button
               type="button"
               onClick={handleLogoutAdmin}
-              className={`${styles.pocketBtnAcao} ${styles.pocketBtnSair}`}
+              className={styles.pocketBtnSair}
             >
               Sair
             </button>
