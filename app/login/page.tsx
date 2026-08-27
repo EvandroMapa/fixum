@@ -57,11 +57,11 @@ function LoginConteudo() {
       // Verificar se o usuário autenticado é Administrador Master
       const { data: perfilData } = await supabase
         .from('perfis')
-        .select('is_admin, tipo_anunciante')
+        .select('is_admin, tipo')
         .eq('id', data.user.id)
         .maybeSingle()
 
-      const ehAdmin = perfilData?.is_admin === true || perfilData?.tipo_anunciante === 'admin' || data.user.user_metadata?.tipo === 'admin' || data.user.email === 'admin@fixum.com.br'
+      const ehAdmin = perfilData?.is_admin === true || perfilData?.tipo === 'admin' || data.user.user_metadata?.tipo === 'admin' || data.user.email === 'admin@fixum.com.br'
 
       if (ehAdmin) {
         router.push('/admin')
@@ -92,11 +92,11 @@ function LoginConteudo() {
       if (user) {
         const { data: perfilData } = await supabase
           .from('perfis')
-          .select('is_admin, tipo_anunciante')
+          .select('is_admin, tipo')
           .eq('id', user.id)
           .maybeSingle()
 
-        const ehAdmin = perfilData?.is_admin === true || perfilData?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
+        const ehAdmin = perfilData?.is_admin === true || perfilData?.tipo === 'admin' || user.user_metadata?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
         if (ehAdmin) {
           router.push('/admin')
           return

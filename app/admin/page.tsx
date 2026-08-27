@@ -28,13 +28,14 @@ import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 
 // Componentes Administrativos
 import AbaAnalyticsRegional from '@/components/admin/AbaAnalyticsRegional'
+import AbaEquipeAdmin from '@/components/admin/AbaEquipeAdmin'
 import ModalDetalhesCliente from '@/components/admin/ModalDetalhesCliente'
 import ModalEstornoFatura from '@/components/admin/ModalEstornoFatura'
 import ModalBloqueioInatividade from '@/components/admin/ModalBloqueioInatividade'
 
 import styles from './page.module.css'
 
-type AbaAdmin = 'analytics' | 'clientes' | 'faturas' | 'operacoes' | 'imoveis' | 'auditoria' | 'configuracoes' | 'planos'
+type AbaAdmin = 'analytics' | 'clientes' | 'faturas' | 'operacoes' | 'imoveis' | 'auditoria' | 'equipe' | 'configuracoes' | 'planos'
 type SubAbaOperacoes = 'cancelamentos' | 'devolucoes' | 'contestacoes'
 
 export default function AdminPage() {
@@ -147,6 +148,28 @@ export default function AdminPage() {
       router.push('/admin/login')
       return
     }
+
+    // 2. Verificar se o usuário autenticado É DE FATO ADMINISTRADOR
+    const { data: perfil } = await supabase
+      .from('perfis')
+      .select('is_admin, tipo')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    const ehAdmin = (
+      user.email === 'admin@fixum.com.br' ||
+      perfil?.is_admin === true ||
+      perfil?.tipo === 'admin' ||
+      user.user_metadata?.is_admin === true ||
+      user.user_metadata?.tipo === 'admin'
+    )
+
+    if (!ehAdmin) {
+      encerrarSessaoAdmin()
+      router.push('/admin/login')
+      return
+    }
+
     setUsuarioAtual(user)
 
     try {
@@ -1304,6 +1327,15 @@ export default function AdminPage() {
 
           <button
             type="button"
+            className={`${styles.navItem} ${abaAtiva === 'equipe' ? styles.navItemAtivo : ''}`}
+            onClick={() => { setAbaAtiva('equipe'); setBusca('') }}
+          >
+            <span className={styles.navIcone}>👥</span>
+            <span>Equipe & Administradores</span>
+          </button>
+
+          <button
+            type="button"
             className={`${styles.navItem} ${abaAtiva === 'auditoria' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('auditoria'); setBusca('') }}
           >
@@ -1354,6 +1386,7 @@ export default function AdminPage() {
               {abaAtiva === 'faturas' && 'Faturas & Receitas'}
               {abaAtiva === 'operacoes' && 'Cancelamentos & Disputas'}
               {abaAtiva === 'imoveis' && 'Moderação de Imóveis'}
+              {abaAtiva === 'equipe' && 'Equipe & Administradores Fixum'}
               {abaAtiva === 'auditoria' && 'Trilha de Auditoria'}
               {abaAtiva === 'planos' && 'Planos & Precificação'}
               {abaAtiva === 'configuracoes' && 'Configurações Globais'}
@@ -1949,6 +1982,11 @@ export default function AdminPage() {
                     </table>
                   </div>
                 </div>
+              )}
+
+              {/* ── ABA: EQUIPE & ADMINISTRADORES FIXUM ── */}
+              {abaAtiva === 'equipe' && (
+                <AbaEquipeAdmin adminEmailLogado={usuarioAtual?.email} />
               )}
 
               {/* ── ABA 6: TRILHA DE AUDITORIA & LOGS ── */}

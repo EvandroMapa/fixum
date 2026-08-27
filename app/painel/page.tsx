@@ -105,12 +105,12 @@ function PainelConteudo() {
 
     const { data: perfil } = await supabase
       .from('perfis')
-      .select('id, nome, tipo_anunciante, telefone, creci, plano_id, is_admin')
+      .select('id, nome, tipo, telefone, creci, plano_id, is_admin')
       .eq('id', user.id)
       .maybeSingle()
 
     const meta = user.user_metadata || {}
-    const ehAdmin = perfil?.is_admin === true || perfil?.tipo_anunciante === 'admin' || meta?.tipo === 'admin' || meta?.tipo_anunciante === 'admin' || user.email === 'admin@fixum.com.br'
+    const ehAdmin = perfil?.is_admin === true || perfil?.tipo === 'admin' || meta?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
 
     // ── PROTEÇÃO DE ACESSO: Administrador Master não acessa painel de anúncios de imóveis ──
     if (ehAdmin) {
@@ -120,22 +120,22 @@ function PainelConteudo() {
     }
 
     const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
-    const metaTipo = perfil?.tipo_anunciante || meta.tipo || meta.tipo_anunciante || searchTipo || 'proprietario'
+    const metaTipo = perfil?.tipo || meta.tipo || searchTipo || 'proprietario'
     const imobId = meta.imobiliaria_id || null
 
     const nomeFinal = perfil?.nome || meta.full_name || meta.name || meta.nome || user.email?.split('@')[0] || 'Anunciante'
     setUsuarioNome(nomeFinal)
     setUsuarioCreci(perfil?.creci || meta?.creci || '')
 
-    const tipoFinal = (perfil?.tipo_anunciante || metaTipo || 'proprietario') as 'proprietario' | 'corretor' | 'imobiliaria'
+    const tipoFinal = (perfil?.tipo || metaTipo || 'proprietario') as 'proprietario' | 'corretor' | 'imobiliaria'
     setTipoAnunciante(tipoFinal)
 
-    if (!perfil || !perfil.tipo_anunciante) {
+    if (!perfil || !perfil.tipo) {
       await supabase.from('perfis').upsert({
         id: user.id,
         nome: nomeFinal,
         email: user.email!,
-        tipo_anunciante: tipoFinal,
+        tipo: tipoFinal,
         telefone: meta.telefone || null,
         creci: meta.creci || null,
       })

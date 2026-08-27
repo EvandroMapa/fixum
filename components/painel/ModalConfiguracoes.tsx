@@ -139,7 +139,7 @@ export default function ModalConfiguracoes({
       try {
         const { data } = await sb
           .from('perfis')
-          .select('prefixo_codigo, tipo_codigo_imovel, foto_url, tipo_anunciante, creci')
+          .select('prefixo_codigo, tipo_codigo_imovel, foto_url, tipo, creci')
           .eq('id', usuarioId)
           .maybeSingle()
 
@@ -147,8 +147,8 @@ export default function ModalConfiguracoes({
           if (data.prefixo_codigo) setPrefixo(data.prefixo_codigo)
           if (data.tipo_codigo_imovel) setModoCodigo(data.tipo_codigo_imovel as any)
           if (data.foto_url) setLogoUrl(data.foto_url)
-          if (data.tipo_anunciante && ['proprietario', 'corretor', 'imobiliaria'].includes(data.tipo_anunciante)) {
-            setTipoAnunciante(data.tipo_anunciante as any)
+          if (data.tipo && ['proprietario', 'corretor', 'imobiliaria'].includes(data.tipo)) {
+            setTipoAnunciante(data.tipo as any)
           }
           if (data.creci) setCreci(data.creci)
         }
@@ -260,7 +260,7 @@ export default function ModalConfiguracoes({
       await sb
         .from('perfis')
         .update({
-          tipo_anunciante: tipoAnunciante,
+          tipo: tipoAnunciante,
           creci: tipoAnunciante === 'corretor' ? creci.trim() : null,
           prefixo_codigo: prefixoLimpo,
           tipo_codigo_imovel: modoCodigo,

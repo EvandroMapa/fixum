@@ -111,22 +111,27 @@
 
 .btnEntrar {
   width: 100%;
-  padding: 14px;
-  background: #ef4444;
-  color: white;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
   border: none;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
-  margin-top: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .btnEntrar:hover {
-  background: #dc2626;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
 }
 
 .btnEntrar:disabled {

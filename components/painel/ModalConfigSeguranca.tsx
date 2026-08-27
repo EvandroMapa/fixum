@@ -17,56 +17,75 @@ export default function ModalConfigSeguranca({
   usuarioEmail,
 }: ModalConfigSegurancaProps) {
   const supabase = createClient()
-  const { confirmar } = useConfirm()
+  const { confirmar, alertar } = useConfirm()
 
   const [carregando, setCarregando] = useState(false)
   const [temMfaAtivo, setTemMfaAtivo] = useState(false)
-  const [fatorId, setFatorId] = useState<string | null>(null)
-  const [qrCodeSvg, setQrCodeSvg] = useState<string | null>(null)
-  const [segredoManual, setSegredoManual] = useState<string | null>(null)
+  const [etapaAtivacao, setEtapaAtivacao] = useState<'inicio' | 'codigo' | 'sucesso'>('inicio')
   const [codigoConfirmacao, setCodigoConfirmacao] = useState('')
-  const [etapaAtivacao, setEtapaAtivacao] = useState<'inicio' | 'qrcode' | 'sucesso'>('inicio')
+  const [timerReenvio, setTimerReenvio] = useState(0)
   const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
 
   useEffect(() => {
     if (!aberto) return
-    async function verificarFatores() {
+    async function verificarStatus2FA() {
       setCarregando(true)
       try {
-        const { data } = await supabase.auth.mfa.listFactors()
-        const totpAtivo = data?.totp?.find((f: any) => f.status === 'verified')
-        if (totpAtivo) {
-          setTemMfaAtivo(true)
-          setFatorId(totpAtivo.id)
-        } else {
-          setTemMfaAtivo(false)
-          setFatorId(null)
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: perfil } = await supabase
+            .from('perfis')
+            .select('two_factor_enabled')
+            .eq('id', user.id)
+            .maybeSingle()
+
+          const ativo = perfil?.two_factor_enabled === true || user.user_metadata?.two_factor_enabled === true
+          setTemMfaAtivo(ativo)
         }
       } catch (e) {
-        console.error('Erro ao verificar MFA:', e)
+        console.error('Erro ao verificar 2FA:', e)
       } finally {
         setCarregando(false)
       }
     }
-    verificarFatores()
+    verificarStatus2FA()
   }, [aberto, supabase])
 
-  async function handleIniciarAtivacaoMfa() {
+  // Timer regressivo de reenvio
+  useEffect(() => {
+    if (timerReenvio <= 0) return
+    const interval = setInterval(() => {
+      setTimerReenvio((prev) => prev - 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [timerReenvio])
+
+  // Iniciar ativação disparando código por e-mail
+  async function handleIniciarAtivacao2FA() {
     setCarregando(true)
     setErro(null)
+    setMensagemSucesso(null)
+
     try {
-      const { data, error } = await supabase.auth.mfa.enroll({
-        factorType: 'totp',
-        friendlyName: 'Fixum Authenticator',
+      const res = await fetch('/api/auth/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          acao: 'enviar',
+          email: usuarioEmail,
+          motivo: 'ativar_2fa',
+        }),
       })
 
-      if (error) throw error
+      const json = await res.json()
+      if (!res.ok || json.error) {
+        throw new Error(json.error || 'Erro ao enviar código de verificação.')
+      }
 
-      setFatorId(data.id)
-      setQrCodeSvg(data.totp.qr_code)
-      setSegredoManual(data.totp.secret)
-      setEtapaAtivacao('qrcode')
+      setEtapaAtivacao('codigo')
+      setTimerReenvio(60)
+      setMensagemSucesso(`Enviamos um código de teste de 6 dígitos para o e-mail: ${usuarioEmail}`)
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : 'Erro ao iniciar ativação de 2FA')
     } finally {
@@ -74,39 +93,44 @@ export default function ModalConfigSeguranca({
     }
   }
 
-  async function handleConfirmarCodigoMfa(e: React.FormEvent) {
+  // Confirmar código de 6 dígitos e ativar 2FA
+  async function handleConfirmarCodigo2FA(e: React.FormEvent) {
     e.preventDefault()
-    if (!fatorId) return
     setCarregando(true)
     setErro(null)
 
     try {
-      const challenge = await supabase.auth.mfa.challenge({ factorId: fatorId })
-      if (challenge.error) throw challenge.error
-
-      const verify = await supabase.auth.mfa.verify({
-        factorId: fatorId,
-        challengeId: challenge.data.id,
-        code: codigoConfirmacao.replace(/\D/g, ''),
+      const res = await fetch('/api/auth/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          acao: 'validar',
+          email: usuarioEmail,
+          codigo: codigoConfirmacao,
+          motivo: 'ativar_2fa',
+        }),
       })
 
-      if (verify.error) throw verify.error
+      const json = await res.json()
+      if (!res.ok || json.error) {
+        throw new Error(json.error || 'Código incorreto ou expirado.')
+      }
 
       setTemMfaAtivo(true)
       setEtapaAtivacao('sucesso')
-      setMensagemSucesso('Autenticação em 2 Fatores ativada com sucesso!')
+      setMensagemSucesso('Verificação em 2 Etapas ativada com sucesso! A cada login um código será enviado ao seu e-mail.')
     } catch (e: unknown) {
-      setErro('Código inválido. Verifique o código gerado no aplicativo e tente novamente.')
+      setErro(e instanceof Error ? e.message : 'Código incorreto ou expirado.')
     } finally {
       setCarregando(false)
     }
   }
 
-  async function handleDesativarMfa() {
-    if (!fatorId) return
+  // Desativar 2FA
+  async function handleDesativar2FA() {
     const confirma = await confirmar({
-      titulo: 'Desativar 2FA?',
-      mensagem: 'Deseja realmente desativar a Autenticação em 2 Fatores da sua conta? Sua conta ficará protegida apenas pela senha.',
+      titulo: 'Desativar Verificação em 2 Etapas?',
+      mensagem: 'Deseja realmente desativar o 2FA por e-mail? Sua conta ficará protegida apenas pela senha.',
       icone: '🔓',
       textoBotaoConfirmar: 'Sim, Desativar 2FA',
       tipo: 'aviso',
@@ -117,13 +141,23 @@ export default function ModalConfigSeguranca({
     setErro(null)
 
     try {
-      const { error } = await supabase.auth.mfa.unenroll({ factorId: fatorId })
-      if (error) throw error
+      const res = await fetch('/api/auth/otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          acao: 'desativar_2fa',
+          email: usuarioEmail,
+        }),
+      })
+
+      const json = await res.json()
+      if (!res.ok || json.error) {
+        throw new Error(json.error || 'Erro ao desativar 2FA.')
+      }
 
       setTemMfaAtivo(false)
-      setFatorId(null)
       setEtapaAtivacao('inicio')
-      setMensagemSucesso('2FA desativado com sucesso.')
+      setMensagemSucesso('Verificação em 2 Etapas desativada com sucesso.')
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : 'Erro ao desativar 2FA')
     } finally {
@@ -131,6 +165,7 @@ export default function ModalConfigSeguranca({
     }
   }
 
+  // Desconectar outras sessões
   async function handleDesconectarOutros() {
     setCarregando(true)
     setErro(null)
@@ -157,7 +192,7 @@ export default function ModalConfigSeguranca({
           <span className={styles.iconeModal}>🛡️</span>
           <h2>Segurança da Conta</h2>
           <p className={styles.subtitulo}>
-            Proteja seus imóveis, leads e planos com autenticação avançada
+            Proteja seus imóveis, leads e planos com autenticação em duas etapas via E-mail
           </p>
         </div>
 
@@ -173,12 +208,12 @@ export default function ModalConfigSeguranca({
           </div>
         )}
 
-        {/* ── SEÇÃO 2FA / MFA ── */}
+        {/* ── SEÇÃO 2FA VIA E-MAIL ── */}
         <div className={styles.secaoCard}>
           <div className={styles.secaoHeader}>
             <div>
-              <h3>Autenticação em 2 Fatores (MFA / 2FA)</h3>
-              <p>Exige um código temporário de 6 dígitos gerado no celular a cada login.</p>
+              <h3>Verificação em 2 Etapas por E-mail (2FA)</h3>
+              <p>Receba um código de 6 dígitos na sua caixa de entrada a cada novo login.</p>
             </div>
             <span className={`${styles.badgeStatus} ${temMfaAtivo ? styles.badgeAtivo : styles.badgeInativo}`}>
               {temMfaAtivo ? 'Ativado 🔒' : 'Desativado ⚠️'}
@@ -187,43 +222,34 @@ export default function ModalConfigSeguranca({
 
           {temMfaAtivo ? (
             <div className={styles.mfaAtivoBox}>
-              <p>Sua conta está protegida com autenticação em duas etapas via aplicativo (TOTP).</p>
+              <p>
+                Sua conta está protegida! Toda vez que você entrar, um código de segurança será enviado para: <strong>{usuarioEmail}</strong>.
+              </p>
               <button
                 type="button"
                 className={styles.btnDesativarMfa}
-                onClick={handleDesativarMfa}
+                onClick={handleDesativar2FA}
                 disabled={carregando}
               >
                 Desativar 2FA
               </button>
             </div>
-          ) : etapaAtivacao === 'qrcode' && qrCodeSvg ? (
-            <form onSubmit={handleConfirmarCodigoMfa} className={styles.formAtivacao}>
+          ) : etapaAtivacao === 'codigo' ? (
+            <form onSubmit={handleConfirmarCodigo2FA} className={styles.formAtivacao}>
               <div className={styles.instrucoesMfa}>
-                <p>1. Abra o <strong>Google Authenticator</strong> ou <strong>Authy</strong> no seu celular.</p>
-                <p>2. Escaneie o QR Code abaixo ou insira o código manual:</p>
+                <p>
+                  1. Enviamos um código de segurança de 6 dígitos para <strong>{usuarioEmail}</strong>.
+                </p>
+                <p>2. Digite os números abaixo para confirmar a ativação:</p>
               </div>
-
-              <div className={styles.qrCodeWrapper}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={qrCodeSvg} alt="QR Code 2FA" className={styles.qrCodeImg} />
-              </div>
-
-              {segredoManual && (
-                <div className={styles.segredoManual}>
-                  <span>Código manual:</span>
-                  <code>{segredoManual}</code>
-                </div>
-              )}
 
               <div className={styles.campoCodigo}>
-                <label>3. Digite o código de 6 dígitos gerado:</label>
                 <input
                   type="text"
                   placeholder="000000"
                   maxLength={6}
                   value={codigoConfirmacao}
-                  onChange={(e) => setCodigoConfirmacao(e.target.value)}
+                  onChange={(e) => setCodigoConfirmacao(e.target.value.replace(/\D/g, ''))}
                   className={styles.inputCodigo}
                   required
                   autoFocus
@@ -246,6 +272,24 @@ export default function ModalConfigSeguranca({
                   Cancelar
                 </button>
               </div>
+
+              <div style={{ marginTop: '12px', textAlign: 'center' }}>
+                <button
+                  type="button"
+                  onClick={handleIniciarAtivacao2FA}
+                  disabled={carregando || timerReenvio > 0}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: timerReenvio > 0 ? '#94a3b8' : 'var(--cor-primaria)',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    cursor: timerReenvio > 0 ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {timerReenvio > 0 ? `Reenviar código em ${timerReenvio}s` : '🔄 Reenviar código para meu e-mail'}
+                </button>
+              </div>
             </form>
           ) : (
             <div className={styles.mfaInativoBox}>
@@ -253,10 +297,10 @@ export default function ModalConfigSeguranca({
               <button
                 type="button"
                 className="btn btn-primario"
-                onClick={handleIniciarAtivacaoMfa}
+                onClick={handleIniciarAtivacao2FA}
                 disabled={carregando}
               >
-                🔐 Ativar Autenticação em 2 Fatores
+                🔐 Ativar Verificação por E-mail
               </button>
             </div>
           )}

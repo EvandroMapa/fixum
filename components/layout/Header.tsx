@@ -71,8 +71,8 @@ function HeaderConteudo() {
       if (nomeMeta) setNomeUsuario(nomeMeta)
 
       try {
-        const { data } = await sb.from('perfis').select('nome, is_admin, tipo_anunciante').eq('id', user.id).maybeSingle()
-        const ehAdmin = data?.is_admin === true || data?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin' || user.user_metadata?.tipo_anunciante === 'admin' || user.email === 'admin@fixum.com.br'
+        const { data } = await sb.from('perfis').select('nome, is_admin, tipo').eq('id', user.id).maybeSingle()
+        const ehAdmin = data?.is_admin === true || data?.tipo === 'admin' || user.user_metadata?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
         setIsAdmin(ehAdmin)
 
         if (data?.nome) {

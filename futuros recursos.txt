@@ -1,0 +1,24 @@
+arredondar planos promocionais. 
+
+criar log de movimentação de imóveis. criação, edição e exclusão.
+
+
+abrir um mapa dedicado somente com os imóveis da corretora?
+mandar link pro cliente?
+
+
+
+51. IMÓVEIS DUPLICADOS
+
+A plataforma deverá futuramente identificar possíveis anúncios duplicados.O mesmo imóvel poderá aparecer anunciado por diferentes profissionais, mas o sistema deve ser capaz de identificar possíveis duplicidades e permitir tratamento administrativo.
+
+
+
+o upgrade DO PLANO poderá ocorrer no meio do período.. isso tem que ser controlado.. período de contratação. 
+
+
+confirmação da conta por email
+
+
+cuidar para as devidas tratativas de downgrade.. tipo.. se tiver 5 imóveis e migrar pra limite de 3.. o que fazer
+

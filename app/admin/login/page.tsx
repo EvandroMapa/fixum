@@ -24,8 +24,29 @@ export default function AdminLoginPage() {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
-          setEmail(user.email || '')
-          setUsuarioSessaoAtiva(user)
+          // Verificar estritamente se o usuário autenticado É ADMINISTRADOR
+          const { data: perfil } = await supabase
+            .from('perfis')
+            .select('is_admin, tipo')
+            .eq('id', user.id)
+            .maybeSingle()
+
+          const ehAdmin = (
+            user.email === 'admin@fixum.com.br' ||
+            perfil?.is_admin === true ||
+            perfil?.tipo === 'admin' ||
+            user.user_metadata?.is_admin === true ||
+            user.user_metadata?.tipo === 'admin'
+          )
+
+          if (ehAdmin) {
+            setEmail(user.email || '')
+            setUsuarioSessaoAtiva(user)
+          } else {
+            // Conta de imobiliária, corretor ou proprietário NÃO É ADMIN!
+            setUsuarioSessaoAtiva(null)
+            setEmail('')
+          }
         }
       } catch (err) {
         console.error('Erro ao verificar sessão Supabase:', err)
@@ -50,6 +71,7 @@ export default function AdminLoginPage() {
     }
   }
 
+  // ── LOGIN DIRETO: CREDENCIAIS + PIN MASTER ──
   async function handleLoginAdmin(e: React.FormEvent) {
     e.preventDefault()
     setErro(null)
@@ -67,39 +89,44 @@ export default function AdminLoginPage() {
       const supabase = createClient()
       let userAutenticado = usuarioSessaoAtiva
 
-      // 2. Se não houver sessão ativa do Supabase ou se uma nova senha foi preenchida
-      if (!userAutenticado || (senha && senha.length > 0)) {
+      // 2. Se não houver sessão ativa confirmada como admin ou se preencheu email/senha
+      if (!userAutenticado || (senha && senha.length > 0) || (email && email.trim() !== userAutenticado.email)) {
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password: senha,
         })
 
         if (authError || !authData.user) {
-          setErro('Credenciais de administrador inválidas.')
+          setErro('Credenciais de administrador inválidas. Verifique o e-mail e a senha.')
           setCarregando(false)
           return
         }
         userAutenticado = authData.user
       }
 
-      // 3. Verificação de privilégio no perfil (is_admin / tipo_anunciante)
+      // 3. Verificação ESTRITA de privilégio no perfil (is_admin / tipo)
       const { data: perfil } = await supabase
         .from('perfis')
-        .select('is_admin, tipo_anunciante')
+        .select('is_admin, tipo')
         .eq('id', userAutenticado.id)
         .maybeSingle()
 
-      const ehAdmin = perfil?.is_admin === true || perfil?.tipo_anunciante === 'admin' || userAutenticado.user_metadata?.tipo === 'admin' || userAutenticado.email === 'admin@fixum.com.br'
+      const ehAdmin = (
+        userAutenticado.email === 'admin@fixum.com.br' ||
+        perfil?.is_admin === true ||
+        perfil?.tipo === 'admin' ||
+        userAutenticado.user_metadata?.is_admin === true ||
+        userAutenticado.user_metadata?.tipo === 'admin'
+      )
 
-      // Se a flag is_admin existir e for explicitamente falsa sem ser admin de metadata
-      if (perfil && perfil.is_admin === false && !ehAdmin) {
-        setErro('Esta conta de usuário não possui permissão de Administrador Master.')
+      if (!ehAdmin) {
+        setErro(`Acesso Negado: A conta "${userAutenticado.email}" não possui permissão de Administrador Master.`)
         setCarregando(false)
         return
       }
 
-      // 4. Sucesso: Registrar sessão blindada
-      salvarSessaoAdmin(userAutenticado.email || email)
+      // 4. Sucesso: Registrar sessão blindada e entrar direto no painel
+      salvarSessaoAdmin(userAutenticado.email || email.trim())
       router.push('/admin')
     } catch (err: any) {
       setErro(err?.message || 'Falha ao autenticar administrador.')
@@ -113,7 +140,9 @@ export default function AdminLoginPage() {
         <div className={styles.cabecalho}>
           <div className={styles.escudoIcone}>🛡️</div>
           <h1 className={styles.titulo}>Painel Executivo Fixum</h1>
-          <p className={styles.subtitulo}>Acesso restrito para administradores autorizados</p>
+          <p className={styles.subtitulo}>
+            Acesso restrito para administradores autorizados
+          </p>
         </div>
 
         {erro && (
@@ -218,26 +247,24 @@ export default function AdminLoginPage() {
               data-lpignore="true"
               data-1p-ignore="true"
               required
-              autoFocus={!!usuarioSessaoAtiva}
             />
           </div>
 
           <button
             type="submit"
-            disabled={carregando}
             className={styles.btnEntrar}
+            disabled={carregando || verificandoSessao}
           >
-            {carregando ? 'Autenticando...' : '🔒 Desbloquear Painel Admin'}
+            {carregando ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
         <div className={styles.rodape}>
           <Link href="/" className={styles.linkVoltar}>
-            ← Voltar para o portal Fixum
+            ← Voltar ao site principal
           </Link>
         </div>
       </div>
     </div>
   )
 }
-
