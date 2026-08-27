@@ -908,31 +908,131 @@ export default function AdminPage() {
             </div>
           ) : (
             <>
-              {/* ABA 1: RESUMO / KPIS */}
+              {/* ABA 1: RESUMO GERAL & BI (ESPELHO DO DESKTOP) */}
               {abaMobilePocket === 'resumo' && (
                 <>
-                  {/* CARD DE FATURAMENTO */}
-                  <div className={styles.pocketCardKpi}>
-                    <div className={styles.pocketKpiTopo}>
-                      <span className={styles.pocketKpiLabel}>💰 Faturamento da Plataforma</span>
-                      <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>
-                        ● Tempo Real
-                      </span>
-                    </div>
-                    <div className={styles.pocketKpiValor}>
-                      {formatarMoeda(totalRecebidoFaturas + totalPendenteFaturas)}
-                    </div>
-                    <div className={styles.pocketKpiSub}>
-                      <span style={{ color: '#34d399' }}>✓ {formatarMoeda(totalRecebidoFaturas)} recebidos</span>
-                      <span>•</span>
-                      <span style={{ color: '#fbbf24' }}>⏳ {formatarMoeda(totalPendenteFaturas)} pendentes</span>
+                  {/* SELETOR DE PERÍODO POCKET */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>📅 Período:</span>
+                    <div className={styles.pocketFiltroPeriodo}>
+                      {(['7d', '30d', 'mes', 'ano', 'tudo'] as PeriodoAnalytics[]).map((p) => {
+                        const labelMap: Record<PeriodoAnalytics, string> = {
+                          '7d': '7 Dias',
+                          '30d': '30 Dias',
+                          'mes': 'Este Mês',
+                          'ano': 'Ano',
+                          'tudo': 'Total',
+                        }
+                        return (
+                          <button
+                            key={p}
+                            type="button"
+                            className={`${styles.pocketBtnPeriodo} ${periodoAnalytics === p ? styles.pocketBtnPeriodoAtivo : ''}`}
+                            onClick={() => setPeriodoAnalytics(p)}
+                          >
+                            {labelMap[p]}
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
 
-                  {/* CARDS EM GRID DE 2 COLUNAS */}
+                  {/* GRID 2x2 DE KPIS EXECUTIVOS */}
+                  <div className={styles.pocketGridKpis}>
+                    {/* MRR */}
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #10b981' }}>
+                      <span className={styles.pocketKpiMiniLabel}>💰 MRR (Recorrente)</span>
+                      <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.mrr)}</div>
+                      <span className={styles.pocketKpiMiniSub}>Mensalidade ativa</span>
+                    </div>
+
+                    {/* FATURAMENTO NO PERÍODO */}
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #8b5cf6' }}>
+                      <span className={styles.pocketKpiMiniLabel}>💳 Faturamento</span>
+                      <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.faturamentoPeriodo)}</div>
+                      <span className={styles.pocketKpiMiniSub}>{metricasBI.totalVendasPeriodo} fatura(s) paga(s)</span>
+                    </div>
+
+                    {/* ARR PROJETADO */}
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #0284c7' }}>
+                      <span className={styles.pocketKpiMiniLabel}>📈 ARR Projetado</span>
+                      <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.arr)}</div>
+                      <span className={styles.pocketKpiMiniSub}>MRR × 12 meses</span>
+                    </div>
+
+                    {/* TICKET MÉDIO */}
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #f59e0b' }}>
+                      <span className={styles.pocketKpiMiniLabel}>🏷️ Ticket Médio</span>
+                      <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.ticketMedio)}</div>
+                      <span className={styles.pocketKpiMiniSub}>Média por venda</span>
+                    </div>
+                  </div>
+
+                  {/* CARD DE CRESCIMENTO & RETENÇÃO (NET GROWTH) */}
+                  <div className={styles.pocketCardGrowth}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>🚀 Contratações & Net Growth</strong>
+                      <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 600 }}>
+                        Retenção {metricasBI.taxaRetencao}%
+                      </span>
+                    </div>
+
+                    <div className={styles.pocketGrowthGrid}>
+                      <div className={styles.pocketGrowthItem}>
+                        <span className={styles.pocketGrowthLabel}>Novas Vendas</span>
+                        <strong className={styles.pocketGrowthNumPositivo}>+{metricasBI.contratacoesPeriodo}</strong>
+                      </div>
+                      <div className={styles.pocketGrowthItem}>
+                        <span className={styles.pocketGrowthLabel}>Cancelamentos</span>
+                        <strong className={styles.pocketGrowthNumNegativo}>-{metricasBI.cancelamentosPeriodo}</strong>
+                      </div>
+                      <div className={styles.pocketGrowthItem}>
+                        <span className={styles.pocketGrowthLabel}>Net Growth</span>
+                        <strong className={metricasBI.netGrowth >= 0 ? styles.pocketGrowthNumPositivo : styles.pocketGrowthNumNegativo}>
+                          {metricasBI.netGrowth >= 0 ? `+${metricasBI.netGrowth}` : metricasBI.netGrowth}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* RESUMO DE PLANOS (DISTRIBUIÇÃO DE VENDAS) */}
+                  <div className={styles.pocketCardPlanos}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>📦 Distribuição de Planos</strong>
+                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                        {metricasBI.vendasPorPlano.reduce((acc, p) => acc + p.quantidade, 0)} assinaturas
+                      </span>
+                    </div>
+
+                    <div className={styles.pocketPlanosLista}>
+                      {metricasBI.vendasPorPlano.length === 0 ? (
+                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Nenhuma venda no período selecionado.</span>
+                      ) : (
+                        metricasBI.vendasPorPlano.map((p) => {
+                          const maxValor = Math.max(...metricasBI.vendasPorPlano.map((x) => x.totalValor), 1)
+                          const pct = Math.round((p.totalValor / maxValor) * 100)
+                          return (
+                            <div key={p.planoId} className={styles.pocketPlanoItem}>
+                              <div className={styles.pocketPlanoItemTopo}>
+                                <span className={styles.pocketPlanoNome}>{p.nome}</span>
+                                <span className={styles.pocketPlanoValores}>
+                                  <strong>{formatarMoeda(p.totalValor)}</strong> ({p.quantidade} un)
+                                </span>
+                              </div>
+                              <div className={styles.pocketPlanoFundo}>
+                                <div className={styles.pocketPlanoBarra} style={{ width: `${Math.max(pct, 6)}%` }} />
+                              </div>
+                            </div>
+                          )
+                        })
+                      )}
+                    </div>
+                  </div>
+
+                  {/* CARDS DE ACERVO E BASE (GRID 2 COLUNAS) */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <div className={styles.pocketCardKpi} style={{ padding: '12px' }}>
-                      <span className={styles.pocketKpiLabel}>🏢 Imóveis</span>
+                      <span className={styles.pocketKpiLabel}>🏢 Imóveis no Ar</span>
                       <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
                         {imoveis.length}
                       </div>

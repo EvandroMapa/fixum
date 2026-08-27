@@ -930,6 +930,187 @@
     border: 1px solid rgba(239, 68, 68, 0.3);
   }
 
+  /* Seletor de Período Pocket */
+  .pocketFiltroPeriodo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 3px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .pocketFiltroPeriodo::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pocketBtnPeriodo {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .pocketBtnPeriodoAtivo {
+    background: #1e293b;
+    color: #38bdf8;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Grid 2x2 de KPIs */
+  .pocketGridKpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .pocketCardKpiMini {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .pocketKpiMiniLabel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .pocketKpiMiniValor {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .pocketKpiMiniSub {
+    font-size: 0.68rem;
+    color: #64748b;
+  }
+
+  /* Card de Crescimento e Churn */
+  .pocketCardGrowth {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pocketGrowthGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+  }
+
+  .pocketGrowthItem {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pocketGrowthLabel {
+    font-size: 0.68rem;
+    color: #94a3b8;
+  }
+
+  .pocketGrowthNumPositivo {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #34d399;
+  }
+
+  .pocketGrowthNumNegativo {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #f87171;
+  }
+
+  .pocketGrowthNumAzul {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #38bdf8;
+  }
+
+  /* Card de Planos */
+  .pocketCardPlanos {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pocketPlanosLista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pocketPlanoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .pocketPlanoItemTopo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.76rem;
+  }
+
+  .pocketPlanoNome {
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .pocketPlanoValores {
+    color: #94a3b8;
+  }
+
+  .pocketPlanoValores strong {
+    color: #34d399;
+  }
+
+  .pocketPlanoFundo {
+    height: 6px;
+    background: #0f172a;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .pocketPlanoBarra {
+    height: 100%;
+    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
   .pocketAvisoDesktop {
     background: #0f172a;
     border: 1px dashed #334155;
