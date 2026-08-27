@@ -9,10 +9,13 @@ interface ModalConfiguracoesProps {
   onFechar: () => void
   usuarioId: string
   usuarioNome: string
+  tipoAnuncianteAtual?: 'proprietario' | 'corretor' | 'imobiliaria'
+  creciAtual?: string
   isImobiliaria: boolean
   isCorretor: boolean
   imobiliariaDona: { id: string; nome: string } | null
-  onConfiguracoesSalvas?: (configs: { prefixo: string; modoCodigo: 'automatico' | 'proprio' }) => void
+  onConfiguracoesSalvas?: (configs: { prefixo: string; modoCodigo: 'automatico' | 'proprio'; tipoAnunciante?: string; creci?: string }) => void
+  onRecarregarPerfil?: () => void
 }
 
 export function gerarPrefixoSugerido(nome: string): string {
@@ -91,14 +94,21 @@ export default function ModalConfiguracoes({
   onFechar,
   usuarioId,
   usuarioNome,
+  tipoAnuncianteAtual,
+  creciAtual,
   isImobiliaria,
   isCorretor,
   imobiliariaDona,
   onConfiguracoesSalvas,
+  onRecarregarPerfil,
 }: ModalConfiguracoesProps) {
   const nomeBase = imobiliariaDona?.nome || usuarioNome || ''
   const prefixoPadrao = gerarPrefixoSugerido(nomeBase)
 
+  const [tipoAnunciante, setTipoAnunciante] = useState<'proprietario' | 'corretor' | 'imobiliaria'>(
+    tipoAnuncianteAtual || (isImobiliaria ? 'imobiliaria' : isCorretor ? 'corretor' : 'proprietario')
+  )
+  const [creci, setCreci] = useState<string>(creciAtual || '')
   const [prefixo, setPrefixo] = useState<string>(prefixoPadrao)
   const [modoCodigo, setModoCodigo] = useState<'automatico' | 'proprio'>('automatico')
   const [logoUrl, setLogoUrl] = useState<string>('')
@@ -129,7 +139,7 @@ export default function ModalConfiguracoes({
       try {
         const { data } = await sb
           .from('perfis')
-          .select('prefixo_codigo, tipo_codigo_imovel, foto_url')
+          .select('prefixo_codigo, tipo_codigo_imovel, foto_url, tipo_anunciante, creci')
           .eq('id', usuarioId)
           .maybeSingle()
 
@@ -137,6 +147,10 @@ export default function ModalConfiguracoes({
           if (data.prefixo_codigo) setPrefixo(data.prefixo_codigo)
           if (data.tipo_codigo_imovel) setModoCodigo(data.tipo_codigo_imovel as any)
           if (data.foto_url) setLogoUrl(data.foto_url)
+          if (data.tipo_anunciante && ['proprietario', 'corretor', 'imobiliaria'].includes(data.tipo_anunciante)) {
+            setTipoAnunciante(data.tipo_anunciante as any)
+          }
+          if (data.creci) setCreci(data.creci)
         }
       } catch {}
     }
@@ -233,7 +247,7 @@ export default function ModalConfiguracoes({
   async function handleSalvar() {
     setSalvando(true)
     const prefixoLimpo = (prefixo.trim() || prefixoPadrao).toUpperCase().replace(/[^A-Z0-9]/g, '')
-    const configs = { prefixo: prefixoLimpo, modoCodigo }
+    const configs = { prefixo: prefixoLimpo, modoCodigo, tipoAnunciante, creci: creci.trim() }
 
     // 1. Gravar no localStorage
     if (typeof window !== 'undefined') {
@@ -246,15 +260,23 @@ export default function ModalConfiguracoes({
       await sb
         .from('perfis')
         .update({
+          tipo_anunciante: tipoAnunciante,
+          creci: tipoAnunciante === 'corretor' ? creci.trim() : null,
           prefixo_codigo: prefixoLimpo,
           tipo_codigo_imovel: modoCodigo,
           foto_url: logoUrl || null,
         })
         .eq('id', usuarioId)
-    } catch {}
+    } catch (err) {
+      console.error('Erro ao salvar perfil:', err)
+    }
 
     if (onConfiguracoesSalvas) {
       onConfiguracoesSalvas(configs)
+    }
+
+    if (onRecarregarPerfil) {
+      onRecarregarPerfil()
     }
 
     setSalvando(false)
@@ -264,6 +286,8 @@ export default function ModalConfiguracoes({
       onFechar()
     }, 700)
   }
+
+  const ehProfissional = tipoAnunciante === 'imobiliaria' || tipoAnunciante === 'corretor'
 
   return (
     <div className={styles.backdrop} onClick={onFechar}>
@@ -275,7 +299,7 @@ export default function ModalConfiguracoes({
             <div>
               <h2 className={styles.titulo}>Configurações da Conta</h2>
               <p className={styles.subtitulo}>
-                Personalize preferências de código de anúncios e operação do workspace
+                Personalize seu tipo de perfil, dados profissionais e preferências do workspace
               </p>
             </div>
           </div>
@@ -286,9 +310,77 @@ export default function ModalConfiguracoes({
 
         {/* Corpo com Configurações */}
         <div className={styles.corpoModal}>
-          {(isImobiliaria || isCorretor) && (
-            <div className={styles.secaoConfig}>
-              {/* Linha 0: Identidade Visual / Logotipo da Imobiliária */}
+          {/* ── SEÇÃO 1: TIPO DE CONTA / ATUAÇÃO ── */}
+          <div className={styles.secaoConfig}>
+            <div className={styles.secaoTituloArea}>
+              <span className={styles.secaoTitulo}>🏷️ Tipo de Atuação no Fixum</span>
+              <span className={styles.secaoSubtitulo}>Define a interface, recursos e identificação da sua conta</span>
+            </div>
+
+            {imobiliariaDona ? (
+              <div className={styles.avisoVinculoEquipe}>
+                <span>🏢 Conta vinculada à equipe de <strong>{imobiliariaDona.nome}</strong>. O papel de corretor é gerenciado pela imobiliária.</span>
+              </div>
+            ) : (
+              <div className={styles.gridTiposConta}>
+                <div
+                  className={`${styles.cardTipoConta} ${tipoAnunciante === 'proprietario' ? styles.cardTipoContaSelecionado : ''}`}
+                  onClick={() => setTipoAnunciante('proprietario')}
+                >
+                  <div className={styles.tipoContaIcone}>👤</div>
+                  <div className={styles.tipoContaInfo}>
+                    <strong>Proprietário Direto</strong>
+                    <span>Particular • 1 imóvel grátis no mapa</span>
+                  </div>
+                </div>
+
+                <div
+                  className={`${styles.cardTipoConta} ${tipoAnunciante === 'corretor' ? styles.cardTipoContaSelecionado : ''}`}
+                  onClick={() => setTipoAnunciante('corretor')}
+                >
+                  <div className={styles.tipoContaIcone}>👔</div>
+                  <div className={styles.tipoContaInfo}>
+                    <strong>Corretor Autônomo</strong>
+                    <span>Profissional independente • CRECI</span>
+                  </div>
+                </div>
+
+                <div
+                  className={`${styles.cardTipoConta} ${tipoAnunciante === 'imobiliaria' ? styles.cardTipoContaSelecionado : ''}`}
+                  onClick={() => setTipoAnunciante('imobiliaria')}
+                >
+                  <div className={styles.tipoContaIcone}>🏢</div>
+                  <div className={styles.tipoContaInfo}>
+                    <strong>Imobiliária</strong>
+                    <span>Gestão de equipe, faturas e carteira</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Campo de CRECI (Aparece se for Corretor Autônomo) */}
+            {tipoAnunciante === 'corretor' && (
+              <div className={styles.linhaCreci}>
+                <label className={styles.labelCampo}>
+                  <span>Número do CRECI (com UF)</span>
+                  <span className={styles.opcionalPill}>Exibido no perfil</span>
+                </label>
+                <input
+                  type="text"
+                  className={styles.inputCreci}
+                  value={creci}
+                  onChange={(e) => setCreci(e.target.value.toUpperCase())}
+                  placeholder="Ex: 12345-F/SP"
+                  maxLength={20}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ── SEÇÃO 2: IDENTIDADE VISUAL & CÓDIGOS (Para Corretor e Imobiliária) ── */}
+          {ehProfissional && (
+            <div className={styles.secaoConfig} style={{ marginTop: '0.75rem' }}>
+              {/* Linha 0: Identidade Visual / Logotipo */}
               <div className={styles.linhaLogo}>
                 <div className={styles.logoInfoArea}>
                   <div className={styles.logoPreviewWrapper}>
@@ -302,7 +394,7 @@ export default function ModalConfiguracoes({
                   </div>
                   <div className={styles.logoTextos}>
                     <span className={styles.logoTitulo}>
-                      {isImobiliaria ? 'Logotipo da Imobiliária' : 'Foto de Perfil / Marca'}
+                      {tipoAnunciante === 'imobiliaria' ? 'Logotipo da Imobiliária' : 'Foto de Perfil / Marca'}
                     </span>
                     <span className={styles.logoSubtitulo}>
                       Exibido nos cards da busca, nos pins do mapa e na página do imóvel
@@ -319,14 +411,14 @@ export default function ModalConfiguracoes({
                       style={{ display: 'none' }}
                       disabled={uploadingLogo}
                     />
-                    {uploadingLogo ? 'Processando...' : logoUrl ? '📁 Trocar' : '📷 Enviar Logo'}
+                    {uploadingLogo ? 'Processando...' : logoUrl ? '📁 Trocar' : '📷 Enviar Foto'}
                   </label>
                   {logoUrl && (
                     <button
                       type="button"
                       className={styles.btnRemoverLogo}
                       onClick={handleRemoverLogo}
-                      title="Remover logotipo"
+                      title="Remover imagem"
                     >
                       ✕
                     </button>
@@ -338,7 +430,7 @@ export default function ModalConfiguracoes({
               <div className={styles.linhaPrefixo}>
                 <div className={styles.prefixoEsquerda}>
                   <label className={styles.labelCampo}>
-                    <span>{isImobiliaria ? 'Iniciais da Imobiliária' : 'Iniciais do Corretor'}</span>
+                    <span>{tipoAnunciante === 'imobiliaria' ? 'Iniciais da Imobiliária' : 'Iniciais do Corretor'}</span>
                     <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
@@ -405,7 +497,7 @@ export default function ModalConfiguracoes({
             Cancelar
           </button>
           <button type="button" className={styles.btnSalvar} onClick={handleSalvar} disabled={salvando}>
-            {salvando ? 'Salvando...' : mensagemSucesso ? '✓ Salvo!' : 'Salvar Preferências'}
+            {salvando ? 'Salvando...' : mensagemSucesso ? '✓ Salvo!' : 'Salvar Alterações'}
           </button>
         </div>
       </div>

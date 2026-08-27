@@ -9,6 +9,8 @@ interface MenuUsuarioTopbarProps {
   usuarioId: string
   usuarioNome: string
   usuarioEmail: string
+  tipoAnunciante?: 'proprietario' | 'corretor' | 'imobiliaria'
+  creci?: string
   isImobiliaria: boolean
   isCorretor: boolean
   imobiliariaDona: { id: string; nome: string } | null
@@ -21,6 +23,8 @@ export default function MenuUsuarioTopbar({
   usuarioId,
   usuarioNome,
   usuarioEmail,
+  tipoAnunciante,
+  creci,
   isImobiliaria,
   isCorretor,
   imobiliariaDona,
@@ -62,9 +66,9 @@ export default function MenuUsuarioTopbar({
     ? '🏢 Gestão Imobiliária'
     : isCorretor && imobiliariaDona
       ? `👔 Equipe ${imobiliariaDona.nome}`
-      : isCorretor
-        ? '👔 Corretor Autônomo'
-        : '👤 Proprietário'
+      : (tipoAnunciante === 'corretor' || isCorretor)
+        ? `👔 Corretor Autônomo${creci ? ` • ${creci}` : ''}`
+        : '👤 Proprietário Direto'
 
   return (
     <div className={styles.menuWrapper} ref={menuRef}>

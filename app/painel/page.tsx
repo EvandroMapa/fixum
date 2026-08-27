@@ -43,12 +43,19 @@ function PainelConteudo() {
   const [usuarioNome, setUsuarioNome] = useState('')
   const [usuarioEmail, setUsuarioEmail] = useState('')
   const [usuarioId, setUsuarioId] = useState('')
+  const [tipoAnunciante, setTipoAnunciante] = useState<'proprietario' | 'corretor' | 'imobiliaria'>('proprietario')
+  const [usuarioCreci, setUsuarioCreci] = useState('')
   const [isImobiliaria, setIsImobiliaria] = useState(false)
   const [isCorretor, setIsCorretor] = useState(false)
   const [isGestor, setIsGestor] = useState(false)
   const [podeExcluir, setPodeExcluir] = useState(true)
   const [imobiliariaDona, setImobiliariaDona] = useState<{ id: string; nome: string } | null>(null)
   const { confirmar, alertar } = useConfirm()
+
+  // Computed booleans para clareza em toda a tela
+  const isCorretorEquipe = isCorretor && !!imobiliariaDona
+  const isCorretorAutonomo = tipoAnunciante === 'corretor' && !imobiliariaDona
+  const isProprietario = tipoAnunciante === 'proprietario' && !isImobiliaria && !isCorretorAutonomo && !isCorretorEquipe
 
   // Estados de Filtro de Corretores da Equipe
   const [filtroCorretor, setFiltroCorretor] = useState<string>('todos')
@@ -118,25 +125,30 @@ function PainelConteudo() {
 
     const nomeFinal = perfil?.nome || meta.full_name || meta.name || meta.nome || user.email?.split('@')[0] || 'Anunciante'
     setUsuarioNome(nomeFinal)
+    setUsuarioCreci(perfil?.creci || meta?.creci || '')
+
+    const tipoFinal = (perfil?.tipo_anunciante || metaTipo || 'proprietario') as 'proprietario' | 'corretor' | 'imobiliaria'
+    setTipoAnunciante(tipoFinal)
 
     if (!perfil || !perfil.tipo_anunciante) {
       await supabase.from('perfis').upsert({
         id: user.id,
         nome: nomeFinal,
         email: user.email!,
-        tipo_anunciante: metaTipo,
+        tipo_anunciante: tipoFinal,
         telefone: meta.telefone || null,
+        creci: meta.creci || null,
       })
     }
 
     setUsuarioTelefone(perfil?.telefone || meta?.telefone || '')
 
-    const tipoFinal = perfil?.tipo_anunciante || metaTipo
     const ehImob = tipoFinal === 'imobiliaria'
     const ehCorretorVinculado = !!imobId
+    const ehCorretor = tipoFinal === 'corretor' || ehCorretorVinculado
 
     setIsImobiliaria(ehImob)
-    setIsCorretor(ehCorretorVinculado)
+    setIsCorretor(ehCorretor)
 
     if (imobId) {
       const { data: imobData } = await supabase
@@ -495,26 +507,40 @@ function PainelConteudo() {
               <span className={styles.empresaTipo}>
                 {isImobiliaria
                   ? '🏢 Gestão Imobiliária'
-                  : isCorretor && imobiliariaDona
+                  : isCorretorEquipe && imobiliariaDona
                     ? `👔 Corretor Oficial — ${imobiliariaDona.nome}`
-                    : '👤 Painel de Anúncios'}
+                    : isCorretorAutonomo
+                      ? `👔 Corretor Autônomo${usuarioCreci ? ` • CRECI ${usuarioCreci}` : ''}`
+                      : '👤 Proprietário Direto'}
               </span>
             </div>
           </div>
         </div>
 
         <div className={styles.topbarDireita}>
-          {/* Badge do Topbar (Apenas para gestor imobiliária ou tag estática de equipe para corretores) */}
-          {isCorretor ? (
-            imobiliariaDona ? (
-              <div
-                className={styles.badgePlanoTopbar}
-                style={{ cursor: 'default', background: '#f8fafc', borderColor: '#e2e8f0', color: '#475569' }}
-                title={`Vinculado à equipe de ${imobiliariaDona.nome}`}
-              >
-                <span>🏢 Equipe <strong>{imobiliariaDona.nome}</strong></span>
-              </div>
-            ) : null
+          {/* Badge do Topbar Adaptativa */}
+          {isCorretorEquipe && imobiliariaDona ? (
+            <div
+              className={styles.badgePlanoTopbar}
+              style={{ cursor: 'default', background: '#f8fafc', borderColor: '#e2e8f0', color: '#475569' }}
+              title={`Vinculado à equipe de ${imobiliariaDona.nome}`}
+            >
+              <span>🏢 Equipe <strong>{imobiliariaDona.nome}</strong></span>
+            </div>
+          ) : isCorretorAutonomo ? (
+            <button
+              type="button"
+              className={styles.badgePlanoTopbar}
+              onClick={() => trocarAba('plano')}
+              title="Gerenciar Cota de Imóveis do Corretor"
+              style={{ background: '#f0fdf4', borderColor: '#bbf7d0', color: '#166534' }}
+            >
+              <span className={styles.iconePlano}>👔</span>
+              <span>Cota: <strong>{usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo}</strong></span>
+              <span className={styles.vagasPill} style={{ background: '#16a34a' }}>
+                {usoPlano.plano.nome}
+              </span>
+            </button>
           ) : isImobiliaria ? (
             <button
               type="button"
@@ -522,13 +548,21 @@ function PainelConteudo() {
               onClick={() => trocarAba('plano')}
               title="Gerenciar Plano & Faturas da Imobiliária"
             >
-              <span className={styles.iconePlano}>💳</span>
+              <span className={styles.iconePlano}>🏢</span>
               <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
               <span className={styles.vagasPill}>
                 {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} vagas
               </span>
             </button>
-          ) : null}
+          ) : (
+            <div
+              className={styles.badgePlanoTopbar}
+              style={{ cursor: 'default', background: '#f0fdf4', borderColor: '#bbf7d0', color: '#166534' }}
+              title="Proprietário Direto com 1 anúncio gratuito ativo no mapa Fixum"
+            >
+              <span>🏷️ <strong>1 Anúncio Grátis</strong></span>
+            </div>
+          )}
 
           {/* Notificações Corporativas */}
           <MenuNotificacoes
@@ -558,6 +592,8 @@ function PainelConteudo() {
             usuarioId={usuarioId}
             usuarioNome={usuarioNome}
             usuarioEmail={usuarioEmail}
+            tipoAnunciante={tipoAnunciante}
+            creci={usuarioCreci}
             isImobiliaria={isImobiliaria}
             isCorretor={isCorretor}
             imobiliariaDona={imobiliariaDona}
@@ -577,7 +613,7 @@ function PainelConteudo() {
               { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis', labelMobile: 'Imóveis' },
               { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}`, labelMobile: `Leads${stats.leadsNovos > 0 ? ` (${stats.leadsNovos})` : ''}` },
               ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores', labelMobile: 'Equipe' }] : []),
-              ...(!isCorretor ? [{ id: 'plano', icone: '💳', label: 'Meu Plano', labelMobile: 'Plano' }] : []),
+              ...(!isCorretorEquipe ? [{ id: 'plano', icone: '💳', label: isProprietario ? 'Meu Anúncio' : 'Meu Plano', labelMobile: isProprietario ? 'Anúncio' : 'Plano' }] : []),
             ].map((item) => (
               <button
                 key={item.id}
@@ -600,10 +636,56 @@ function PainelConteudo() {
           {abaAtiva === 'dashboard' && (
             <div className={styles.secao}>
               <h1>Olá, {usuarioNome}! 👋</h1>
-              <p className={styles.subtitulo}>Aqui está o resumo dos seus anúncios</p>
+              <p className={styles.subtitulo}>
+                {isProprietario
+                  ? 'Acompanhe o desempenho do seu anúncio particular'
+                  : 'Aqui está o resumo e desempenho da sua carteira de anúncios'}
+              </p>
 
-              {/* Banner de Plano e Capacidade (Apenas para gestor imobiliária / anunciante dono) */}
-              {!isCorretor && (
+              {/* Card Adaptativo: Proprietário vs Corretor Autônomo / Imobiliária */}
+              {isProprietario ? (
+                <div className={styles.cardProprietarioBoasVindas}>
+                  <div className={styles.proprietarioInfo}>
+                    <div className={styles.proprietarioTag}>
+                      <span>🏷️ Anúncio Particular</span>
+                      <span className={styles.proprietarioStatusBadge}>
+                        {stats.publicados > 0 ? '🟢 1 Imóvel Ativo no Mapa' : '⚪ Nenhum imóvel publicado'}
+                      </span>
+                    </div>
+                    <p className={styles.proprietarioDescricao}>
+                      {stats.publicados > 0
+                        ? 'Seu imóvel está anunciado e visível para milhares de compradores e locatários no mapa Fixum.'
+                        : 'Você tem direito a 1 anúncio 100% gratuito para divulgar seu imóvel direto com interessados.'}
+                    </p>
+                  </div>
+                  <div className={styles.proprietarioAcoes}>
+                    {stats.total === 0 ? (
+                      <button
+                        className={`btn btn-primario btn-sm ${styles.btnPlanoAcao}`}
+                        onClick={() => setModalNovoImovelAberto(true)}
+                      >
+                        ➕ Publicar Imóvel Grátis
+                      </button>
+                    ) : (
+                      <button
+                        className={`btn btn-primario btn-sm ${styles.btnPlanoAcao}`}
+                        onClick={() => trocarAba('imoveis')}
+                      >
+                        🏢 Gerenciar Meu Anúncio
+                      </button>
+                    )}
+                    {proximoPlano && stats.total > 0 && (
+                      <button
+                        className={`btn btn-outline btn-sm ${styles.btnPlanoAcao}`}
+                        onClick={() => dispararUpgrade(proximoPlano)}
+                        title="Deseja anunciar outro imóvel ou aumentar seu limite?"
+                      >
+                        ⭐ Anunciar outro imóvel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : !isCorretorEquipe && (
                 <div className={styles.cardPlanoResumo}>
                   <div className={styles.planoResumoInfo}>
                     <div className={styles.planoResumoBadgeContainer}>
@@ -815,9 +897,12 @@ function PainelConteudo() {
           onFechar={() => setModalConfiguracoesAberto(false)}
           usuarioId={usuarioId}
           usuarioNome={usuarioNome}
+          tipoAnuncianteAtual={tipoAnunciante}
+          creciAtual={usuarioCreci}
           isImobiliaria={isImobiliaria}
           isCorretor={isCorretor}
           imobiliariaDona={imobiliariaDona}
+          onRecarregarPerfil={() => carregarDados(true)}
         />
 
         {/* Modal de Cadastro de Novo Imóvel (com Workspace visível atrás) */}
