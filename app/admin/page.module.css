@@ -712,27 +712,233 @@
   background: #0369a1;
 }
 
-/* ── RESPONSIVIDADE (MOBILE-FIRST) ── */
+/* ── MODO ADMIN POCKET MOBILE (VISÃO EXECUTIVA INFORMATIVA) ── */
+.adminPocketMobile {
+  display: none;
+}
+
 @media (max-width: 900px) {
-  .adminLayout {
-    flex-direction: column;
-    height: auto;
-    overflow: visible;
-  }
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
+  .sidebar,
   .conteudoPrincipal {
-    height: auto;
-    overflow-y: visible;
-    overflow-x: visible;
+    display: none !important;
   }
-  .topbar {
-    padding: 0 16px;
+
+  .adminLayout {
+    display: block !important;
+    height: auto !important;
+    min-height: 100vh;
+    overflow-y: auto !important;
+    background: #090d16;
   }
-  .corpo {
+
+  .adminPocketMobile {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  .pocketTopbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #111827;
+    border-bottom: 1px solid #1f2937;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .pocketLogoBox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .pocketLogoTexto {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  .pocketBadge {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .pocketTopbarAcoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pocketBtnAcao {
+    background: #1f2937;
+    border: 1px solid #374151;
+    color: #cbd5e1;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .pocketNavPills {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .pocketNavPills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pocketNavPill {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .pocketNavPillAtivo {
+    background: #0284c7 !important;
+    border-color: #0284c7 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  .pocketCorpo {
     padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .pocketCardKpi {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .pocketKpiTopo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pocketKpiLabel {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pocketKpiValor {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .pocketKpiSub {
+    font-size: 0.75rem;
+    color: #64748b;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pocketListaCards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pocketItemCard {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pocketItemTopo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .pocketItemNome {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .pocketBadgeStatus {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .pocketBadgePago {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .pocketBadgePendente {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .pocketBadgeAtrasado {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .pocketAvisoDesktop {
+    background: #0f172a;
+    border: 1px dashed #334155;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.4;
+    text-align: center;
+    margin-top: 8px;
   }
 }

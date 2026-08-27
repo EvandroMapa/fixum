@@ -72,6 +72,7 @@ export default function AdminPage() {
   const [filtroTipoCliente, setFiltroTipoCliente] = useState<string>('comerciais')
   const [filtroStatusCliente, setFiltroStatusCliente] = useState<string>('todos')
   const [filtroStatusFatura, setFiltroStatusFatura] = useState<string>('todos')
+  const [abaMobilePocket, setAbaMobilePocket] = useState<'resumo' | 'faturas' | 'imoveis' | 'clientes'>('resumo')
 
   // ── MODAIS ──
   const [clienteSelecionado360, setClienteSelecionado360] = useState<ClienteAdmin360 | null>(null)
@@ -285,6 +286,15 @@ export default function AdminPage() {
       periodoSelecionado: periodoAnalytics,
     })
   }, [clientes, faturas, cancelamentos, imoveis, regiaoAnalytics, periodoAnalytics])
+
+  // Totalizadores Financeiros para Resumos Rápidos
+  const totalRecebidoFaturas = useMemo(() => {
+    return faturas.filter((f) => f.status === 'pago').reduce((acc, f) => acc + (f.valor || 0), 0)
+  }, [faturas])
+
+  const totalPendenteFaturas = useMemo(() => {
+    return faturas.filter((f) => f.status === 'pendente').reduce((acc, f) => acc + (f.valor || 0), 0)
+  }, [faturas])
 
   // ── AÇÕES ADMINISTRATIVAS (AUDITADAS) ──
   async function handleAtualizarPlanoCliente(clienteId: string, novoPlanoId: string, justificativa: string) {
@@ -824,7 +834,322 @@ export default function AdminPage() {
         />
       )}
 
-      {/* ── SIDEBAR EXECUTIVA BLINDADA ── */}
+      {/* ── VISÃO EXECUTIVA POCKET PARA CELULAR (INFORMATIVA) ── */}
+      <div className={styles.adminPocketMobile}>
+        {/* TOPBAR POCKET */}
+        <header className={styles.pocketTopbar}>
+          <Link href="/" className={styles.pocketLogoBox}>
+            <span style={{ fontSize: '1.2rem' }}>📍</span>
+            <strong className={styles.pocketLogoTexto}>FIXUM</strong>
+            <span className={styles.pocketBadge}>Pocket Admin</span>
+          </Link>
+
+          <div className={styles.pocketTopbarAcoes}>
+            <button
+              type="button"
+              onClick={() => {
+                bloquearTelaAdmin()
+                setTelaBloqueada(true)
+              }}
+              className={styles.pocketBtnAcao}
+              title="Bloquear com PIN"
+            >
+              🔒
+            </button>
+            <button
+              type="button"
+              onClick={handleLogoutAdmin}
+              className={styles.pocketBtnAcao}
+              style={{ color: '#f87171' }}
+            >
+              Sair
+            </button>
+          </div>
+        </header>
+
+        {/* NAVEGAÇÃO POCKET PILLS */}
+        <div className={styles.pocketNavPills}>
+          <button
+            type="button"
+            className={`${styles.pocketNavPill} ${abaMobilePocket === 'resumo' ? styles.pocketNavPillAtivo : ''}`}
+            onClick={() => setAbaMobilePocket('resumo')}
+          >
+            📊 Resumo Geral
+          </button>
+          <button
+            type="button"
+            className={`${styles.pocketNavPill} ${abaMobilePocket === 'faturas' ? styles.pocketNavPillAtivo : ''}`}
+            onClick={() => setAbaMobilePocket('faturas')}
+          >
+            💳 Faturas ({faturas.length})
+          </button>
+          <button
+            type="button"
+            className={`${styles.pocketNavPill} ${abaMobilePocket === 'imoveis' ? styles.pocketNavPillAtivo : ''}`}
+            onClick={() => setAbaMobilePocket('imoveis')}
+          >
+            🏢 Imóveis ({imoveis.length})
+          </button>
+          <button
+            type="button"
+            className={`${styles.pocketNavPill} ${abaMobilePocket === 'clientes' ? styles.pocketNavPillAtivo : ''}`}
+            onClick={() => setAbaMobilePocket('clientes')}
+          >
+            👥 Clientes ({clientes.filter(c => !c.is_corretor_vinculado).length})
+          </button>
+        </div>
+
+        {/* CONTEÚDO POCKET */}
+        <div className={styles.pocketCorpo}>
+          {carregando ? (
+            <div className={styles.carregando}>
+              <div className={styles.spinner} />
+              <span>Carregando visão executiva...</span>
+            </div>
+          ) : (
+            <>
+              {/* ABA 1: RESUMO / KPIS */}
+              {abaMobilePocket === 'resumo' && (
+                <>
+                  {/* CARD DE FATURAMENTO */}
+                  <div className={styles.pocketCardKpi}>
+                    <div className={styles.pocketKpiTopo}>
+                      <span className={styles.pocketKpiLabel}>💰 Faturamento da Plataforma</span>
+                      <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>
+                        ● Tempo Real
+                      </span>
+                    </div>
+                    <div className={styles.pocketKpiValor}>
+                      {formatarMoeda(totalRecebidoFaturas + totalPendenteFaturas)}
+                    </div>
+                    <div className={styles.pocketKpiSub}>
+                      <span style={{ color: '#34d399' }}>✓ {formatarMoeda(totalRecebidoFaturas)} recebidos</span>
+                      <span>•</span>
+                      <span style={{ color: '#fbbf24' }}>⏳ {formatarMoeda(totalPendenteFaturas)} pendentes</span>
+                    </div>
+                  </div>
+
+                  {/* CARDS EM GRID DE 2 COLUNAS */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div className={styles.pocketCardKpi} style={{ padding: '12px' }}>
+                      <span className={styles.pocketKpiLabel}>🏢 Imóveis</span>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
+                        {imoveis.length}
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                        {imoveis.filter(i => i.destaque).length} com destaque ⭐
+                      </span>
+                    </div>
+
+                    <div className={styles.pocketCardKpi} style={{ padding: '12px' }}>
+                      <span className={styles.pocketKpiLabel}>👥 Anunciantes</span>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
+                        {clientes.filter(c => !c.is_corretor_vinculado).length}
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                        {clientes.filter(c => c.tipo_anunciante === 'imobiliaria').length} imobiliárias
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* ALERTAS OPERACIONAIS */}
+                  {contestacoes.length > 0 || cancelamentos.length > 0 ? (
+                    <div style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '10px',
+                      padding: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                    }}>
+                      <span style={{ fontSize: '1.3rem' }}>⚠️</span>
+                      <div style={{ fontSize: '0.8rem', color: '#fca5a5' }}>
+                        <strong>Atenção Operacional:</strong> Há {contestacoes.length} contestação(ões) e {cancelamentos.length} cancelamento(s) no gateway.
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{
+                      background: 'rgba(16, 185, 129, 0.08)',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      borderRadius: '10px',
+                      padding: '10px 14px',
+                      fontSize: '0.78rem',
+                      color: '#34d399',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}>
+                      <span>✅</span>
+                      <span>Nenhuma contestação ou estorno pendente.</span>
+                    </div>
+                  )}
+
+                  {/* FEED DE ÚLTIMAS FATURAS */}
+                  <div style={{ marginTop: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <strong style={{ fontSize: '0.88rem', color: '#ffffff' }}>Últimas Cobranças</strong>
+                      <button
+                        type="button"
+                        onClick={() => setAbaMobilePocket('faturas')}
+                        style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+                      >
+                        Ver todas →
+                      </button>
+                    </div>
+
+                    <div className={styles.pocketListaCards}>
+                      {faturas.slice(0, 4).map((f) => (
+                        <div key={f.id} className={styles.pocketItemCard}>
+                          <div className={styles.pocketItemTopo}>
+                            <span className={styles.pocketItemNome}>{f.usuario_nome || 'Cliente'}</span>
+                            <span className={`${styles.pocketBadgeStatus} ${
+                              f.status === 'pago' ? styles.pocketBadgePago : f.status === 'pendente' ? styles.pocketBadgePendente : styles.pocketBadgeAtrasado
+                            }`}>
+                              {f.status}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: '#94a3b8' }}>
+                            <span>{f.plano_nome || 'Assinatura'} • {f.metodo_pagamento?.toUpperCase() || 'PIX'}</span>
+                            <strong style={{ color: '#34d399', fontSize: '0.9rem' }}>{formatarMoeda(f.valor)}</strong>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* ABA 2: FATURAS COMPLETAS */}
+              {abaMobilePocket === 'faturas' && (
+                <div className={styles.pocketListaCards}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>💳 Histórico de Cobranças</strong>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{faturas.length} faturas</span>
+                  </div>
+
+                  {faturas.map((f) => (
+                    <div key={f.id} className={styles.pocketItemCard}>
+                      <div className={styles.pocketItemTopo}>
+                        <div>
+                          <strong className={styles.pocketItemNome}>{f.usuario_nome || 'Cliente'}</strong>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{f.usuario_email}</div>
+                        </div>
+                        <span className={`${styles.pocketBadgeStatus} ${
+                          f.status === 'pago' ? styles.pocketBadgePago : f.status === 'pendente' ? styles.pocketBadgePendente : styles.pocketBadgeAtrasado
+                        }`}>
+                          {f.status}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', borderTop: '1px solid #334155', paddingTop: '6px' }}>
+                        <span style={{ color: '#94a3b8' }}>
+                          {f.metodo_pagamento?.toUpperCase()} • {new Date(f.created_at).toLocaleDateString('pt-BR')}
+                        </span>
+                        <strong style={{ color: f.status === 'pago' ? '#34d399' : '#fbbf24', fontSize: '0.95rem' }}>
+                          {formatarMoeda(f.valor)}
+                        </strong>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ABA 3: IMÓVEIS */}
+              {abaMobilePocket === 'imoveis' && (
+                <div className={styles.pocketListaCards}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>🏢 Anúncios Publicados</strong>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{imoveis.length} imóveis</span>
+                  </div>
+
+                  {imoveis.map((im) => (
+                    <div key={im.id} className={styles.pocketItemCard}>
+                      <div className={styles.pocketItemTopo}>
+                        <strong className={styles.pocketItemNome} style={{ fontSize: '0.85rem' }}>
+                          {im.titulo}
+                        </strong>
+                        {im.destaque && (
+                          <span style={{ background: '#fef08a', color: '#854d0e', fontSize: '0.65rem', fontWeight: 800, padding: '1px 5px', borderRadius: '4px' }}>
+                            ⭐ Destaque
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'flex', justifyContent: 'space-between' }}>
+                        <span>📍 {im.bairro ? `${im.bairro}, ` : ''}{im.cidade || 'MG'}</span>
+                        <strong style={{ color: '#38bdf8' }}>{formatarMoeda(im.preco)}</strong>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #334155', paddingTop: '6px' }}>
+                        <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                          {im.imobiliaria_nome || im.usuario_nome || 'Anunciante'}
+                        </span>
+                        <Link
+                          href={`/imovel/${im.id}`}
+                          target="_blank"
+                          style={{
+                            fontSize: '0.75rem',
+                            color: '#38bdf8',
+                            textDecoration: 'none',
+                            fontWeight: 600,
+                          }}
+                        >
+                          Ver Anúncio ↗
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ABA 4: CLIENTES */}
+              {abaMobilePocket === 'clientes' && (
+                <div className={styles.pocketListaCards}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>👥 Diretório de Clientes</strong>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{clientes.filter(c => !c.is_corretor_vinculado).length} contas</span>
+                  </div>
+
+                  {clientes.filter(c => !c.is_corretor_vinculado).map((cli) => (
+                    <div key={cli.id} className={styles.pocketItemCard}>
+                      <div className={styles.pocketItemTopo}>
+                        <div>
+                          <strong className={styles.pocketItemNome}>{cli.nome}</strong>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{cli.email}</div>
+                        </div>
+                        <span style={{
+                          background: cli.status_conta === 'ativo' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                          color: cli.status_conta === 'ativo' ? '#34d399' : '#f87171',
+                          fontSize: '0.65rem',
+                          fontWeight: 700,
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                        }}>
+                          {cli.status_conta}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', borderTop: '1px solid #334155', paddingTop: '6px' }}>
+                        <span style={{ color: '#38bdf8', fontWeight: 600 }}>Plano: {cli.plano_nome || 'Grátis'}</span>
+                        <span style={{ color: '#cbd5e1' }}>{cli.imoveis_ativos || 0} imóveis ativos</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* AVISO DESKTOP NO RODAPÉ */}
+              <div className={styles.pocketAvisoDesktop}>
+                💻 <strong>Acesso Master Desktop</strong><br />
+                Para editar planos, alterar credenciais de API/Webhook e realizar estornos com PIN master, utilize o computador.
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* ── SIDEBAR EXECUTIVA BLINDADA (DESKTOP) ── */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <Link href="/" className={styles.logoAdmin}>

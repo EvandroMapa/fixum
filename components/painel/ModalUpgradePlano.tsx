@@ -76,6 +76,12 @@ export default function ModalUpgradePlano({
     periodicidade
   )
 
+  // Custo unitário do plano atual para comparação direta
+  const custoUnitarioAtual =
+    planoAtual.preco_mensal > 0 && planoAtual.limite_imoveis_max > 0
+      ? planoAtual.preco_mensal / planoAtual.limite_imoveis_max
+      : 0
+
   // Cálculo do término do ciclo atual
   const dataFimCalculada = (() => {
     if (dataFimCiclo) {
@@ -167,12 +173,48 @@ export default function ModalUpgradePlano({
           <>
             {erro && <div className={styles.alertaErro}>{erro}</div>}
 
+            {/* FAIXA DE RESUMO DO PLANO ATUAL PARA COMPARAÇÃO (COMPACTA) */}
+            {!mostrarTodosPlanos && !isMesmoPlano && (
+              <div className={styles.faixaPlanoAtual}>
+                <div className={styles.faixaPlanoAtualHeader}>
+                  <span className={styles.tagPlanoAtual}>Plano Atual</span>
+                  <strong className={styles.nomePlanoAtual}>{planoAtual.nome}</strong>
+                  <span className={styles.faixaPlanoAtualPreco}>
+                    ({planoAtual.preco_mensal > 0 ? `${formatarMoeda(planoAtual.preco_mensal)}/mês` : 'Grátis'})
+                  </span>
+                </div>
+
+                <div className={styles.faixaPlanoAtualGrid}>
+                  <div className={styles.itemPlanoAtual}>
+                    <span className={styles.labelPlanoAtual}>📦 Cota:</span>
+                    <strong className={styles.valorPlanoAtual}>
+                      {imoveisAtivos}/{planoAtual.limite_imoveis_max >= 99999 ? '+500' : planoAtual.limite_imoveis_max}
+                    </strong>
+                  </div>
+
+                  <div className={styles.itemPlanoAtual}>
+                    <span className={styles.labelPlanoAtual}>🏷️ Custo/imóvel:</span>
+                    <strong className={styles.valorPlanoAtual}>
+                      {custoUnitarioAtual > 0 ? `${formatarMoeda(custoUnitarioAtual)}/mês` : 'Grátis'}
+                    </strong>
+                  </div>
+
+                  <div className={styles.itemPlanoAtual}>
+                    <span className={styles.labelPlanoAtual}>🚀 Destaque:</span>
+                    <strong className={styles.valorPlanoAtual}>
+                      {planoAtual.destaque_incluso ? 'Incluso' : 'Opcional'}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* CARD DE DESTAQUE DO PLANO ESCOLHIDO */}
             {!mostrarTodosPlanos ? (
               <div className={styles.cardResumoPlano}>
                 <div className={styles.resumoTopo}>
                   <div>
-                    <span className={styles.badgePlanoAlvo}>Plano Selecionado</span>
+                    <span className={styles.badgePlanoAlvo}>Novo Plano Selecionado</span>
                     <h3 className={styles.resumoNome}>{planoSelecionado.nome}</h3>
                   </div>
                   <div className={styles.resumoPrecoBox}>
