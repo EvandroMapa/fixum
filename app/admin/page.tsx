@@ -837,11 +837,12 @@ export default function AdminPage() {
       {/* ── VISÃO EXECUTIVA POCKET PARA CELULAR (INFORMATIVA) ── */}
       <div className={styles.adminPocketMobile}>
         {/* TOPBAR POCKET */}
+        {/* TOPBAR POCKET */}
         <header className={styles.pocketTopbar}>
           <Link href="/" className={styles.pocketLogoBox}>
-            <span style={{ fontSize: '1.2rem' }}>📍</span>
+            <span style={{ fontSize: '1.25rem' }}>📍</span>
             <strong className={styles.pocketLogoTexto}>FIXUM</strong>
-            <span className={styles.pocketBadge}>Pocket Admin</span>
+            <span className={styles.pocketBadge}>Admin</span>
           </Link>
 
           <div className={styles.pocketTopbarAcoes}>
@@ -854,13 +855,12 @@ export default function AdminPage() {
               className={styles.pocketBtnAcao}
               title="Bloquear com PIN"
             >
-              🔒
+              🔒 Bloquear
             </button>
             <button
               type="button"
               onClick={handleLogoutAdmin}
-              className={styles.pocketBtnAcao}
-              style={{ color: '#f87171' }}
+              className={`${styles.pocketBtnAcao} ${styles.pocketBtnSair}`}
             >
               Sair
             </button>
@@ -911,30 +911,27 @@ export default function AdminPage() {
               {/* ABA 1: RESUMO GERAL & BI (ESPELHO DO DESKTOP) */}
               {abaMobilePocket === 'resumo' && (
                 <>
-                  {/* SELETOR DE PERÍODO POCKET */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>📅 Período:</span>
-                    <div className={styles.pocketFiltroPeriodo}>
-                      {(['7d', '30d', 'mes', 'ano', 'tudo'] as PeriodoAnalytics[]).map((p) => {
-                        const labelMap: Record<PeriodoAnalytics, string> = {
-                          '7d': '7 Dias',
-                          '30d': '30 Dias',
-                          'mes': 'Este Mês',
-                          'ano': 'Ano',
-                          'tudo': 'Total',
-                        }
-                        return (
-                          <button
-                            key={p}
-                            type="button"
-                            className={`${styles.pocketBtnPeriodo} ${periodoAnalytics === p ? styles.pocketBtnPeriodoAtivo : ''}`}
-                            onClick={() => setPeriodoAnalytics(p)}
-                          >
-                            {labelMap[p]}
-                          </button>
-                        )
-                      })}
-                    </div>
+                  {/* SELETOR DE PERÍODO SEGMENTADO */}
+                  <div className={styles.pocketFiltroPeriodo}>
+                    {(['7d', '30d', 'mes', 'ano', 'tudo'] as PeriodoAnalytics[]).map((p) => {
+                      const labelMap: Record<PeriodoAnalytics, string> = {
+                        '7d': '7 Dias',
+                        '30d': '30 Dias',
+                        'mes': 'Este Mês',
+                        'ano': 'Ano',
+                        'tudo': 'Total',
+                      }
+                      return (
+                        <button
+                          key={p}
+                          type="button"
+                          className={`${styles.pocketBtnPeriodo} ${periodoAnalytics === p ? styles.pocketBtnPeriodoAtivo : ''}`}
+                          onClick={() => setPeriodoAnalytics(p)}
+                        >
+                          {labelMap[p]}
+                        </button>
+                      )
+                    })}
                   </div>
 
                   {/* GRID 2x2 DE KPIS EXECUTIVOS */}

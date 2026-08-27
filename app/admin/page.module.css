@@ -743,13 +743,13 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #111827;
-    border-bottom: 1px solid #1f2937;
-    padding: 12px 16px;
+    background: #090d16;
+    border-bottom: 1px solid #1e293b;
+    padding: 10px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   }
 
   .pocketLogoBox {
@@ -760,18 +760,19 @@
   }
 
   .pocketLogoTexto {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: -0.02em;
   }
 
   .pocketBadge {
-    background: #0284c7;
-    color: #ffffff;
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.25);
     font-size: 0.65rem;
-    font-weight: 800;
-    padding: 2px 6px;
+    font-weight: 700;
+    padding: 2px 7px;
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -780,45 +781,68 @@
   .pocketTopbarAcoes {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   .pocketBtnAcao {
-    background: #1f2937;
-    border: 1px solid #374151;
+    background: #162032;
+    border: 1px solid #24334d;
     color: #cbd5e1;
     padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.76rem;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .pocketBtnAcao:hover {
+    background: #1e293b;
+    color: #ffffff;
+  }
+
+  .pocketBtnSair {
+    color: #f87171 !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    background: rgba(239, 68, 68, 0.08) !important;
+  }
+
+  .pocketBtnSair:hover {
+    background: rgba(239, 68, 68, 0.2) !important;
   }
 
   .pocketNavPills {
     display: flex;
     gap: 6px;
-    padding: 10px 16px;
-    background: #0f172a;
+    padding: 8px 16px;
+    background: #0d1322;
     border-bottom: 1px solid #1e293b;
     overflow-x: auto;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
   .pocketNavPills::-webkit-scrollbar {
     display: none;
   }
 
   .pocketNavPill {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: #162032;
+    border: 1px solid #24334d;
     color: #94a3b8;
     padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.78rem;
+    border-radius: 8px;
+    font-size: 0.76rem;
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .pocketNavPillAtivo {
@@ -826,13 +850,14 @@
     border-color: #0284c7 !important;
     color: #ffffff !important;
     font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
   }
 
   .pocketCorpo {
-    padding: 16px;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
   }
 
   .pocketCardKpi {
