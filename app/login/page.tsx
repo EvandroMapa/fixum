@@ -54,6 +54,20 @@ function LoginConteudo() {
         }
       }
 
+      // Verificar se o usuário autenticado é Administrador Master
+      const { data: perfilData } = await supabase
+        .from('perfis')
+        .select('is_admin, tipo_anunciante')
+        .eq('id', data.user.id)
+        .maybeSingle()
+
+      const ehAdmin = perfilData?.is_admin === true || perfilData?.tipo_anunciante === 'admin' || data.user.user_metadata?.tipo === 'admin' || data.user.email === 'admin@fixum.com.br'
+
+      if (ehAdmin) {
+        router.push('/admin')
+        return
+      }
+
       router.push(destino)
     } catch (err: unknown) {
       setErro(traduzirErro(err instanceof Error ? err.message : ""))
@@ -73,6 +87,22 @@ function LoginConteudo() {
         code: codigoMfa.trim(),
       })
       if (error) throw error
+
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: perfilData } = await supabase
+          .from('perfis')
+          .select('is_admin, tipo_anunciante')
+          .eq('id', user.id)
+          .maybeSingle()
+
+        const ehAdmin = perfilData?.is_admin === true || perfilData?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
+        if (ehAdmin) {
+          router.push('/admin')
+          return
+        }
+      }
+
       router.push(destino)
     } catch {
       setErro("Código incorreto ou expirado. Tente novamente.")

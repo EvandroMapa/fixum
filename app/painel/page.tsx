@@ -88,6 +88,8 @@ function PainelConteudo() {
     router.replace(`/painel?aba=${novaAba}`)
   }
 
+  const [isAdminRedirecionando, setIsAdminRedirecionando] = useState(false)
+
   const carregarDados = useCallback(async (silencioso = false) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { window.location.href = '/login'; return }
@@ -96,12 +98,21 @@ function PainelConteudo() {
 
     const { data: perfil } = await supabase
       .from('perfis')
-      .select('id, nome, tipo_anunciante, telefone, creci, plano_id')
+      .select('id, nome, tipo_anunciante, telefone, creci, plano_id, is_admin')
       .eq('id', user.id)
       .maybeSingle()
 
-    const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
     const meta = user.user_metadata || {}
+    const ehAdmin = perfil?.is_admin === true || perfil?.tipo_anunciante === 'admin' || meta?.tipo === 'admin' || meta?.tipo_anunciante === 'admin' || user.email === 'admin@fixum.com.br'
+
+    // ── PROTEÇÃO DE ACESSO: Administrador Master não acessa painel de anúncios de imóveis ──
+    if (ehAdmin) {
+      setIsAdminRedirecionando(true)
+      router.replace('/admin')
+      return
+    }
+
+    const searchTipo = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') : null
     const metaTipo = perfil?.tipo_anunciante || meta.tipo || meta.tipo_anunciante || searchTipo || 'proprietario'
     const imobId = meta.imobiliaria_id || null
 
@@ -423,6 +434,25 @@ function PainelConteudo() {
     const supabase = createClient()
     await supabase.auth.signOut()
     window.location.href = '/'
+  }
+
+  if (isAdminRedirecionando) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background: '#0f172a',
+        color: '#ffffff',
+        gap: '16px',
+      }}>
+        <div style={{ fontSize: '2.5rem' }}>🛡️</div>
+        <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>Redirecionando para o Painel Executivo Fixum...</div>
+        <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>Contas Master não utilizam o painel de anunciante</div>
+      </div>
+    )
   }
 
   if (carregando) {

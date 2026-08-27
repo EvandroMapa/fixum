@@ -34,7 +34,7 @@ import ModalBloqueioInatividade from '@/components/admin/ModalBloqueioInatividad
 
 import styles from './page.module.css'
 
-type AbaAdmin = 'analytics' | 'clientes' | 'faturas' | 'operacoes' | 'imoveis' | 'auditoria' | 'configuracoes'
+type AbaAdmin = 'analytics' | 'clientes' | 'faturas' | 'operacoes' | 'imoveis' | 'auditoria' | 'configuracoes' | 'planos'
 type SubAbaOperacoes = 'cancelamentos' | 'devolucoes' | 'contestacoes'
 
 export default function AdminPage() {
@@ -60,6 +60,12 @@ export default function AdminPage() {
   const [contestacoes, setContestacoes] = useState<ContestacaoAdmin[]>([])
   const [imoveis, setImoveis] = useState<any[]>([])
   const [logsAuditoria, setLogsAuditoria] = useState<LogAuditoriaAdmin[]>([])
+  const [planosAdmin, setPlanosAdmin] = useState<any[]>([])
+  const [descontoTrimestral, setDescontoTrimestral] = useState(10)
+  const [descontoSemestral, setDescontoSemestral] = useState(15)
+  const [descontoAnual, setDescontoAnual] = useState(20)
+  const [salvandoPlanos, setSalvandoPlanos] = useState(false)
+  const [msgPlanos, setMsgPlanos] = useState<{ tipo: 'sucesso' | 'erro'; texto: string } | null>(null)
 
   // ── ESTADOS DE BUSCA E FILTROS EM LISTAS ──
   const [busca, setBusca] = useState('')
@@ -78,6 +84,21 @@ export default function AdminPage() {
   const [asaasApiKey, setAsaasApiKey] = useState('')
   const [asaasWebhookToken, setAsaasWebhookToken] = useState('')
   const [asaasModo, setAsaasModo] = useState<'producao' | 'sandbox'>('producao')
+  const [configsSalvas, setConfigsSalvas] = useState<{
+    whatsComercial: string
+    whatsSuporte: string
+    emailContato: string
+    asaasApiKey: string
+    asaasWebhookToken: string
+    asaasModo: 'producao' | 'sandbox'
+  }>({
+    whatsComercial: CONFIG_PADRAO.WHATSAPP_COMERCIAL,
+    whatsSuporte: CONFIG_PADRAO.WHATSAPP_SUPORTE,
+    emailContato: CONFIG_PADRAO.EMAIL_CONTATO,
+    asaasApiKey: '',
+    asaasWebhookToken: '',
+    asaasModo: 'producao',
+  })
   const [mostrarApiKey, setMostrarApiKey] = useState(false)
   const [mostrarWebhookToken, setMostrarWebhookToken] = useState(false)
   const [testandoAsaas, setTestandoAsaas] = useState(false)
@@ -142,16 +163,29 @@ export default function AdminPage() {
       setContestacoes(data.contestacoes || [])
       setImoveis(data.imoveis || [])
       setLogsAuditoria(data.logsAuditoria || [])
+      setPlanosAdmin(data.planos && data.planos.length > 0 ? data.planos : PLANOS_OFICIAIS)
 
       if (data.configs) {
+        const objConfigs = {
+          whatsComercial: CONFIG_PADRAO.WHATSAPP_COMERCIAL,
+          whatsSuporte: CONFIG_PADRAO.WHATSAPP_SUPORTE,
+          emailContato: CONFIG_PADRAO.EMAIL_CONTATO,
+          asaasApiKey: '',
+          asaasWebhookToken: '',
+          asaasModo: 'producao' as 'producao' | 'sandbox',
+        }
         data.configs.forEach((c: any) => {
-          if (c.chave === 'whatsapp_comercial') setWhatsComercial(c.valor)
-          if (c.chave === 'whatsapp_suporte') setWhatsSuporte(c.valor)
-          if (c.chave === 'email_contato') setEmailContato(c.valor)
-          if (c.chave === 'asaas_api_key') setAsaasApiKey(c.valor)
-          if (c.chave === 'asaas_webhook_token') setAsaasWebhookToken(c.valor)
-          if (c.chave === 'asaas_modo') setAsaasModo(c.valor as 'producao' | 'sandbox')
+          if (c.chave === 'whatsapp_comercial') { setWhatsComercial(c.valor); objConfigs.whatsComercial = c.valor }
+          if (c.chave === 'whatsapp_suporte') { setWhatsSuporte(c.valor); objConfigs.whatsSuporte = c.valor }
+          if (c.chave === 'email_contato') { setEmailContato(c.valor); objConfigs.emailContato = c.valor }
+          if (c.chave === 'asaas_api_key') { setAsaasApiKey(c.valor); objConfigs.asaasApiKey = c.valor }
+          if (c.chave === 'asaas_webhook_token') { setAsaasWebhookToken(c.valor); objConfigs.asaasWebhookToken = c.valor }
+          if (c.chave === 'asaas_modo') { setAsaasModo(c.valor as 'producao' | 'sandbox'); objConfigs.asaasModo = c.valor as 'producao' | 'sandbox' }
+          if (c.chave === 'desconto_trimestral_pct') setDescontoTrimestral(Number(c.valor) || 10)
+          if (c.chave === 'desconto_semestral_pct') setDescontoSemestral(Number(c.valor) || 15)
+          if (c.chave === 'desconto_anual_pct') setDescontoAnual(Number(c.valor) || 20)
         })
+        setConfigsSalvas(objConfigs)
       }
     } catch (err) {
       console.error('[ADMIN-LOAD-ERROR]:', err)
@@ -159,6 +193,70 @@ export default function AdminPage() {
       setCarregando(false)
     }
   }, [router])
+
+  // Função para editar campos de um plano localmente antes de salvar
+  function handleAlterarCampoPlano(id: string, campo: string, valor: any) {
+    setPlanosAdmin((prev) =>
+      prev.map((p) => {
+        if (p.id !== id) return p
+        const atualizado = { ...p, [campo]: valor }
+        if (campo === 'preco_mensal' || campo === 'limite_imoveis_max') {
+          const preco = campo === 'preco_mensal' ? Number(valor) : Number(p.preco_mensal)
+          const max = campo === 'limite_imoveis_max' ? Number(valor) : Number(p.limite_imoveis_max)
+          atualizado.custo_unitario_max = max > 0 && preco > 0 ? Number((preco / max).toFixed(2)) : 0
+        }
+        return atualizado
+      })
+    )
+  }
+
+  // Salvar toda a precificação no banco Supabase com auditoria
+  async function handleSalvarPlanos() {
+    const confirmou = await confirmar({
+      titulo: 'Salvar Alterações de Precificação?',
+      mensagem: 'Os novos preços, faixas e descontos promocionais passarão a valer imediatamente para novos clientes e novos ciclos contratados.',
+      icone: '🏷️',
+      tipo: 'primario',
+    })
+    if (!confirmou) return
+
+    setSalvandoPlanos(true)
+    setMsgPlanos(null)
+
+    try {
+      const res = await fetch('/api/admin/planos', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planos: planosAdmin,
+          descontos: {
+            trimestral: Number(descontoTrimestral) || 0,
+            semestral: Number(descontoSemestral) || 0,
+            anual: Number(descontoAnual) || 0,
+          },
+          adminEmail: usuarioAtual?.email || 'admin@fixum.com.br',
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao salvar planos.')
+      }
+
+      setMsgPlanos({ tipo: 'sucesso', texto: data.mensagem || 'Planos atualizados com sucesso!' })
+      await alertar({
+        titulo: 'Precificação Atualizada!',
+        mensagem: 'Todos os preços e limites foram gravados com sucesso na plataforma.',
+        icone: '🎉',
+        tipo: 'sucesso',
+      })
+      carregarDadosAdmin()
+    } catch (err: any) {
+      setMsgPlanos({ tipo: 'erro', texto: err.message || 'Erro ao salvar planos.' })
+    } finally {
+      setSalvandoPlanos(false)
+    }
+  }
 
   useEffect(() => {
     carregarDadosAdmin()
@@ -404,10 +502,16 @@ export default function AdminPage() {
     await supabase.from('imoveis').delete().eq('id', id)
   }
 
-  // Testar Conexão com o Asaas
+  // Testar Conexão com o Asaas (Sem recarregar a tela inteira)
   async function handleTestarAsaas() {
     if (!asaasApiKey.trim()) {
       setStatusAsaas({ ok: false, msg: 'Informe a Chave de API do Asaas para testar.' })
+      await alertar({
+        titulo: 'Chave Não Informada',
+        mensagem: 'Por favor, preencha o campo da Chave de API do Asaas antes de realizar o teste.',
+        icone: '⚠️',
+        tipo: 'aviso',
+      })
       return
     }
 
@@ -427,44 +531,179 @@ export default function AdminPage() {
       const data = await res.json()
 
       if (!res.ok || !data.sucesso) {
-        setStatusAsaas({ ok: false, msg: data.error || 'Falha ao autenticar no Asaas.' })
+        const msgErro = data.error || 'Falha ao autenticar no Asaas. Verifique a chave e o ambiente selecionado.'
+        setStatusAsaas({ ok: false, msg: msgErro })
+        await alertar({
+          titulo: 'Falha na Conexão',
+          mensagem: msgErro,
+          icone: '❌',
+          tipo: 'perigo',
+        })
       } else {
-        setStatusAsaas({ ok: true, msg: data.mensagem || 'Conexão com o Asaas validada com sucesso!' })
-        carregarDadosAdmin()
+        const msgSucesso = data.mensagem || 'Conexão com o Asaas validada com sucesso! A chave está ativa.'
+        setStatusAsaas({ ok: true, msg: msgSucesso })
+        await alertar({
+          titulo: 'Conexão Validada com Sucesso!',
+          mensagem: msgSucesso,
+          icone: '⚡',
+          tipo: 'sucesso',
+        })
       }
     } catch (err: any) {
-      setStatusAsaas({ ok: false, msg: err?.message || 'Erro ao conectar ao Asaas.' })
+      const erroStr = err?.message || 'Erro ao conectar ao Asaas.'
+      setStatusAsaas({ ok: false, msg: erroStr })
+      await alertar({
+        titulo: 'Erro no Teste',
+        mensagem: erroStr,
+        icone: '❌',
+        tipo: 'perigo',
+      })
     } finally {
       setTestandoAsaas(false)
     }
   }
 
-  // Salvar Configurações Globais
+  // Salvar Configurações Globais com Alerta Inteligente
   async function handleSalvarConfig(e: React.FormEvent) {
     e.preventDefault()
+
+    const alterouCredenciais =
+      asaasApiKey.trim() !== configsSalvas.asaasApiKey.trim() ||
+      asaasWebhookToken.trim() !== configsSalvas.asaasWebhookToken.trim() ||
+      asaasModo !== configsSalvas.asaasModo
+
+    const alterouContatos =
+      whatsComercial.trim() !== configsSalvas.whatsComercial.trim() ||
+      whatsSuporte.trim() !== configsSalvas.whatsSuporte.trim() ||
+      emailContato.trim() !== configsSalvas.emailContato.trim()
+
+    // 1. Se NÃO houve nenhuma alteração
+    if (!alterouCredenciais && !alterouContatos) {
+      await alertar({
+        titulo: 'Nenhuma Alteração Detectada',
+        mensagem: 'As configurações atuais não foram modificadas e já correspondem às salvas no sistema.',
+        icone: 'ℹ️',
+        tipo: 'sucesso',
+      })
+      return
+    }
+
+    // 2. Se alterou Chave de API, Token ou Modo (Risco Crítico de Recebimento)
+    if (alterouCredenciais) {
+      const confirmou = await confirmar({
+        titulo: '⚠️ Confirmar Alteração de Credenciais?',
+        mensagem:
+          'Você modificou a Chave de API, Token do Webhook ou Ambiente do Asaas.\n\nSe alguma dessas credenciais estiver incorreta, novas cobranças não serão geradas e confirmações de pagamento não serão recebidas. Deseja realmente aplicar essa alteração?',
+        icone: '⚠️',
+        tipo: 'aviso',
+        textoBotaoConfirmar: 'Sim, Salvar Credenciais',
+        textoBotaoCancelar: 'Cancelar e Revisar',
+      })
+      if (!confirmou) return
+    } else if (alterouContatos) {
+      // 3. Se alterou apenas contatos
+      const confirmou = await confirmar({
+        titulo: 'Salvar Novos Contatos?',
+        mensagem: 'Deseja atualizar os números de WhatsApp e e-mail de atendimento da Fixum?',
+        icone: '📞',
+        tipo: 'primario',
+        textoBotaoConfirmar: 'Salvar Contatos',
+        textoBotaoCancelar: 'Cancelar',
+      })
+      if (!confirmou) return
+    }
+
     setSalvandoConfig(true)
     setMsgConfig(null)
 
-    const supabase = createClient()
-    const { error } = await supabase.from('configuracoes_sistema').upsert([
-      { chave: 'whatsapp_comercial', valor: whatsComercial, descricao: 'WhatsApp comercial Fixum' },
-      { chave: 'whatsapp_suporte', valor: whatsSuporte, descricao: 'WhatsApp suporte Fixum' },
-      { chave: 'email_contato', valor: emailContato, descricao: 'E-mail de contato Fixum' },
-      { chave: 'asaas_api_key', valor: asaasApiKey.trim(), descricao: 'Chave de API do Asaas' },
-      { chave: 'asaas_webhook_token', valor: asaasWebhookToken.trim(), descricao: 'Token de autenticação do Webhook Asaas' },
-      { chave: 'asaas_modo', valor: asaasModo, descricao: 'Ambiente do Asaas (producao/sandbox)' },
-    ], { onConflict: 'chave' })
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.from('configuracoes_sistema').upsert([
+        { chave: 'whatsapp_comercial', valor: whatsComercial, descricao: 'WhatsApp comercial Fixum' },
+        { chave: 'whatsapp_suporte', valor: whatsSuporte, descricao: 'WhatsApp suporte Fixum' },
+        { chave: 'email_contato', valor: emailContato, descricao: 'E-mail de contato Fixum' },
+        { chave: 'asaas_api_key', valor: asaasApiKey.trim(), descricao: 'Chave de API do Asaas' },
+        { chave: 'asaas_webhook_token', valor: asaasWebhookToken.trim(), descricao: 'Token de autenticação do Webhook Asaas' },
+        { chave: 'asaas_modo', valor: asaasModo, descricao: 'Ambiente do Asaas (producao/sandbox)' },
+      ], { onConflict: 'chave' })
 
-    setSalvandoConfig(false)
-    if (error) {
-      setMsgConfig('⚠️ As configurações foram salvas em memória.')
-    } else {
-      setMsgConfig('✅ Configurações, Chave de API e Token do Webhook salvos com sucesso no banco de dados!')
+      if (error) {
+        throw new Error(error.message || 'Erro ao gravar configurações no banco.')
+      }
+
+      setConfigsSalvas({
+        whatsComercial,
+        whatsSuporte,
+        emailContato,
+        asaasApiKey: asaasApiKey.trim(),
+        asaasWebhookToken: asaasWebhookToken.trim(),
+        asaasModo,
+      })
+
+      // Registro de Auditoria
+      await supabase.from('logs_auditoria_admin').insert({
+        admin_email: usuarioAtual?.email || 'admin@fixum.com.br',
+        tipo_acao: 'ALTERAR_CONFIGURACOES_GLOBAIS',
+        entidade: 'configuracoes_sistema',
+        entidade_id: 'global',
+        justificativa: alterouCredenciais
+          ? `Atualização de credenciais Asaas (Ambiente: ${asaasModo.toUpperCase()})`
+          : 'Atualização de dados de contato e suporte',
+        dados_novos: {
+          whatsapp_comercial: whatsComercial,
+          whatsapp_suporte: whatsSuporte,
+          email_contato: emailContato,
+          asaas_modo: asaasModo,
+          has_api_key: Boolean(asaasApiKey.trim()),
+          has_webhook_token: Boolean(asaasWebhookToken.trim()),
+        },
+      })
+
+      setMsgConfig('✅ Configurações salvas e auditadas com sucesso!')
+      await alertar({
+        titulo: 'Configurações Salvas!',
+        mensagem: 'As configurações foram salvas com sucesso no banco de dados e já estão ativas na plataforma.',
+        icone: '🛡️',
+        tipo: 'sucesso',
+      })
+    } catch (err: any) {
+      setMsgConfig(`❌ Erro ao salvar: ${err?.message || 'Falha na gravação.'}`)
+      await alertar({
+        titulo: 'Erro ao Salvar',
+        mensagem: err?.message || 'Ocorreu um erro ao salvar as configurações.',
+        icone: '❌',
+        tipo: 'perigo',
+      })
+    } finally {
+      setSalvandoConfig(false)
     }
   }
 
-  function handleLogoutAdmin() {
+  // Restaurar configurações para os valores originais do banco
+  function handleRestaurarConfigsOriginais() {
+    setWhatsComercial(configsSalvas.whatsComercial)
+    setWhatsSuporte(configsSalvas.whatsSuporte)
+    setEmailContato(configsSalvas.emailContato)
+    setAsaasApiKey(configsSalvas.asaasApiKey)
+    setAsaasWebhookToken(configsSalvas.asaasWebhookToken)
+    setAsaasModo(configsSalvas.asaasModo)
+    setMsgConfig(null)
+    alertar({
+      titulo: 'Valores Originais Restaurados',
+      mensagem: 'Todos os campos voltaram aos valores atualmente ativos e salvos no sistema.',
+      icone: '↺',
+      tipo: 'sucesso',
+    })
+  }
+
+  async function handleLogoutAdmin() {
     encerrarSessaoAdmin()
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+    } catch (err) {
+      console.error('Erro ao deslogar do Supabase:', err)
+    }
     router.push('/admin/login')
   }
 
@@ -653,6 +892,15 @@ export default function AdminPage() {
 
           <button
             type="button"
+            className={`${styles.navItem} ${abaAtiva === 'planos' ? styles.navItemAtivo : ''}`}
+            onClick={() => { setAbaAtiva('planos'); setBusca('') }}
+          >
+            <span className={styles.navIcone}>🏷️</span>
+            <span>Planos & Precificação</span>
+          </button>
+
+          <button
+            type="button"
             className={`${styles.navItem} ${abaAtiva === 'configuracoes' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('configuracoes'); setBusca('') }}
           >
@@ -676,15 +924,20 @@ export default function AdminPage() {
       <main className={styles.conteudoPrincipal}>
         {/* TOPBAR */}
         <header className={styles.topbar}>
-          <h1 className={styles.topbarTitulo}>
-            {abaAtiva === 'analytics' && '📊 Inteligência de Negócios & Analytics Regional'}
-            {abaAtiva === 'clientes' && '👥 Gestão 360° de Clientes & Contas Comerciais'}
-            {abaAtiva === 'faturas' && '💳 Faturas, Assinaturas & Receitas'}
-            {abaAtiva === 'operacoes' && '🔄 Cancelamentos, Devoluções & Contestações (Chargebacks)'}
-            {abaAtiva === 'imoveis' && '🏢 Moderação Global de Anúncios'}
-            {abaAtiva === 'auditoria' && '📜 Trilha de Auditoria Imutável (Logs de Segurança)'}
-            {abaAtiva === 'configuracoes' && '⚙️ Configurações & Parâmetros Fixum'}
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.88rem' }}>
+            <span style={{ color: '#64748b', fontWeight: 500 }}>Painel Master</span>
+            <span style={{ color: '#334155' }}>/</span>
+            <strong style={{ color: '#e2e8f0', fontWeight: 600 }}>
+              {abaAtiva === 'analytics' && 'Analytics & BI'}
+              {abaAtiva === 'clientes' && 'Clientes & Anunciantes'}
+              {abaAtiva === 'faturas' && 'Faturas & Receitas'}
+              {abaAtiva === 'operacoes' && 'Cancelamentos & Disputas'}
+              {abaAtiva === 'imoveis' && 'Moderação de Imóveis'}
+              {abaAtiva === 'auditoria' && 'Trilha de Auditoria'}
+              {abaAtiva === 'planos' && 'Planos & Precificação'}
+              {abaAtiva === 'configuracoes' && 'Configurações Globais'}
+            </strong>
+          </div>
 
           <div className={styles.topbarAcoes}>
             <button
@@ -1343,6 +1596,28 @@ export default function AdminPage() {
                         </div>
                       </div>
 
+                      {/* BANNER DE ALERTA DE SEGURANÇA CRÍTICA */}
+                      <div style={{
+                        marginTop: '14px',
+                        background: 'rgba(234, 179, 8, 0.08)',
+                        border: '1px solid rgba(234, 179, 8, 0.3)',
+                        borderRadius: '10px',
+                        padding: '12px 16px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '12px',
+                      }}>
+                        <span style={{ fontSize: '1.5rem', lineHeight: '1' }}>⚠️</span>
+                        <div>
+                          <strong style={{ color: '#facc15', fontSize: '0.85rem' }}>
+                            Atenção de Segurança: Proteção do Fluxo de Recebimento
+                          </strong>
+                          <p style={{ margin: '4px 0 0', color: '#cbd5e1', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                            A <strong>Chave de API</strong> e o <strong>Token do Webhook</strong> são a espinha dorsal de cobranças da plataforma. Alterações incorretas impedem que novos anunciantes paguem ou que pagamentos confirmados no banco liberem cotas de anúncios. Sempre clique em <strong>&quot;⚡ Testar Conexão com o Asaas Agora&quot;</strong> antes de salvar.
+                          </p>
+                        </div>
+                      </div>
+
                       <div className={styles.grupoInput} style={{ marginTop: '14px' }}>
                         <label className={styles.labelForm}>
                           <span>Ambiente do Asaas:</span>
@@ -1401,7 +1676,7 @@ export default function AdminPage() {
                         />
                       </div>
 
-                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginTop: '6px' }}>
+                      <div style={{ marginTop: '6px' }}>
                         <button
                           type="button"
                           disabled={testandoAsaas}
@@ -1411,20 +1686,6 @@ export default function AdminPage() {
                         >
                           {testandoAsaas ? '⏳ Testando Conexão...' : '⚡ Testar Conexão com o Asaas Agora'}
                         </button>
-
-                        {statusAsaas && (
-                          <div style={{
-                            padding: '6px 12px',
-                            borderRadius: '8px',
-                            fontSize: '0.8rem',
-                            fontWeight: 600,
-                            background: statusAsaas.ok ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                            color: statusAsaas.ok ? '#34d399' : '#f87171',
-                            border: `1px solid ${statusAsaas.ok ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-                          }}>
-                            {statusAsaas.ok ? '✅ ' : '❌ '} {statusAsaas.msg}
-                          </div>
-                        )}
                       </div>
 
                       {/* CARD DO WEBHOOK */}
@@ -1541,21 +1802,405 @@ export default function AdminPage() {
                     </div>
 
                     {msgConfig && (
-                      <div className={msgConfig.includes('⚠️') ? styles.alertaAmarelo : styles.alertaVerde} style={{ marginTop: '16px' }}>
+                      <div className={msgConfig.includes('⚠️') || msgConfig.includes('❌') ? styles.alertaAmarelo : styles.alertaVerde} style={{ marginTop: '16px' }}>
                         {msgConfig}
                       </div>
                     )}
 
-                    <div style={{ marginTop: '20px' }}>
-                      <button
-                        type="submit"
-                        disabled={salvandoConfig}
-                        className={styles.btnSalvarConfig}
-                      >
-                        {salvandoConfig ? 'Salvando Configurações...' : '💾 Salvar Todas as Configurações & Credenciais'}
-                      </button>
+                    <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <button
+                          type="submit"
+                          disabled={salvandoConfig}
+                          className={styles.btnSalvarConfig}
+                          style={{ flex: '1', minWidth: '240px' }}
+                        >
+                          {salvandoConfig ? 'Gravando e Validando...' : '💾 Salvar Todas as Configurações & Credenciais'}
+                        </button>
+
+                        {(asaasApiKey.trim() !== configsSalvas.asaasApiKey.trim() ||
+                          asaasWebhookToken.trim() !== configsSalvas.asaasWebhookToken.trim() ||
+                          asaasModo !== configsSalvas.asaasModo ||
+                          whatsComercial.trim() !== configsSalvas.whatsComercial.trim() ||
+                          whatsSuporte.trim() !== configsSalvas.whatsSuporte.trim() ||
+                          emailContato.trim() !== configsSalvas.emailContato.trim()) && (
+                          <button
+                            type="button"
+                            onClick={handleRestaurarConfigsOriginais}
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.12)',
+                              border: '1px solid rgba(239, 68, 68, 0.35)',
+                              color: '#f87171',
+                              padding: '10px 18px',
+                              borderRadius: '8px',
+                              fontSize: '0.85rem',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            ↺ Descartar Alterações
+                          </button>
+                        )}
+                      </div>
+
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        🛡️ <em>Blindagem ativa: alterações de credenciais financeiras exigem confirmação explícita e são gravadas na Trilha de Auditoria.</em>
+                      </span>
                     </div>
                   </form>
+                </div>
+              )}
+
+              {/* ── ABA 8: GESTÃO DE PLANOS & PRECIFICAÇÃO ── */}
+              {abaAtiva === 'planos' && (
+                <div className={styles.painelBox}>
+                  <div className={styles.painelHeader}>
+                    <div className={styles.painelHeaderTitulos}>
+                      <h2 className={styles.painelTitulo}>🏷️ Gestão de Planos & Precificação Oficial</h2>
+                      <span className={styles.painelSub}>
+                        Calibre as faixas de imóveis, preços mensais, destaques inclusos e ative/pause planos com sincronização instantânea em todo o portal Fixum.
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={salvandoPlanos}
+                      onClick={handleSalvarPlanos}
+                      className={styles.btnSalvarConfig}
+                      style={{ padding: '10px 24px', fontSize: '0.95rem' }}
+                    >
+                      {salvandoPlanos ? 'Gravando Preços...' : '💾 Salvar Alterações de Precificação'}
+                    </button>
+                  </div>
+
+                  {msgPlanos && (
+                    <div className={msgPlanos.tipo === 'erro' ? styles.alertaAmarelo : styles.alertaVerde} style={{ marginTop: '16px', marginBottom: '16px' }}>
+                      {msgPlanos.tipo === 'sucesso' ? '✅ ' : '❌ '} {msgPlanos.texto}
+                    </div>
+                  )}
+
+                  <div className={styles.tabelaContainer} style={{ marginTop: '20px' }}>
+                    <table className={styles.tabela}>
+                      <thead>
+                        <tr>
+                          <th style={{ width: '60px' }}>Ordem</th>
+                          <th>Plano & Descrição Comercial</th>
+                          <th style={{ width: '160px' }}>Faixa de Imóveis</th>
+                          <th style={{ width: '160px' }}>Mensalidade (R$)</th>
+                          <th style={{ width: '150px' }}>Custo / Imóvel</th>
+                          <th style={{ width: '130px', textAlign: 'center' }}>Destaque Mapa</th>
+                          <th style={{ width: '110px', textAlign: 'center' }}>Disponível</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {planosAdmin.map((plano, idx) => {
+                          const preco = Number(plano.preco_mensal) || 0
+                          const max = Number(plano.limite_imoveis_max) || 1
+                          const custoCalc = max >= 99999 ? '—' : preco === 0 ? 'Grátis' : `R$ ${(preco / max).toFixed(2)} / imóvel / mês`
+
+                          return (
+                            <tr key={plano.id}>
+                              <td style={{ textAlign: 'center' }}>
+                                <span style={{
+                                  background: '#1e293b',
+                                  color: '#38bdf8',
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 700,
+                                }}>
+                                  #{idx + 1}
+                                </span>
+                              </td>
+                              <td>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <input
+                                      type="text"
+                                      value={plano.nome || ''}
+                                      onChange={(e) => handleAlterarCampoPlano(plano.id, 'nome', e.target.value)}
+                                      style={{
+                                        background: '#0f172a',
+                                        border: '1px solid #334155',
+                                        borderRadius: '6px',
+                                        color: '#ffffff',
+                                        padding: '4px 8px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 700,
+                                        width: '160px',
+                                      }}
+                                    />
+                                    <code style={{ fontSize: '0.75rem', color: '#64748b' }}>({plano.id})</code>
+                                  </div>
+
+                                  <input
+                                    type="text"
+                                    value={plano.descricao || ''}
+                                    onChange={(e) => handleAlterarCampoPlano(plano.id, 'descricao', e.target.value)}
+                                    placeholder="Descrição comercial para o anunciante..."
+                                    style={{
+                                      background: '#0f172a',
+                                      border: '1px solid #334155',
+                                      borderRadius: '6px',
+                                      color: '#94a3b8',
+                                      padding: '4px 8px',
+                                      fontSize: '0.8rem',
+                                      width: '100%',
+                                    }}
+                                  />
+                                </div>
+                              </td>
+
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={plano.limite_imoveis_min || 1}
+                                    onChange={(e) => handleAlterarCampoPlano(plano.id, 'limite_imoveis_min', e.target.value)}
+                                    style={{
+                                      background: '#0f172a',
+                                      border: '1px solid #334155',
+                                      borderRadius: '6px',
+                                      color: '#ffffff',
+                                      padding: '4px 8px',
+                                      fontSize: '0.85rem',
+                                      width: '55px',
+                                      textAlign: 'center',
+                                    }}
+                                  />
+                                  <span style={{ color: '#64748b' }}>a</span>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={plano.limite_imoveis_max >= 99999 ? 99999 : plano.limite_imoveis_max}
+                                    onChange={(e) => handleAlterarCampoPlano(plano.id, 'limite_imoveis_max', e.target.value)}
+                                    style={{
+                                      background: '#0f172a',
+                                      border: '1px solid #334155',
+                                      borderRadius: '6px',
+                                      color: '#ffffff',
+                                      padding: '4px 8px',
+                                      fontSize: '0.85rem',
+                                      width: '65px',
+                                      textAlign: 'center',
+                                    }}
+                                  />
+                                </div>
+                                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>imóveis ativos</span>
+                              </td>
+
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <span style={{ color: '#38bdf8', fontWeight: 600, fontSize: '0.85rem' }}>R$</span>
+                                  <input
+                                    type="number"
+                                    step="0.10"
+                                    min="0"
+                                    value={plano.preco_mensal !== undefined ? plano.preco_mensal : 0}
+                                    onChange={(e) => handleAlterarCampoPlano(plano.id, 'preco_mensal', e.target.value)}
+                                    style={{
+                                      background: '#0f172a',
+                                      border: '1px solid #334155',
+                                      borderRadius: '6px',
+                                      color: '#34d399',
+                                      padding: '4px 8px',
+                                      fontSize: '0.95rem',
+                                      fontWeight: 700,
+                                      width: '90px',
+                                    }}
+                                  />
+                                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>/mês</span>
+                                </div>
+                              </td>
+
+                              <td>
+                                <span style={{
+                                  background: 'rgba(56, 189, 248, 0.1)',
+                                  color: '#38bdf8',
+                                  padding: '3px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                }}>
+                                  {custoCalc}
+                                </span>
+                              </td>
+
+                              <td style={{ textAlign: 'center' }}>
+                                <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={!!plano.destaque_incluso}
+                                    onChange={(e) => handleAlterarCampoPlano(plano.id, 'destaque_incluso', e.target.checked)}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#38bdf8' }}
+                                  />
+                                </label>
+                              </td>
+
+                              <td style={{ textAlign: 'center' }}>
+                                <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={plano.ativo !== false}
+                                    onChange={(e) => handleAlterarCampoPlano(plano.id, 'ativo', e.target.checked)}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#22c55e' }}
+                                  />
+                                </label>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* ── CARD: DESCONTOS PROMOCIONAIS POR CICLO ── */}
+                  <div className={styles.secaoConfigCard} style={{ marginTop: '24px' }}>
+                    <div className={styles.secaoConfigHeader}>
+                      <span style={{ fontSize: '1.4rem' }}>🎁</span>
+                      <div>
+                        <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.05rem', fontWeight: 700 }}>
+                          Descontos Promocionais por Ciclo Contratual (Multi-Meses)
+                        </h3>
+                        <p style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '0.8rem' }}>
+                          Defina o percentual de desconto concedido automaticamente ao cliente ao optar por ciclos de pagamento mais longos.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginTop: '16px' }}>
+                      <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px 16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <strong style={{ color: '#38bdf8', fontSize: '0.85rem' }}>🥉 Trimestral (3 Meses)</strong>
+                          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Renovação a cada 90 dias</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+                          <input
+                            type="number"
+                            min="0"
+                            max="90"
+                            value={descontoTrimestral}
+                            onChange={(e) => setDescontoTrimestral(Number(e.target.value))}
+                            style={{
+                              background: '#020617',
+                              border: '1px solid #334155',
+                              borderRadius: '6px',
+                              color: '#34d399',
+                              padding: '6px 10px',
+                              fontSize: '1rem',
+                              fontWeight: 700,
+                              width: '75px',
+                              textAlign: 'center',
+                            }}
+                          />
+                          <span style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.9rem' }}>% de desconto</span>
+                        </div>
+                      </div>
+
+                      <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px 16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <strong style={{ color: '#38bdf8', fontSize: '0.85rem' }}>🥈 Semestral (6 Meses)</strong>
+                          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Renovação a cada 180 dias</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+                          <input
+                            type="number"
+                            min="0"
+                            max="90"
+                            value={descontoSemestral}
+                            onChange={(e) => setDescontoSemestral(Number(e.target.value))}
+                            style={{
+                              background: '#020617',
+                              border: '1px solid #334155',
+                              borderRadius: '6px',
+                              color: '#34d399',
+                              padding: '6px 10px',
+                              fontSize: '1rem',
+                              fontWeight: 700,
+                              width: '75px',
+                              textAlign: 'center',
+                            }}
+                          />
+                          <span style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.9rem' }}>% de desconto</span>
+                        </div>
+                      </div>
+
+                      <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px 16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <strong style={{ color: '#eab308', fontSize: '0.85rem' }}>🥇 Anual (12 Meses) 🔥</strong>
+                          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Renovação a cada 365 dias</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+                          <input
+                            type="number"
+                            min="0"
+                            max="90"
+                            value={descontoAnual}
+                            onChange={(e) => setDescontoAnual(Number(e.target.value))}
+                            style={{
+                              background: '#020617',
+                              border: '1px solid #334155',
+                              borderRadius: '6px',
+                              color: '#34d399',
+                              padding: '6px 10px',
+                              fontSize: '1rem',
+                              fontWeight: 700,
+                              width: '75px',
+                              textAlign: 'center',
+                            }}
+                          />
+                          <span style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.9rem' }}>% de desconto</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── CARD: BLINDAGEM CONTRATUAL E IMUTABILIDADE DE PREÇO ── */}
+                  <div style={{
+                    marginTop: '20px',
+                    background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    borderRadius: '12px',
+                    padding: '18px 22px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '16px',
+                  }}>
+                    <span style={{ fontSize: '2rem' }}>⚖️</span>
+                    <div>
+                      <strong style={{ color: '#a5b4fc', fontSize: '0.95rem' }}>
+                        🛡️ Blindagem Contratual de Preço Ativo (Garantia de Não Reajuste Durante a Vigência)
+                      </strong>
+                      <p style={{ margin: '6px 0 0 0', color: '#cbd5e1', fontSize: '0.82rem', lineHeight: '1.5' }}>
+                        A Fixum assegura total segurança jurídica aos clientes: <strong>qualquer reajuste realizado nesta tabela NÃO altera as cobranças de clientes que já possuem assinatura ativa</strong> durante o ciclo contratado (seja mensal, trimestral, semestral ou anual). Os novos valores valem exclusivamente para <strong>novas adesões</strong> ou em caso de <strong>alteração voluntária (upgrade/downgrade)</strong> solicitada pelo próprio anunciante.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* CARD DE INSTRUÇÕES E AUDITORIA */}
+                  <div style={{
+                    marginTop: '16px',
+                    background: '#0f172a',
+                    border: '1px solid #1e293b',
+                    borderRadius: '12px',
+                    padding: '16px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                  }}>
+                    <span style={{ fontSize: '1.8rem' }}>📜</span>
+                    <div>
+                      <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>Sincronização & Trilha de Auditoria Automática</strong>
+                      <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                        Qualquer alteração de preços, faixas ou descontos é gravada com carimbo de data/hora e e-mail do administrador na <strong>Trilha de Auditoria</strong>.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </>

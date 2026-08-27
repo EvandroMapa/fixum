@@ -226,7 +226,7 @@ export default function ParaImobiliariasPage() {
 
                     {plano.custo_unitario_max > 0 && (
                       <span className={styles.badgeCustoUnitario}>
-                        ~{formatarMoeda(plano.custo_unitario_max)} por imóvel
+                        {formatarMoeda(plano.custo_unitario_max)} / imóvel / mês
                       </span>
                     )}
 

@@ -162,6 +162,19 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       try {
         setUsuarioLogado(user)
 
+        // Se for admin master, redireciona para a central administrativa
+        const { data: perfil } = await supabase
+          .from('perfis')
+          .select('is_admin, tipo_anunciante')
+          .eq('id', user.id)
+          .maybeSingle()
+
+        const ehAdmin = perfil?.is_admin === true || perfil?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
+        if (ehAdmin) {
+          router.replace('/admin')
+          return
+        }
+
         const { data: imovel, error } = await supabase
           .from("imoveis")
           .select("*, fotos_imovel(id, url, principal, ordem)")

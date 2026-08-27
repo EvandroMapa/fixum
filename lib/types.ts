@@ -222,6 +222,7 @@ export type SlugPlano =
 export type StatusAssinatura = 'ativo' | 'pendente' | 'cancelado' | 'atrasado'
 export type MetodoPagamento = 'pix' | 'cartao' | 'gratis'
 export type StatusFatura = 'pago' | 'pendente' | 'falhou' | 'reembolsado' | 'atrasado' | 'atrasada'
+export type PeriodicidadePlano = 'mensal' | 'trimestral' | 'semestral' | 'anual'
 
 export interface Plano {
   id: SlugPlano
@@ -242,6 +243,8 @@ export interface Assinatura {
   usuario_id: string
   plano_id: SlugPlano
   status: StatusAssinatura
+  periodicidade?: PeriodicidadePlano
+  valor_contratado?: number
   data_inicio: string
   data_fim_ciclo?: string
   cancelado_em?: string

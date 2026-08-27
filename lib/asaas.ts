@@ -166,12 +166,14 @@ export async function criarCobrancaPixAsaas({
   descricao,
   usuarioId,
   planoId,
+  periodicidade = 'mensal',
 }: {
   clienteId: string
   valor: number
   descricao: string
   usuarioId: string
   planoId: string
+  periodicidade?: 'mensal' | 'trimestral' | 'semestral' | 'anual'
 }): Promise<{
   cobrancaId: string
   status: string
@@ -204,7 +206,7 @@ export async function criarCobrancaPixAsaas({
     value: valor,
     dueDate,
     description: descricao,
-    externalReference: `${usuarioId}:${planoId}:pix`,
+    externalReference: `${usuarioId}:${planoId}:${periodicidade}:pix`,
     postalService: false,
   }
 
@@ -263,7 +265,7 @@ export async function criarCobrancaPixAsaas({
 }
 
 /**
- * Cria uma assinatura recorrente mensal via Cartão de Crédito
+ * Cria uma assinatura recorrente (mensal, trimestral, semestral ou anual) via Cartão de Crédito
  */
 export async function criarAssinaturaCartaoAsaas({
   clienteId,
@@ -272,6 +274,7 @@ export async function criarAssinaturaCartaoAsaas({
   usuarioId,
   planoId,
   cartao,
+  periodicidade = 'mensal',
   remoteIp,
 }: {
   clienteId: string
@@ -280,6 +283,7 @@ export async function criarAssinaturaCartaoAsaas({
   usuarioId: string
   planoId: string
   cartao: DadosCartaoCredito
+  periodicidade?: 'mensal' | 'trimestral' | 'semestral' | 'anual'
   remoteIp?: string
 }): Promise<{
   assinaturaId: string
@@ -299,6 +303,15 @@ export async function criarAssinaturaCartaoAsaas({
     'User-Agent': 'Fixum-Plataforma-Imobiliaria/1.0',
   }
 
+  // Mapeamento de ciclo para o Asaas
+  const cicloAsaasMap: Record<string, string> = {
+    mensal: 'MONTHLY',
+    trimestral: 'QUARTERLY',
+    semestral: 'SEMIANNUALLY',
+    anual: 'YEARLY',
+  }
+  const cycle = cicloAsaasMap[periodicidade] || 'MONTHLY'
+
   // Vencimento da primeira cobrança: HOJE (débito imediato no cartão)
   const hoje = new Date().toISOString().split('T')[0]
 
@@ -307,9 +320,9 @@ export async function criarAssinaturaCartaoAsaas({
     billingType: 'CREDIT_CARD',
     value: valor,
     nextDueDate: hoje,
-    cycle: 'MONTHLY',
+    cycle,
     description: descricao,
-    externalReference: `${usuarioId}:${planoId}:cartao`,
+    externalReference: `${usuarioId}:${planoId}:${periodicidade}:cartao`,
     creditCard: {
       holderName: cartao.nomeTitular,
       number: cartao.numeroCartao.replace(/\D/g, ''),

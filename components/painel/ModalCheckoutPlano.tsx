@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Plano } from '@/lib/types'
-import { formatarMoeda } from '@/lib/planos'
+import { Plano, PeriodicidadePlano } from '@/lib/types'
+import { formatarMoeda, calcularPrecoPeriodicidade } from '@/lib/planos'
 import styles from './ModalCheckoutPlano.module.css'
 
 interface Props {
   aberto: boolean
   onFechar: () => void
   plano: Plano
+  periodicidade?: PeriodicidadePlano
   usuarioId: string
   usuarioNome?: string
   usuarioEmail?: string
@@ -20,6 +21,7 @@ export default function ModalCheckoutPlano({
   aberto,
   onFechar,
   plano,
+  periodicidade = 'mensal',
   usuarioId,
   usuarioNome = '',
   usuarioEmail = '',
@@ -167,6 +169,7 @@ export default function ModalCheckoutPlano({
             usuarioId,
             planoId: plano.id,
             metodoPagamento: 'pix',
+            periodicidade,
             dadosPessoais: {
               nome,
               email,
@@ -198,6 +201,7 @@ export default function ModalCheckoutPlano({
             usuarioId,
             planoId: plano.id,
             metodoPagamento: 'cartao',
+            periodicidade,
             dadosPessoais: {
               nome,
               email,
@@ -237,6 +241,15 @@ export default function ModalCheckoutPlano({
     }
   }
 
+  const detalhesPreco = calcularPrecoPeriodicidade(plano.preco_mensal, periodicidade)
+  const labelCiclo = periodicidade === 'anual'
+    ? 'Assinatura Anual (12 Meses)'
+    : periodicidade === 'semestral'
+    ? 'Assinatura Semestral (6 Meses)'
+    : periodicidade === 'trimestral'
+    ? 'Assinatura Trimestral (3 Meses)'
+    : 'Assinatura Mensal'
+
   return (
     <div className={styles.overlay} onClick={onFechar}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -247,12 +260,21 @@ export default function ModalCheckoutPlano({
         {/* TOPO: RESUMO DO PLANO */}
         <div className={styles.topoPlano}>
           <div className={styles.topoPlanoGlow} />
-          <span className={styles.badgePlano}>Assinatura Mensal</span>
+          <span className={styles.badgePlano}>{labelCiclo}</span>
           <h2 className={styles.nomePlano}>Plano {plano.nome}</h2>
           <div className={styles.precoPlano}>
-            <span className={styles.valorGrande}>{formatarMoeda(plano.preco_mensal)}</span>
-            <span className={styles.periodo}>/mês</span>
+            <span className={styles.valorGrande}>{formatarMoeda(detalhesPreco.valorTotalComDesconto)}</span>
+            {detalhesPreco.meses > 1 ? (
+              <span className={styles.periodo}>/ {detalhesPreco.meses} meses</span>
+            ) : (
+              <span className={styles.periodo}>/mês</span>
+            )}
           </div>
+          {detalhesPreco.descontoPct > 0 && (
+            <div style={{ marginTop: '6px', fontSize: '0.78rem', color: '#a7f3d0', fontWeight: 600 }}>
+              🎉 {detalhesPreco.descontoPct}% de Desconto Incluso (Equiv. {formatarMoeda(detalhesPreco.valorMensalEquivalente)}/mês)
+            </div>
+          )}
         </div>
 
         {/* CONTEÚDO */}

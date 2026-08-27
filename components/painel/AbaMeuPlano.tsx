@@ -222,7 +222,7 @@ export default function AbaMeuPlano({
 
                 {p.custo_unitario_max > 0 && (
                   <span className={styles.custoUnitarioItem}>
-                    ~{formatarMoeda(p.custo_unitario_max)} / imóvel
+                    {formatarMoeda(p.custo_unitario_max)} / imóvel / mês
                   </span>
                 )}
 

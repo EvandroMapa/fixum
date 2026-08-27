@@ -364,8 +364,9 @@
 .resumoTopo {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
+  min-height: 48px;
 }
 
 .badgePlanoAlvo {
@@ -382,10 +383,10 @@
 }
 
 .resumoNome {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: #0f172a;
-  margin-bottom: 0.15rem;
+  margin: 0;
 }
 
 .resumoDesc {
@@ -396,17 +397,37 @@
 .resumoPrecoBox {
   text-align: right;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.precoEquivLinha {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.resumoPrecoTotal {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 .resumoValor {
   font-size: 1.4rem;
   font-weight: 800;
   color: #1d4ed8;
+  line-height: 1;
 }
 
 .resumoPeriodo {
   font-size: 0.75rem;
   color: #64748b;
+  font-weight: 500;
 }
 
 .valorSobConsulta {
@@ -415,9 +436,95 @@
   color: #1d4ed8;
 }
 
+.seletorCicloBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seletorCicloLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0;
+}
+
+.seletorCicloGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.btnCiclo {
+  background: #ffffff;
+  color: #475569;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.15s ease-in-out;
+  min-height: 48px;
+  justify-content: center;
+}
+
+.btnCicloAtivo {
+  background: #0f4c81 !important;
+  color: #ffffff !important;
+  border-color: #0f4c81 !important;
+  font-weight: 700 !important;
+}
+
+.tagCicloOff {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: #ecfdf5;
+  color: #059669;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.btnCicloAtivo .tagCicloOff {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.barraStatusCiclo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  min-height: 32px;
+  box-sizing: border-box;
+}
+
+.statusPromocional {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #059669;
+}
+
+.statusMensal {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
 .resumoBeneficios {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   padding-top: 0.6rem;
   border-top: 1px solid #dbeafe;
@@ -426,7 +533,7 @@
 .beneficioItem {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   font-size: 0.775rem;
   color: #475569;
 }
@@ -434,6 +541,7 @@
 .beneficioItem strong {
   color: #0f172a;
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .btnTrocarPlano {

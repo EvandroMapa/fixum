@@ -41,34 +41,67 @@ export async function POST(req: Request) {
 
     console.log('[ASAAS-WEBHOOK] Evento recebido:', event, payment?.id || subscription?.id || chargeback?.id)
 
-    function extrairDadosReferencia(extRef?: string): { usuarioId: string; planoId: string } {
-      if (!extRef) return { usuarioId: '', planoId: '' }
+    function extrairDadosReferencia(extRef?: string): {
+      usuarioId: string
+      planoId: string
+      periodicidade: 'mensal' | 'trimestral' | 'semestral' | 'anual'
+      metodo: string
+    } {
+      if (!extRef) return { usuarioId: '', planoId: '', periodicidade: 'mensal', metodo: 'cartao' }
       if (extRef.includes(':')) {
         const partes = extRef.split(':')
-        return { usuarioId: partes[0] || '', planoId: partes[1] || '' }
+        const usuarioId = partes[0] || ''
+        const planoId = partes[1] || ''
+        let periodicidade: any = 'mensal'
+        let metodo = 'cartao'
+        if (partes.length >= 4) {
+          periodicidade = ['mensal', 'trimestral', 'semestral', 'anual'].includes(partes[2]) ? partes[2] : 'mensal'
+          metodo = partes[3] || 'cartao'
+        } else if (partes.length === 3) {
+          metodo = partes[2] || 'cartao'
+        }
+        return { usuarioId, planoId, periodicidade, metodo }
       }
       try {
         const obj = JSON.parse(extRef)
-        return { usuarioId: obj.usuarioId || obj.u || '', planoId: obj.planoId || obj.p || '' }
+        return {
+          usuarioId: obj.usuarioId || obj.u || '',
+          planoId: obj.planoId || obj.p || '',
+          periodicidade: obj.periodicidade || 'mensal',
+          metodo: obj.metodo || 'cartao',
+        }
       } catch {
-        return { usuarioId: '', planoId: '' }
+        return { usuarioId: '', planoId: '', periodicidade: 'mensal', metodo: 'cartao' }
       }
     }
 
-    const { usuarioId, planoId } = extrairDadosReferencia(
+    const { usuarioId, planoId, periodicidade } = extrairDadosReferencia(
       payment?.externalReference || subscription?.externalReference || chargeback?.externalReference
     )
 
     // 2. Tratar confirmação de pagamento (PIX ou Cartão)
     if (event === 'PAYMENT_RECEIVED' || event === 'PAYMENT_CONFIRMED') {
       if (usuarioId && planoId) {
-        // Ativar assinatura
+        // Calcular data de término do ciclo de acordo com a periodicidade contratada
+        const dataFim = new Date()
+        if (periodicidade === 'anual') {
+          dataFim.setFullYear(dataFim.getFullYear() + 1)
+        } else if (periodicidade === 'semestral') {
+          dataFim.setMonth(dataFim.getMonth() + 6)
+        } else if (periodicidade === 'trimestral') {
+          dataFim.setMonth(dataFim.getMonth() + 3)
+        } else {
+          dataFim.setDate(dataFim.getDate() + 30)
+        }
+
+        // Ativar assinatura e blindar ciclo contratual
         await supabase.from('assinaturas').upsert(
           {
             usuario_id: usuarioId,
             plano_id: planoId,
             status: 'ativo',
             data_inicio: new Date().toISOString(),
+            data_fim_ciclo: dataFim.toISOString(),
             metodo_pagamento: payment.billingType === 'PIX' ? 'pix' : 'cartao',
             asaas_subscription_id: subscription?.id || null,
             asaas_customer_id: payment.customer || null,

@@ -2,8 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import styles from './ModalUpgradePlano.module.css'
-import { Plano, SlugPlano, MetodoPagamento } from '@/lib/types'
-import { PLANOS_OFICIAIS, formatarMoeda, validarDowngrade } from '@/lib/planos'
+import { Plano, SlugPlano, MetodoPagamento, PeriodicidadePlano } from '@/lib/types'
+import {
+  PLANOS_OFICIAIS,
+  formatarMoeda,
+  validarDowngrade,
+  calcularPrecoPeriodicidade,
+  calcularCustoUnitario,
+} from '@/lib/planos'
 
 import ModalCheckoutPlano from './ModalCheckoutPlano'
 
@@ -39,6 +45,7 @@ export default function ModalUpgradePlano({
   const [planoSelecionadoId, setPlanoSelecionadoId] = useState<SlugPlano>(
     planoSugerido?.id || planoAtual.id
   )
+  const [periodicidade, setPeriodicidade] = useState<PeriodicidadePlano>('mensal')
   const [metodoPagamento, setMetodoPagamento] = useState<MetodoPagamento>('pix')
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
@@ -60,6 +67,14 @@ export default function ModalUpgradePlano({
   const isMesmoPlano = planoSelecionado.id === planoAtual.id
   const isDowngrade = planoSelecionado.ordem < planoAtual.ordem
   const isGratis = planoSelecionado.id === 'gratis'
+
+  // Cálculo detalhado dos valores e custo unitário de acordo com a periodicidade
+  const detalhesPreco = calcularPrecoPeriodicidade(planoSelecionado.preco_mensal, periodicidade)
+  const custoUnitarioDinamico = calcularCustoUnitario(
+    planoSelecionado.preco_mensal,
+    planoSelecionado.limite_imoveis_max,
+    periodicidade
+  )
 
   // Cálculo do término do ciclo atual
   const dataFimCalculada = (() => {
@@ -159,42 +174,102 @@ export default function ModalUpgradePlano({
                   <div>
                     <span className={styles.badgePlanoAlvo}>Plano Selecionado</span>
                     <h3 className={styles.resumoNome}>{planoSelecionado.nome}</h3>
-                    <p className={styles.resumoDesc}>{planoSelecionado.descricao}</p>
                   </div>
                   <div className={styles.resumoPrecoBox}>
                     {planoSelecionado.id === 'enterprise_plus' ? (
                       <span className={styles.valorSobConsulta}>Sob consulta</span>
                     ) : (
                       <>
-                        <span className={styles.resumoValor}>
-                          {formatarMoeda(planoSelecionado.preco_mensal)}
-                        </span>
+                        <div className={styles.precoEquivLinha}>
+                          <span className={styles.resumoValor}>
+                            {formatarMoeda(detalhesPreco.valorMensalEquivalente)}
+                          </span>
+                          {planoSelecionado.preco_mensal > 0 && (
+                            <span className={styles.resumoPeriodo}>/mês equiv.</span>
+                          )}
+                        </div>
                         {planoSelecionado.preco_mensal > 0 && (
-                          <span className={styles.resumoPeriodo}>/mês</span>
+                          <span className={styles.resumoPrecoTotal}>
+                            {detalhesPreco.meses > 1
+                              ? `Total: ${formatarMoeda(detalhesPreco.valorTotalComDesconto)} (${detalhesPreco.meses} meses)`
+                              : `Total: ${formatarMoeda(planoSelecionado.preco_mensal)} / mês`}
+                          </span>
                         )}
                       </>
                     )}
                   </div>
                 </div>
 
+                {/* SELETOR DE PERIODICIDADE E DESCONTOS PROMOCIONAIS */}
+                {planoSelecionado.preco_mensal > 0 && !isDowngrade && (
+                  <div className={styles.seletorCicloBox}>
+                    <div className={styles.seletorCicloLabel}>
+                      📅 Escolha o ciclo de pagamento:
+                    </div>
+                    <div className={styles.seletorCicloGrid}>
+                      {[
+                        { id: 'mensal', label: 'Mensal', tag: null },
+                        { id: 'trimestral', label: '3 Meses', tag: '-10% OFF' },
+                        { id: 'semestral', label: '6 Meses', tag: '-15% OFF' },
+                        { id: 'anual', label: '1 Ano 🔥', tag: '-20% OFF' },
+                      ].map((c) => {
+                        const isAtivo = periodicidade === c.id
+                        return (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => setPeriodicidade(c.id as any)}
+                            className={`${styles.btnCiclo} ${isAtivo ? styles.btnCicloAtivo : ''}`}
+                          >
+                            <span>{c.label}</span>
+                            {c.tag && (
+                              <span className={styles.tagCicloOff}>
+                                {c.tag}
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    <div className={`${styles.barraStatusCiclo} ${detalhesPreco.descontoPct > 0 ? styles.statusPromocional : styles.statusMensal}`}>
+                      {detalhesPreco.descontoPct > 0 ? (
+                        <>
+                          <span>🎉 Economia de {formatarMoeda(detalhesPreco.economiaTotal)} ({detalhesPreco.descontoPct}% OFF)</span>
+                          <span>Total: <strong>{formatarMoeda(detalhesPreco.valorTotalComDesconto)}</strong> ({detalhesPreco.meses} meses)</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Cobrança mensal padrão</span>
+                          <span>Total: <strong>{formatarMoeda(planoSelecionado.preco_mensal)}</strong> / mês</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div className={styles.resumoBeneficios}>
                   <div className={styles.beneficioItem}>
                     <span>📦 Capacidade:</span>
                     <strong>
                       {planoSelecionado.limite_imoveis_max >= 99999
-                        ? 'Ilimitados (+500)'
-                        : `${planoSelecionado.limite_imoveis_max} anúncios ativos`}
+                        ? '+500 imóveis'
+                        : `${planoSelecionado.limite_imoveis_max} imóveis ativos`}
                     </strong>
                   </div>
-                  {planoSelecionado.custo_unitario_max > 0 && (
+
+                  {custoUnitarioDinamico > 0 && (
                     <div className={styles.beneficioItem}>
                       <span>🏷️ Custo unitário:</span>
-                      <strong>~{formatarMoeda(planoSelecionado.custo_unitario_max)} / imóvel</strong>
+                      <strong style={{ color: detalhesPreco.descontoPct > 0 ? '#059669' : '#0f172a' }}>
+                        {formatarMoeda(custoUnitarioDinamico)} / imóvel / mês
+                      </strong>
                     </div>
                   )}
+
                   <div className={styles.beneficioItem}>
                     <span>🚀 Destaque no Mapa:</span>
-                    <strong>Incluso</strong>
+                    <strong>{planoSelecionado.destaque_incluso ? 'Incluso' : 'Opcional'}</strong>
                   </div>
                 </div>
 
@@ -316,7 +391,9 @@ export default function ModalUpgradePlano({
                     ? `📉 Confirmar Redução (R$ 0,00 Agora)`
                     : isGratis
                     ? 'Ativar Plano Grátis'
-                    : `Prosseguir para Pagamento (${formatarMoeda(planoSelecionado.preco_mensal)}/mês) ➔`}
+                    : `Prosseguir para Pagamento (${formatarMoeda(
+                        calcularPrecoPeriodicidade(planoSelecionado.preco_mensal, periodicidade).valorTotalComDesconto
+                      )}) ➔`}
                 </button>
               )}
             </div>
@@ -332,6 +409,7 @@ export default function ModalUpgradePlano({
               onFechar()
             }}
             plano={planoSelecionado}
+            periodicidade={periodicidade}
             usuarioId={usuarioId}
             usuarioNome={usuarioNome}
             usuarioEmail={usuarioEmail}

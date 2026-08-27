@@ -23,8 +23,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Ideal para proprietários e pequenos corretores.',
     limite_imoveis_min: 2,
     limite_imoveis_max: 2,
-    preco_mensal: 14.9,
-    custo_unitario_max: 7.45,
+    preco_mensal: 21.9,
+    custo_unitario_max: 10.95,
     destaque_incluso: false,
     ordem: 2,
     ativo: true,
@@ -35,8 +35,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Flexibilidade para até 3 imóveis simultâneos.',
     limite_imoveis_min: 3,
     limite_imoveis_max: 3,
-    preco_mensal: 19.9,
-    custo_unitario_max: 6.63,
+    preco_mensal: 29.9,
+    custo_unitario_max: 9.97,
     destaque_incluso: false,
     ordem: 3,
     ativo: true,
@@ -47,8 +47,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Excelente custo-benefício para corretores ativos.',
     limite_imoveis_min: 4,
     limite_imoveis_max: 10,
-    preco_mensal: 29.9,
-    custo_unitario_max: 2.99,
+    preco_mensal: 59.9,
+    custo_unitario_max: 5.99,
     destaque_incluso: false,
     ordem: 4,
     ativo: true,
@@ -59,8 +59,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Mais capacidade e economia por imóvel para corretores.',
     limite_imoveis_min: 11,
     limite_imoveis_max: 20,
-    preco_mensal: 39.9,
-    custo_unitario_max: 1.99,
+    preco_mensal: 89.9,
+    custo_unitario_max: 4.5,
     destaque_incluso: false,
     ordem: 5,
     ativo: true,
@@ -71,8 +71,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Para corretores de alta performance e equipes pequenas.',
     limite_imoveis_min: 21,
     limite_imoveis_max: 50,
-    preco_mensal: 89.9,
-    custo_unitario_max: 1.8,
+    preco_mensal: 189.9,
+    custo_unitario_max: 3.8,
     destaque_incluso: false,
     ordem: 6,
     ativo: true,
@@ -83,8 +83,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Para imobiliárias e carteiras médias.',
     limite_imoveis_min: 51,
     limite_imoveis_max: 100,
-    preco_mensal: 169.9,
-    custo_unitario_max: 1.7,
+    preco_mensal: 289.9,
+    custo_unitario_max: 2.9,
     destaque_incluso: false,
     ordem: 7,
     ativo: true,
@@ -95,8 +95,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Grande capacidade com baixíssimo custo por anúncio.',
     limite_imoveis_min: 101,
     limite_imoveis_max: 200,
-    preco_mensal: 299.9,
-    custo_unitario_max: 1.5,
+    preco_mensal: 389.9,
+    custo_unitario_max: 1.95,
     destaque_incluso: false,
     ordem: 8,
     ativo: true,
@@ -107,8 +107,8 @@ export const PLANOS_OFICIAIS: Plano[] = [
     descricao: 'Para grandes imobiliárias e redes consolidadas.',
     limite_imoveis_min: 201,
     limite_imoveis_max: 500,
-    preco_mensal: 599.9,
-    custo_unitario_max: 1.2,
+    preco_mensal: 889.9,
+    custo_unitario_max: 1.78,
     destaque_incluso: false,
     ordem: 9,
     ativo: true,
@@ -116,10 +116,10 @@ export const PLANOS_OFICIAIS: Plano[] = [
   {
     id: 'enterprise_plus',
     nome: 'Enterprise Plus',
-    descricao: 'Para carteiras acima de 500 imóveis com suporte dedicado.',
+    descricao: 'Para carteiras acima de 500 imóveis com suporte e condições dedicadas.',
     limite_imoveis_min: 501,
     limite_imoveis_max: 99999,
-    preco_mensal: 0.0, // Sob consulta
+    preco_mensal: 0.0, // A negociar / Sob consulta
     custo_unitario_max: 0.0,
     destaque_incluso: true,
     ordem: 10,
@@ -222,4 +222,100 @@ export function formatarMoeda(valor: number): string {
     style: 'currency',
     currency: 'BRL',
   }).format(valor)
+}
+
+/**
+ * Descontos Promocionais Padrão por Periodicidade
+ */
+export const DESCONTOS_PADRAO_CICLOS = {
+  mensal: 0,
+  trimestral: 10, // 10% OFF
+  semestral: 15,  // 15% OFF
+  anual: 20,      // 20% OFF
+}
+
+export interface DetalhesPrecoCiclo {
+  periodicidade: 'mensal' | 'trimestral' | 'semestral' | 'anual'
+  meses: number
+  precoMensalBase: number
+  valorTotalSemDesconto: number
+  descontoPct: number
+  valorTotalComDesconto: number
+  valorMensalEquivalente: number
+  economiaTotal: number
+}
+
+/**
+ * Calcula os valores, descontos e economia de um plano de acordo com a periodicidade
+ */
+export function calcularPrecoPeriodicidade(
+  precoMensal: number,
+  periodicidade: 'mensal' | 'trimestral' | 'semestral' | 'anual' = 'mensal',
+  descontosCustom?: { trimestral?: number; semestral?: number; anual?: number }
+): DetalhesPrecoCiclo {
+  const mesesMap = {
+    mensal: 1,
+    trimestral: 3,
+    semestral: 6,
+    anual: 12,
+  }
+
+  const descMap = {
+    mensal: 0,
+    trimestral: descontosCustom?.trimestral ?? DESCONTOS_PADRAO_CICLOS.trimestral,
+    semestral: descontosCustom?.semestral ?? DESCONTOS_PADRAO_CICLOS.semestral,
+    anual: descontosCustom?.anual ?? DESCONTOS_PADRAO_CICLOS.anual,
+  }
+
+  const meses = mesesMap[periodicidade]
+  const descontoPct = descMap[periodicidade]
+  const valorTotalSemDesconto = Number((precoMensal * meses).toFixed(2))
+  const valorTotalComDesconto = Number((valorTotalSemDesconto * (1 - descontoPct / 100)).toFixed(2))
+  const valorMensalEquivalente = Number((valorTotalComDesconto / meses).toFixed(2))
+  const economiaTotal = Number((valorTotalSemDesconto - valorTotalComDesconto).toFixed(2))
+
+  return {
+    periodicidade,
+    meses,
+    precoMensalBase: precoMensal,
+    valorTotalSemDesconto,
+    descontoPct,
+    valorTotalComDesconto,
+    valorMensalEquivalente,
+    economiaTotal,
+  }
+}
+
+/**
+ * Calcula o custo unitário por imóvel considerando a periodicidade e descontos aplicados
+ */
+export function calcularCustoUnitario(
+  precoMensal: number,
+  limiteImoveisMax: number,
+  periodicidade: 'mensal' | 'trimestral' | 'semestral' | 'anual' = 'mensal',
+  descontosCustom?: { trimestral?: number; semestral?: number; anual?: number }
+): number {
+  if (limiteImoveisMax <= 0 || precoMensal <= 0) return 0
+  const detalhes = calcularPrecoPeriodicidade(precoMensal, periodicidade, descontosCustom)
+  return Number((detalhes.valorMensalEquivalente / limiteImoveisMax).toFixed(2))
+}
+
+/**
+ * Calcula a data de término exata do ciclo contratado (30, 90, 180 ou 365 dias)
+ */
+export function calcularDataTerminoCiclo(
+  dataInicio: string | Date = new Date(),
+  periodicidade: 'mensal' | 'trimestral' | 'semestral' | 'anual' = 'mensal'
+): Date {
+  const data = new Date(dataInicio)
+  if (periodicidade === 'anual') {
+    data.setFullYear(data.getFullYear() + 1)
+  } else if (periodicidade === 'semestral') {
+    data.setMonth(data.getMonth() + 6)
+  } else if (periodicidade === 'trimestral') {
+    data.setMonth(data.getMonth() + 3)
+  } else {
+    data.setDate(data.getDate() + 30)
+  }
+  return data
 }

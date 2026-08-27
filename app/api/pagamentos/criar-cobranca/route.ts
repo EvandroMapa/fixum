@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { obterPlanoPorId } from '@/lib/planos'
+import { obterPlanoPorId, calcularPrecoPeriodicidade } from '@/lib/planos'
 import {
   criarOuBuscarClienteAsaas,
   criarCobrancaPixAsaas,
@@ -18,6 +18,7 @@ export async function POST(req: Request) {
       usuarioId,
       planoId,
       metodoPagamento, // 'pix' | 'cartao'
+      periodicidade = 'mensal', // 'mensal' | 'trimestral' | 'semestral' | 'anual'
       dadosPessoais, // { nome, email, cpfCnpj, telefone }
       dadosCartao,   // DadosCartaoCredito (se cartao)
     } = body
@@ -34,6 +35,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Plano não encontrado.' }, { status: 404 })
     }
 
+    // Calcular o valor com base na periodicidade e desconto promocional
+    const detalhesPreco = calcularPrecoPeriodicidade(plano.preco_mensal, periodicidade)
+    const valorCobrar = detalhesPreco.valorTotalComDesconto
+
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
       auth: { autoRefreshToken: false, persistSession: false },
     })
@@ -47,21 +52,30 @@ export async function POST(req: Request) {
       telefone: dadosPessoais.telefone,
     })
 
+    const nomePeriodicidadeMap: Record<string, string> = {
+      mensal: 'Mensal',
+      trimestral: 'Trimestral (3 meses)',
+      semestral: 'Semestral (6 meses)',
+      anual: 'Anual (12 meses)',
+    }
+    const labelCiclo = nomePeriodicidadeMap[periodicidade] || 'Mensal'
+
     // 2. Se for PIX
     if (metodoPagamento === 'pix') {
       const cobrancaPix = await criarCobrancaPixAsaas({
         clienteId: clienteAsaas.id,
-        valor: plano.preco_mensal,
-        descricao: `Fixum Imóveis - Assinatura Plano ${plano.nome} (Mensal)`,
+        valor: valorCobrar,
+        descricao: `Fixum Imóveis - Plano ${plano.nome} (${labelCiclo})`,
         usuarioId,
         planoId: plano.id,
+        periodicidade,
       })
 
       // Registrar fatura pendente no Supabase
       try {
         await supabase.from('faturas').insert({
           usuario_id: usuarioId,
-          valor: plano.preco_mensal,
+          valor: valorCobrar,
           status: 'pendente',
           metodo_pagamento: 'pix',
           data_vencimento: cobrancaPix.vencimento,
@@ -78,6 +92,8 @@ export async function POST(req: Request) {
         pixCopiaCola: cobrancaPix.pixCopiaCola,
         valor: cobrancaPix.valor,
         vencimento: cobrancaPix.vencimento,
+        periodicidade,
+        economia: detalhesPreco.economiaTotal,
       })
     }
 
@@ -91,11 +107,12 @@ export async function POST(req: Request) {
 
       const assinaturaCartao = await criarAssinaturaCartaoAsaas({
         clienteId: clienteAsaas.id,
-        valor: plano.preco_mensal,
-        descricao: `Fixum Imóveis - Assinatura Recorrente Plano ${plano.nome}`,
+        valor: valorCobrar,
+        descricao: `Fixum Imóveis - Assinatura Plano ${plano.nome} (${labelCiclo})`,
         usuarioId,
         planoId: plano.id,
         cartao: dadosCartao as DadosCartaoCredito,
+        periodicidade,
         remoteIp: clientIp,
       })
 

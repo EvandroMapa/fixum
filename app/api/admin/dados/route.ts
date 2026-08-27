@@ -47,6 +47,9 @@ export async function GET() {
     // 9. Buscar Configurações
     const { data: configsData } = await supabase.from('configuracoes_sistema').select('*')
 
+    // 10. Buscar Planos Oficiais do Banco
+    const { data: planosData } = await supabase.from('planos').select('*').order('ordem', { ascending: true })
+
     // Mapa de Perfis por ID
     const perfisMap: Record<string, any> = {}
     listaPerfis.forEach((p) => {
@@ -307,6 +310,7 @@ export async function GET() {
       imoveis: imoveisFormatados,
       logsAuditoria: logsData || [],
       configs: configsData || [],
+      planos: planosData || [],
     })
   } catch (err: any) {
     console.error('[API-ADMIN-DADOS-ERROR]:', err)

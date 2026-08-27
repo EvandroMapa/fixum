@@ -63,7 +63,7 @@ export default function ModalLimiteAtingido({
                 <p>Até {proximoPlano.limite_imoveis_max} imóveis ativos</p>
                 <span className={styles.precoProximo}>{formatarMoeda(proximoPlano.preco_mensal)}/mês</span>
                 <span className={styles.custoUnitario}>
-                  {proximoPlano.custo_unitario_max > 0 ? `(~${formatarMoeda(proximoPlano.custo_unitario_max)} por imóvel)` : ''}
+                  {proximoPlano.custo_unitario_max > 0 ? `(${formatarMoeda(proximoPlano.custo_unitario_max)} / imóvel / mês)` : ''}
                 </span>
               </div>
             </>

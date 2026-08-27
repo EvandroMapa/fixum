@@ -3,13 +3,22 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
-import { PLANOS_OFICIAIS, formatarMoeda, obterPlanoNecessario } from '@/lib/planos'
+import {
+  PLANOS_OFICIAIS,
+  formatarMoeda,
+  obterPlanoNecessario,
+  calcularPrecoPeriodicidade,
+  calcularCustoUnitario,
+} from '@/lib/planos'
+import { PeriodicidadePlano } from '@/lib/types'
 import styles from './page.module.css'
 
 export default function PlanosPage() {
   const [qtdImoveisSimulador, setQtdImoveisSimulador] = useState<number>(1)
+  const [periodicidade, setPeriodicidade] = useState<PeriodicidadePlano>('mensal')
 
   const planoSugerido = obterPlanoNecessario(qtdImoveisSimulador)
+  const detalhesSugerido = calcularPrecoPeriodicidade(planoSugerido.preco_mensal, periodicidade)
 
   const faixasRapidas = [1, 2, 3, 10, 20, 50, 100, 200, 500]
 
@@ -134,7 +143,7 @@ export default function PlanosPage() {
                       </div>
                       {planoSugerido.custo_unitario_max > 0 && (
                         <span className={styles.custoUnitarioBadge}>
-                          Apenas {formatarMoeda(planoSugerido.custo_unitario_max)} por imóvel
+                          Apenas {formatarMoeda(planoSugerido.custo_unitario_max)} / imóvel / mês
                         </span>
                       )}
                     </>
@@ -162,10 +171,69 @@ export default function PlanosPage() {
               <p>Transparência total: escolha o plano sob medida para sua estratégia de vendas</p>
             </div>
 
+            {/* SELETOR DE PERIODICIDADE */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '6px',
+              margin: '1.5rem auto 2.5rem',
+              background: '#f1f5f9',
+              padding: '6px',
+              borderRadius: '12px',
+              maxWidth: '520px',
+              flexWrap: 'wrap',
+            }}>
+              {[
+                { id: 'mensal', label: 'Mensal', tag: null },
+                { id: 'trimestral', label: '3 Meses', tag: '-10% OFF' },
+                { id: 'semestral', label: '6 Meses', tag: '-15% OFF' },
+                { id: 'anual', label: '1 Ano 🔥', tag: '-20% OFF' },
+              ].map((c) => {
+                const isAtivo = periodicidade === c.id
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setPeriodicidade(c.id as any)}
+                    style={{
+                      background: isAtivo ? '#0f4c81' : 'transparent',
+                      color: isAtivo ? '#ffffff' : '#475569',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 14px',
+                      fontSize: '0.85rem',
+                      fontWeight: isAtivo ? 700 : 500,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <span>{c.label}</span>
+                    {c.tag && (
+                      <span style={{
+                        fontSize: '0.65rem',
+                        fontWeight: 800,
+                        background: isAtivo ? 'rgba(255,255,255,0.25)' : '#ecfdf5',
+                        color: isAtivo ? '#ffffff' : '#059669',
+                        padding: '1px 6px',
+                        borderRadius: '10px',
+                      }}>
+                        {c.tag}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
             <div className={styles.gridPlanosOficiais}>
               {PLANOS_OFICIAIS.map((p) => {
                 const isDestaque = p.id === 'profissional'
                 const isGratis = p.id === 'gratis'
+                const detalhes = calcularPrecoPeriodicidade(p.preco_mensal, periodicidade)
 
                 return (
                   <div
@@ -198,18 +266,27 @@ export default function PlanosPage() {
                         <>
                           <span className={styles.precoSimbolo}>R$</span>
                           <span className={styles.precoValor}>
-                            {p.preco_mensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            {detalhes.valorMensalEquivalente.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </span>
                           {p.preco_mensal > 0 && <span className={styles.precoPeriodo}>/mês</span>}
                         </>
                       )}
                     </div>
 
-                    {p.custo_unitario_max > 0 && (
-                      <div className={styles.cardPlanoCustoUnitario}>
-                        Custo efetivo: <strong>{formatarMoeda(p.custo_unitario_max)}</strong>/imóvel
+                    {detalhes.descontoPct > 0 && p.preco_mensal > 0 && (
+                      <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, marginBottom: '8px' }}>
+                        🎉 {detalhes.descontoPct}% OFF (Total: {formatarMoeda(detalhes.valorTotalComDesconto)})
                       </div>
                     )}
+
+                    {p.custo_unitario_max > 0 && (() => {
+                      const custoUnitario = calcularCustoUnitario(p.preco_mensal, p.limite_imoveis_max, periodicidade)
+                      return (
+                        <div className={styles.cardPlanoCustoUnitario}>
+                          Custo efetivo: <strong style={{ color: detalhes.descontoPct > 0 ? '#059669' : 'inherit' }}>{formatarMoeda(custoUnitario)}</strong> / imóvel / mês
+                        </div>
+                      )
+                    })()}
 
                     <ul className={styles.listaRecursos}>
                       <li>✓ Mapa interativo e busca georreferenciada</li>
@@ -221,10 +298,10 @@ export default function PlanosPage() {
 
                     <div className={styles.cardPlanoBtnWrapper}>
                       <Link
-                        href={isGratis ? '/cadastro' : '/cadastro?plano=' + p.id}
-                        className={`btn ${isDestaque ? 'btn-primario' : 'btn-outline'} ${styles.btnCard}`}
+                        href={isGratis ? '/cadastro' : `/cadastro?plano=${p.id}&ciclo=${periodicidade}`}
+                        className={`btn ${isDestaque ? 'btn-primario' : 'btn-outline'} ${styles.btnCardPlano}`}
                       >
-                        {isGratis ? 'Começar Grátis' : `Assinar ${p.nome}`}
+                        {isGratis ? 'Começar Grátis' : `Contratar ${p.nome}`}
                       </Link>
                     </div>
                   </div>

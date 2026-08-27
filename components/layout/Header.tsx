@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
+import { encerrarSessaoAdmin } from '@/lib/admin-auth'
 import LogoGota from '@/components/ui/LogoGota'
 import styles from './Header.module.css'
 
@@ -15,6 +16,7 @@ function HeaderConteudo() {
   const [dropdownAberto, setDropdownAberto] = useState(false)
   const [usuario, setUsuario] = useState<User | null>(null)
   const [nomeUsuario, setNomeUsuario] = useState<string>('')
+  const [isAdmin, setIsAdmin] = useState(false)
   const [favoritosLista, setFavoritosLista] = useState<{ id: string; negociacao: string }[]>([])
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -61,6 +63,7 @@ function HeaderConteudo() {
       setUsuario(user)
       if (!user) {
         setNomeUsuario('')
+        setIsAdmin(false)
         setFavoritosLista([])
         return
       }
@@ -68,7 +71,10 @@ function HeaderConteudo() {
       if (nomeMeta) setNomeUsuario(nomeMeta)
 
       try {
-        const { data } = await sb.from('perfis').select('nome').eq('id', user.id).maybeSingle()
+        const { data } = await sb.from('perfis').select('nome, is_admin, tipo_anunciante').eq('id', user.id).maybeSingle()
+        const ehAdmin = data?.is_admin === true || data?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin' || user.user_metadata?.tipo_anunciante === 'admin' || user.email === 'admin@fixum.com.br'
+        setIsAdmin(ehAdmin)
+
         if (data?.nome) {
           setNomeUsuario(data.nome)
         } else if (!nomeMeta) {
@@ -137,6 +143,7 @@ function HeaderConteudo() {
 
   async function handleSair() {
     const sb = createClient()
+    encerrarSessaoAdmin()
     await sb.auth.signOut()
     setDropdownAberto(false)
     router.push('/')
@@ -180,12 +187,23 @@ function HeaderConteudo() {
             </Link>
           )}
 
-          <Link
-            href={usuario ? '/painel/novo-imovel' : '/login?next=/painel/novo-imovel'}
-            className={styles.btnAnunciar}
-          >
-            Anunciar
-          </Link>
+          {isAdmin ? (
+            <Link
+              href="/admin"
+              className={styles.btnAdminHeader}
+              title="Acessar o Painel Executivo / BI Fixum"
+            >
+              <span>🛡️</span>
+              <span>Painel Executivo</span>
+            </Link>
+          ) : (
+            <Link
+              href={usuario ? '/painel/novo-imovel' : '/login?next=/painel/novo-imovel'}
+              className={styles.btnAnunciar}
+            >
+              Anunciar
+            </Link>
+          )}
 
           {/* Botão de Favoritos com Toggle e Badge — exibido apenas para usuário logado e fora da página de detalhes do imóvel */}
           {usuario && !pathname.startsWith('/imovel/') && (() => {
@@ -221,25 +239,40 @@ function HeaderConteudo() {
                 onClick={() => setDropdownAberto(!dropdownAberto)}
                 aria-label="Menu do usuário"
                 title={nomeUsuario || usuario.email || 'Minha Conta'}
-                style={{ background: gradienteAvatar }}
+                style={{ background: isAdmin ? 'linear-gradient(135deg, #0f172a, #1e293b)' : gradienteAvatar }}
               >
-                {inicialAvatar}
+                {isAdmin ? '🛡️' : inicialAvatar}
               </button>
               {dropdownAberto && (
                 <div className={styles.dropdown}>
                   <div className={styles.dropdownUsuario}>
-                    <div className={styles.dropdownNome}>{nomeUsuario || 'Minha Conta'}</div>
+                    <div className={styles.dropdownNome}>
+                      {nomeUsuario || (isAdmin ? 'Administrador Master' : 'Minha Conta')}
+                      {isAdmin && <span className={styles.badgeAdminMaster}>Master</span>}
+                    </div>
                     <div className={styles.dropdownEmail}>{usuario.email}</div>
                   </div>
-                  <Link href="/painel" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
-                    🏠 Meu Painel
-                  </Link>
-                  <Link href="/painel?aba=plano" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
-                    💳 Meu Plano
-                  </Link>
+
+                  {isAdmin ? (
+                    <>
+                      <Link href="/admin" className={styles.dropdownItemAdmin} onClick={() => setDropdownAberto(false)}>
+                        🛡️ Painel Executivo Fixum
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/painel" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
+                        🏠 Meu Painel
+                      </Link>
+                      <Link href="/painel?aba=plano" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
+                        💳 Meu Plano
+                      </Link>
+                    </>
+                  )}
+
                   <hr className={styles.dropdownDivider} />
                   <button className={styles.dropdownSair} onClick={handleSair}>
-                    Sair
+                    {isAdmin ? 'Encerrar Sessão' : 'Sair'}
                   </button>
                 </div>
               )}
@@ -271,12 +304,51 @@ function HeaderConteudo() {
           <Link href="/para-imobiliarias" onClick={() => setMenuAberto(false)} style={{ color: '#0f4c81', fontWeight: 700 }}>
             🏢 Para Imobiliárias & Redes
           </Link>
-          <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imóvel</Link>
-          <hr style={{ margin: '8px 0', borderColor: '#f1f5f9' }} />
-          <Link href="/login" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
-            🔑 Entrar na Conta
-          </Link>
-          <Link href="/cadastro" onClick={() => setMenuAberto(false)}>Criar Conta</Link>
+          {isAdmin ? (
+            <>
+              <Link href="/admin" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
+                🛡️ Painel Executivo Admin
+              </Link>
+              <hr style={{ margin: '8px 0', borderColor: '#f1f5f9' }} />
+              <button
+                onClick={handleSair}
+                style={{
+                  background: 'none', border: 'none', textAlign: 'left',
+                  padding: '10px 14px', color: '#ef4444', fontWeight: 600,
+                  fontSize: '0.9375rem', cursor: 'pointer', width: '100%'
+                }}
+              >
+                Encerrar Sessão
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imóvel</Link>
+              <hr style={{ margin: '8px 0', borderColor: '#f1f5f9' }} />
+              {usuario ? (
+                <>
+                  <Link href="/painel" onClick={() => setMenuAberto(false)}>Meu Painel</Link>
+                  <button
+                    onClick={handleSair}
+                    style={{
+                      background: 'none', border: 'none', textAlign: 'left',
+                      padding: '10px 14px', color: '#ef4444', fontWeight: 600,
+                      fontSize: '0.9375rem', cursor: 'pointer', width: '100%'
+                    }}
+                  >
+                    Sair da Conta
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
+                    🔑 Entrar na Conta
+                  </Link>
+                  <Link href="/cadastro" onClick={() => setMenuAberto(false)}>Criar Conta</Link>
+                </>
+              )}
+            </>
+          )}
         </div>
       )}
     </header>
