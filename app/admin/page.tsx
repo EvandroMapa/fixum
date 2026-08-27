@@ -837,7 +837,6 @@ export default function AdminPage() {
       {/* ── VISÃO EXECUTIVA POCKET PARA CELULAR (INFORMATIVA) ── */}
       <div className={styles.adminPocketMobile}>
         {/* TOPBAR POCKET */}
-        {/* TOPBAR POCKET */}
         <header className={styles.pocketTopbar}>
           <Link href="/" className={styles.pocketLogoBox}>
             <span style={{ fontSize: '1.25rem' }}>📍</span>
@@ -867,35 +866,35 @@ export default function AdminPage() {
           </div>
         </header>
 
-        {/* NAVEGAÇÃO POCKET PILLS */}
+        {/* NAVEGAÇÃO POCKET (4 ABAS FIXAS SEM ROLAGEM) */}
         <div className={styles.pocketNavPills}>
           <button
             type="button"
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'resumo' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('resumo')}
           >
-            📊 Resumo Geral
+            📊 Geral
           </button>
           <button
             type="button"
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'faturas' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('faturas')}
           >
-            💳 Faturas ({faturas.length})
+            💳 Faturas
           </button>
           <button
             type="button"
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'imoveis' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('imoveis')}
           >
-            🏢 Imóveis ({imoveis.length})
+            🏢 Imóveis
           </button>
           <button
             type="button"
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'clientes' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('clientes')}
           >
-            👥 Clientes ({clientes.filter(c => !c.is_corretor_vinculado).length})
+            👥 Clientes
           </button>
         </div>
 
