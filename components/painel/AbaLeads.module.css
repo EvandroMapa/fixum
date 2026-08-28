@@ -591,46 +591,89 @@
    ═══════════════════════════════════════════════════════════════ */
 .cardKanban {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 9px;
-  padding: 8px 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
-  cursor: default;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 11px;
+  box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.08), 0 1px 4px -1px rgba(15, 23, 42, 0.05);
+  cursor: grab;
   user-select: none;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  gap: 7px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
+  position: relative;
 }
 
 .cardKanban:hover {
-  border-color: #93c5fd;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+  border-color: #60a5fa;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -3px rgba(37, 99, 235, 0.14), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
 }
 
 .cardKanban:active {
-  cursor: default;
+  cursor: grabbing;
 }
 
 .cardArrastando {
-  opacity: 0.4;
-  transform: scale(0.96);
+  opacity: 0.35;
+  transform: scale(0.97);
   border: 2px dashed #3b82f6 !important;
   box-shadow: none !important;
 }
 
+.cardNaoAtribuido {
+  border-left: 3.5px solid #f59e0b !important;
+}
+
+/* 1. Header do Card */
 .cardTopo {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 6px;
 }
 
+.cardLeadPrincipal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.cardAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border: 1.5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.cardLeadIdentificacao {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.cardLinhaNome {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
 .cardNome {
   font-size: 0.84rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
@@ -638,21 +681,14 @@
   line-height: 1.2;
 }
 
-.cardBadgesTopo {
-  display: flex;
+.badgeQuente {
+  font-size: 0.65rem;
+  line-height: 1;
+  display: inline-flex;
   align-items: center;
-  gap: 3px;
-  flex-shrink: 0;
 }
 
-.cardLinhaSub {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-}
-
-.cardTelefoneWrapper {
+.cardSubtexto {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -660,38 +696,70 @@
 }
 
 .cardTelefone {
-  font-size: 0.72rem;
-  color: #334155;
-  font-weight: 700;
+  font-size: 0.71rem;
+  color: #64748b;
+  font-weight: 500;
   white-space: nowrap;
 }
 
 .cardTempo {
   font-size: 0.675rem;
-  color: #64748b;
-  font-weight: 600;
+  color: #94a3b8;
+  font-weight: 500;
 }
 
-.badgeQuente {
-  font-size: 0.65rem;
-  font-weight: 700;
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+.cardBadgesTopo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.badgeCodigoTopoDestaque {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1.5px solid #bfdbfe;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+  letter-spacing: 0.25px;
+  line-height: 1.2;
+  box-shadow: 0 1px 2px rgba(29, 78, 216, 0.06);
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.cardKanban:hover .badgeCodigoTopoDestaque {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+.badgeAguardandoCorretor {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-size: 0.62rem;
+  font-weight: 800;
   padding: 1px 5px;
   border-radius: 4px;
   white-space: nowrap;
 }
 
-/* TAG DE CONTATO / SLA COMPACTA EM LINHA */
+/* SLA / Contato */
 .tagContatoCompacta {
   font-size: 0.65rem;
   font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 4px;
+  padding: 2px 6px;
+  border-radius: 999px;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
+  line-height: 1.1;
+  letter-spacing: 0.1px;
 }
 
 .tagContatoOk {
@@ -702,7 +770,7 @@
 
 .tagContatoPendente {
   background: #eff6ff;
-  color: #1e40af;
+  color: #1d4ed8;
   border: 1px solid #bfdbfe;
 }
 
@@ -714,33 +782,53 @@
 
 .tagContatoCritico {
   background: #fef2f2;
-  color: #991b1b;
+  color: #b91c1c;
   border: 1px solid #fecaca;
   animation: pulseCritico 2s infinite;
 }
 
 @keyframes pulseCritico {
   0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  50% { transform: scale(1.03); }
   100% { transform: scale(1); }
 }
 
-/* IMÓVEL NO CARD COMPACTO */
+/* 2. Imóvel de Interesse */
 .cardImovelInfo {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 6px;
-  border-radius: 6px;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
   background: #f8fafc;
   border: 1px solid #f1f5f9;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cardKanban:hover .cardImovelInfo {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
 }
 
 .cardImovelThumb {
-  width: 26px;
-  height: 26px;
-  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
   object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #e2e8f0;
+}
+
+.cardImovelThumbPlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  border: 1px solid #cbd5e1;
   flex-shrink: 0;
 }
 
@@ -749,6 +837,7 @@
   flex-direction: column;
   min-width: 0;
   gap: 1px;
+  flex: 1;
 }
 
 .cardImovelLinhaCabecalho {
@@ -762,10 +851,10 @@
   background: #eff6ff;
   color: #1d4ed8;
   border: 1px solid #bfdbfe;
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 800;
   padding: 0 4px;
-  border-radius: 3px;
+  border-radius: 4px;
   white-space: nowrap;
   flex-shrink: 0;
   letter-spacing: 0.2px;
@@ -774,19 +863,18 @@
 
 .cardImovelTitulo {
   font-size: 0.74rem;
-  color: #334155;
-  font-weight: 700;
+  color: #1e293b;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.15;
-  max-width: 200px;
+  line-height: 1.2;
 }
 
 .cardImovelPreco {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 800;
-  color: #1d4ed8;
+  color: #0f172a;
 }
 
 .cardDestaqueVisita {
@@ -905,37 +993,63 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  padding-top: 4px;
+  gap: 6px;
+  padding-top: 6px;
   border-top: 1px solid #f1f5f9;
-  margin-top: 1px;
+  margin-top: 2px;
   flex-wrap: nowrap;
 }
 
 .cardCorretorTag {
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.71rem;
   color: #475569;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.iconeCorretorPill {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.nomeCorretorPill {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .btnWhatsCard {
-  background: #25d366;
-  color: white;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
   border: none;
   font-size: 0.68rem;
   font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 5px;
+  padding: 4px 8px;
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 4px rgba(22, 163, 74, 0.25);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
 }
 
 .btnWhatsCard:hover {
-  background: #20ba59;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(22, 163, 74, 0.35);
+}
+
+.btnWhatsCard:active {
+  transform: translateY(0);
 }
 
 /* ═══════════════════════════════════════════════════════════════

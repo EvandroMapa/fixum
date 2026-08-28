@@ -29,6 +29,31 @@ const ETAPAS_KANBAN_ATIVAS = [
   { id: 'negociacao', titulo: 'Em Negociação', icone: '🤝', cor: '#ea580c' },
 ]
 
+function extrairIniciais(nome: string) {
+  if (!nome) return 'L'
+  const partes = nome.trim().split(/\s+/).filter(Boolean)
+  if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase()
+  return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase()
+}
+
+const CORES_AVATAR = [
+  { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
+  { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0' },
+  { bg: '#faf5ff', text: '#7e22ce', border: '#e9d5ff' },
+  { bg: '#fff7ed', text: '#c2410c', border: '#fed7aa' },
+  { bg: '#fdf2f8', text: '#be185d', border: '#fbcfe8' },
+  { bg: '#f0fdfa', text: '#0f766e', border: '#99f6e4' },
+]
+
+function obterCorAvatar(nome: string) {
+  let hash = 0
+  for (let i = 0; i < (nome || '').length; i++) {
+    hash = nome.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const index = Math.abs(hash) % CORES_AVATAR.length
+  return CORES_AVATAR[index]
+}
+
 export default function AbaLeads({
   leads,
   usuarioId,
@@ -964,12 +989,65 @@ export default function AbaLeads({
                               arrastandoLeadId === lead.id ? styles.cardArrastando : ''
                             } ${isNaoAtribuido ? styles.cardNaoAtribuido : ''}`}
                           >
-                            {/* 1. Topo do Card */}
+                            {/* 1. Header do Card: Avatar + Nome + Telefone (Esq) | Código + SLA Abaixo (Dir) */}
                             <div className={styles.cardTopo}>
-                              <strong className={styles.cardNome} title={lead.nome}>
-                                {lead.nome}
-                              </strong>
+                              <div className={styles.cardLeadPrincipal}>
+                                {(() => {
+                                  const corAvatar = obterCorAvatar(lead.nome)
+                                  return (
+                                    <div
+                                      className={styles.cardAvatar}
+                                      style={{
+                                        backgroundColor: corAvatar.bg,
+                                        color: corAvatar.text,
+                                        borderColor: corAvatar.border,
+                                      }}
+                                    >
+                                      {extrairIniciais(lead.nome)}
+                                    </div>
+                                  )
+                                })()}
+                                <div className={styles.cardLeadIdentificacao}>
+                                  <div className={styles.cardLinhaNome}>
+                                    <strong className={styles.cardNome} title={lead.nome}>
+                                      {lead.nome}
+                                    </strong>
+                                    {lead.temperatura === 'quente' && (
+                                      <span className={styles.badgeQuente} title="Lead de Alta Prioridade">
+                                        🔥
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className={styles.cardSubtexto}>
+                                    {lead.telefone ? (
+                                      <span
+                                        className={styles.cardTelefone}
+                                        title={`Telefone: ${formatarTelefone(lead.telefone)}`}
+                                      >
+                                        {formatarTelefone(lead.telefone)}
+                                      </span>
+                                    ) : (
+                                      <span className={styles.cardTempo}>
+                                        {new Date(lead.created_at).toLocaleDateString('pt-BR', {
+                                          day: '2-digit',
+                                          month: '2-digit',
+                                        })}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Canto Superior Direito: Código no Topo e Badge de Tempo Abaixo */}
                               <div className={styles.cardBadgesTopo}>
+                                {lead.imovel?.codigo && (
+                                  <span
+                                    className={styles.badgeCodigoTopoDestaque}
+                                    title={`Código do Imóvel: ${lead.imovel.codigo}`}
+                                  >
+                                    {lead.imovel.codigo}
+                                  </span>
+                                )}
                                 {isNaoAtribuido && (
                                   <span
                                     className={styles.badgeAguardandoCorretor}
@@ -978,93 +1056,64 @@ export default function AbaLeads({
                                     🔔 Triagem
                                   </span>
                                 )}
-                                {lead.temperatura === 'quente' && (
-                                  <span className={styles.badgeQuente} title="Lead de Alta Prioridade">
-                                    🔥 Quente
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* 2. Sub-linha de Contato & SLA */}
-                            <div className={styles.cardLinhaSub}>
-                              <div className={styles.cardTelefoneWrapper}>
-                                {lead.telefone ? (
-                                  <span
-                                    className={styles.cardTelefone}
-                                    title={`Telefone: ${formatarTelefone(lead.telefone)}`}
-                                  >
-                                    📱 {formatarTelefone(lead.telefone)}
-                                  </span>
-                                ) : (
-                                  <span className={styles.cardTempo}>
-                                    📅{' '}
-                                    {new Date(lead.created_at).toLocaleDateString('pt-BR', {
-                                      day: '2-digit',
-                                      month: '2-digit',
-                                    })}
-                                  </span>
-                                )}
-                              </div>
-
-                              <div
-                                className={`${styles.tagContatoCompacta} ${
-                                  fezContato
-                                    ? styles.tagContatoOk
-                                    : horasCriacao >= 24
-                                    ? styles.tagContatoCritico
-                                    : horasCriacao >= 2
-                                    ? styles.tagContatoAlerta
-                                    : styles.tagContatoPendente
-                                }`}
-                              >
-                                {fezContato ? (
-                                  <span>✓ Contatado</span>
-                                ) : isNaoAtribuido ? (
-                                  <span>
-                                    {minutosCriacao < 60
-                                      ? `⏱️ ${minutosCriacao}m`
-                                      : `🚨 ${horasCriacao}h s/ corretor`}
-                                  </span>
-                                ) : (
-                                  <span>
-                                    {horasCriacao >= 24
-                                      ? `🚨 +24h`
+                                <div
+                                  className={`${styles.tagContatoCompacta} ${
+                                    fezContato
+                                      ? styles.tagContatoOk
+                                      : horasCriacao >= 24
+                                      ? styles.tagContatoCritico
                                       : horasCriacao >= 2
-                                      ? `⏳ +${horasCriacao}h`
-                                      : '⏳ Aguardando'}
-                                  </span>
-                                )}
+                                      ? styles.tagContatoAlerta
+                                      : styles.tagContatoPendente
+                                  }`}
+                                  title={
+                                    fezContato
+                                      ? 'Primeiro contato realizado'
+                                      : `Aguardando contato há ${horasCriacao} horas`
+                                  }
+                                >
+                                  {fezContato ? (
+                                    <span>✓ Contatado</span>
+                                  ) : isNaoAtribuido ? (
+                                    <span>
+                                      {minutosCriacao < 60
+                                        ? `⏱️ ${minutosCriacao}m`
+                                        : `🚨 ${horasCriacao}h s/ corretor`}
+                                    </span>
+                                  ) : (
+                                    <span>
+                                      {horasCriacao >= 24
+                                        ? `🚨 +24h`
+                                        : horasCriacao >= 2
+                                        ? `⏳ +${horasCriacao}h`
+                                        : '⏳ Aguardando'}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
 
-                            {/* 3. Imóvel de Interesse */}
+                            {/* 2. Imóvel de Interesse (Card Interno Elegante) */}
                             {lead.imovel && (
                               <div className={styles.cardImovelInfo}>
-                                {lead.imovel.fotos?.[0] && (
+                                {lead.imovel.fotos?.[0] ? (
                                   <img
                                     src={lead.imovel.fotos[0].url}
                                     alt=""
                                     className={styles.cardImovelThumb}
                                   />
+                                ) : (
+                                  <div className={styles.cardImovelThumbPlaceholder}>
+                                    🏢
+                                  </div>
                                 )}
                                 <div className={styles.cardImovelTextos}>
-                                  <div className={styles.cardImovelLinhaCabecalho}>
-                                    {lead.imovel.codigo && (
-                                      <span
-                                        className={styles.badgeCodigoCardLead}
-                                        title={`Código de Referência: ${lead.imovel.codigo}`}
-                                      >
-                                        Ref: {lead.imovel.codigo}
-                                      </span>
-                                    )}
-                                    <span
-                                      className={styles.cardImovelTitulo}
-                                      title={lead.imovel.titulo}
-                                    >
-                                      {lead.imovel.titulo}
-                                    </span>
-                                  </div>
+                                  <span
+                                    className={styles.cardImovelTitulo}
+                                    title={lead.imovel.titulo}
+                                  >
+                                    {lead.imovel.titulo}
+                                  </span>
                                   <strong className={styles.cardImovelPreco}>
                                     {formatarPreco(lead.imovel.preco || 0)}
                                   </strong>
@@ -1110,7 +1159,7 @@ export default function AbaLeads({
                               </div>
                             ) : null}
 
-                            {/* Rodapé do Card */}
+                            {/* 3. Rodapé do Card: Responsável + Botão WhatsApp Moderno */}
                             <div className={styles.cardRodape}>
                               {isNaoAtribuido &&
                               (isGestor || isImobiliaria) &&
@@ -1141,9 +1190,12 @@ export default function AbaLeads({
                                   </select>
                                 </div>
                               ) : (
-                                <span className={styles.cardCorretorTag} title="Corretor responsável">
-                                  👔 {lead.corretor_nome || 'Sem corretor'}
-                                </span>
+                                <div className={styles.cardCorretorTag} title="Corretor responsável">
+                                  <span className={styles.iconeCorretorPill}>👔</span>
+                                  <span className={styles.nomeCorretorPill}>
+                                    {lead.corretor_nome || 'Sem corretor'}
+                                  </span>
+                                </div>
                               )}
 
                               {lead.telefone && (
@@ -1153,7 +1205,10 @@ export default function AbaLeads({
                                   onClick={(e) => handleChamarWhatsCard(e, lead)}
                                   title="Chamar no WhatsApp"
                                 >
-                                  <span>💬</span> WhatsApp
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12.031 2c-5.508 0-9.984 4.477-9.984 9.984 0 1.761.458 3.479 1.328 4.996L2 22l5.166-1.355a9.945 9.945 0 004.865 1.258h.004c5.508 0 9.984-4.477 9.984-9.984 0-2.668-1.039-5.176-2.926-7.063A9.927 9.927 0 0012.031 2zm0 18.293h-.003a8.272 8.272 0 01-4.221-1.151l-.303-.18-3.136.822.837-3.056-.197-.314a8.27 8.27 0 01-1.268-4.43c0-4.57 3.719-8.289 8.292-8.289 2.215 0 4.297.863 5.863 2.43 1.566 1.566 2.428 3.649 2.428 5.864 0 4.571-3.719 8.29-8.291 8.29zm4.542-6.205c-.249-.125-1.472-.726-1.7-.809-.228-.083-.394-.125-.56.125-.166.249-.643.809-.788.975-.145.166-.29.187-.539.062-.249-.125-1.052-.388-2.003-1.236-.74-.66-1.24-1.476-1.385-1.725-.145-.249-.015-.384.11-.508.112-.111.249-.29.373-.435.125-.145.166-.249.249-.415.083-.166.042-.311-.021-.435-.062-.125-.56-1.349-.768-1.847-.202-.486-.407-.42-.56-.428l-.477-.008c-.166 0-.435.062-.663.311-.228.249-.871.851-.871 2.075 0 1.224.892 2.407 1.016 2.573.125.166 1.756 2.681 4.254 3.759.594.257 1.059.41 1.421.525.598.19 1.142.163 1.572.099.479-.071 1.472-.602 1.68-1.183.208-.581.208-1.079.145-1.183-.062-.104-.228-.166-.477-.291z"/>
+                                  </svg>
+                                  <span>WhatsApp</span>
                                 </button>
                               )}
                             </div>
