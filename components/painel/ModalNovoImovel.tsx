@@ -434,8 +434,12 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
       // Gerar ou formatar código de referência do imóvel
       let codigoFinal = dados.codigo?.trim().toUpperCase() || ''
-      if (!codigoFinal && (isCorretor || isImobiliaria)) {
-        codigoFinal = `${prefixoImovel}-${Math.floor(1000 + Math.random() * 9000)}`
+      if (!codigoFinal) {
+        if (modoCodigo === 'proprio') {
+          throw new Error("Sua imobiliária/conta está configurada para utilizar código próprio/CRM. Por favor, informe o Código do Anúncio.")
+        }
+        const prefixoValido = prefixoImovel?.trim().toUpperCase() || 'FIX'
+        codigoFinal = `${prefixoValido}-${Math.floor(1000 + Math.random() * 9000)}`
       }
 
       const { data: imovel, error: erroImovel } = await supabase
@@ -445,7 +449,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
           tipo: normalizarTipoParaBanco(dados.tipo),
           negociacao: dados.negociacao,
           titulo: dados.titulo,
-          codigo: codigoFinal || null,
+          codigo: codigoFinal,
           descricao: dados.descricao || null,
           preco: precoNumerico,
           area: areaNumerica,
@@ -668,22 +672,25 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                 </div>
               </div>
 
-              {/* Campo Código de Referência (visível para Corretores e Imobiliárias no modo próprio) */}
-              {(isCorretor || isImobiliaria) && modoCodigo === 'proprio' && (
-                <div className={styles.grupo} style={{ marginBottom: '10px' }}>
-                  <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Código do Anúncio / Referência Interna</span>
-                    <span style={{ fontSize: '0.725rem', color: '#64748b', fontWeight: 'normal' }}>Opcional (CRM)</span>
-                  </label>
-                  <input
-                    className={styles.input}
-                    value={dados.codigo || ''}
-                    onChange={(e) => atualizar("codigo", e.target.value.toUpperCase())}
-                    placeholder={`Ex: ${prefixoImovel}-0142, AP100`}
-                    maxLength={20}
-                  />
-                </div>
-              )}
+              {/* Campo Código de Referência do Anúncio */}
+              <div className={styles.grupo} style={{ marginBottom: '10px' }}>
+                <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>Código do Anúncio / Referência {modoCodigo === 'proprio' ? '*' : '(Ref)'}</span>
+                  <span style={{ fontSize: '0.725rem', color: modoCodigo === 'proprio' ? '#c2410c' : '#64748b', fontWeight: 'normal' }}>
+                    {modoCodigo === 'proprio'
+                      ? (dados.codigo ? '✓ Código Próprio/CRM' : '⚠️ Obrigatório (Modo Próprio/CRM)')
+                      : (dados.codigo ? 'Personalizado' : `Automático (${prefixoImovel || 'FIX'}-XXXX)`)}
+                  </span>
+                </label>
+                <input
+                  className={styles.input}
+                  value={dados.codigo || ''}
+                  onChange={(e) => atualizar("codigo", e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                  placeholder={modoCodigo === 'proprio' ? 'Ex: AP-104, CAS-002 (Informe o código do seu sistema)' : `Ex: ${prefixoImovel || 'FIX'}-0142 (Deixe vazio para gerar auto)`}
+                  maxLength={20}
+                  style={modoCodigo === 'proprio' && !dados.codigo ? { borderColor: '#fb923c' } : undefined}
+                />
+              </div>
 
               <div className={styles.grid3}>
                 <div className={styles.grupo}>

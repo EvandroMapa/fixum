@@ -138,6 +138,7 @@ export async function GET(req: Request) {
         return {
           ...l,
           valor_proposta: l.valor_proposta ?? metaLocal.valor_proposta ?? null,
+          valor_fechamento: l.valor_fechamento ?? metaLocal.valor_fechamento ?? null,
           data_visita: l.data_visita ?? metaLocal.data_visita ?? null,
           data_primeiro_contato: l.data_primeiro_contato ?? metaLocal.data_primeiro_contato ?? null,
           data_ultimo_contato: l.data_ultimo_contato ?? metaLocal.data_ultimo_contato ?? null,
@@ -148,6 +149,8 @@ export async function GET(req: Request) {
           homologado_por_nome: l.homologado_por_nome ?? metaLocal.homologado_por_nome ?? null,
           data_homologacao: l.data_homologacao ?? metaLocal.data_homologacao ?? null,
           motivo_rejeicao_homologacao: l.motivo_rejeicao_homologacao ?? metaLocal.motivo_rejeicao_homologacao ?? null,
+          arquivado: l.arquivado ?? metaLocal.arquivado ?? false,
+          data_arquivamento: l.data_arquivamento ?? metaLocal.data_arquivamento ?? null,
           corretor_id: corretorIdFinal,
           corretor_nome: corretorNomeFinal,
           imovel: imovelRel ? {

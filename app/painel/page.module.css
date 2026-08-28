@@ -349,6 +349,74 @@
   display: none;
 }
 
+.sidebarIconeWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badgeMicroFlutuante {
+  display: none;
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.5);
+  border: 1.5px solid #0f172a;
+  line-height: 1;
+}
+
+.badgeSidebarPill {
+  margin-left: auto;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+  line-height: 1;
+  animation: pulseBadge 2.5s infinite;
+}
+
+.sidebarItemAtivo .badgeSidebarPill {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.sidebarRecolhida .badgeSidebarPill {
+  display: none !important;
+}
+
+.sidebarRecolhida .badgeMicroFlutuante {
+  display: flex !important;
+}
+
+@keyframes pulseBadge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
 .sidebarRodapeFixar {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 0.75rem;
@@ -967,6 +1035,17 @@
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     max-width: 100% !important;
+  }
+
+  .badgeSidebarPill {
+    display: none !important;
+  }
+
+  .badgeMicroFlutuante {
+    display: flex !important;
+    border-color: #ffffff !important;
+    top: -5px !important;
+    right: -8px !important;
   }
 
   .conteudo {

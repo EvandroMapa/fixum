@@ -49,6 +49,7 @@ export type StatusLead =
   | 'negociacao'
   | 'fechado'
   | 'perdido'
+  | 'arquivado'
 
 export interface Perfil {
   id: string
@@ -73,6 +74,8 @@ export interface Imobiliaria {
   telefone?: string
   whatsapp?: string
   site?: string
+  prefixo_codigo?: string
+  tipo_codigo_imovel?: 'automatico' | 'proprio'
   created_at: string
 }
 
@@ -172,6 +175,7 @@ export interface Lead {
   data_ultimo_contato?: string
   data_visita?: string
   valor_proposta?: number
+  valor_fechamento?: number
   motivo_perda?: string
   origem?: string
   temperatura?: 'frio' | 'morno' | 'quente'
@@ -180,6 +184,8 @@ export interface Lead {
   homologado_por_nome?: string
   data_homologacao?: string
   motivo_rejeicao_homologacao?: string
+  arquivado?: boolean
+  data_arquivamento?: string
   created_at: string
   imovel?: Imovel
   corretor_nome?: string

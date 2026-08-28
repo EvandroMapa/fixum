@@ -8,6 +8,7 @@ import LinhaTempoRevisao from "@/components/painel/LinhaTempoRevisao"
 import styles from "./page.module.css"
 
 interface DadosImovel {
+  codigo: string
   tipo: string
   negociacao: string
   titulo: string
@@ -91,7 +92,10 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   const [recadoReenvio, setRecadoReenvio] = useState("")
   const [fotos, setFotos] = useState<FotoPreview[]>([])
   const [fotosRemovidas, setFotosRemovidas] = useState<string[]>([])
+  const [modoCodigo, setModoCodigo] = useState<'automatico' | 'proprio'>('automatico')
+  const [prefixo, setPrefixo] = useState<string>('FIX')
   const [dados, setDados] = useState<DadosImovel>({
+    codigo: "",
     tipo: "",
     negociacao: "venda",
     titulo: "",
@@ -165,9 +169,25 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
         // Se for admin master, redireciona para a central administrativa
         const { data: perfil } = await supabase
           .from('perfis')
-          .select('is_admin, tipo_anunciante')
+          .select('is_admin, tipo_anunciante, prefixo_codigo, tipo_codigo_imovel, imobiliaria_id')
           .eq('id', user.id)
           .maybeSingle()
+
+        if (perfil) {
+          if (perfil.tipo_codigo_imovel) setModoCodigo(perfil.tipo_codigo_imovel as any)
+          if (perfil.prefixo_codigo) setPrefixo(perfil.prefixo_codigo)
+          if (perfil.imobiliaria_id) {
+            const { data: imobPerfil } = await supabase
+              .from('perfis')
+              .select('prefixo_codigo, tipo_codigo_imovel')
+              .eq('id', perfil.imobiliaria_id)
+              .maybeSingle()
+            if (imobPerfil) {
+              if (imobPerfil.tipo_codigo_imovel) setModoCodigo(imobPerfil.tipo_codigo_imovel as any)
+              if (imobPerfil.prefixo_codigo) setPrefixo(imobPerfil.prefixo_codigo)
+            }
+          }
+        }
 
         const ehAdmin = perfil?.is_admin === true || perfil?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
         if (ehAdmin) {
@@ -219,6 +239,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
 
     function preencherDados(imovel: any) {
       setDados({
+        codigo: imovel.codigo || "",
         tipo: imovel.tipo || "",
         negociacao: imovel.negociacao || "venda",
         titulo: imovel.titulo || "",
@@ -315,9 +336,18 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
       const precoNum = parseFloat(dados.preco.replace(/\D/g, "")) || 0
       const areaNum = parseFloat(dados.area.replace(",", ".")) || null
 
+      let codigoFinal = dados.codigo?.trim().toUpperCase() || ''
+      if (!codigoFinal) {
+        if (modoCodigo === 'proprio') {
+          throw new Error("Sua imobiliária/conta está configurada para utilizar código próprio/CRM. Por favor, informe o Código do Anúncio.")
+        }
+        codigoFinal = `${prefixo || 'FIX'}-${Math.floor(1000 + Math.random() * 9000)}`
+      }
+
       const { error: erroImovel } = await supabase
         .from("imoveis")
         .update({
+          codigo: codigoFinal,
           tipo: normalizarTipoParaBanco(dados.tipo),
           negociacao: dados.negociacao,
           titulo: dados.titulo,
@@ -554,6 +584,26 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 className={styles.input}
                 value={dados.titulo}
                 onChange={(e) => atualizar("titulo", e.target.value)}
+              />
+            </div>
+
+            {/* Código de Referência */}
+            <div className={styles.grupo} style={{ marginTop: "0.5rem" }}>
+              <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span>Código do Anúncio / Referência {modoCodigo === 'proprio' ? '*' : '(Ref)'}</span>
+                <span style={{ fontSize: '0.725rem', color: modoCodigo === 'proprio' ? '#c2410c' : '#64748b', fontWeight: 'normal' }}>
+                  {modoCodigo === 'proprio'
+                    ? (dados.codigo ? '✓ Código Próprio/CRM' : '⚠️ Obrigatório (Modo Próprio/CRM)')
+                    : (dados.codigo ? 'Personalizado' : `Automático (${prefixo || 'FIX'}-XXXX)`)}
+                </span>
+              </label>
+              <input
+                className={styles.input}
+                value={dados.codigo || ''}
+                onChange={(e) => atualizar("codigo", e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                placeholder={modoCodigo === 'proprio' ? 'Ex: AP-104, CAS-002 (Informe o código do seu sistema)' : `Ex: ${prefixo || 'FIX'}-1042 (Deixe vazio para gerar auto)`}
+                maxLength={20}
+                style={modoCodigo === 'proprio' && !dados.codigo ? { borderColor: '#fb923c' } : undefined}
               />
             </div>
 

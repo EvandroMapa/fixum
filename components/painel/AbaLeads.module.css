@@ -13,14 +13,113 @@
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 0.4rem 0.75rem;
+  padding: 0.45rem 0.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   flex-shrink: 0;
+}
+
+/* Pílulas de Status do Pipeline */
+.pillsStatusPipeline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.btnPillStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnPillStatus:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.badgePillQtd {
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 800;
+}
+
+.btnPillAtivoAbertos {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.btnPillAtivoAbertos .badgePillQtd {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.btnPillAtivoFechados {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.btnPillAtivoFechados .badgePillQtd {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.btnPillAtivoPerdidos {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.btnPillAtivoPerdidos .badgePillQtd {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.btnPillAtivoArquivados {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.btnPillAtivoArquivados .badgePillQtd {
+  background: #475569;
+  color: #ffffff;
+}
+
+.btnPillAtivoTodos {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.btnPillAtivoTodos .badgePillQtd {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.filtrosDireita {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .filtrosEsquerda {
@@ -44,7 +143,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 11px;
+  padding: 5px 9px;
   border-radius: 6px;
   border: none;
   background: transparent;
@@ -649,7 +748,28 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 0px;
+  gap: 1px;
+}
+
+.cardImovelLinhaCabecalho {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.badgeCodigoCardLead {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 0 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+  line-height: 1.35;
 }
 
 .cardImovelTitulo {
@@ -1188,6 +1308,557 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   SEÇÕES DEDICADAS: FECHADOS, PERDIDOS, ARQUIVADOS
+   ═══════════════════════════════════════════════════════════════ */
+.secaoDedicadaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  min-height: 400px;
+}
+
+.secaoDedicadaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 0.85rem;
+}
+
+.secaoDedicadaTitulo {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.secaoDedicadaSub {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.secaoDedicadaBadge {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.vazioDedicada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.vazioDedicada span {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.6;
+}
+
+.vazioDedicada h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.vazioDedicada p {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.gridCardsDedicados {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.85rem;
+}
+
+.cardDedicadoItem {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.cardDedicadoItem:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.cardDedicadoTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cardDedicadoCliente {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cardDedicadoCliente strong {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.cardDedicadoCliente span {
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.badgePendenteHomologacao {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.badgeFechadoAprovado {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.badgeMotivoPerda {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badgeArquivado {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.imovelDedicadoInfo {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.imovelDedicadoTitulo {
+  font-size: 0.78rem;
+  color: #334155;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 190px;
+}
+
+.imovelDedicadoValor {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.cardDedicadoRodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 4px;
+  border-top: 1px solid #f8fafc;
+}
+
+.metaCorretorData {
+  font-size: 0.74rem;
+  color: #64748b;
+}
+
+.acoesDedicadasBotoes {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btnAprovarDedicado {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnAprovarDedicado:hover {
+  background: #15803d;
+}
+
+.btnRecusarDedicado {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 5px;
+  padding: 3px 7px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btnReativarDedicado {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 5px;
+  padding: 4px 9px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnReativarDedicado:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.btnDesarquivarDedicado {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnDesarquivarDedicado:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btnArquivarDedicado {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnArquivarDedicado:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BARRA FLUTUANTE DE DESCARTE / GANHO (AO ARRASTAR CARD)
+   ═══════════════════════════════════════════════════════════════ */
+.barraAcoesDescarteRodape {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(12px);
+  padding: 10px 18px;
+  border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  animation: slideUpBarra 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpBarra {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.dropZoneAcao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  min-width: 260px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropZoneIcone {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.dropZoneTitulo {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.dropZoneSub {
+  display: block;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dropZoneGanho {
+  background: rgba(22, 163, 74, 0.25);
+  border-color: rgba(74, 222, 128, 0.5);
+}
+
+.dropZoneGanhoHover {
+  background: rgba(22, 163, 74, 0.85);
+  border-color: #86efac;
+  border-style: solid;
+  transform: scale(1.04);
+  box-shadow: 0 0 24px rgba(74, 222, 128, 0.4);
+}
+
+.dropZonePerda {
+  background: rgba(220, 38, 38, 0.25);
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+.dropZonePerdaHover {
+  background: rgba(220, 38, 38, 0.85);
+  border-color: #fca5a5;
+  border-style: solid;
+  transform: scale(1.04);
+  box-shadow: 0 0 24px rgba(248, 113, 113, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODAIS DE AÇÃO RÁPIDA (FECHAMENTO E PERDA)
+   ═══════════════════════════════════════════════════════════════ */
+.overlayAcaoModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.cardAcaoModal {
+  background: #ffffff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: popModal 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popModal {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cardAcaoModalTopo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.iconeAcaoModal {
+  font-size: 1.8rem;
+}
+
+.cardAcaoModalTopo h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.cardAcaoModalTopo p {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.corpoAcaoModal {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.labelAcaoModal {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.inputAcaoModal,
+.selectAcaoModal {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  outline: none;
+  background: #f8fafc;
+  transition: all 0.15s ease;
+}
+
+.inputAcaoModal:focus,
+.selectAcaoModal:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.avisoHomologacaoModal {
+  font-size: 0.74rem;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 8px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+.rodapeAcaoModal {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0.9rem 1.25rem;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btnCancelarModal {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnCancelarModal:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.btnConfirmarFechamentoModal {
+  background: #16a34a;
+  border: none;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnConfirmarFechamentoModal:hover {
+  background: #15803d;
+}
+
+.btnConfirmarPerdaModal {
+  background: #dc2626;
+  border: none;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnConfirmarPerdaModal:hover {
+  background: #b91c1c;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    RESPONSIVIDADE MOBILE
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -1213,5 +1884,17 @@
 
   .gridMetricas {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .barraAcoesDescarteRodape {
+    width: 90%;
+    flex-direction: column;
+    gap: 8px;
+    bottom: 12px;
+  }
+
+  .dropZoneAcao {
+    width: 100%;
+    min-width: unset;
   }
 }

@@ -5,6 +5,7 @@ const METADATA_FILE = path.resolve(process.cwd(), 'data_metadados_leads.json')
 
 export interface LeadMetadata {
   valor_proposta?: number | null
+  valor_fechamento?: number | null
   data_visita?: string | null
   data_primeiro_contato?: string | null
   data_ultimo_contato?: string | null
@@ -17,6 +18,8 @@ export interface LeadMetadata {
   homologado_por_nome?: string | null
   data_homologacao?: string | null
   motivo_rejeicao_homologacao?: string | null
+  arquivado?: boolean | null
+  data_arquivamento?: string | null
 }
 
 export function lerTodosMetadadosLeads(): Record<string, LeadMetadata> {

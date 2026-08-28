@@ -224,7 +224,8 @@ export default function ModalDetalhesLead({
       ? `${window.location.origin}/imovel/${lead.imovel.id}`
       : ''
 
-    const texto = `Olá ${lead.nome}! Sou ${usuarioNome} do portal de imóveis Fixum.\n\nVi seu interesse no imóvel *${lead.imovel?.titulo || 'anunciado na Fixum'}*.\n${urlImovel ? `🔗 ${urlImovel}\n\n` : ''}Como posso te ajudar?`
+    const codTexto = lead.imovel?.codigo ? ` (Ref: ${lead.imovel.codigo})` : ''
+    const texto = `Olá ${lead.nome}! Sou ${usuarioNome} do portal de imóveis Fixum.\n\nVi seu interesse no imóvel *${lead.imovel?.titulo || 'anunciado na Fixum'}*${codTexto}.\n${urlImovel ? `🔗 ${urlImovel}\n\n` : ''}Como posso te ajudar?`
 
     const msg = encodeURIComponent(texto)
     window.open(`https://wa.me/55${telLimpo}?text=${msg}`, '_blank')
@@ -470,6 +471,36 @@ export default function ModalDetalhesLead({
             <span>📎</span> Documentos & Anexos ({anexos.length})
           </button>
         </div>
+
+        {/* ── BANNER DE LEAD ARQUIVADO ── */}
+        {(lead.arquivado || lead.status === 'arquivado') && (
+          <div className={styles.bannerArquivado}>
+            <div className={styles.bannerArquivadoInfo}>
+              <span className={styles.iconeBannerArquivado}>📁</span>
+              <div>
+                <strong>Este Lead Está Arquivado</strong>
+                <p>
+                  O lead está fora do funil ativo de atendimento diário, mas todos os históricos,
+                  atividades e documentos estão 100% preservados.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={styles.btnDesarquivarBanner}
+              disabled={processandoAcao}
+              onClick={() =>
+                handleAtualizarCampo({
+                  arquivado: false,
+                  status: lead.status === 'arquivado' ? 'novo' : lead.status,
+                  mensagem_atividade: `📂 Lead DESARQUIVADO por ${usuarioNome} e retornado ao funil ativo.`,
+                })
+              }
+            >
+              📂 Desarquivar Lead
+            </button>
+          </div>
+        )}
 
         {/* ── BANNER DE HOMOLOGAÇÃO DE VENDA (QUANDO FECHADO) ── */}
         {lead.status === 'fechado' && (
@@ -1000,7 +1031,7 @@ export default function ModalDetalhesLead({
                   onClick={handleChamarWhatsApp}
                   title="Conversar com o cliente no WhatsApp"
                 >
-                  <span>💬</span> Chamar no WhatsApp
+                  <span>💬</span> WhatsApp
                 </button>
               )}
 
@@ -1010,7 +1041,7 @@ export default function ModalDetalhesLead({
                 onClick={() => setAbaAtiva('agenda')}
                 title="Abrir a agenda de visitas"
               >
-                <span>📅</span> Agendar Visita / Tarefa
+                <span>📅</span> Agendar Visita
               </button>
 
               <button
@@ -1022,14 +1053,83 @@ export default function ModalDetalhesLead({
                 <span>💰</span> {lead.valor_proposta ? 'Atualizar Proposta' : 'Registrar Proposta'}
               </button>
 
-              <button
-                type="button"
-                className={styles.btnAcaoPerdaFixo}
-                onClick={() => setModalPerdaAberto(true)}
-                title="Marcar oportunidade como perdida"
-              >
-                <span>❌</span> Marcar Perdido
-              </button>
+              {lead.status !== 'fechado' && (
+                <button
+                  type="button"
+                  className={styles.btnAcaoFechamentoFixo}
+                  onClick={() => {
+                    handleAtualizarCampo({
+                      status: 'fechado',
+                      status_homologacao: 'pendente',
+                      mensagem_atividade: `🏆 Negócio marcado como FECHADO por ${usuarioNome}. Enviado para homologação do Gestor.`,
+                    })
+                  }}
+                  title="Fechar venda e enviar para homologação"
+                >
+                  <span>🏆</span> Fechar Venda
+                </button>
+              )}
+
+              {lead.status !== 'perdido' && (
+                <button
+                  type="button"
+                  className={styles.btnAcaoPerdaFixo}
+                  onClick={() => setModalPerdaAberto(true)}
+                  title="Marcar oportunidade como perdida"
+                >
+                  <span>❌</span> Marcar Perdido
+                </button>
+              )}
+
+              {lead.arquivado || lead.status === 'arquivado' ? (
+                <button
+                  type="button"
+                  className={styles.btnAcaoDesarquivarFixo}
+                  disabled={processandoAcao}
+                  onClick={() => {
+                    handleAtualizarCampo({
+                      arquivado: false,
+                      status: lead.status === 'arquivado' ? 'novo' : lead.status,
+                      mensagem_atividade: `📂 Lead DESARQUIVADO por ${usuarioNome} e retornado ao funil ativo.`,
+                    })
+                  }}
+                  title="Desarquivar lead e voltar para o funil ativo"
+                >
+                  <span>📂</span> Desarquivar Lead
+                </button>
+              ) : lead.status === 'perdido' ? (
+                <button
+                  type="button"
+                  className={styles.btnAcaoSecundarioFixo}
+                  disabled={processandoAcao}
+                  onClick={() => {
+                    handleAtualizarCampo({
+                      status: 'novo',
+                      arquivado: false,
+                      motivo_perda: null,
+                      mensagem_atividade: `🔄 Lead REATIVADO por ${usuarioNome} e retornado para Novos.`,
+                    })
+                  }}
+                  title="Reativar oportunidade e voltar para o funil ativo"
+                >
+                  <span>🔄</span> Reativar Lead
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={styles.btnAcaoSecundarioFixo}
+                  disabled={processandoAcao}
+                  onClick={() => {
+                    handleAtualizarCampo({
+                      arquivado: true,
+                      mensagem_atividade: `📁 Lead arquivado por ${usuarioNome}.`,
+                    })
+                  }}
+                  title="Arquivar lead"
+                >
+                  <span>📁</span> Arquivar
+                </button>
+              )}
             </div>
           </div>
         )}

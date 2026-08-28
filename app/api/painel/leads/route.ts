@@ -96,6 +96,7 @@ export async function PATCH(req: Request) {
       primeiro_contato,
       data_visita,
       valor_proposta,
+      valor_fechamento,
       motivo_perda,
       temperatura,
       status_homologacao,
@@ -103,6 +104,8 @@ export async function PATCH(req: Request) {
       homologado_por_nome,
       data_homologacao,
       motivo_rejeicao_homologacao,
+      arquivado,
+      data_arquivamento,
       mensagem_atividade,
     } = body
 
@@ -113,6 +116,7 @@ export async function PATCH(req: Request) {
     // 1. Salvar metadados enriquecidos (proposta, visita, corretor, temperatura, homologação, etc.)
     const metaSalva: Record<string, any> = {}
     if (valor_proposta !== undefined) metaSalva.valor_proposta = valor_proposta
+    if (valor_fechamento !== undefined) metaSalva.valor_fechamento = valor_fechamento
     if (data_visita !== undefined) metaSalva.data_visita = data_visita
     if (corretor_id !== undefined) metaSalva.corretor_id = corretor_id
     if (corretor_nome !== undefined) metaSalva.corretor_nome = corretor_nome
@@ -123,6 +127,8 @@ export async function PATCH(req: Request) {
     if (homologado_por_nome !== undefined) metaSalva.homologado_por_nome = homologado_por_nome
     if (data_homologacao !== undefined) metaSalva.data_homologacao = data_homologacao
     if (motivo_rejeicao_homologacao !== undefined) metaSalva.motivo_rejeicao_homologacao = motivo_rejeicao_homologacao
+    if (arquivado !== undefined) metaSalva.arquivado = arquivado
+    if (data_arquivamento !== undefined) metaSalva.data_arquivamento = data_arquivamento
 
     if (primeiro_contato) {
       metaSalva.data_primeiro_contato = new Date().toISOString()

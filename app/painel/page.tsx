@@ -630,12 +630,12 @@ function PainelConteudo() {
         <aside className={`${styles.sidebar} ${!sidebarFixa ? styles.sidebarRecolhida : ''}`}>
           <nav className={styles.sidebarNav}>
             {[
-              { id: 'dashboard', icone: '📊', label: 'Dashboard', labelMobile: 'Início' },
-              { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis', labelMobile: 'Imóveis' },
-              { id: 'leads', icone: '👥', label: `Leads ${stats.leadsNovos > 0 ? `(${stats.leadsNovos})` : ''}`, labelMobile: `Leads${stats.leadsNovos > 0 ? ` (${stats.leadsNovos})` : ''}` },
-              ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores', labelMobile: 'Equipe' }] : []),
-              ...(!isProprietario ? [{ id: 'desempenho', icone: '📈', label: 'Desempenho & Ranking', labelMobile: 'Ranking' }] : []),
-              ...(!isCorretorEquipe ? [{ id: 'plano', icone: '💳', label: isProprietario ? 'Meu Anúncio' : 'Meu Plano', labelMobile: isProprietario ? 'Anúncio' : 'Plano' }] : []),
+              { id: 'dashboard', icone: '📊', label: 'Dashboard', labelMobile: 'Início', badge: 0 },
+              { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis', labelMobile: 'Imóveis', badge: 0 },
+              { id: 'leads', icone: '👥', label: 'Leads & CRM', labelMobile: 'Leads', badge: stats.leadsNovos },
+              ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores', labelMobile: 'Equipe', badge: 0 }] : []),
+              ...(!isProprietario ? [{ id: 'desempenho', icone: '📈', label: 'Desempenho & Ranking', labelMobile: 'Ranking', badge: 0 }] : []),
+              ...(!isCorretorEquipe ? [{ id: 'plano', icone: '💳', label: isProprietario ? 'Meu Anúncio' : 'Meu Plano', labelMobile: isProprietario ? 'Anúncio' : 'Plano', badge: 0 }] : []),
             ].map((item) => (
               <button
                 key={item.id}
@@ -643,9 +643,21 @@ function PainelConteudo() {
                 onClick={() => trocarAba(item.id as Aba)}
                 title={item.label}
               >
-                <span className={styles.sidebarIcone}>{item.icone}</span>
+                <div className={styles.sidebarIconeWrapper}>
+                  <span className={styles.sidebarIcone}>{item.icone}</span>
+                  {item.badge > 0 && (
+                    <span className={styles.badgeMicroFlutuante} title={`${item.badge} lead(s) novos aguardando ação`}>
+                      {item.badge > 99 ? '99+' : item.badge}
+                    </span>
+                  )}
+                </div>
                 <span className={styles.sidebarTextoDesktop}>{item.label}</span>
                 <span className={styles.sidebarTextoMobile}>{item.labelMobile}</span>
+                {item.badge > 0 && (
+                  <span className={styles.badgeSidebarPill} title={`${item.badge} lead(s) novos aguardando atendimento`}>
+                    {item.badge > 99 ? '99+' : item.badge}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
