@@ -302,3 +302,93 @@
   align-items: center;
   gap: 8px;
 }
+
+/* ── MODO DE EXIBIÇÃO DE PREÇO (POR ANÚNCIO / POLÍTICA) ── */
+.blocoModoPreco {
+  margin-top: 0.4rem;
+  margin-bottom: 0.65rem;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.pillOpcional {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #8b5cf6;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.gridBotoesModoPreco {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.btnModoPreco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: #334155;
+  text-align: center;
+}
+
+.btnModoPreco small {
+  font-size: 0.65rem;
+  font-weight: normal;
+  color: #64748b;
+}
+
+.btnModoPreco:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.btnModoPrecoAtivo {
+  border-color: #2563eb !important;
+  background: #eff6ff !important;
+  color: #1e40af !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.btnModoPrecoAtivo small {
+  color: #2563eb !important;
+}
+
+.btnModoPrecoAtivoSobConsulta {
+  border-color: #0284c7 !important;
+  background: #f0f9ff !important;
+  color: #0369a1 !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+.btnModoPrecoAtivoSobConsulta small {
+  color: #0284c7 !important;
+}
+
+.avisoPoliticaPreco {
+  margin-top: 0.35rem;
+  margin-bottom: 0.65rem;
+  padding: 6px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.735rem;
+  color: #475569;
+  line-height: 1.3;
+}

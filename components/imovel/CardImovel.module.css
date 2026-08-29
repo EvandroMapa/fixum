@@ -188,6 +188,19 @@
   flex-wrap: wrap;
 }
 
+.sobConsulta {
+  font-size: 0.885rem;
+  font-weight: 800;
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  padding: 3px 9px;
+  border-radius: 6px;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+}
+
 .condominio {
   font-size: var(--texto-xs);
   font-weight: 500;

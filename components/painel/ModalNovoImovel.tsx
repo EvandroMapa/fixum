@@ -19,6 +19,7 @@ interface DadosImovel {
   titulo: string
   descricao: string
   preco: string
+  modo_exibicao_preco?: 'visivel' | 'sob_consulta'
   area: string
   quartos: string
   banheiros: string
@@ -99,13 +100,16 @@ interface ModalNovoImovelProps {
 export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: ModalNovoImovelProps) {
   const supabase = createClient()
 
-  const [buscandoCep, setBuscandoCep] = useState(false)
-  const [usuarioId, setUsuarioId] = useState("")
+  // Usuário / Perfil
+  const [usuarioId, setUsuarioId] = useState<string | null>(null)
   const [isCorretor, setIsCorretor] = useState(false)
   const [isImobiliaria, setIsImobiliaria] = useState(false)
-  const [imobiliariaNome, setImobiliariaNome] = useState("")
-  const [prefixoImovel, setPrefixoImovel] = useState("FX")
+  const [imobiliariaNome, setImobiliariaNome] = useState('')
+  const [prefixoImovel, setPrefixoImovel] = useState('FIX')
   const [modoCodigo, setModoCodigo] = useState<'automatico' | 'proprio'>('automatico')
+  const [modoExibicaoPrecoConta, setModoExibicaoPrecoConta] = useState<'visivel' | 'sob_consulta' | 'por_anuncio'>('visivel')
+
+  // Cota e Limite do Plano
   const [assinatura, setAssinatura] = useState<Assinatura | null>(null)
   const [imoveisAtivosCount, setImoveisAtivosCount] = useState(0)
 
@@ -117,6 +121,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
   const [etapa, setEtapa] = useState<Etapa>(1)
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState("")
+  const [buscandoCep, setBuscandoCep] = useState(false)
   const [arrastando, setArrastando] = useState(false)
   const inputFotoRef = useRef<HTMLInputElement>(null)
 
@@ -127,6 +132,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
     codigo: "",
     descricao: "",
     preco: "",
+    modo_exibicao_preco: "visivel",
     area: "",
     quartos: "",
     banheiros: "",
@@ -169,51 +175,69 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
       let prefixoFinal = gerarPrefixoSugerido(imobNome || meta.nome || meta.full_name || '')
       let modoFinal: 'automatico' | 'proprio' = 'automatico'
+      let modoPrecoFinal: 'visivel' | 'sob_consulta' | 'por_anuncio' = (meta.modo_exibicao_preco as any) || 'visivel'
 
-      // Se for corretor vinculado à imobiliária, a regra de prefixo e modo de código VEM DA IMOBILIÁRIA
+      // Se for corretor vinculado à imobiliária, as regras de prefixo, modo e exibição de preço VÊM DA IMOBILIÁRIA
       if (ehCorretorVinculado && imobId) {
         try {
           const { data: imobPerfil } = await supabase
             .from('perfis')
-            .select('prefixo_codigo, tipo_codigo_imovel, nome')
+            .select('prefixo_codigo, tipo_codigo_imovel, modo_exibicao_preco, nome')
             .eq('id', imobId)
             .maybeSingle()
 
           if (imobPerfil) {
             if (imobPerfil.prefixo_codigo) prefixoFinal = imobPerfil.prefixo_codigo
             if (imobPerfil.tipo_codigo_imovel) modoFinal = imobPerfil.tipo_codigo_imovel as any
+            if (imobPerfil.modo_exibicao_preco) modoPrecoFinal = imobPerfil.modo_exibicao_preco as any
             if (imobPerfil.nome) setImobiliariaNome(imobPerfil.nome)
           }
+
+          // Fallback para API de configurações da imobiliária
+          try {
+            const resImobConfig = await fetch(`/api/painel/configuracoes?usuario_id=${imobId}`)
+            if (resImobConfig.ok) {
+              const dataImobConfig = await resImobConfig.json()
+              if (dataImobConfig.configs?.modo_exibicao_preco) {
+                modoPrecoFinal = dataImobConfig.configs.modo_exibicao_preco
+              }
+            }
+          } catch {}
         } catch (e) {
-          console.error('Erro ao buscar perfil da imobiliária para código:', e)
+          console.error('Erro ao buscar perfil da imobiliária para código e preço:', e)
         }
       } else {
-        // Se for imobiliária ou corretor independente, buscar do perfil do usuário / localStorage
+        // Se for imobiliária ou corretor independente, buscar do perfil do usuário / API
         try {
           const { data: userPerfil } = await supabase
             .from('perfis')
-            .select('prefixo_codigo, tipo_codigo_imovel')
+            .select('prefixo_codigo, tipo_codigo_imovel, modo_exibicao_preco')
             .eq('id', user.id)
             .maybeSingle()
 
           if (userPerfil) {
             if (userPerfil.prefixo_codigo) prefixoFinal = userPerfil.prefixo_codigo
             if (userPerfil.tipo_codigo_imovel) modoFinal = userPerfil.tipo_codigo_imovel as any
-          } else if (typeof window !== 'undefined') {
-            const salvo = localStorage.getItem(`config_imoveis_${user.id}`)
-            if (salvo) {
-              const parsed = JSON.parse(salvo)
-              if (parsed.prefixo) prefixoFinal = parsed.prefixo
-              if (parsed.modoCodigo) modoFinal = parsed.modoCodigo
-            }
+            if (userPerfil.modo_exibicao_preco) modoPrecoFinal = userPerfil.modo_exibicao_preco as any
           }
+
+          try {
+            const resUserConfig = await fetch(`/api/painel/configuracoes?usuario_id=${user.id}`)
+            if (resUserConfig.ok) {
+              const dataUserConfig = await resUserConfig.json()
+              if (dataUserConfig.configs?.modo_exibicao_preco) {
+                modoPrecoFinal = dataUserConfig.configs.modo_exibicao_preco
+              }
+            }
+          } catch {}
         } catch (e) {
-          console.error('Erro ao buscar perfil de código do usuário:', e)
+          console.error('Erro ao buscar perfil de código e preço do usuário:', e)
         }
       }
 
       setPrefixoImovel(prefixoFinal)
       setModoCodigo(modoFinal)
+      setModoExibicaoPrecoConta(modoPrecoFinal)
 
       try {
         const res = await fetch('/api/painel/cota')
@@ -452,6 +476,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
           codigo: codigoFinal,
           descricao: dados.descricao || null,
           preco: precoNumerico,
+          modo_exibicao_preco: dados.modo_exibicao_preco || 'visivel',
           area: areaNumerica,
           quartos: extrairNumero(dados.quartos),
           banheiros: extrairNumero(dados.banheiros),
@@ -671,6 +696,42 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                   />
                 </div>
               </div>
+
+              {/* Seletor / Aviso de Exibição de Preço */}
+              {modoExibicaoPrecoConta === 'por_anuncio' ? (
+                <div className={styles.blocoModoPreco}>
+                  <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span>Exibição de Preço no Anúncio</span>
+                    <span className={styles.pillOpcional}>Opção por Anúncio</span>
+                  </label>
+                  <div className={styles.gridBotoesModoPreco}>
+                    <button
+                      type="button"
+                      className={`${styles.btnModoPreco} ${dados.modo_exibicao_preco !== 'sob_consulta' ? styles.btnModoPrecoAtivo : ''}`}
+                      onClick={() => atualizar('modo_exibicao_preco', 'visivel')}
+                    >
+                      <span>💰 Preço Visível</span>
+                      <small>Exibe o valor no portal e mapa</small>
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.btnModoPreco} ${dados.modo_exibicao_preco === 'sob_consulta' ? styles.btnModoPrecoAtivoSobConsulta : ''}`}
+                      onClick={() => atualizar('modo_exibicao_preco', 'sob_consulta')}
+                    >
+                      <span>💬 Sob Consulta</span>
+                      <small>Oculta o valor no anúncio</small>
+                    </button>
+                  </div>
+                </div>
+              ) : modoExibicaoPrecoConta === 'sob_consulta' ? (
+                <div className={styles.avisoPoliticaPreco} style={{ background: '#f0f9ff', borderColor: '#bae6fd', color: '#0369a1' }}>
+                  <span>💬 <strong>Preço Sob Consulta:</strong> Este anúncio será exibido como sob consulta conforme a política da conta.</span>
+                </div>
+              ) : (
+                <div className={styles.avisoPoliticaPreco}>
+                  <span>💰 <strong>Preço Sempre Visível:</strong> O valor numérico será exibido no anúncio conforme a política da conta.</span>
+                </div>
+              )}
 
               {/* Campo Código de Referência do Anúncio */}
               <div className={styles.grupo} style={{ marginBottom: '10px' }}>

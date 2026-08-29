@@ -64,6 +64,20 @@ export default async function PaginaImobiliaria({ params }: Props) {
     notFound()
   }
 
+  let modoExibicaoPreco: 'visivel' | 'sob_consulta' | 'por_anuncio' = perfil.modo_exibicao_preco || 'visivel'
+  try {
+    const { data: donoData } = await supabase.auth.admin.getUserById(id)
+    const donoMeta = donoData?.user?.user_metadata || {}
+    if (donoMeta.modo_exibicao_preco) {
+      modoExibicaoPreco = donoMeta.modo_exibicao_preco
+    }
+  } catch {}
+
+  const perfilFinal = {
+    ...perfil,
+    modo_exibicao_preco: modoExibicaoPreco,
+  }
+
   // 2. Buscar corretores associados
   let idsAnunciantes = [id]
   let corretores: any[] = []
@@ -112,13 +126,14 @@ export default async function PaginaImobiliaria({ params }: Props) {
     imoveis = (listaImoveis || []).map((im: any) => ({
       ...im,
       fotos: im.fotos_imovel ?? [],
-      anunciante: perfil,
+      anunciante: perfilFinal,
+      modo_exibicao_preco: perfilFinal.modo_exibicao_preco,
     }))
   } catch {}
 
   return (
     <PaginaImobiliariaCliente
-      imobiliaria={perfil}
+      imobiliaria={perfilFinal}
       corretores={corretores}
       imoveis={imoveis}
     />

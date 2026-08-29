@@ -31,6 +31,15 @@ export async function GET(
       return NextResponse.json({ error: 'Imobiliária não encontrada.' }, { status: 404 })
     }
 
+    const { data: donoData } = await supabase.auth.admin.getUserById(id)
+    const donoMeta = donoData?.user?.user_metadata || {}
+    const modoExibicaoPreco = perfil.modo_exibicao_preco || donoMeta.modo_exibicao_preco || 'visivel'
+
+    const perfilFinal = {
+      ...perfil,
+      modo_exibicao_preco: modoExibicaoPreco,
+    }
+
     // 2. Buscar corretores associados
     const { data: allUsers } = await supabase.auth.admin.listUsers()
     const corretores = (allUsers?.users || [])
@@ -43,6 +52,7 @@ export async function GET(
         creci: u.user_metadata?.creci || null,
         foto_url: u.user_metadata?.foto_url || null,
         papel: u.user_metadata?.papel || 'corretor',
+        modo_exibicao_preco: modoExibicaoPreco,
       }))
 
     const idsAnunciantes = [id, ...corretores.map((c) => c.id)]
@@ -60,11 +70,16 @@ export async function GET(
       return NextResponse.json({ error: erroImoveis.message }, { status: 500 })
     }
 
+    const imoveisFormatados = (imoveis || []).map((im: any) => ({
+      ...im,
+      anunciante: perfilFinal,
+    }))
+
     return NextResponse.json({
-      imobiliaria: perfil,
+      imobiliaria: perfilFinal,
       corretores,
-      totalImoveis: imoveis?.length || 0,
-      imoveis: imoveis || [],
+      totalImoveis: imoveisFormatados.length,
+      imoveis: imoveisFormatados,
       idsAnunciantes,
     })
   } catch (err: any) {

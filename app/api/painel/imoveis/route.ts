@@ -99,10 +99,32 @@ export async function GET(req: Request) {
       }
     } catch {}
 
+    let modoExibicaoPrecoConta: 'visivel' | 'sob_consulta' | 'por_anuncio' = meta.modo_exibicao_preco || 'visivel'
+    if (imobiliariaId && !isImobDirect) {
+      try {
+        const { data: imobUser } = await supabase.auth.admin.getUserById(imobiliariaId)
+        if (imobUser?.user?.user_metadata?.modo_exibicao_preco) {
+          modoExibicaoPrecoConta = imobUser.user.user_metadata.modo_exibicao_preco
+        }
+      } catch {}
+    }
+
     const imoveis = (imoveisData || []).map((i: any) => {
       const motivoFallback = mapaMotivos[i.id] || i.descricao_motivo_rejeicao || null
+      // Resolução inteligente: se a conta for 'visivel' -> 'visivel', se 'sob_consulta' -> 'sob_consulta', se 'por_anuncio' -> respeita o imóvel
+      const modoFinal =
+        modoExibicaoPrecoConta === 'visivel'
+          ? 'visivel'
+          : modoExibicaoPrecoConta === 'sob_consulta'
+          ? 'sob_consulta'
+          : i.modo_exibicao_preco === 'sob_consulta'
+          ? 'sob_consulta'
+          : 'visivel'
+
       return {
         ...i,
+        modo_exibicao_preco_individual: i.modo_exibicao_preco || 'visivel',
+        modo_exibicao_preco: modoFinal,
         descricao_motivo_rejeicao: motivoFallback,
         fotos: i.fotos_imovel || [],
         nome_anunciante: mapaNomes[i.anunciante_id] || 'Anunciante',
@@ -186,6 +208,7 @@ export async function GET(req: Request) {
       isGestor,
       podeExcluir,
       papel,
+      modo_exibicao_preco: modoExibicaoPrecoConta,
     })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Erro ao carregar dados do painel.' }, { status: 500 })

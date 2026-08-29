@@ -102,34 +102,45 @@ export default async function PaginaImovel({ params }: Props) {
         .maybeSingle()
       perfil = p
 
+      let modoExibicaoPrecoFinal: 'visivel' | 'sob_consulta' | 'por_anuncio' = 'visivel'
       let imobIdParaBuscar: string | null = null
+
+      if (SERVICE_KEY) {
+        try {
+          const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId)
+          const meta = userData?.user?.user_metadata || {}
+          if (meta.modo_exibicao_preco) modoExibicaoPrecoFinal = meta.modo_exibicao_preco
+          const idImobVinculada = meta.imobiliaria_id
+          if (idImobVinculada) {
+            imobIdParaBuscar = idImobVinculada
+            imobiliariaId = idImobVinculada
+          }
+        } catch {}
+      }
 
       if (p?.tipo === 'imobiliaria') {
         imobiliariaId = p.id
         imobiliariaNome = p.nome
         imobIdParaBuscar = p.id
-      } else {
-        // Verificar se é corretor ou usuário com imobiliária vinculada
-        if (SERVICE_KEY) {
-          try {
-            const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId)
-            const meta = userData?.user?.user_metadata || {}
-            const idImobVinculada = meta.imobiliaria_id
-            if (idImobVinculada) {
-              imobIdParaBuscar = idImobVinculada
-              imobiliariaId = idImobVinculada
-            }
-          } catch {}
-        }
       }
 
-      // Se tiver uma imobiliária mãe, carregar o perfil oficial dela
+      // Se tiver uma imobiliária mãe, carregar o perfil oficial dela e suas preferências de preço
       if (imobIdParaBuscar) {
         const { data: imobPerfil } = await supabase
           .from('perfis')
           .select('id, nome, foto_url, telefone, whatsapp, creci, email')
           .eq('id', imobIdParaBuscar)
           .maybeSingle()
+
+        if (SERVICE_KEY && imobIdParaBuscar !== anuncianteId) {
+          try {
+            const { data: imobUser } = await supabase.auth.admin.getUserById(imobIdParaBuscar)
+            const imobMeta = imobUser?.user?.user_metadata || {}
+            if (imobMeta.modo_exibicao_preco) {
+              modoExibicaoPrecoFinal = imobMeta.modo_exibicao_preco
+            }
+          } catch {}
+        }
 
         if (imobPerfil) {
           imobiliariaNome = imobPerfil.nome
@@ -140,8 +151,13 @@ export default async function PaginaImovel({ params }: Props) {
             nome: imobPerfil.nome,
             imobiliaria_nome: imobPerfil.nome,
             tipo: 'imobiliaria',
+            modo_exibicao_preco: modoExibicaoPrecoFinal,
           }
         }
+      }
+
+      if (perfil) {
+        perfil.modo_exibicao_preco = modoExibicaoPrecoFinal
       }
 
       // Buscar todos os IDs de anunciantes vinculados a esta imobiliária

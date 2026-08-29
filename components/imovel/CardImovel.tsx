@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { type Imovel } from '@/lib/types'
-import { formatarPreco, formatarArea, labelTipoImovel } from '@/lib/utils'
+import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } from '@/lib/utils'
 import { useFavorito } from '@/hooks/useFavorito'
 import styles from './CardImovel.module.css'
 
@@ -181,11 +181,17 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
       <div className={styles.info}>
         {/* Preço */}
         <div className={styles.preco}>
-          {formatarPreco(imovel.preco, imovel.negociacao)}
-          {imovel.condominio && imovel.negociacao === 'aluguel' && (
-            <span className={styles.condominio}>
-              + R$ {imovel.condominio.toLocaleString('pt-BR')} cond.
-            </span>
+          {resolverExibicaoPreco(imovel.anunciante?.modo_exibicao_preco, imovel.modo_exibicao_preco, (imovel as any).exibir_preco) === 'sob_consulta' ? (
+            <span className={styles.sobConsulta}>Preço sob consulta</span>
+          ) : (
+            <>
+              {formatarPreco(imovel.preco, imovel.negociacao)}
+              {imovel.condominio && imovel.negociacao === 'aluguel' && (
+                <span className={styles.condominio}>
+                  + R$ {imovel.condominio.toLocaleString('pt-BR')} cond.
+                </span>
+              )}
+            </>
           )}
         </div>
 

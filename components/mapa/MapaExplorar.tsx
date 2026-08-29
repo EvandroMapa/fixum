@@ -5,6 +5,7 @@ import Link from 'next/link'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { type Imovel } from '@/lib/types'
+import { resolverExibicaoPreco } from '@/lib/utils'
 import styles from './MapaExplorar.module.css'
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
@@ -411,7 +412,9 @@ export default function MapaExplorar({
     marcadoresMapRef.current.clear()
 
     aplicarDispersaoCoordenadas(imoveis).forEach(({ imovel: i, lng, lat }) => {
-        const label = precoLabel(i.preco || 0)
+        const modoFinal = resolverExibicaoPreco(i.anunciante?.modo_exibicao_preco, i.modo_exibicao_preco, (i as any).exibir_preco)
+        const isSobConsulta = modoFinal === 'sob_consulta'
+        const label = isSobConsulta ? 'Sob Consulta' : precoLabel(i.preco || 0)
         const isFavoritado = favoritosSetRef.current.has(i.id)
 
         // wrapper transparente — o Mapbox aplica o transform nele para posicionar
@@ -542,7 +545,8 @@ export default function MapaExplorar({
           i.vagas ? `${i.vagas} ${i.vagas === 1 ? 'vaga' : 'vagas'}` : null,
         ].filter(Boolean).join(' · ')
 
-        const negociacaoLabel = i.negociacao === 'aluguel' ? '/mês' : ''
+        const negociacaoLabel = (!isSobConsulta && i.negociacao === 'aluguel') ? '/mês' : ''
+        const popupPrecoTexto = isSobConsulta ? 'Preço sob consulta' : `${label}${negociacaoLabel}`
 
         const isMobile = window.innerWidth < 768
         const popupW = isMobile ? 200 : 270
@@ -558,13 +562,13 @@ export default function MapaExplorar({
                   style="width:100%;height:100%;object-fit:cover;display:block;"
                 />
                 <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.35) 0%,transparent 50%);pointer-events:none;"></div>
-                <div style="position:absolute;bottom:${isMobile ? '6px' : '10px'};left:${isMobile ? '8px' : '12px'};background:white;color:#1a56db;font-size:${isMobile ? '12px' : '14px'};font-weight:800;padding:${isMobile ? '2px 7px' : '3px 9px'};border-radius:20px;letter-spacing:-0.02em;">
-                  ${label}${negociacaoLabel}
+                <div style="position:absolute;bottom:${isMobile ? '6px' : '10px'};left:${isMobile ? '8px' : '12px'};background:white;color:${isSobConsulta ? '#0284c7' : '#1a56db'};font-size:${isMobile ? '11px' : '13px'};font-weight:800;padding:${isMobile ? '2px 7px' : '3px 9px'};border-radius:20px;letter-spacing:-0.02em;box-shadow:0 2px 6px rgba(0,0,0,0.12);">
+                  ${popupPrecoTexto}
                 </div>
               </div>
             ` : `
               <div style="height:${isMobile ? '48px' : '80px'};background:linear-gradient(135deg,#e0eaff,#c7d7f7);border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;">
-                <span style="font-size:${isMobile ? '12px' : '14px'};font-weight:800;color:#1a56db;">${label}${negociacaoLabel}</span>
+                <span style="font-size:${isMobile ? '11px' : '13px'};font-weight:800;color:${isSobConsulta ? '#0284c7' : '#1a56db'};">${popupPrecoTexto}</span>
               </div>
             `}
             <div style="padding:${isMobile ? '8px 10px 10px' : '12px 14px 14px'};">
@@ -700,8 +704,9 @@ export default function MapaExplorar({
                 <div className={styles.semFotoCardMobile}>Fixum</div>
               )}
               <span className={styles.precoBadgeMobile}>
-                {precoLabel(imovelCardMobile.preco || 0)}
-                {imovelCardMobile.negociacao === 'aluguel' ? '/mês' : ''}
+                {resolverExibicaoPreco(imovelCardMobile.anunciante?.modo_exibicao_preco, imovelCardMobile.modo_exibicao_preco, (imovelCardMobile as any).exibir_preco) === 'sob_consulta'
+                  ? 'Preço sob consulta'
+                  : `${precoLabel(imovelCardMobile.preco || 0)}${imovelCardMobile.negociacao === 'aluguel' ? '/mês' : ''}`}
               </span>
             </div>
             <div className={styles.infoCardMobile}>

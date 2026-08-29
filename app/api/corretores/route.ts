@@ -60,9 +60,19 @@ export async function GET(req: Request) {
       .eq('id', imobiliariaId)
       .maybeSingle()
 
+    const modoExibicaoPrecoImob = donoMeta.modo_exibicao_preco || (perfilImob as any)?.modo_exibicao_preco || 'visivel'
+
     const configDistribuicao = {
-      regra: perfilImob?.regra_distribuicao_leads || 'captador',
-      whatsapp_destino: perfilImob?.whatsapp_destino || 'corretor',
+      regra: (perfilImob as any)?.regra_distribuicao_leads || 'captador',
+      whatsapp_destino: (perfilImob as any)?.whatsapp_destino || 'corretor',
+      modo_exibicao_preco: modoExibicaoPrecoImob,
+    }
+
+    const infoImobiliaria = {
+      id: imobiliariaId,
+      nome: gestorTitular?.nome || (perfilImob as any)?.nome || 'Imobiliária',
+      foto_url: gestorTitular?.avatar_url || (perfilImob as any)?.foto_url || null,
+      modo_exibicao_preco: modoExibicaoPrecoImob,
     }
 
     if (todosMembros.length > 0) {
@@ -79,12 +89,14 @@ export async function GET(req: Request) {
 
       const formatados = todosMembros.map((c) => ({
         ...c,
+        modo_exibicao_preco: modoExibicaoPrecoImob,
         total_imoveis: contagem[c.id] || 0,
       }))
 
       const listaGestores = formatados.filter((m) => m.papel === 'gestor' || m.papel === 'gestor_principal')
 
       return NextResponse.json({
+        imobiliaria: infoImobiliaria,
         corretores: formatados,
         gestores: listaGestores,
         gestorTitular,
@@ -92,7 +104,7 @@ export async function GET(req: Request) {
       })
     }
 
-    return NextResponse.json({ corretores: [], gestores: [], gestorTitular, config_distribuicao: configDistribuicao })
+    return NextResponse.json({ imobiliaria: infoImobiliaria, corretores: [], gestores: [], gestorTitular, config_distribuicao: configDistribuicao })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Erro ao buscar equipe.' }, { status: 500 })
   }

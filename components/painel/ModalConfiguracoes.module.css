@@ -23,9 +23,9 @@
   border: 1px solid #e2e8f0;
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
   width: 100%;
-  max-width: 780px;
-  height: 540px;
-  max-height: 88vh;
+  max-width: 800px;
+  height: 550px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -186,26 +186,26 @@
 .areaConteudo {
   flex: 1;
   background: #ffffff;
-  padding: 1.25rem 1.35rem;
+  padding: 1rem 1.25rem;
   overflow-y: auto;
   min-height: 0;
 }
 
 .secaoTituloArea {
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 }
 
 .secaoTitulo {
-  font-size: 0.925rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: #0f172a;
   display: block;
 }
 
 .secaoSubtitulo {
-  font-size: 0.725rem;
+  font-size: 0.715rem;
   color: #64748b;
-  margin-top: 2px;
+  margin-top: 1px;
   display: block;
 }
 
@@ -329,30 +329,32 @@
   line-height: 1.4;
 }
 
-/* ── ABA 2: MARCA & CÓDIGOS ── */
-.linhaLogo {
+/* ── ABA 2: MARCA & ANÚNCIOS (COMPACTO SEM ROLAGEM) ── */
+.linhaMarcaTopo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid #f1f5f9;
-  margin-bottom: 0.85rem;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 0.65rem;
 }
 
-.logoInfoArea {
+.marcaTopoEsquerda {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.logoPreviewWrapper {
-  width: 48px;
-  height: 48px;
+.logoPreviewWrapperCompacto {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   overflow: hidden;
-  background: #f1f5f9;
-  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -365,56 +367,56 @@
   object-fit: cover;
 }
 
-.logoPlaceholder {
-  font-size: 1rem;
+.logoPlaceholderCompacto {
+  font-size: 0.85rem;
   font-weight: 800;
   color: #2563eb;
 }
 
-.logoTextos {
+.logoTextosCompacto {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
-.logoTitulo {
-  font-size: 0.825rem;
+.logoTituloCompacto {
+  font-size: 0.775rem;
   font-weight: 700;
   color: #0f172a;
+  line-height: 1.1;
 }
 
-.logoSubtitulo {
-  font-size: 0.685rem;
-  color: #64748b;
+.logoBotoesCompacto {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-top: 1px;
 }
 
-.logoBotoes {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btnUploadLogo {
-  padding: 6px 12px;
-  background: #f1f5f9;
+.btnUploadLogoCompacto {
+  padding: 3px 8px;
+  background: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.75rem;
+  border-radius: 5px;
+  font-size: 0.685rem;
   font-weight: 700;
   color: #334155;
   cursor: pointer;
   transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
 }
 
-.btnUploadLogo:hover {
-  background: #e2e8f0;
+.btnUploadLogoCompacto:hover {
+  background: #f1f5f9;
   color: #0f172a;
+  border-color: #94a3b8;
 }
 
-.btnRemoverLogo {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+.btnRemoverLogoCompacto {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
   border: 1px solid #fee2e2;
   background: #fef2f2;
   color: #ef4444;
@@ -422,68 +424,88 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   transition: all 0.15s;
 }
 
-.btnRemoverLogo:hover {
+.btnRemoverLogoCompacto:hover {
   background: #fee2e2;
 }
 
-.linhaPrefixo {
+.marcaTopoDireita {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 0.85rem;
+  gap: 8px;
 }
 
-.prefixoEsquerda {
-  flex: 1;
+.prefixoWrapperCompacto {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.inputPrefixo {
+.labelPrefixoCompacto {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.inputPrefixoCompacto {
   background: #ffffff;
   border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 7px 10px;
-  font-size: 0.85rem;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.8rem;
   font-weight: 800;
   color: #0f172a;
   outline: none;
-  width: 100%;
+  width: 52px;
+  text-align: center;
   box-sizing: border-box;
   text-transform: uppercase;
 }
 
-.inputPrefixo:focus {
+.inputPrefixoCompacto:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
-.dicaPrefixoBox {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 0.725rem;
-  color: #475569;
-  flex: 1.2;
+.pillExemploCodigoCompacto {
+  font-size: 0.675rem;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 3px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.secaoBloco {
+  margin-bottom: 0.65rem;
+}
+
+.secaoBloco:last-child {
+  margin-bottom: 0;
 }
 
 .gridModos {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
-  margin-top: 0.35rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.25rem;
 }
 
 .cardModo {
   background: #f8fafc;
   border: 1.5px solid #e2e8f0;
-  border-radius: 0.75rem;
-  padding: 0.75rem;
+  border-radius: 0.65rem;
+  padding: 0.55rem 0.75rem;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .cardModo:hover {
@@ -501,6 +523,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 2px;
 }
 
 .cardModoTitulo {
@@ -518,15 +541,24 @@
   border-radius: 999px;
 }
 
+.badgeEstrategico {
+  font-size: 0.585rem;
+  font-weight: 800;
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 1px 5px;
+  border-radius: 999px;
+}
+
 .cardModoTexto {
   font-size: 0.685rem;
   color: #64748b;
-  margin: 4px 0 6px;
-  line-height: 1.35;
+  margin: 2px 0 5px;
+  line-height: 1.25;
 }
 
 .cardModoExemplo {
-  font-size: 0.675rem;
+  font-size: 0.65rem;
   font-family: monospace;
   font-weight: 700;
   color: #2563eb;
@@ -534,6 +566,7 @@
   padding: 2px 6px;
   border-radius: 4px;
   display: inline-block;
+  align-self: flex-start;
 }
 
 /* ── ABA 3: DISTRIBUIÇÃO DE LEADS (IMOBILIÁRIA) ── */
@@ -670,8 +703,8 @@
 /* RESPONSIVIDADE MOBILE */
 @media (max-width: 680px) {
   .modalBox {
-    height: 90vh;
-    max-height: 90vh;
+    height: 92vh;
+    max-height: 92vh;
   }
 
   .corpoLayout {
@@ -697,12 +730,20 @@
     display: none;
   }
 
-  .gridModos {
-    grid-template-columns: 1fr;
-  }
-
-  .linhaPrefixo {
+  .linhaMarcaTopo {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+  }
+
+  .marcaTopoDireita {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px dashed #e2e8f0;
+  }
+
+  .gridModos {
+    grid-template-columns: 1fr;
   }
 }

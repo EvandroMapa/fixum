@@ -15,7 +15,13 @@ interface ModalConfiguracoesProps {
   isImobiliaria: boolean
   isCorretor: boolean
   imobiliariaDona: { id: string; nome: string } | null
-  onConfiguracoesSalvas?: (configs: { prefixo: string; modoCodigo: 'automatico' | 'proprio'; tipoAnunciante?: string; creci?: string }) => void
+  onConfiguracoesSalvas?: (configs: {
+    prefixo: string
+    modoCodigo: 'automatico' | 'proprio'
+    tipoAnunciante?: string
+    creci?: string
+    modoExibicaoPreco?: 'visivel' | 'sob_consulta' | 'por_anuncio'
+  }) => void
   onRecarregarPerfil?: () => void
 }
 
@@ -52,38 +58,44 @@ async function processarImagemLogo(file: File): Promise<Blob> {
         canvas.height = CANVAS_SIZE
         const ctx = canvas.getContext('2d')
         if (!ctx) {
-          reject(new Error('Falha ao processar canvas'))
+          reject(new Error('Falha ao obter contexto 2D do canvas.'))
           return
         }
 
-        ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
-        const maxDrawWidth = CANVAS_SIZE - PADDING * 2
-        const maxDrawHeight = CANVAS_SIZE - PADDING * 2
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
 
-        const scale = Math.min(maxDrawWidth / img.width, maxDrawHeight / img.height, 1)
-        const drawWidth = img.width * scale
-        const drawHeight = img.height * scale
+        const maxDim = CANVAS_SIZE - PADDING * 2
+        let drawWidth = img.width
+        let drawHeight = img.height
 
-        const offsetX = (CANVAS_SIZE - drawWidth) / 2
-        const offsetY = (CANVAS_SIZE - drawHeight) / 2
+        if (drawWidth > maxDim || drawHeight > maxDim) {
+          const ratio = Math.min(maxDim / drawWidth, maxDim / drawHeight)
+          drawWidth = drawWidth * ratio
+          drawHeight = drawHeight * ratio
+        }
 
-        ctx.imageSmoothingEnabled = true
-        ctx.imageSmoothingQuality = 'high'
-        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight)
+        const x = (CANVAS_SIZE - drawWidth) / 2
+        const y = (CANVAS_SIZE - drawHeight) / 2
+
+        ctx.drawImage(img, x, y, drawWidth, drawHeight)
 
         canvas.toBlob(
           (blob) => {
-            if (blob) resolve(blob)
-            else reject(new Error('Falha ao converter canvas para blob'))
+            if (blob) {
+              resolve(blob)
+            } else {
+              reject(new Error('Erro ao gerar Blob da imagem.'))
+            }
           },
-          'image/webp',
-          0.92
+          'image/jpeg',
+          0.9
         )
       }
-      img.onerror = () => reject(new Error('Falha ao carregar imagem'))
+      img.onerror = () => reject(new Error('Erro ao carregar arquivo de imagem.'))
       img.src = e.target?.result as string
     }
-    reader.onerror = () => reject(new Error('Falha ao ler arquivo'))
+    reader.onerror = () => reject(new Error('Erro ao ler arquivo de imagem.'))
     reader.readAsDataURL(file)
   })
 }
@@ -113,6 +125,7 @@ export default function ModalConfiguracoes({
   const [creci, setCreci] = useState<string>(creciAtual || '')
   const [prefixo, setPrefixo] = useState<string>(prefixoPadrao)
   const [modoCodigo, setModoCodigo] = useState<'automatico' | 'proprio'>('automatico')
+  const [modoExibicaoPreco, setModoExibicaoPreco] = useState<'visivel' | 'sob_consulta' | 'por_anuncio'>('visivel')
   const [regraDistribuicao, setRegraDistribuicao] = useState<'captador' | 'roleta' | 'gestor'>('captador')
   const [whatsappDestino, setWhatsappDestino] = useState<'corretor' | 'imobiliaria'>('corretor')
   const [logoUrl, setLogoUrl] = useState<string>('')
@@ -126,52 +139,80 @@ export default function ModalConfiguracoes({
     creci: string
     prefixo: string
     modoCodigo: 'automatico' | 'proprio'
+    modoExibicaoPreco: 'visivel' | 'sob_consulta' | 'por_anuncio'
     regraDistribuicao: 'captador' | 'roleta' | 'gestor'
     whatsappDestino: 'corretor' | 'imobiliaria'
     logoUrl: string
   } | null>(null)
 
-  // Carregar preferências salvas do banco ao abrir
+  // Carregar preferências salvas da API e do banco ao abrir
   useEffect(() => {
     if (!aberto || !usuarioId) return
 
-    const sb = createClient()
-    async function carregarDoBanco() {
+    async function carregarConfigs() {
       try {
-        const { data } = await sb
-          .from('perfis')
-          .select('prefixo_codigo, tipo_codigo_imovel, foto_url, tipo, creci, regra_distribuicao_leads, whatsapp_destino')
-          .eq('id', usuarioId)
-          .maybeSingle()
+        let tipoFinal = tipoAnuncianteAtual || (isImobiliaria ? 'imobiliaria' : isCorretor ? 'corretor' : 'proprietario')
+        let creciFinal = creciAtual || ''
+        let prefixoFinal = prefixoPadrao
+        let modoFinal: 'automatico' | 'proprio' = 'automatico'
+        let modoPrecoFinal: 'visivel' | 'sob_consulta' | 'por_anuncio' = 'visivel'
+        let regraFinal: 'captador' | 'roleta' | 'gestor' = 'captador'
+        let zapFinal: 'corretor' | 'imobiliaria' = 'corretor'
+        let logoFinal = ''
 
-        let tipoFinal = (data?.tipo && ['proprietario', 'corretor', 'imobiliaria'].includes(data.tipo))
-          ? (data.tipo as any)
-          : (tipoAnuncianteAtual || (isImobiliaria ? 'imobiliaria' : isCorretor ? 'corretor' : 'proprietario'))
-        let creciFinal = data?.creci || creciAtual || ''
-        let prefixoFinal = data?.prefixo_codigo || prefixoPadrao
-        let modoFinal = (data?.tipo_codigo_imovel as any) || 'automatico'
-        const regraFinal = (data?.regra_distribuicao_leads as any) || 'captador'
-        const zapFinal = (data?.whatsapp_destino as any) || 'corretor'
-        const logoFinal = data?.foto_url || ''
-
-        // Se for corretor vinculado, herdar o prefixo e modo de código da imobiliária
-        if (imobiliariaDona?.id && !isImobiliaria) {
-          const { data: imobData } = await sb
+        // Tentar via API de configurações
+        try {
+          const res = await fetch(`/api/painel/configuracoes?usuario_id=${usuarioId}`)
+          if (res.ok) {
+            const dataApi = await res.json()
+            if (dataApi.configs) {
+              const c = dataApi.configs
+              if (c.tipo) tipoFinal = c.tipo
+              if (c.creci) creciFinal = c.creci
+              if (c.prefixo_codigo) prefixoFinal = c.prefixo_codigo
+              if (c.tipo_codigo_imovel) modoFinal = c.tipo_codigo_imovel
+              if (c.modo_exibicao_preco) modoPrecoFinal = c.modo_exibicao_preco
+              if (c.regra_distribuicao_leads) regraFinal = c.regra_distribuicao_leads
+              if (c.whatsapp_destino) zapFinal = c.whatsapp_destino
+              if (c.foto_url) logoFinal = c.foto_url
+            }
+          }
+        } catch (errApi) {
+          console.warn('Fallback para banco direto:', errApi)
+          const sb = createClient()
+          const { data } = await sb
             .from('perfis')
-            .select('prefixo_codigo, tipo_codigo_imovel')
-            .eq('id', imobiliariaDona.id)
+            .select('*')
+            .eq('id', usuarioId)
             .maybeSingle()
 
-          if (imobData) {
-            if (imobData.prefixo_codigo) prefixoFinal = imobData.prefixo_codigo
-            if (imobData.tipo_codigo_imovel) modoFinal = imobData.tipo_codigo_imovel as any
+          if (data?.tipo && ['proprietario', 'corretor', 'imobiliaria'].includes(data.tipo)) {
+            tipoFinal = data.tipo as any
           }
+          if (data?.creci) creciFinal = data.creci
+          if (data?.foto_url) logoFinal = data.foto_url
+        }
+
+        // Se for corretor vinculado, herdar o prefixo, modo e exibição de preço da imobiliária
+        if (imobiliariaDona?.id && !isImobiliaria) {
+          try {
+            const resImob = await fetch(`/api/painel/configuracoes?usuario_id=${imobiliariaDona.id}`)
+            if (resImob.ok) {
+              const dataImob = await resImob.json()
+              if (dataImob.configs) {
+                if (dataImob.configs.prefixo_codigo) prefixoFinal = dataImob.configs.prefixo_codigo
+                if (dataImob.configs.tipo_codigo_imovel) modoFinal = dataImob.configs.tipo_codigo_imovel
+                if (dataImob.configs.modo_exibicao_preco) modoPrecoFinal = dataImob.configs.modo_exibicao_preco
+              }
+            }
+          } catch {}
         }
 
         setTipoAnunciante(tipoFinal)
         setCreci(creciFinal)
         setPrefixo(prefixoFinal)
         setModoCodigo(modoFinal)
+        setModoExibicaoPreco(modoPrecoFinal)
         setRegraDistribuicao(regraFinal)
         setWhatsappDestino(zapFinal)
         setLogoUrl(logoFinal)
@@ -182,13 +223,17 @@ export default function ModalConfiguracoes({
           creci: creciFinal,
           prefixo: prefixoFinal,
           modoCodigo: modoFinal,
+          modoExibicaoPreco: modoPrecoFinal,
           regraDistribuicao: regraFinal,
           whatsappDestino: zapFinal,
           logoUrl: logoFinal,
         })
-      } catch {}
+      } catch (errGeral) {
+        console.error('Erro ao carregar configurações:', errGeral)
+      }
     }
-    carregarDoBanco()
+
+    carregarConfigs()
   }, [aberto, usuarioId])
 
   // Cancelar e descartar alterações com confirmação inteligente
@@ -202,17 +247,18 @@ export default function ModalConfiguracoes({
         creci.trim() !== snapshotOriginal.creci.trim() ||
         prefixoAtualLimpo !== prefixoOriginalLimpo ||
         modoCodigo !== snapshotOriginal.modoCodigo ||
+        modoExibicaoPreco !== snapshotOriginal.modoExibicaoPreco ||
         regraDistribuicao !== snapshotOriginal.regraDistribuicao ||
         whatsappDestino !== snapshotOriginal.whatsappDestino ||
         logoUrl !== snapshotOriginal.logoUrl
 
       if (houveAlteracao) {
         const confirmou = await confirmar({
-          titulo: 'Descartar Alterações?',
-          mensagem: 'Você fez alterações nas configurações que ainda não foram salvas. Deseja realmente sair e descartar as mudanças?',
+          titulo: 'Descartar alterações?',
+          mensagem: 'Você tem modificações não salvas nas configurações. Deseja realmente sair sem salvar?',
           icone: '⚠️',
-          textoBotaoConfirmar: 'Sim, Descartar',
           tipo: 'aviso',
+          textoBotaoConfirmar: 'Sim, Descartar',
         })
 
         if (!confirmou) return
@@ -222,6 +268,7 @@ export default function ModalConfiguracoes({
       setCreci(snapshotOriginal.creci)
       setPrefixo(snapshotOriginal.prefixo)
       setModoCodigo(snapshotOriginal.modoCodigo)
+      setModoExibicaoPreco(snapshotOriginal.modoExibicaoPreco)
       setRegraDistribuicao(snapshotOriginal.regraDistribuicao)
       setWhatsappDestino(snapshotOriginal.whatsappDestino)
       setLogoUrl(snapshotOriginal.logoUrl)
@@ -242,39 +289,51 @@ export default function ModalConfiguracoes({
 
   if (!aberto) return null
 
+  // Upload do Logotipo / Foto
   async function handleSelecionarLogo(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setUploadingLogo(true)
+    if (!file.type.startsWith('image/')) {
+      alert('Por favor, selecione um arquivo de imagem válido (PNG, JPG, WebP).')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('A imagem deve ter no máximo 5MB.')
+      return
+    }
+
     try {
-      const blobOtimizado = await processarImagemLogo(file)
-      const nomeArquivo = `logo_${usuarioId}_${Date.now()}.webp`
-      const caminho = `logos/${nomeArquivo}`
-
+      setUploadingLogo(true)
+      const blob = await processarImagemLogo(file)
       const sb = createClient()
+      const nomeArquivo = `logo_${usuarioId}_${Date.now()}.jpg`
+      const caminho = `${usuarioId}/${nomeArquivo}`
 
-      const { error: errUpload } = await sb.storage
+      const { error: uploadError } = await sb.storage
         .from('fotos-imoveis')
-        .upload(caminho, blobOtimizado, {
-          contentType: 'image/webp',
+        .upload(caminho, blob, {
+          contentType: 'image/jpeg',
           upsert: true,
         })
 
-      if (errUpload) throw errUpload
+      if (uploadError) throw uploadError
 
-      const { data: { publicUrl } } = sb.storage
-        .from('fotos-imoveis')
-        .getPublicUrl(caminho)
+      const { data: urlData } = sb.storage.from('fotos-imoveis').getPublicUrl(caminho)
+      const urlPublica = urlData.publicUrl
 
-      setLogoUrl(publicUrl)
+      setLogoUrl(urlPublica)
     } catch (err) {
-      console.error('Erro ao fazer upload da logo:', err)
+      console.error('Erro ao enviar foto/logo:', err)
+      alert('Não foi possível enviar a imagem. Tente novamente.')
     } finally {
       setUploadingLogo(false)
+      e.target.value = ''
     }
   }
 
+  // Remover foto/logo
   function handleRemoverLogo() {
     setLogoUrl('')
   }
@@ -282,7 +341,13 @@ export default function ModalConfiguracoes({
   async function handleSalvar() {
     setSalvando(true)
     const prefixoLimpo = (prefixo.trim() || prefixoPadrao).toUpperCase().replace(/[^A-Z0-9]/g, '')
-    const configs = { prefixo: prefixoLimpo, modoCodigo, tipoAnunciante, creci: creci.trim() }
+    const configs = {
+      prefixo: prefixoLimpo,
+      modoCodigo,
+      tipoAnunciante,
+      creci: creci.trim(),
+      modoExibicaoPreco,
+    }
 
     const ehCorretorVinculado = !!(imobiliariaDona && !isImobiliaria)
 
@@ -291,25 +356,37 @@ export default function ModalConfiguracoes({
     }
 
     try {
+      // 1. Salvar via API segura do Painel
+      await fetch('/api/painel/configuracoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: usuarioId,
+          tipo: tipoAnunciante,
+          creci: tipoAnunciante === 'corretor' ? creci.trim() : null,
+          foto_url: logoUrl || null,
+          modo_exibicao_preco: !ehCorretorVinculado ? modoExibicaoPreco : undefined,
+          prefixo_codigo: !ehCorretorVinculado ? prefixoLimpo : undefined,
+          tipo_codigo_imovel: !ehCorretorVinculado ? modoCodigo : undefined,
+          regra_distribuicao_leads: tipoAnunciante === 'imobiliaria' ? regraDistribuicao : 'captador',
+          whatsapp_destino: tipoAnunciante === 'imobiliaria' ? whatsappDestino : 'corretor',
+        }),
+      })
+
+      // 2. Atualizar Auth Client Metadata local
       const sb = createClient()
-      const dadosUpdate: any = {
-        tipo: tipoAnunciante,
-        creci: tipoAnunciante === 'corretor' ? creci.trim() : null,
-        foto_url: logoUrl || null,
-        regra_distribuicao_leads: tipoAnunciante === 'imobiliaria' ? regraDistribuicao : 'captador',
-        whatsapp_destino: tipoAnunciante === 'imobiliaria' ? whatsappDestino : 'corretor',
-      }
-
-      // Apenas imobiliárias e corretores independentes configuram prefixo e modo de código próprios
-      if (!ehCorretorVinculado) {
-        dadosUpdate.prefixo_codigo = prefixoLimpo
-        dadosUpdate.tipo_codigo_imovel = modoCodigo
-      }
-
-      await sb
-        .from('perfis')
-        .update(dadosUpdate)
-        .eq('id', usuarioId)
+      await sb.auth.updateUser({
+        data: {
+          tipo: tipoAnunciante,
+          tipo_anunciante: tipoAnunciante,
+          creci: tipoAnunciante === 'corretor' ? creci.trim() : null,
+          foto_url: logoUrl || null,
+          avatar_url: logoUrl || null,
+          modo_exibicao_preco: modoExibicaoPreco,
+          prefixo_codigo: prefixoLimpo,
+          tipo_codigo_imovel: modoCodigo,
+        },
+      })
     } catch (err) {
       console.error('Erro ao salvar perfil:', err)
     }
@@ -331,6 +408,13 @@ export default function ModalConfiguracoes({
   }
 
   const ehImobiliaria = tipoAnunciante === 'imobiliaria'
+
+  const labelPoliticaPrecoImob =
+    modoExibicaoPreco === 'sob_consulta'
+      ? '💬 Preço Sempre Sob Consulta'
+      : modoExibicaoPreco === 'por_anuncio'
+      ? '🎛️ Opcional por Anúncio'
+      : '💰 Preço Sempre Visível'
 
   return (
     <div className={styles.backdrop} onClick={handleCancelar}>
@@ -374,8 +458,8 @@ export default function ModalConfiguracoes({
             >
               <span className={styles.iconeAba}>🎨</span>
               <div className={styles.textosAba}>
-                <span className={styles.tituloAba}>Marca & Códigos</span>
-                <span className={styles.descAba}>Logotipo e prefixo</span>
+                <span className={styles.tituloAba}>Marca & Anúncios</span>
+                <span className={styles.descAba}>Logotipo, preços e códigos</span>
               </div>
             </button>
 
@@ -464,90 +548,146 @@ export default function ModalConfiguracoes({
               </div>
             )}
 
-            {/* ── ABA 2: MARCA & CÓDIGOS ── */}
+            {/* ── ABA 2: MARCA & ANÚNCIOS ── */}
             {abaAtiva === 'marca' && (
               <div>
                 <div className={styles.secaoTituloArea}>
-                  <span className={styles.secaoTitulo}>Identidade Visual & Padronização</span>
-                  <span className={styles.secaoSubtitulo}>Sua foto ou logotipo e padrão de referência dos imóveis</span>
+                  <span className={styles.secaoTitulo}>Identidade Visual & Anúncios</span>
+                  <span className={styles.secaoSubtitulo}>Foto/logotipo, visibilidade de preços e formato do código</span>
                 </div>
 
-                {/* Logotipo */}
-                <div className={styles.linhaLogo}>
-                  <div className={styles.logoInfoArea}>
-                    <div className={styles.logoPreviewWrapper}>
+                {/* Topo Compacto: Logotipo + Prefixo na mesma linha */}
+                <div className={styles.linhaMarcaTopo}>
+                  {/* Lado Esquerdo: Foto/Logotipo */}
+                  <div className={styles.marcaTopoEsquerda}>
+                    <div className={styles.logoPreviewWrapperCompacto}>
                       {logoUrl ? (
                         <img src={logoUrl} alt="Logotipo" className={styles.logoImgPreview} />
                       ) : (
-                        <div className={styles.logoPlaceholder}>
+                        <div className={styles.logoPlaceholderCompacto}>
                           {prefixo || prefixoPadrao}
                         </div>
                       )}
                     </div>
-                    <div className={styles.logoTextos}>
-                      <span className={styles.logoTitulo}>
+                    <div className={styles.logoTextosCompacto}>
+                      <span className={styles.logoTituloCompacto}>
                         {ehImobiliaria ? 'Logotipo da Imobiliária' : 'Foto de Perfil / Marca'}
                       </span>
-                      <span className={styles.logoSubtitulo}>
-                        Exibido nos cards da busca e no mapa
-                      </span>
+                      <div className={styles.logoBotoesCompacto}>
+                        <label className={styles.btnUploadLogoCompacto}>
+                          <input
+                            type="file"
+                            accept="image/png, image/jpeg, image/webp"
+                            onChange={handleSelecionarLogo}
+                            style={{ display: 'none' }}
+                            disabled={uploadingLogo}
+                          />
+                          {uploadingLogo ? 'Enviando...' : logoUrl ? '📁 Trocar' : '📷 Enviar Foto'}
+                        </label>
+                        {logoUrl && (
+                          <button
+                            type="button"
+                            className={styles.btnRemoverLogoCompacto}
+                            onClick={handleRemoverLogo}
+                            title="Remover logotipo"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  <div className={styles.logoBotoes}>
-                    <label className={styles.btnUploadLogo}>
-                      <input
-                        type="file"
-                        accept="image/png, image/jpeg, image/webp"
-                        onChange={handleSelecionarLogo}
-                        style={{ display: 'none' }}
-                        disabled={uploadingLogo}
-                      />
-                      {uploadingLogo ? 'Enviando...' : logoUrl ? '📁 Trocar' : '📷 Enviar Foto'}
-                    </label>
-                    {logoUrl && (
-                      <button
-                        type="button"
-                        className={styles.btnRemoverLogo}
-                        onClick={handleRemoverLogo}
-                        title="Remover logotipo"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Regra de Padronização de Códigos */}
-                {imobiliariaDona && !isImobiliaria ? (
-                  <div className={styles.avisoVinculoEquipe} style={{ marginTop: '1.25rem' }}>
-                    <span>🏢 <strong>Padronização da Imobiliária:</strong> O prefixo e a regra de códigos dos anúncios são definidos centralmente pela gestão da <strong>{imobiliariaDona.nome}</strong>. Seus anúncios seguirão o padrão oficial da empresa ({modoCodigo === 'proprio' ? 'Código Interno/CRM' : `Código Sequencial: ${prefixo || prefixoPadrao}-0001`}).</span>
-                  </div>
-                ) : (
-                  <>
-                    {/* Iniciais / Prefixo */}
-                    <div className={styles.linhaPrefixo}>
-                      <div className={styles.prefixoEsquerda}>
-                        <label className={styles.labelCampo} style={{ marginBottom: '4px' }}>
-                          <span>Iniciais / Prefixo</span>
-                        </label>
+                  {/* Lado Direito: Iniciais / Prefixo */}
+                  {(!imobiliariaDona || isImobiliaria) && (
+                    <div className={styles.marcaTopoDireita}>
+                      <div className={styles.prefixoWrapperCompacto}>
+                        <label className={styles.labelPrefixoCompacto}>Prefixo:</label>
                         <input
                           type="text"
-                          className={styles.inputPrefixo}
+                          className={styles.inputPrefixoCompacto}
                           maxLength={6}
                           value={prefixo}
                           onChange={(e) => setPrefixo(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
                           placeholder={prefixoPadrao}
                         />
                       </div>
-                      <div className={styles.dicaPrefixoBox}>
-                        💡 Exemplo de código: <strong>{prefixo || prefixoPadrao}-0001</strong>
+                      <span className={styles.pillExemploCodigoCompacto} title="Exemplo de código gerado">
+                        Ref: <strong>{prefixo || prefixoPadrao}-0001</strong>
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Regra de Exibição de Preço nos Anúncios */}
+                {imobiliariaDona && !isImobiliaria ? (
+                  <div className={styles.avisoVinculoEquipe} style={{ marginTop: '0.65rem' }}>
+                    <span>🏢 <strong>Política da Imobiliária:</strong> A exibição de valores nos anúncios ({labelPoliticaPrecoImob}) e os códigos ({modoCodigo === 'proprio' ? 'Código Interno/CRM' : `Sequencial: ${prefixo || prefixoPadrao}-0001`}) são definidos pela <strong>{imobiliariaDona.nome}</strong>.</span>
+                  </div>
+                ) : (
+                  <>
+                    {/* Seção 1: Exibição de Preço */}
+                    <div className={styles.secaoBloco}>
+                      <label className={styles.labelCampo} style={{ marginBottom: '3px' }}>
+                        <span>Exibição de Preço nos Anúncios (Mapa e Lista)</span>
+                      </label>
+                      <div className={styles.gridModos}>
+                        {/* Opção 1: Sempre Visível (Sim) */}
+                        <div
+                          className={`${styles.cardModo} ${modoExibicaoPreco === 'visivel' ? styles.cardModoSelecionado : ''}`}
+                          onClick={() => setModoExibicaoPreco('visivel')}
+                        >
+                          <div className={styles.cardModoTopo}>
+                            <span className={styles.cardModoTitulo}>💰 Sempre Visível</span>
+                            <span className={styles.badgeRecomendado}>Padrão</span>
+                          </div>
+                          <p className={styles.cardModoTexto}>
+                            Exibe o valor numérico em todos os anúncios da conta.
+                          </p>
+                          <div className={styles.cardModoExemplo}>
+                            Ex: R$ 750.000
+                          </div>
+                        </div>
+
+                        {/* Opção 2: Sempre Sob Consulta (Não) */}
+                        <div
+                          className={`${styles.cardModo} ${modoExibicaoPreco === 'sob_consulta' ? styles.cardModoSelecionado : ''}`}
+                          onClick={() => setModoExibicaoPreco('sob_consulta')}
+                        >
+                          <div className={styles.cardModoTopo}>
+                            <span className={styles.cardModoTitulo}>💬 Sob Consulta</span>
+                            <span className={styles.badgeEstrategico}>Leads</span>
+                          </div>
+                          <p className={styles.cardModoTexto}>
+                            Oculta o valor em todos os anúncios para gerar contato direto.
+                          </p>
+                          <div className={styles.cardModoExemplo} style={{ color: '#0284c7', background: 'rgba(2, 132, 199, 0.08)' }}>
+                            Preço sob consulta
+                          </div>
+                        </div>
+
+                        {/* Opção 3: Opcional por Anúncio */}
+                        <div
+                          className={`${styles.cardModo} ${modoExibicaoPreco === 'por_anuncio' ? styles.cardModoSelecionado : ''}`}
+                          onClick={() => setModoExibicaoPreco('por_anuncio')}
+                        >
+                          <div className={styles.cardModoTopo}>
+                            <span className={styles.cardModoTitulo}>🎛️ Por Anúncio</span>
+                            <span className={styles.badgeRecomendado} style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a' }}>Flexível</span>
+                          </div>
+                          <p className={styles.cardModoTexto}>
+                            Escolha individualmente em cada imóvel no cadastro/edição.
+                          </p>
+                          <div className={styles.cardModoExemplo} style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.08)' }}>
+                            Configuração individual
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Modo de Código */}
-                    <div>
-                      <label className={styles.labelCampo} style={{ marginBottom: '6px' }}>
+                    {/* Seção 2: Modo de Código */}
+                    <div className={styles.secaoBloco}>
+                      <label className={styles.labelCampo} style={{ marginBottom: '3px' }}>
                         <span>Modo de Criação do Código</span>
                       </label>
                       <div className={styles.gridModos}>
@@ -575,7 +715,7 @@ export default function ModalConfiguracoes({
                             <span className={styles.cardModoTitulo}>🏷️ Próprio / CRM</span>
                           </div>
                           <p className={styles.cardModoTexto}>
-                            Habilita campo para você digitar seus códigos internos.
+                            Habilita campo para digitar códigos manuais.
                           </p>
                           <div className={styles.cardModoExemplo}>
                             Ex: AP-104

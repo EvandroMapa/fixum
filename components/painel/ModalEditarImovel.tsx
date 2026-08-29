@@ -14,6 +14,7 @@ interface DadosImovel {
   titulo: string
   descricao: string
   preco: string
+  modo_exibicao_preco?: 'visivel' | 'sob_consulta'
   area: string
   quartos: string
   banheiros: string
@@ -125,6 +126,7 @@ export default function ModalEditarImovel({
   const [imovelCompleto, setImovelCompleto] = useState<any>(null)
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
   const [isCorretor, setIsCorretor] = useState(false)
+  const [modoExibicaoPrecoConta, setModoExibicaoPrecoConta] = useState<'visivel' | 'sob_consulta' | 'por_anuncio'>('visivel')
   const [recadoReenvio, setRecadoReenvio] = useState('')
   const [fotos, setFotos] = useState<FotoPreview[]>([])
   const [fotosRemovidas, setFotosRemovidas] = useState<string[]>([])
@@ -138,6 +140,7 @@ export default function ModalEditarImovel({
     titulo: '',
     descricao: '',
     preco: '',
+    modo_exibicao_preco: 'visivel',
     area: '',
     quartos: '',
     banheiros: '',
@@ -174,10 +177,23 @@ export default function ModalEditarImovel({
         } = await supabase.auth.getUser()
         if (!ativo) return
 
+        let imobIdConta: string | null = null
         if (user) {
           setUsuarioLogado(user)
           const meta = user.user_metadata || {}
-          setIsCorretor(meta.tipo === 'corretor' || !!meta.imobiliaria_id)
+          imobIdConta = meta.imobiliaria_id || null
+          setIsCorretor(meta.tipo === 'corretor' || !!imobIdConta)
+
+          // Buscar modo de exibição de preço da conta/imobiliária
+          try {
+            const resConfig = await fetch(`/api/painel/configuracoes?usuario_id=${imobIdConta || user.id}`)
+            if (resConfig.ok) {
+              const dataConfig = await resConfig.json()
+              if (dataConfig.configs?.modo_exibicao_preco) {
+                setModoExibicaoPrecoConta(dataConfig.configs.modo_exibicao_preco)
+              }
+            }
+          } catch {}
         }
 
         const { data: imovel, error } = await supabase
@@ -229,6 +245,7 @@ export default function ModalEditarImovel({
         titulo: imovel.titulo || '',
         descricao: imovel.descricao || '',
         preco: imovel.preco ? String(imovel.preco) : '',
+        modo_exibicao_preco: imovel.modo_exibicao_preco || 'visivel',
         area: imovel.area ? String(imovel.area) : '',
         quartos: imovel.quartos ? String(imovel.quartos) : '',
         banheiros: imovel.banheiros ? String(imovel.banheiros) : '',
@@ -420,6 +437,7 @@ export default function ModalEditarImovel({
           codigo: dados.codigo?.trim().toUpperCase() || null,
           descricao: dados.descricao || null,
           preco: precoNum,
+          modo_exibicao_preco: dados.modo_exibicao_preco || 'visivel',
           area: areaNum,
           quartos: parseInt(dados.quartos) || null,
           banheiros: parseInt(dados.banheiros) || null,
@@ -684,6 +702,42 @@ export default function ModalEditarImovel({
                     />
                   </div>
                 </div>
+
+                {/* Seletor / Aviso de Exibição de Preço */}
+                {modoExibicaoPrecoConta === 'por_anuncio' ? (
+                  <div className={styles.blocoModoPreco}>
+                    <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span>Exibição de Preço no Anúncio</span>
+                      <span className={styles.pillOpcional}>Opção por Anúncio</span>
+                    </label>
+                    <div className={styles.gridBotoesModoPreco}>
+                      <button
+                        type="button"
+                        className={`${styles.btnModoPreco} ${dados.modo_exibicao_preco !== 'sob_consulta' ? styles.btnModoPrecoAtivo : ''}`}
+                        onClick={() => atualizar('modo_exibicao_preco', 'visivel')}
+                      >
+                        <span>💰 Preço Visível</span>
+                        <small>Exibe o valor no portal e mapa</small>
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.btnModoPreco} ${dados.modo_exibicao_preco === 'sob_consulta' ? styles.btnModoPrecoAtivoSobConsulta : ''}`}
+                        onClick={() => atualizar('modo_exibicao_preco', 'sob_consulta')}
+                      >
+                        <span>💬 Sob Consulta</span>
+                        <small>Oculta o valor no anúncio</small>
+                      </button>
+                    </div>
+                  </div>
+                ) : modoExibicaoPrecoConta === 'sob_consulta' ? (
+                  <div className={styles.avisoPoliticaPreco} style={{ background: '#f0f9ff', borderColor: '#bae6fd', color: '#0369a1' }}>
+                    <span>💬 <strong>Preço Sob Consulta:</strong> Este anúncio será exibido como sob consulta conforme a política da conta.</span>
+                  </div>
+                ) : (
+                  <div className={styles.avisoPoliticaPreco}>
+                    <span>💰 <strong>Preço Sempre Visível:</strong> O valor numérico será exibido no anúncio conforme a política da conta.</span>
+                  </div>
+                )}
 
                 {/* Campo Código de Referência Interna */}
                 {(isCorretor || !!dados.codigo) && (

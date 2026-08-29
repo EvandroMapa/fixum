@@ -1466,6 +1466,11 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
 
                   <div className={styles.badgePrecoCard}>
                     {formatarPreco(imovel.preco, imovel.negociacao)}
+                    {imovel.modo_exibicao_preco === 'sob_consulta' && (
+                      <span style={{ fontSize: '0.65rem', marginLeft: '5px', color: '#bae6fd', fontWeight: 'bold' }}>
+                        (Sob Consulta)
+                      </span>
+                    )}
                   </div>
 
                   {imovel.fotos && imovel.fotos.length > 0 && (
@@ -1776,6 +1781,11 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                       <strong style={{ color: '#1d4ed8' }}>
                         {formatarPreco(imovel.preco, imovel.negociacao)}
                       </strong>
+                      {imovel.modo_exibicao_preco === 'sob_consulta' && (
+                        <span style={{ display: 'block', fontSize: '0.685rem', color: '#0284c7', fontWeight: 600 }}>
+                          💬 Sob Consulta no anúncio
+                        </span>
+                      )}
                     </td>
                     {isImobiliaria && (
                       <td>

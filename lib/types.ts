@@ -61,6 +61,7 @@ export interface Perfil {
   whatsapp?: string
   creci?: string
   imobiliaria_id?: string
+  modo_exibicao_preco?: 'visivel' | 'sob_consulta' | 'por_anuncio'
   created_at: string
 }
 
@@ -76,6 +77,7 @@ export interface Imobiliaria {
   site?: string
   prefixo_codigo?: string
   tipo_codigo_imovel?: 'automatico' | 'proprio'
+  modo_exibicao_preco?: 'visivel' | 'sob_consulta' | 'por_anuncio'
   created_at: string
 }
 
@@ -95,6 +97,7 @@ export interface Imovel {
   tipo: TipoImovel
   negociacao: TipoNegociacao
   preco: number
+  modo_exibicao_preco?: 'visivel' | 'sob_consulta'
   area?: number
   area_construida?: number
   area_terreno?: number

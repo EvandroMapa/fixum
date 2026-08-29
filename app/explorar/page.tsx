@@ -211,13 +211,25 @@ function ExplorarConteudo() {
               const res = await fetch(`/api/corretores?imobiliaria_id=${imob.id}`)
               if (res.ok) {
                 const json = await res.json()
+                const modoPrecoImob = json.imobiliaria?.modo_exibicao_preco || json.config_distribuicao?.modo_exibicao_preco || 'visivel'
+                const imobObjeto = {
+                  id: imob.id,
+                  nome: json.imobiliaria?.nome || imob.nome,
+                  tipo: 'imobiliaria',
+                  foto_url: json.imobiliaria?.foto_url || imob.foto_url,
+                  modo_exibicao_preco: modoPrecoImob,
+                }
                 const membros = json.corretores || []
                 for (const m of membros) {
-                  mapaMembroParaImob.set(m.id, imob)
+                  mapaMembroParaImob.set(m.id, imobObjeto)
                 }
+                mapaMembroParaImob.set(imob.id, imobObjeto)
+              } else {
+                mapaMembroParaImob.set(imob.id, { ...imob, modo_exibicao_preco: 'visivel' })
               }
-            } catch {}
-            mapaMembroParaImob.set(imob.id, imob)
+            } catch {
+              mapaMembroParaImob.set(imob.id, { ...imob, modo_exibicao_preco: 'visivel' })
+            }
           }
         } catch {}
         mapaBrandingRef.current = mapaMembroParaImob
@@ -231,20 +243,15 @@ function ExplorarConteudo() {
         const perfilOriginal = (i.perfis as any) || null
         const anuncianteId = (i.anunciante_id as string) || ''
 
-        // Se o anunciante pertence a uma imobiliária, usar branding da imobiliária
+        // Se o anunciante pertence a uma imobiliária, usar branding e regras da imobiliária
         let anuncianteFinal = perfilOriginal
         if (mapaMembroParaImob.has(anuncianteId)) {
-          const imobDona = mapaMembroParaImob.get(anuncianteId)
-          anuncianteFinal = {
-            id: imobDona.id,
-            nome: imobDona.nome,
-            tipo: 'imobiliaria',
-            foto_url: imobDona.foto_url,
-          }
+          anuncianteFinal = mapaMembroParaImob.get(anuncianteId)
         }
 
         return {
           ...i,
+          modo_exibicao_preco: anuncianteFinal?.modo_exibicao_preco || (i as any).modo_exibicao_preco || 'visivel',
           fotos: (i.fotos_imovel as Record<string, unknown>[]) ?? [],
           anunciante: anuncianteFinal,
         }

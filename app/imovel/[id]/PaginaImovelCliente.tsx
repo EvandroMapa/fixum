@@ -8,7 +8,7 @@ import Header from '@/components/layout/Header'
 import CardImovel from '@/components/imovel/CardImovel'
 import SecaoEntorno from '@/components/imovel/SecaoEntorno'
 import { type Imovel, type PontoInteresse } from '@/lib/types'
-import { formatarPreco, formatarArea, labelTipoImovel } from '@/lib/utils'
+import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } from '@/lib/utils'
 import { useFavorito } from '@/hooks/useFavorito'
 import { createClient } from '@/lib/supabase/client'
 import styles from './page.module.css'
@@ -62,6 +62,7 @@ interface Props {
       creci?: string
       imobiliaria_id?: string
       imobiliaria_nome?: string
+      modo_exibicao_preco?: 'visivel' | 'sob_consulta'
       total_imoveis?: number
     }
   }
@@ -171,18 +172,26 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
     return () => { document.body.style.overflow = '' }
   }, [modalFoto])
 
+  const isSobConsulta =
+    resolverExibicaoPreco(
+      anunciante?.modo_exibicao_preco,
+      imovel.modo_exibicao_preco,
+      (imovel as any).exibir_preco
+    ) === 'sob_consulta'
+
   function handleWhatsApp() {
     const cod = imovel.codigo || imovel.id.slice(0, 8).toUpperCase()
-    const msg = encodeURIComponent(
-      `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Vi no FIXUM.`
-    )
+    const msgIntro = isSobConsulta
+      ? `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Gostaria de consultar o valor e obter mais informações. Vi no FIXUM.`
+      : `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Vi no FIXUM.`
+    const msg = encodeURIComponent(msgIntro)
     const tel = anunciante?.whatsapp ?? anunciante?.telefone ?? '31988027152'
     window.open(`https://wa.me/55${tel.replace(/\D/g, '')}?text=${msg}`, '_blank')
   }
 
   function handleCompartilharWhatsApp() {
     const localTxt = `${imovel.cidade}${imovel.bairro ? ` - ${imovel.bairro}` : ''}`
-    const precoTxt = formatarPreco(imovel.preco, imovel.negociacao)
+    const precoTxt = isSobConsulta ? 'Valor: Sob Consulta' : formatarPreco(imovel.preco, imovel.negociacao)
     const url = typeof window !== 'undefined' ? window.location.href : `https://fixum.com.br/imovel/${imovel.id}`
     const refTexto = imovel.codigo ? `\nRef: ${imovel.codigo}` : ''
     const texto = encodeURIComponent(
@@ -480,35 +489,41 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               {/* Bloco de Preço & Custos */}
               <div className={styles.blocoPrecoCard}>
                 <div className={styles.linhaPrecoPrincipal}>
-                  <span className={styles.precoValorDestaque}>
-                    {formatarPreco(imovel.preco, imovel.negociacao)}
+                  <span className={styles.precoValorDestaque} style={isSobConsulta ? { color: '#0284c7' } : undefined}>
+                    {isSobConsulta ? 'Preço sob consulta' : formatarPreco(imovel.preco, imovel.negociacao)}
                   </span>
-                  {imovel.negociacao === 'aluguel' && (
+                  {!isSobConsulta && imovel.negociacao === 'aluguel' && (
                     <span className={styles.precoSufixo}>/ mês</span>
                   )}
                 </div>
 
-                {(imovel.condominio || imovel.iptu) && (
-                  <div className={styles.detalhamentoCustos}>
-                    {imovel.condominio && (
-                      <div className={styles.itemCusto}>
-                        <span className={styles.itemCustoLabel}>Condomínio:</span>
-                        <strong className={styles.itemCustoValor}>R$ {imovel.condominio.toLocaleString('pt-BR')}</strong>
-                      </div>
-                    )}
-                    {imovel.iptu && (
-                      <div className={styles.itemCusto}>
-                        <span className={styles.itemCustoLabel}>IPTU:</span>
-                        <strong className={styles.itemCustoValor}>R$ {imovel.iptu.toLocaleString('pt-BR')}</strong>
-                      </div>
-                    )}
-                    {imovel.negociacao === 'aluguel' && (
-                      <div className={styles.itemCustoTotal}>
-                        <span className={styles.itemCustoLabel}>Total Mensal Estimado:</span>
-                        <strong className={styles.itemCustoValorTotal}>R$ {custoTotalMensal.toLocaleString('pt-BR')}</strong>
-                      </div>
-                    )}
+                {isSobConsulta ? (
+                  <div style={{ fontSize: '0.8rem', color: '#0369a1', background: '#f0f9ff', border: '1px solid #bae6fd', padding: '8px 12px', borderRadius: '6px', marginTop: '2px', lineHeight: 1.4 }}>
+                    💬 Consulte valores atualizados, condições especiais e agende uma visita diretamente com a nossa equipe.
                   </div>
+                ) : (
+                  (imovel.condominio || imovel.iptu) && (
+                    <div className={styles.detalhamentoCustos}>
+                      {imovel.condominio && (
+                        <div className={styles.itemCusto}>
+                          <span className={styles.itemCustoLabel}>Condomínio:</span>
+                          <strong className={styles.itemCustoValor}>R$ {imovel.condominio.toLocaleString('pt-BR')}</strong>
+                        </div>
+                      )}
+                      {imovel.iptu && (
+                        <div className={styles.itemCusto}>
+                          <span className={styles.itemCustoLabel}>IPTU:</span>
+                          <strong className={styles.itemCustoValor}>R$ {imovel.iptu.toLocaleString('pt-BR')}</strong>
+                        </div>
+                      )}
+                      {imovel.negociacao === 'aluguel' && (
+                        <div className={styles.itemCustoTotal}>
+                          <span className={styles.itemCustoLabel}>Total Mensal Estimado:</span>
+                          <strong className={styles.itemCustoValorTotal}>R$ {custoTotalMensal.toLocaleString('pt-BR')}</strong>
+                        </div>
+                      )}
+                    </div>
+                  )
                 )}
               </div>
 
@@ -844,10 +859,10 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
       {/* ── BARRA FIXA DE CONTATO MOBILE (BOTTOM BAR) ── */}
       <div className={styles.barraContatoMobile}>
         <div className={styles.precoMobileInfo}>
-          <span className={styles.precoMobileValor}>
-            {formatarPreco(imovel.preco, imovel.negociacao)}
+          <span className={styles.precoMobileValor} style={isSobConsulta ? { color: '#0284c7', fontSize: '1.05rem' } : undefined}>
+            {isSobConsulta ? 'Preço sob consulta' : formatarPreco(imovel.preco, imovel.negociacao)}
           </span>
-          {imovel.condominio && (
+          {!isSobConsulta && imovel.condominio && (
             <span className={styles.condominioMobile}>
               + R$ {imovel.condominio.toLocaleString('pt-BR')} cond.
             </span>

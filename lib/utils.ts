@@ -1,13 +1,36 @@
 import { type Imovel } from './types'
 
-export function formatarPreco(preco: number, negociacao?: string): string {
+export function resolverExibicaoPreco(
+  modoConta?: 'visivel' | 'sob_consulta' | 'por_anuncio' | string | null,
+  modoImovel?: 'visivel' | 'sob_consulta' | string | null,
+  exibirPrecoImovel?: boolean | null
+): 'visivel' | 'sob_consulta' {
+  // 1. Se a conta/imobiliária força "Sim" (Sempre Visível)
+  if (modoConta === 'visivel') return 'visivel'
+
+  // 2. Se a conta/imobiliária força "Não" (Sempre Sob Consulta)
+  if (modoConta === 'sob_consulta') return 'sob_consulta'
+
+  // 3. Se for "Opcional por Anúncio" (ou conta individual/padrão) -> respeita o imóvel
+  if (modoImovel === 'sob_consulta' || exibirPrecoImovel === false) {
+    return 'sob_consulta'
+  }
+
+  return 'visivel'
+}
+
+export function formatarPreco(preco: number, negociacao?: string, modoExibicao?: string): string {
+  if (modoExibicao === 'sob_consulta') {
+    return 'Preço sob consulta'
+  }
+
   const formatado = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
     maximumFractionDigits: 0,
   }).format(preco)
 
-  if (negociacao === 'aluguel') return `${formatado}/m\u00EAs`
+  if (negociacao === 'aluguel') return `${formatado}/mês`
   return formatado
 }
 
