@@ -1466,12 +1466,13 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
 
                   <div className={styles.badgePrecoCard}>
                     {formatarPreco(imovel.preco, imovel.negociacao)}
-                    {imovel.modo_exibicao_preco === 'sob_consulta' && (
-                      <span style={{ fontSize: '0.65rem', marginLeft: '5px', color: '#bae6fd', fontWeight: 'bold' }}>
-                        (Sob Consulta)
-                      </span>
-                    )}
                   </div>
+
+                  {imovel.modo_exibicao_preco === 'sob_consulta' && (
+                    <div className={styles.badgeSobConsultaAdmin} title="Para o público e visitantes do portal, este imóvel aparece como 'Preço sob consulta'">
+                      💬 Sob Consulta
+                    </div>
+                  )}
 
                   {imovel.fotos && imovel.fotos.length > 0 && (
                     <div className={styles.badgeQtdFotos}>
@@ -1500,6 +1501,12 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                       <span>📍</span>
                       <span>{imovel.cidade} {imovel.bairro ? `• ${imovel.bairro}` : ''}</span>
                     </div>
+                    {imovel.modo_exibicao_preco === 'sob_consulta' && (
+                      <div className={styles.avisoSobConsultaCard} title="Preço sob consulta para visitantes no portal público">
+                        <span className={styles.avisoSobConsultaDot} />
+                        <span>Preço sob consulta para o público</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Grade Limpa de 4 Atributos */}
@@ -1778,12 +1785,16 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                       {imovel.bairro ? <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748b' }}>{imovel.bairro}</span> : null}
                     </td>
                     <td>
-                      <strong style={{ color: '#1d4ed8' }}>
+                      <strong style={{ color: '#1d4ed8', display: 'block' }}>
                         {formatarPreco(imovel.preco, imovel.negociacao)}
                       </strong>
-                      {imovel.modo_exibicao_preco === 'sob_consulta' && (
-                        <span style={{ display: 'block', fontSize: '0.685rem', color: '#0284c7', fontWeight: 600 }}>
-                          💬 Sob Consulta no anúncio
+                      {imovel.modo_exibicao_preco === 'sob_consulta' ? (
+                        <span className={styles.badgeTabelaSobConsulta} title="Para o público e visitantes do portal, este imóvel aparece como 'Preço sob consulta'">
+                          💬 Sob Consulta (Público)
+                        </span>
+                      ) : (
+                        <span style={{ display: 'block', fontSize: '0.685rem', color: '#16a34a', fontWeight: 600 }}>
+                          💰 Preço Visível
                         </span>
                       )}
                     </td>

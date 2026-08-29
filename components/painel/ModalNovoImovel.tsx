@@ -466,37 +466,50 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         codigoFinal = `${prefixoValido}-${Math.floor(1000 + Math.random() * 9000)}`
       }
 
-      const { data: imovel, error: erroImovel } = await supabase
+      const payloadInsert: Record<string, any> = {
+        anunciante_id: user.id,
+        tipo: normalizarTipoParaBanco(dados.tipo),
+        negociacao: dados.negociacao,
+        titulo: dados.titulo,
+        codigo: codigoFinal,
+        descricao: dados.descricao || null,
+        preco: precoNumerico,
+        modo_exibicao_preco: dados.modo_exibicao_preco || 'visivel',
+        area: areaNumerica,
+        quartos: extrairNumero(dados.quartos),
+        banheiros: extrairNumero(dados.banheiros),
+        vagas: extrairNumero(dados.vagas),
+        endereco: dados.endereco || "",
+        bairro: dados.bairro || null,
+        cidade: dados.cidade,
+        estado: dados.estado || null,
+        cep: dados.cep || null,
+        latitude: latNumerica,
+        longitude: lngNumerica,
+        condominio: extrairNumero(dados.condominio),
+        iptu: extrairNumero(dados.iptu),
+        aceita_pets: !!dados.aceita_pets,
+        mobiliado: !!dados.mobiliado,
+        status: statusFinal,
+        destaque: false,
+      }
+
+      let { data: imovel, error: erroImovel } = await supabase
         .from("imoveis")
-        .insert({
-          anunciante_id: user.id,
-          tipo: normalizarTipoParaBanco(dados.tipo),
-          negociacao: dados.negociacao,
-          titulo: dados.titulo,
-          codigo: codigoFinal,
-          descricao: dados.descricao || null,
-          preco: precoNumerico,
-          modo_exibicao_preco: dados.modo_exibicao_preco || 'visivel',
-          area: areaNumerica,
-          quartos: extrairNumero(dados.quartos),
-          banheiros: extrairNumero(dados.banheiros),
-          vagas: extrairNumero(dados.vagas),
-          endereco: dados.endereco || "",
-          bairro: dados.bairro || null,
-          cidade: dados.cidade,
-          estado: dados.estado || null,
-          cep: dados.cep || null,
-          latitude: latNumerica,
-          longitude: lngNumerica,
-          condominio: extrairNumero(dados.condominio),
-          iptu: extrairNumero(dados.iptu),
-          aceita_pets: !!dados.aceita_pets,
-          mobiliado: !!dados.mobiliado,
-          status: statusFinal,
-          destaque: false,
-        })
+        .insert(payloadInsert)
         .select()
         .single()
+
+      if (erroImovel && (erroImovel.message?.includes('modo_exibicao_preco') || erroImovel.message?.includes('column'))) {
+        delete payloadInsert.modo_exibicao_preco
+        const retry = await supabase
+          .from("imoveis")
+          .insert(payloadInsert)
+          .select()
+          .single()
+        imovel = retry.data
+        erroImovel = retry.error
+      }
 
       if (erroImovel) {
         console.error("Erro Supabase imoveis:", erroImovel)

@@ -428,34 +428,45 @@ export default function ModalEditarImovel({
         } catch {}
       }
 
-      const { error: erroImovel } = await supabase
+      const payloadUpdate: Record<string, any> = {
+        tipo: normalizarTipoParaBanco(dados.tipo),
+        negociacao: dados.negociacao,
+        titulo: dados.titulo,
+        codigo: dados.codigo?.trim().toUpperCase() || null,
+        descricao: dados.descricao || null,
+        preco: precoNum,
+        modo_exibicao_preco: dados.modo_exibicao_preco || 'visivel',
+        area: areaNum,
+        quartos: parseInt(dados.quartos) || null,
+        banheiros: parseInt(dados.banheiros) || null,
+        vagas: parseInt(dados.vagas) || null,
+        endereco: dados.endereco || '',
+        bairro: dados.bairro || null,
+        cidade: dados.cidade,
+        estado: dados.estado || null,
+        cep: dados.cep || null,
+        latitude: latNum,
+        longitude: lngNum,
+        condominio: condNum,
+        iptu: iptuNum,
+        aceita_pets: !!dados.aceita_pets,
+        mobiliado: !!dados.mobiliado,
+        status: 'rascunho',
+      }
+
+      let { error: erroImovel } = await supabase
         .from('imoveis')
-        .update({
-          tipo: normalizarTipoParaBanco(dados.tipo),
-          negociacao: dados.negociacao,
-          titulo: dados.titulo,
-          codigo: dados.codigo?.trim().toUpperCase() || null,
-          descricao: dados.descricao || null,
-          preco: precoNum,
-          modo_exibicao_preco: dados.modo_exibicao_preco || 'visivel',
-          area: areaNum,
-          quartos: parseInt(dados.quartos) || null,
-          banheiros: parseInt(dados.banheiros) || null,
-          vagas: parseInt(dados.vagas) || null,
-          endereco: dados.endereco || '',
-          bairro: dados.bairro || null,
-          cidade: dados.cidade,
-          estado: dados.estado || null,
-          cep: dados.cep || null,
-          latitude: latNum,
-          longitude: lngNum,
-          condominio: condNum,
-          iptu: iptuNum,
-          aceita_pets: !!dados.aceita_pets,
-          mobiliado: !!dados.mobiliado,
-          status: 'rascunho',
-        })
+        .update(payloadUpdate)
         .eq('id', imovelId)
+
+      if (erroImovel && (erroImovel.message?.includes('modo_exibicao_preco') || erroImovel.message?.includes('column'))) {
+        delete payloadUpdate.modo_exibicao_preco
+        const retry = await supabase
+          .from('imoveis')
+          .update(payloadUpdate)
+          .eq('id', imovelId)
+        erroImovel = retry.error
+      }
 
       if (erroImovel) throw erroImovel
 

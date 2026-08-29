@@ -25,7 +25,14 @@ export async function GET(req: Request) {
     }
 
     const meta = userData.user.user_metadata || {}
-    const isImobDirect = meta.tipo === 'imobiliaria' || meta.tipo_anunciante === 'imobiliaria'
+
+    const { data: perfilData } = await supabase
+      .from('perfis')
+      .select('tipo, modo_exibicao_preco')
+      .eq('id', usuarioId)
+      .maybeSingle()
+
+    const isImobDirect = meta.tipo === 'imobiliaria' || meta.tipo_anunciante === 'imobiliaria' || perfilData?.tipo === 'imobiliaria'
     const imobiliariaId = meta.imobiliaria_id || (isImobDirect ? usuarioId : null)
     const papel = meta.papel || (isImobDirect ? 'gestor_principal' : 'corretor')
     const isGestor = isImobDirect || papel === 'gestor' || papel === 'gestor_principal'
@@ -99,8 +106,10 @@ export async function GET(req: Request) {
       }
     } catch {}
 
-    let modoExibicaoPrecoConta: 'visivel' | 'sob_consulta' | 'por_anuncio' = meta.modo_exibicao_preco || 'visivel'
-    if (imobiliariaId && !isImobDirect) {
+    let modoExibicaoPrecoConta: 'visivel' | 'sob_consulta' | 'por_anuncio' =
+      meta.modo_exibicao_preco || perfilData?.modo_exibicao_preco || 'visivel'
+
+    if (imobiliariaId && !isImobDirect && imobiliariaId !== usuarioId) {
       try {
         const { data: imobUser } = await supabase.auth.admin.getUserById(imobiliariaId)
         if (imobUser?.user?.user_metadata?.modo_exibicao_preco) {

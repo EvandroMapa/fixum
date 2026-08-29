@@ -40,9 +40,10 @@ export async function GET(req: NextRequest) {
 
     const imobId = meta.imobiliaria_id || null
     const isImobDirect = meta.tipo === 'imobiliaria' || meta.tipo_anunciante === 'imobiliaria' || perfilData?.tipo === 'imobiliaria'
+    const isCorretorVinculado = !!(imobId && imobId !== usuarioId && !isImobDirect)
 
     let imobConfig: any = null
-    if (imobId && !isImobDirect) {
+    if (isCorretorVinculado) {
       try {
         const { data: imobUser } = await supabase.auth.admin.getUserById(imobId)
         if (imobUser?.user) {
@@ -51,23 +52,17 @@ export async function GET(req: NextRequest) {
       } catch {}
     }
 
-    const modoExibicaoPrecoFinal =
-      (imobConfig?.modo_exibicao_preco) ||
-      (meta.modo_exibicao_preco) ||
-      (perfilData?.modo_exibicao_preco) ||
-      'visivel'
+    const modoExibicaoPrecoFinal = isCorretorVinculado && imobConfig?.modo_exibicao_preco
+      ? imobConfig.modo_exibicao_preco
+      : meta.modo_exibicao_preco || perfilData?.modo_exibicao_preco || 'visivel'
 
-    const prefixoFinal =
-      (imobConfig?.prefixo_codigo) ||
-      (meta.prefixo_codigo) ||
-      (perfilData?.prefixo_codigo) ||
-      'FX'
+    const prefixoFinal = isCorretorVinculado && imobConfig?.prefixo_codigo
+      ? imobConfig.prefixo_codigo
+      : meta.prefixo_codigo || perfilData?.prefixo_codigo || 'FX'
 
-    const modoCodigoFinal =
-      (imobConfig?.tipo_codigo_imovel) ||
-      (meta.tipo_codigo_imovel) ||
-      (perfilData?.tipo_codigo_imovel) ||
-      'automatico'
+    const modoCodigoFinal = isCorretorVinculado && imobConfig?.tipo_codigo_imovel
+      ? imobConfig.tipo_codigo_imovel
+      : meta.tipo_codigo_imovel || perfilData?.tipo_codigo_imovel || 'automatico'
 
     const regraDistribuicaoFinal =
       (meta.regra_distribuicao_leads) ||
@@ -106,7 +101,7 @@ export async function POST(req: NextRequest) {
       tipo,
       creci,
       foto_url,
-      modo_exibicao_preco = 'visivel',
+      modo_exibicao_preco,
       prefixo_codigo,
       tipo_codigo_imovel = 'automatico',
       regra_distribuicao_leads = 'captador',
@@ -128,6 +123,7 @@ export async function POST(req: NextRequest) {
     }
 
     const metaAtual = userData.user.user_metadata || {}
+    const modoPrecoSalvar = modo_exibicao_preco !== undefined ? modo_exibicao_preco : (metaAtual.modo_exibicao_preco || 'visivel')
 
     // 2. Atualizar user_metadata no Auth
     const novoMeta = {
@@ -137,7 +133,7 @@ export async function POST(req: NextRequest) {
       creci: creci !== undefined ? creci : metaAtual.creci,
       foto_url: foto_url !== undefined ? foto_url : metaAtual.foto_url,
       avatar_url: foto_url !== undefined ? foto_url : metaAtual.avatar_url,
-      modo_exibicao_preco: modo_exibicao_preco || 'visivel',
+      modo_exibicao_preco: modoPrecoSalvar,
       prefixo_codigo: prefixo_codigo || metaAtual.prefixo_codigo,
       tipo_codigo_imovel: tipo_codigo_imovel || 'automatico',
       regra_distribuicao_leads: regra_distribuicao_leads || 'captador',
@@ -154,13 +150,22 @@ export async function POST(req: NextRequest) {
         tipo: tipo || 'proprietario',
         creci: creci || null,
         foto_url: foto_url || null,
-        modo_exibicao_preco: modo_exibicao_preco || 'visivel',
+        modo_exibicao_preco: modoPrecoSalvar,
       }
 
-      await supabase
+      const { error: erroPerfil } = await supabase
         .from('perfis')
         .update(dadosUpdatePerfil)
         .eq('id', usuario_id)
+
+      if (erroPerfil && erroPerfil.message?.includes('column')) {
+        // Fallback caso a coluna ainda não exista na tabela perfis
+        delete dadosUpdatePerfil.modo_exibicao_preco
+        await supabase
+          .from('perfis')
+          .update(dadosUpdatePerfil)
+          .eq('id', usuario_id)
+      }
     } catch (errPerfil) {
       console.warn('Aviso ao atualizar perfis:', errPerfil)
     }
