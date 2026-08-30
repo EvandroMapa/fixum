@@ -116,7 +116,7 @@ export default function ModalEditarImovel({
   onImovelSalvo,
 }: ModalEditarImovelProps) {
   const supabase = createClient()
-  const { alertar } = useConfirm()
+  const { confirmar, alertar } = useConfirm()
 
   const [etapa, setEtapa] = useState<Etapa>(1)
   const [carregando, setCarregando] = useState(true)
@@ -131,8 +131,11 @@ export default function ModalEditarImovel({
   const [fotos, setFotos] = useState<FotoPreview[]>([])
   const [fotosRemovidas, setFotosRemovidas] = useState<string[]>([])
   const [buscandoCep, setBuscandoCep] = useState(false)
+  const [erroCep, setErroCep] = useState('')
+  const [sucessoCep, setSucessoCep] = useState('')
   const [arrastando, setArrastando] = useState(false)
   const inputFotoRef = useRef<HTMLInputElement>(null)
+  const dadosOriginaisRef = useRef<string>('')
 
   const [dados, setDados] = useState<DadosImovel>({
     tipo: 'apartamento',
@@ -239,7 +242,7 @@ export default function ModalEditarImovel({
     }
 
     function preencherDados(imovel: any) {
-      setDados({
+      const dadosCarregados: DadosImovel = {
         tipo: imovel.tipo || 'apartamento',
         negociacao: imovel.negociacao || 'venda',
         titulo: imovel.titulo || '',
@@ -264,7 +267,9 @@ export default function ModalEditarImovel({
         aceita_pets: imovel.aceita_pets || false,
         mobiliado: imovel.mobiliado || false,
         codigo: imovel.codigo || '',
-      })
+      }
+
+      setDados(dadosCarregados)
 
       const fotosExistentes: FotoPreview[] = (imovel.fotos_imovel || [])
         .sort((a: { ordem: number }, b: { ordem: number }) => a.ordem - b.ordem)
@@ -277,6 +282,10 @@ export default function ModalEditarImovel({
 
       setFotos(fotosExistentes)
       setFotosRemovidas([])
+      dadosOriginaisRef.current = JSON.stringify({
+        dados: dadosCarregados,
+        fotosIds: fotosExistentes.map((f) => `${f.id}_${f.principal}`),
+      })
     }
 
     carregarImovel()
@@ -285,6 +294,53 @@ export default function ModalEditarImovel({
       ativo = false
     }
   }, [isOpen, imovelId, supabase])
+
+  function verificarSeTemAlteracoesEdicao(): boolean {
+    if (!dadosOriginaisRef.current) return false
+    if (fotosRemovidas.length > 0) return true
+    if (fotos.some((f) => !!f.arquivo)) return true
+
+    const atual = JSON.stringify({
+      dados,
+      fotosIds: fotos.map((f) => `${f.id || f.preview}_${f.principal}`),
+    })
+    return atual !== dadosOriginaisRef.current
+  }
+
+  async function handleTentarFechar() {
+    if (salvando || reenviando) return
+
+    if (verificarSeTemAlteracoesEdicao()) {
+      const confirmou = await confirmar({
+        titulo: 'Descartar alterações?',
+        mensagem: 'Você fez modificações neste imóvel que ainda não foram salvas. Tem certeza que deseja sair e perder as alterações?',
+        icone: '⚠️',
+        tipo: 'perigo',
+        textoBotaoConfirmar: 'Sim, Descartar',
+        textoBotaoCancelar: 'Continuar Editando',
+      })
+
+      if (!confirmou) return
+    }
+
+    setEtapa(1)
+    setErro('')
+    setFotosRemovidas([])
+    onClose()
+  }
+
+  // Interceptar tecla Escape (ESC) para confirmar saída
+  useEffect(() => {
+    if (!isOpen) return
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        handleTentarFechar()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, dados, fotos, fotosRemovidas, salvando, reenviando])
 
   if (!isOpen || !imovelId) return null
 
@@ -307,32 +363,61 @@ export default function ModalEditarImovel({
     if (cep.length !== 8) return
 
     setBuscandoCep(true)
+    setErroCep('')
+    setSucessoCep('')
+
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
       const data = await res.json()
-      if (!data.erro) {
+
+      if (data.erro) {
+        setErroCep('CEP não encontrado nos Correios. Preencha Cidade, Estado e Endereço manualmente.')
+        setSucessoCep('')
+        // Zera os campos preenchidos pelo CEP anterior para evitar dados inconsistentes
         setDados((prev) => ({
           ...prev,
-          endereco: data.logradouro || prev.endereco,
-          bairro: data.bairro || prev.bairro,
-          cidade: data.localidade || prev.cidade,
-          estado: data.uf || prev.estado,
+          endereco: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+          latitude: '',
+          longitude: '',
         }))
-        const query = encodeURIComponent(`${data.bairro || ''}, ${data.localidade}, ${data.uf}, Brasil`)
-        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-        if (token) {
+        return
+      }
+
+      setErroCep('')
+      setSucessoCep(`Localizado: ${data.localidade}/${data.uf}`)
+
+      let latEncontrada = ''
+      let lngEncontrada = ''
+      const query = encodeURIComponent(`${data.logradouro ? data.logradouro + ', ' : ''}${data.bairro || ''}, ${data.localidade}, ${data.uf}, Brasil`)
+      const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+      if (token) {
+        try {
           const geo = await fetch(
             `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&language=pt&limit=1&country=BR`
           )
           const geoData = await geo.json()
           if (geoData.features?.length > 0) {
             const [lng, lat] = geoData.features[0].center
-            setDados((prev) => ({ ...prev, latitude: String(lat), longitude: String(lng) }))
+            latEncontrada = String(lat)
+            lngEncontrada = String(lng)
           }
-        }
+        } catch {}
       }
+
+      setDados((prev) => ({
+        ...prev,
+        endereco: data.logradouro || '',
+        bairro: data.bairro || '',
+        cidade: data.localidade || '',
+        estado: data.uf || '',
+        latitude: latEncontrada,
+        longitude: lngEncontrada,
+      }))
     } catch {
-      // Silencioso
+      setErroCep('Não foi possível consultar o CEP. Preencha os campos abaixo manualmente.')
     } finally {
       setBuscandoCep(false)
     }
@@ -416,7 +501,7 @@ export default function ModalEditarImovel({
         try {
           const termo = [dados.endereco, dados.bairro, dados.cidade, dados.estado, 'Brasil'].filter(Boolean).join(', ')
           const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-          if (token) {
+          if (token && termo.trim() !== 'Brasil') {
             const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(termo)}.json?access_token=${token}&country=BR&limit=1`)
             const json = await res.json()
             if (json.features?.length > 0) {
@@ -426,6 +511,17 @@ export default function ModalEditarImovel({
             }
           }
         } catch {}
+      }
+
+      if (!latNum || !lngNum || (latNum === 0 && lngNum === 0)) {
+        await alertar({
+          titulo: 'Localização Obrigatória no Mapa',
+          mensagem: 'Não foi possível identificar a localização deste imóvel no mapa. Por favor, verifique se o CEP ou o nome da Cidade e Estado estão preenchidos corretamente.',
+          icone: '📍',
+          tipo: 'aviso',
+        })
+        setSalvando(false)
+        return false
       }
 
       const payloadUpdate: Record<string, any> = {
@@ -574,19 +670,14 @@ export default function ModalEditarImovel({
   const temAjustesPendentes = !!imovelCompleto?.descricao_motivo_rejeicao
 
   return (
-    <div
-      className={styles.overlay}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
-    >
-      <div className={styles.modalCard}>
+    <div className={styles.overlay}>
+      <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.modalHeader}>
           <div className={styles.modalHeaderTitulo}>
             <span>✏️</span> Editar Imóvel
           </div>
-          <button type="button" className={styles.btnFechar} onClick={onClose} title="Fechar">
+          <button type="button" className={styles.btnFechar} onClick={handleTentarFechar} title="Fechar">
             ✕
           </button>
         </div>
@@ -761,7 +852,6 @@ export default function ModalEditarImovel({
                       className={styles.input}
                       value={dados.codigo || ''}
                       onChange={(e) => atualizar('codigo', e.target.value.toUpperCase())}
-                      placeholder="Ex: VF-0142, AP100"
                       maxLength={20}
                     />
                   </div>
@@ -775,12 +865,16 @@ export default function ModalEditarImovel({
                         className={styles.input}
                         value={dados.cep}
                         onChange={(e) => {
-                          atualizar('cep', e.target.value)
-                          if (e.target.value.replace(/\D/g, '').length === 8) {
-                            buscarCep(e.target.value)
+                          const val = e.target.value
+                          atualizar('cep', val)
+                          if (val.replace(/\D/g, '').length < 8) {
+                            if (erroCep) setErroCep('')
+                          } else if (val.replace(/\D/g, '').length === 8) {
+                            buscarCep(val)
                           }
                         }}
                         maxLength={9}
+                        style={erroCep ? { borderColor: '#f59e0b' } : undefined}
                       />
                       {buscandoCep && <span style={{ alignSelf: 'center', fontSize: '0.75rem', color: '#64748b' }}>...</span>}
                     </div>
@@ -805,6 +899,27 @@ export default function ModalEditarImovel({
                     />
                   </div>
                 </div>
+
+                {/* Feedback de CEP não encontrado */}
+                {erroCep && (
+                  <div style={{
+                    background: '#fffbeb',
+                    border: '1px solid #fde68a',
+                    color: '#b45309',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    padding: '6px 10px',
+                    borderRadius: '6px',
+                    marginTop: '-4px',
+                    marginBottom: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <span>⚠️</span>
+                    <span>{erroCep}</span>
+                  </div>
+                )}
 
                 <div className={styles.gridEnderecoBairro}>
                   <div className={styles.grupo}>
@@ -1088,7 +1203,7 @@ export default function ModalEditarImovel({
                   ← Voltar
                 </button>
               ) : (
-                <button className={styles.btnVoltar2} onClick={onClose}>
+                <button className={styles.btnVoltar2} onClick={handleTentarFechar}>
                   Cancelar
                 </button>
               )}

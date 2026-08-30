@@ -116,16 +116,18 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
   // Modais de Limite / Upgrade
   const [modalLimiteAberto, setModalLimiteAberto] = useState(false)
   const [modalUpgradeAberto, setModalUpgradeAberto] = useState(false)
-  const { alertar } = useConfirm()
+  const { confirmar, alertar } = useConfirm()
 
   const [etapa, setEtapa] = useState<Etapa>(1)
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState("")
   const [buscandoCep, setBuscandoCep] = useState(false)
+  const [erroCep, setErroCep] = useState('')
+  const [sucessoCep, setSucessoCep] = useState('')
   const [arrastando, setArrastando] = useState(false)
   const inputFotoRef = useRef<HTMLInputElement>(null)
 
-  const [dados, setDados] = useState<DadosImovel>({
+  const DADOS_INICIAIS_IMOVEL: DadosImovel = {
     tipo: "apartamento",
     negociacao: "venda",
     titulo: "",
@@ -150,9 +152,71 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
     iptu: "",
     aceita_pets: false,
     mobiliado: false,
-  })
+  }
 
+  const [dados, setDados] = useState<DadosImovel>(DADOS_INICIAIS_IMOVEL)
   const [fotos, setFotos] = useState<FotoPreview[]>([])
+
+  function verificarSeTemAlteracoes(): boolean {
+    return (
+      dados.titulo.trim() !== '' ||
+      dados.preco.trim() !== '' ||
+      dados.descricao.trim() !== '' ||
+      dados.cidade.trim() !== '' ||
+      dados.endereco.trim() !== '' ||
+      dados.bairro.trim() !== '' ||
+      dados.area.trim() !== '' ||
+      dados.quartos.trim() !== '' ||
+      dados.condominio.trim() !== '' ||
+      dados.iptu.trim() !== '' ||
+      dados.aceita_pets ||
+      dados.mobiliado ||
+      fotos.length > 0
+    )
+  }
+
+  function resetarFormulario() {
+    setDados(DADOS_INICIAIS_IMOVEL)
+    setFotos([])
+    setEtapa(1)
+    setErro('')
+    setErroCep('')
+    setSucessoCep('')
+    setSalvando(false)
+  }
+
+  async function handleTentarFechar() {
+    if (salvando) return
+
+    if (verificarSeTemAlteracoes()) {
+      const confirmou = await confirmar({
+        titulo: 'Descartar cadastro?',
+        mensagem: 'Você possui dados preenchidos neste formulário. Se sair agora, todas as informações digitadas serão perdidas.',
+        icone: '⚠️',
+        tipo: 'perigo',
+        textoBotaoConfirmar: 'Sim, Descartar',
+        textoBotaoCancelar: 'Continuar Cadastrando',
+      })
+
+      if (!confirmou) return
+    }
+
+    resetarFormulario()
+    onClose()
+  }
+
+  // Interceptar tecla Escape (ESC) para confirmar saída
+  useEffect(() => {
+    if (!isOpen) return
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        handleTentarFechar()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, dados, fotos, salvando])
 
   useEffect(() => {
     if (!isOpen) return
@@ -275,40 +339,61 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
     if (cep.length !== 8) return
 
     setBuscandoCep(true)
+    setErroCep('')
+    setSucessoCep('')
+
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
       const data = await res.json()
-      if (!data.erro) {
-        let latEncontrada = ''
-        let lngEncontrada = ''
-        const query = encodeURIComponent(`${data.logradouro ? data.logradouro + ', ' : ''}${data.bairro || ''}, ${data.localidade}, ${data.uf}, Brasil`)
-        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-        if (token) {
-          try {
-            const geo = await fetch(
-              `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&language=pt&limit=1&country=BR`
-            )
-            const geoData = await geo.json()
-            if (geoData.features?.length > 0) {
-              const [lng, lat] = geoData.features[0].center
-              latEncontrada = String(lat)
-              lngEncontrada = String(lng)
-            }
-          } catch {}
-        }
 
+      if (data.erro) {
+        setErroCep('CEP não encontrado nos Correios. Preencha Cidade, Estado e Endereço manualmente.')
+        setSucessoCep('')
+        // Zera os campos preenchidos pelo CEP anterior para evitar dados inconsistentes
         setDados((prev) => ({
           ...prev,
-          endereco: data.logradouro || prev.endereco,
-          bairro: data.bairro || prev.bairro,
-          cidade: data.localidade || prev.cidade,
-          estado: data.uf || prev.estado,
-          latitude: latEncontrada || prev.latitude,
-          longitude: lngEncontrada || prev.longitude,
+          endereco: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+          latitude: '',
+          longitude: '',
         }))
+        return
       }
+
+      setErroCep('')
+      setSucessoCep(`Localizado: ${data.localidade}/${data.uf}`)
+
+      let latEncontrada = ''
+      let lngEncontrada = ''
+      const query = encodeURIComponent(`${data.logradouro ? data.logradouro + ', ' : ''}${data.bairro || ''}, ${data.localidade}, ${data.uf}, Brasil`)
+      const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+      if (token) {
+        try {
+          const geo = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&language=pt&limit=1&country=BR`
+          )
+          const geoData = await geo.json()
+          if (geoData.features?.length > 0) {
+            const [lng, lat] = geoData.features[0].center
+            latEncontrada = String(lat)
+            lngEncontrada = String(lng)
+          }
+        } catch {}
+      }
+
+      setDados((prev) => ({
+        ...prev,
+        endereco: data.logradouro || '',
+        bairro: data.bairro || '',
+        cidade: data.localidade || '',
+        estado: data.uf || '',
+        latitude: latEncontrada,
+        longitude: lngEncontrada,
+      }))
     } catch {
-      // Falha silenciosa
+      setErroCep('Não foi possível consultar o CEP. Preencha os campos abaixo manualmente.')
     } finally {
       setBuscandoCep(false)
     }
@@ -414,7 +499,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         try {
           const termo = [dados.endereco, dados.bairro, dados.cidade, dados.estado, 'Brasil'].filter(Boolean).join(', ')
           const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-          if (token) {
+          if (token && termo.trim() !== 'Brasil') {
             const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(termo)}.json?access_token=${token}&country=BR&limit=1`)
             const json = await res.json()
             if (json.features?.length > 0) {
@@ -424,6 +509,17 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
             }
           }
         } catch {}
+      }
+
+      if (!latNumerica || !lngNumerica || (latNumerica === 0 && lngNumerica === 0)) {
+        await alertar({
+          titulo: 'Localização Obrigatória no Mapa',
+          mensagem: 'Não foi possível identificar a localização deste imóvel no mapa. Por favor, verifique se o CEP ou o nome da Cidade e Estado estão preenchidos corretamente.',
+          icone: '📍',
+          tipo: 'aviso',
+        })
+        setSalvando(false)
+        return
       }
 
       const { data: perfilExistente } = await supabase
@@ -579,7 +675,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
       // 3. Pequeno intervalo para renderização da lista ao fundo
       await new Promise((resolve) => setTimeout(resolve, 200))
 
-      // 4. Fecha a janela suavemente
+      // 4. Limpa o formulário e fecha a janela suavemente
+      resetarFormulario()
       onClose()
     } catch (e: unknown) {
       console.error("Erro ao salvar imóvel:", e)
@@ -601,16 +698,14 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
   return (
     <>
-      <div className={styles.overlay} onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}>
-        <div className={styles.modalCard}>
+      <div className={styles.overlay}>
+        <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className={styles.modalHeader}>
             <div className={styles.modalHeaderTitulo}>
               <span>🏡</span> Cadastrar Novo Imóvel
             </div>
-            <button type="button" className={styles.btnFechar} onClick={onClose} title="Fechar">
+            <button type="button" className={styles.btnFechar} onClick={handleTentarFechar} title="Fechar">
               ✕
             </button>
           </div>
@@ -760,7 +855,6 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                   className={styles.input}
                   value={dados.codigo || ''}
                   onChange={(e) => atualizar("codigo", e.target.value.toUpperCase().replace(/\s+/g, ''))}
-                  placeholder={modoCodigo === 'proprio' ? 'Ex: AP-104, CAS-002 (Informe o código do seu sistema)' : `Ex: ${prefixoImovel || 'FIX'}-0142 (Deixe vazio para gerar auto)`}
                   maxLength={20}
                   style={modoCodigo === 'proprio' && !dados.codigo ? { borderColor: '#fb923c' } : undefined}
                 />
@@ -774,9 +868,12 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       className={styles.input}
                       value={dados.cep}
                       onChange={(e) => {
-                        atualizar("cep", e.target.value)
-                        if (e.target.value.replace(/\D/g, "").length === 8) {
-                          buscarCep(e.target.value)
+                        const val = e.target.value
+                        atualizar("cep", val)
+                        if (val.replace(/\D/g, "").length < 8) {
+                          if (erroCep) setErroCep('')
+                        } else if (val.replace(/\D/g, "").length === 8) {
+                          buscarCep(val)
                         }
                       }}
                       maxLength={9}
@@ -784,6 +881,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       autoComplete="one-time-code"
                       data-lpignore="true"
                       data-form-type="other"
+                      style={erroCep ? { borderColor: '#f59e0b' } : undefined}
                     />
                     {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.75rem", color: "#64748b" }}>...</span>}
                   </div>
@@ -816,6 +914,27 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                   />
                 </div>
               </div>
+
+              {/* Feedback de CEP não encontrado */}
+              {erroCep && (
+                <div style={{
+                  background: '#fffbeb',
+                  border: '1px solid #fde68a',
+                  color: '#b45309',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  padding: '6px 10px',
+                  borderRadius: '6px',
+                  marginTop: '-4px',
+                  marginBottom: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <span>⚠️</span>
+                  <span>{erroCep}</span>
+                </div>
+              )}
 
               <div className={styles.gridEnderecoBairro}>
                 <div className={styles.grupo}>
@@ -1122,7 +1241,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                 ← Voltar
               </button>
             ) : (
-              <button className={styles.btnVoltar2} onClick={onClose}>
+              <button className={styles.btnVoltar2} onClick={handleTentarFechar}>
                 Cancelar
               </button>
             )}
