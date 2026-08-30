@@ -10,6 +10,7 @@ import ModalReatribuirCorretor from './ModalReatribuirCorretor'
 import ModalRevisaoImovel from './ModalRevisaoImovel'
 import ModalEditarImovel from './ModalEditarImovel'
 import ModalChatModeracao from './ModalChatModeracao'
+import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import styles from './AbaImoveis.module.css'
 
 interface AbaImoveisProps {
@@ -1420,6 +1421,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                     backgroundImage: `url(${fotoPrincipal(imovel)})`,
                   }}
                 >
+                  <MarcaDaguaTeste variante="padrao" />
                   <div className={styles.overlayGradiente} />
 
                   <input

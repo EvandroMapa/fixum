@@ -1,0 +1,73 @@
+.container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Selo com efeito translúcido discreto (não esconde os detalhes do imóvel) */
+.seloDiscreto {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  transform: rotate(-4deg);
+  opacity: 0.85;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.2s ease;
+}
+
+.icone {
+  font-size: 0.72rem;
+  opacity: 0.9;
+}
+
+.texto {
+  white-space: nowrap;
+}
+
+/* Variante Grande (Página do Imóvel) */
+.grande .seloDiscreto {
+  padding: 6px 16px;
+  font-size: 0.82rem;
+  background: rgba(15, 23, 42, 0.52);
+  border-color: rgba(255, 255, 255, 0.28);
+  gap: 8px;
+}
+
+.grande .icone {
+  font-size: 0.85rem;
+}
+
+/* Variante Lightbox */
+.lightbox .seloDiscreto {
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  background: rgba(15, 23, 42, 0.55);
+  border-color: rgba(255, 255, 255, 0.35);
+  gap: 8px;
+}
+
+/* Variante Compacta (Cards pequenos e Mobile) */
+.compacto .seloDiscreto {
+  padding: 2px 8px;
+  font-size: 0.58rem;
+  gap: 4px;
+}

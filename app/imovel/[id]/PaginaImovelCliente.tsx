@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import Header from '@/components/layout/Header'
 import CardImovel from '@/components/imovel/CardImovel'
 import SecaoEntorno from '@/components/imovel/SecaoEntorno'
+import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import { type Imovel, type PontoInteresse } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } from '@/lib/utils'
 import { useFavorito } from '@/hooks/useFavorito'
@@ -346,8 +347,9 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               {/* Foto Principal (Esquerda) */}
               <div
                 className={styles.mosaicoFotoPrincipal}
-                style={{ backgroundImage: `url(${fotos[0].url})` }}
+                style={{ backgroundImage: `url(${fotos[0].url})`, position: 'relative' }}
               >
+                <MarcaDaguaTeste variante="grande" />
                 <div className={styles.overlayHoverFoto} />
               </div>
 
@@ -355,14 +357,16 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               <div className={styles.mosaicoFotosLaterais}>
                 <div
                   className={styles.mosaicoFotoItem}
-                  style={{ backgroundImage: `url(${fotos[1].url})` }}
+                  style={{ backgroundImage: `url(${fotos[1].url})`, position: 'relative' }}
                 >
+                  <MarcaDaguaTeste variante="padrao" />
                   <div className={styles.overlayHoverFoto} />
                 </div>
                 <div
                   className={styles.mosaicoFotoItem}
-                  style={{ backgroundImage: `url(${fotos[2].url})` }}
+                  style={{ backgroundImage: `url(${fotos[2].url})`, position: 'relative' }}
                 >
+                  <MarcaDaguaTeste variante="padrao" />
                   <div className={styles.overlayHoverFoto} />
                 </div>
               </div>
@@ -384,13 +388,16 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             <div className={styles.galeriaSimples}>
               <div
                 className={styles.fotoGrande}
-                style={{ backgroundImage: `url(${fotoAtual})` }}
+                style={{ backgroundImage: `url(${fotoAtual})`, position: 'relative' }}
                 onClick={() => setModalFoto(true)}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
                 {fotos.length === 0 && <div className={styles.semFoto}>🏠</div>}
+
+                {/* Marca d'água na foto */}
+                <MarcaDaguaTeste variante="grande" />
 
                 {fotos.length > 0 && (
                   <div className={styles.badgeQtdFotos}>
@@ -898,7 +905,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               </button>
             </div>
 
-            <div className={styles.lightboxCorpo}>
+            <div className={styles.lightboxCorpo} style={{ position: 'relative' }}>
+              <MarcaDaguaTeste variante="lightbox" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={fotoAtual}

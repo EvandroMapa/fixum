@@ -6,6 +6,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { type Imovel } from '@/lib/types'
 import { resolverExibicaoPreco } from '@/lib/utils'
+import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import styles from './MapaExplorar.module.css'
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
@@ -561,7 +562,10 @@ export default function MapaExplorar({
                 <img src="${fotoUrl}" alt="${i.titulo || ''}"
                   style="width:100%;height:100%;object-fit:cover;display:block;"
                 />
-                <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.35) 0%,transparent 50%);pointer-events:none;"></div>
+                <div style="position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(245,158,11,0.1) 12px,rgba(245,158,11,0.1) 24px);pointer-events:none;"></div>
+                <div style="position:absolute;top:${isMobile ? '5px' : '8px'};left:${isMobile ? '6px' : '10px'};background:rgba(15,23,42,0.85);color:#fbbf24;font-size:${isMobile ? '8.5px' : '10px'};font-weight:800;padding:2px 6px;border-radius:4px;border:1px solid #f59e0b;letter-spacing:0.04em;">
+                  ⚠️ ANÚNCIO FICTÍCIO (TESTE)
+                </div>
                 <div style="position:absolute;bottom:${isMobile ? '6px' : '10px'};left:${isMobile ? '8px' : '12px'};background:white;color:${isSobConsulta ? '#0284c7' : '#1a56db'};font-size:${isMobile ? '11px' : '13px'};font-weight:800;padding:${isMobile ? '2px 7px' : '3px 9px'};border-radius:20px;letter-spacing:-0.02em;box-shadow:0 2px 6px rgba(0,0,0,0.12);">
                   ${popupPrecoTexto}
                 </div>
@@ -695,6 +699,7 @@ export default function MapaExplorar({
             }}
           >
             <div className={styles.fotoCardMobile}>
+              <MarcaDaguaTeste variante="compacto" />
               {imovelCardMobile.fotos?.find((f) => f.principal)?.url || imovelCardMobile.fotos?.[0]?.url ? (
                 <img
                   src={imovelCardMobile.fotos?.find((f) => f.principal)?.url || imovelCardMobile.fotos?.[0]?.url}

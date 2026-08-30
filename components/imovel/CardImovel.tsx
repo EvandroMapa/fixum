@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { type Imovel } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } from '@/lib/utils'
 import { useFavorito } from '@/hooks/useFavorito'
+import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import styles from './CardImovel.module.css'
 
 interface Props {
@@ -105,6 +106,9 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
           ) : (
             <div className={styles.fotoPlaceholder} />
           )}
+
+          {/* Marca d'água sutil de teste */}
+          <MarcaDaguaTeste variante="padrao" />
 
           {/* Selos */}
           <div className={styles.selos}>
