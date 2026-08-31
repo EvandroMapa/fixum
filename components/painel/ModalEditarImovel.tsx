@@ -465,7 +465,7 @@ export default function ModalEditarImovel({
 
   function podeAvancar(): boolean {
     if (etapa === 1) return !!dados.tipo && !!dados.negociacao
-    if (etapa === 2) return !!dados.titulo.trim() && !!dados.preco && !!dados.cidade.trim()
+    if (etapa === 2) return !!dados.titulo.trim() && dados.preco !== undefined && dados.preco.trim() !== '' && !!dados.cidade.trim()
     if (etapa === 3) return !!dados.area
     if (etapa === 4) return true
     return true
@@ -801,7 +801,13 @@ export default function ModalEditarImovel({
                       className={styles.input}
                       value={formatarPreco(dados.preco)}
                       onChange={(e) => atualizar('preco', e.target.value)}
+                      placeholder="0 = Sob Consulta"
                     />
+                    {extrairNumero(dados.preco) === 0 && dados.preco.trim() !== '' && (
+                      <span style={{ display: 'block', fontSize: '0.725rem', color: '#0284c7', marginTop: '3px' }}>
+                        ℹ️ R$ 0: o anúncio será exibido automaticamente como <strong>Sob Consulta</strong>.
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -1145,7 +1151,9 @@ export default function ModalEditarImovel({
                   </div>
                   <div className={styles.revisaoLinha}>
                     <span>Preço</span>
-                    <strong className={styles.revisaoPreco}>{formatarPreco(dados.preco)}</strong>
+                    <strong className={styles.revisaoPreco}>
+                      {extrairNumero(dados.preco) === 0 ? 'Preço sob consulta' : formatarPreco(dados.preco)}
+                    </strong>
                   </div>
                   <div className={styles.revisaoLinha}>
                     <span>Localização</span>

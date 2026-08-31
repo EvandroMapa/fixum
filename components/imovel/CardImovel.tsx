@@ -185,7 +185,7 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
       <div className={styles.info}>
         {/* Preço */}
         <div className={styles.preco}>
-          {resolverExibicaoPreco(imovel.anunciante?.modo_exibicao_preco, imovel.modo_exibicao_preco, (imovel as any).exibir_preco) === 'sob_consulta' ? (
+          {resolverExibicaoPreco(imovel.anunciante?.modo_exibicao_preco, imovel.modo_exibicao_preco, (imovel as any).exibir_preco, imovel.preco) === 'sob_consulta' ? (
             <span className={styles.sobConsulta}>Preço sob consulta</span>
           ) : (
             <>

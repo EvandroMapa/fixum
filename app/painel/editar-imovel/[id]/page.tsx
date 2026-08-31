@@ -614,7 +614,13 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 className={styles.input}
                 value={formatarPreco(dados.preco)}
                 onChange={(e) => atualizar("preco", e.target.value)}
+                placeholder="0 = Sob Consulta"
               />
+              {dados.preco && dados.preco.replace(/\D/g, "") === "0" && (
+                <span style={{ display: 'block', fontSize: '0.725rem', color: '#0284c7', marginTop: '3px' }}>
+                  ℹ️ R$ 0: o anúncio será exibido automaticamente como <strong>Sob Consulta</strong>.
+                </span>
+              )}
             </div>
 
             {/* CEP */}

@@ -177,7 +177,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
     resolverExibicaoPreco(
       anunciante?.modo_exibicao_preco,
       imovel.modo_exibicao_preco,
-      (imovel as any).exibir_preco
+      (imovel as any).exibir_preco,
+      imovel.preco
     ) === 'sob_consulta'
 
   function handleWhatsApp() {

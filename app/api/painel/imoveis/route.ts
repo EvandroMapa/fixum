@@ -120,9 +120,11 @@ export async function GET(req: Request) {
 
     const imoveis = (imoveisData || []).map((i: any) => {
       const motivoFallback = mapaMotivos[i.id] || i.descricao_motivo_rejeicao || null
-      // Resolução inteligente: se a conta for 'visivel' -> 'visivel', se 'sob_consulta' -> 'sob_consulta', se 'por_anuncio' -> respeita o imóvel
+      // Resolução inteligente: se preço for 0/vazio -> sempre 'sob_consulta'. Senão: conta 'visivel' -> 'visivel', conta 'sob_consulta' -> 'sob_consulta', 'por_anuncio' -> respeita o imóvel
       const modoFinal =
-        modoExibicaoPrecoConta === 'visivel'
+        !i.preco || i.preco <= 0
+          ? 'sob_consulta'
+          : modoExibicaoPrecoConta === 'visivel'
           ? 'visivel'
           : modoExibicaoPrecoConta === 'sob_consulta'
           ? 'sob_consulta'

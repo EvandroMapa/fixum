@@ -413,7 +413,7 @@ export default function MapaExplorar({
     marcadoresMapRef.current.clear()
 
     aplicarDispersaoCoordenadas(imoveis).forEach(({ imovel: i, lng, lat }) => {
-        const modoFinal = resolverExibicaoPreco(i.anunciante?.modo_exibicao_preco, i.modo_exibicao_preco, (i as any).exibir_preco)
+        const modoFinal = resolverExibicaoPreco(i.anunciante?.modo_exibicao_preco, i.modo_exibicao_preco, (i as any).exibir_preco, i.preco)
         const isSobConsulta = modoFinal === 'sob_consulta'
         const label = isSobConsulta ? 'Sob Consulta' : precoLabel(i.preco || 0)
         const isFavoritado = favoritosSetRef.current.has(i.id)
@@ -709,7 +709,7 @@ export default function MapaExplorar({
                 <div className={styles.semFotoCardMobile}>Fixum</div>
               )}
               <span className={styles.precoBadgeMobile}>
-                {resolverExibicaoPreco(imovelCardMobile.anunciante?.modo_exibicao_preco, imovelCardMobile.modo_exibicao_preco, (imovelCardMobile as any).exibir_preco) === 'sob_consulta'
+                {resolverExibicaoPreco(imovelCardMobile.anunciante?.modo_exibicao_preco, imovelCardMobile.modo_exibicao_preco, (imovelCardMobile as any).exibir_preco, imovelCardMobile.preco) === 'sob_consulta'
                   ? 'Preço sob consulta'
                   : `${precoLabel(imovelCardMobile.preco || 0)}${imovelCardMobile.negociacao === 'aluguel' ? '/mês' : ''}`}
               </span>

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { type Lead, type Imovel } from '@/lib/types'
-import { formatarPreco, obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
+import { formatarMoeda, obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import styles from './AbaDesempenho.module.css'
 
 interface Props {
@@ -282,14 +282,14 @@ export default function AbaDesempenho({
           {/* VGV em Negociação */}
           <div className={styles.cardKpi}>
             <span className={styles.kpiRotulo}>VGV em Negociação</span>
-            <strong className={styles.kpiValor}>{formatarPreco(metricas.vgvPropostas)}</strong>
+            <strong className={styles.kpiValor}>{formatarMoeda(metricas.vgvPropostas)}</strong>
             <span className={styles.kpiSub}>{metricas.propostas + metricas.emNegociacao} propostas e negociações</span>
           </div>
 
           {/* VGV Fechado */}
           <div className={styles.cardKpi}>
             <span className={styles.kpiRotulo}>VGV Fechado</span>
-            <strong className={`${styles.kpiValor} ${styles.kpiValorDestaque}`}>{formatarPreco(metricas.vgvFechado)}</strong>
+            <strong className={`${styles.kpiValor} ${styles.kpiValorDestaque}`}>{formatarMoeda(metricas.vgvFechado)}</strong>
             <span className={styles.kpiSub}>{metricas.fechados} negócios homologados</span>
           </div>
 
@@ -303,7 +303,7 @@ export default function AbaDesempenho({
           {/* Ticket Médio */}
           <div className={styles.cardKpi}>
             <span className={styles.kpiRotulo}>Ticket Médio</span>
-            <strong className={styles.kpiValor}>{metricas.ticketMedio > 0 ? formatarPreco(metricas.ticketMedio) : '—'}</strong>
+            <strong className={styles.kpiValor}>{metricas.ticketMedio > 0 ? formatarMoeda(metricas.ticketMedio) : '—'}</strong>
             <span className={styles.kpiSub}>Média por negócio fechado</span>
           </div>
         </div>
@@ -463,13 +463,13 @@ export default function AbaDesempenho({
                         )}
                       </td>
                       <td style={{ textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
-                        {formatarPreco(c.vgvFechado)}
+                        {formatarMoeda(c.vgvFechado)}
                       </td>
                       <td style={{ textAlign: 'right', fontWeight: 600, color: Number(c.taxaConversao) > 0 ? '#15803d' : '#64748b' }}>
                         {c.taxaConversao}%
                       </td>
                       <td style={{ textAlign: 'right', color: '#475569' }}>
-                        {c.ticketMedioCorretor > 0 ? formatarPreco(c.ticketMedioCorretor) : '—'}
+                        {c.ticketMedioCorretor > 0 ? formatarMoeda(c.ticketMedioCorretor) : '—'}
                       </td>
                     </tr>
                   ))}

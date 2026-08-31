@@ -3,8 +3,14 @@ import { type Imovel } from './types'
 export function resolverExibicaoPreco(
   modoConta?: 'visivel' | 'sob_consulta' | 'por_anuncio' | string | null,
   modoImovel?: 'visivel' | 'sob_consulta' | string | null,
-  exibirPrecoImovel?: boolean | null
+  exibirPrecoImovel?: boolean | null,
+  preco?: number | null
 ): 'visivel' | 'sob_consulta' {
+  // 0. Se o preço for 0, menor ou igual a 0 ou não informado (quando número) -> SEMPRE Sob Consulta
+  if (preco !== undefined && preco !== null && preco <= 0) {
+    return 'sob_consulta'
+  }
+
   // 1. Se a conta/imobiliária força "Sim" (Sempre Visível)
   if (modoConta === 'visivel') return 'visivel'
 
@@ -19,8 +25,8 @@ export function resolverExibicaoPreco(
   return 'visivel'
 }
 
-export function formatarPreco(preco: number, negociacao?: string, modoExibicao?: string): string {
-  if (modoExibicao === 'sob_consulta') {
+export function formatarPreco(preco?: number | null, negociacao?: string, modoExibicao?: string): string {
+  if (modoExibicao === 'sob_consulta' || preco === undefined || preco === null || preco <= 0) {
     return 'Preço sob consulta'
   }
 
@@ -32,6 +38,15 @@ export function formatarPreco(preco: number, negociacao?: string, modoExibicao?:
 
   if (negociacao === 'aluguel') return `${formatado}/mês`
   return formatado
+}
+
+export function formatarMoeda(valor?: number | null): string {
+  if (valor === undefined || valor === null) return 'R$ 0'
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(valor)
 }
 
 export function formatarArea(area?: number): string {
