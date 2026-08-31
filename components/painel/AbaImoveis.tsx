@@ -258,9 +258,8 @@ export default function AbaImoveis({
     const negociados = imoveis.filter((i) => i.status === 'vendido' || i.status === 'alugado').length
     const totalVenda = imoveis.filter((i) => i.negociacao === 'venda').length
     const totalAluguel = imoveis.filter((i) => i.negociacao === 'aluguel').length
-    const totalTemporada = imoveis.filter((i) => (i.negociacao as string) === 'temporada').length
     const totalLeads = leads.length
-    return { total, ativos, emRevisao, pausados, negociados, totalVenda, totalAluguel, totalTemporada, totalLeads }
+    return { total, ativos, emRevisao, pausados, negociados, totalVenda, totalAluguel, totalLeads }
   }, [imoveis, leads])
 
   // ── CONTAGENS FACETADAS EM CASCATA PARA OS 3 DROPDOWNS ──
@@ -293,8 +292,7 @@ export default function AbaImoveis({
     const total = base.length
     const venda = base.filter((i) => i.negociacao === 'venda').length
     const aluguel = base.filter((i) => i.negociacao === 'aluguel').length
-    const temporada = base.filter((i) => (i.negociacao as string) === 'temporada').length
-    return { total, venda, aluguel, temporada }
+    return { total, venda, aluguel }
   }, [imoveis, filtroCorretores, filtroStatus])
 
   // Filtragem e Ordenação
@@ -1095,13 +1093,10 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                     : filtroNegociacoes.length === 1
                       ? filtroNegociacoes[0] === 'venda'
                         ? `💰 Venda (${contagensNegociacao.venda})`
-                        : filtroNegociacoes[0] === 'aluguel'
-                          ? `🔑 Aluguel (${contagensNegociacao.aluguel})`
-                          : `🏖️ Temporada (${contagensNegociacao.temporada})`
+                        : `🔑 Aluguel (${contagensNegociacao.aluguel})`
                       : `🤝 ${filtroNegociacoes.length} modalidades (${filtroNegociacoes.reduce((acc, neg) => {
                           if (neg === 'venda') return acc + contagensNegociacao.venda
                           if (neg === 'aluguel') return acc + contagensNegociacao.aluguel
-                          if (neg === 'temporada') return acc + contagensNegociacao.temporada
                           return acc
                         }, 0)})`}
                 </span>
@@ -1187,28 +1182,6 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                       <span className={styles.popoverContador}>{contagensNegociacao.aluguel}</span>
                     </div>
 
-                    {/* Temporada */}
-                    {contagensNegociacao.temporada > 0 && (
-                      <div
-                        className={`${styles.popoverItem} ${filtroNegociacoes.includes('temporada') ? styles.popoverItemSelecionado : ''}`}
-                        onClick={() => {
-                          setFiltroNegociacoes((prev) =>
-                            prev.includes('temporada') ? prev.filter((n) => n !== 'temporada') : [...prev, 'temporada']
-                          )
-                        }}
-                      >
-                        <div className={styles.popoverItemLeft}>
-                          <input
-                            type="checkbox"
-                            checked={filtroNegociacoes.includes('temporada')}
-                            readOnly
-                            style={{ accentColor: '#2563eb', pointerEvents: 'none' }}
-                          />
-                          <span>🏖️ Temporada</span>
-                        </div>
-                        <span className={styles.popoverContador}>{contagensNegociacao.temporada}</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Rodapé com Ações Rápidas */}

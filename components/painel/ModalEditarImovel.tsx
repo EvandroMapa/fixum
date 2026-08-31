@@ -758,7 +758,7 @@ export default function ModalEditarImovel({
                 <div className={styles.grupo} style={{ marginTop: '0.4rem' }}>
                   <label className={styles.label}>Modalidade de Negociação</label>
                   <div className={styles.btnGroup}>
-                    {['venda', 'aluguel', 'temporada'].map((neg) => (
+                    {['venda', 'aluguel'].map((neg) => (
                       <button
                         key={neg}
                         type="button"

@@ -564,7 +564,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
             <div className={styles.grupo} style={{ marginTop: "0.5rem" }}>
               <label className={styles.label}>Modalidade de Negociação</label>
               <div className={styles.btnGroup}>
-                {["venda", "aluguel", "temporada"].map((neg) => (
+                {["venda", "aluguel"].map((neg) => (
                   <button
                     key={neg}
                     type="button"
