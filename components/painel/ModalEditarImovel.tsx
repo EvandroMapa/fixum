@@ -358,6 +358,11 @@ export default function ModalEditarImovel({
     }).format(parseInt(num))
   }
 
+  function extrairNumero(str: string): number | null {
+    const limpo = (str || '').replace(/\D/g, '')
+    return limpo ? parseInt(limpo, 10) : null
+  }
+
   async function buscarCep(cepLimpo: string) {
     const cep = cepLimpo.replace(/\D/g, '')
     if (cep.length !== 8) return
