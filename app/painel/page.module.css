@@ -30,7 +30,9 @@
 .logoPainel {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  color: var(--tinta);
+  min-height: 44px;
   background: none;
   border: none;
   cursor: pointer;
@@ -46,13 +48,14 @@
 }
 
 .badgePro {
-  background: var(--tinta-profunda);
-  color: #ffffff;
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
+  font-family: var(--fonte-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pedra-500);
+  padding-left: 10px;
+  border-left: 1px solid var(--pedra-200);
 }
 
 .divisorVertical {

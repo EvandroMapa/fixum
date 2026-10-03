@@ -32,6 +32,7 @@
   align-items: center;
   gap: 8px;
   text-decoration: none;
+  color: var(--papel);
 }
 
 .badgeAdmin {
@@ -1175,4 +1176,9 @@
     text-align: center;
     margin-top: 8px;
   }
+}
+
+
+.pocketLogoBox {
+  color: var(--papel);
 }

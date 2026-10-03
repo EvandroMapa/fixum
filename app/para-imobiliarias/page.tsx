@@ -76,7 +76,7 @@ export default function ParaImobiliariasPage() {
 
             <h1 className={styles.heroTitulo}>
               Aumente a visibilidade de toda a sua carteira de imóveis.<br />
-              <span className={styles.gradiente}>Com o menor custo por anúncio do Brasil.</span>
+              <span className={styles.gradiente}>Quanto maior a carteira, menor o custo por imóvel.</span>
             </h1>
 
             <p className={styles.heroSubtitulo}>
