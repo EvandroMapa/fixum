@@ -193,6 +193,7 @@ function CadastroConteudo() {
           telefone: telefone || null,
           imobiliaria_id: imobiliariaId || null,
           creci: creci || null,
+          codigo: codigoLimpo,
         }),
       })
 

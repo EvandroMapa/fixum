@@ -1,24 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
+import { lerVinculo } from '@/lib/auth/contexto-conta'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+const TIPOS_CONTA_PERMITIDOS = ['proprietario', 'corretor', 'imobiliaria']
 
 // GET: Obter configurações da conta/imobiliária
 export async function GET(req: NextRequest) {
   try {
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
+
+    // Por padrão lê a própria conta. Um corretor vinculado também pode ler as configurações da sua imobiliária.
     const { searchParams } = new URL(req.url)
-    const usuarioId = searchParams.get('usuario_id')
-
-    if (!usuarioId) {
-      return NextResponse.json({ error: 'usuario_id é obrigatório.' }, { status: 400 })
+    const usuarioSolicitado = searchParams.get('usuario_id') || auth.usuario.id
+    const imobDoSolicitante = lerVinculo(auth.usuario).imobiliariaId
+    if (usuarioSolicitado !== auth.usuario.id && usuarioSolicitado !== imobDoSolicitante) {
+      return NextResponse.json({ error: 'Sem permissão para acessar estas configurações.' }, { status: 403 })
     }
+    const usuarioId = usuarioSolicitado
 
-    const supabase = createSupabaseAdmin(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     const { data: userData, error: userError } = await supabase.auth.admin.getUserById(usuarioId)
     if (userError || !userData?.user) {
@@ -38,7 +40,7 @@ export async function GET(req: NextRequest) {
       perfilData = p
     } catch {}
 
-    const imobId = meta.imobiliaria_id || null
+    const imobId = lerVinculo(userData.user).imobiliariaId
     const isImobDirect = meta.tipo === 'imobiliaria' || meta.tipo_anunciante === 'imobiliaria' || perfilData?.tipo === 'imobiliaria'
     const isCorretorVinculado = !!(imobId && imobId !== usuarioId && !isImobDirect)
 
@@ -95,9 +97,13 @@ export async function GET(req: NextRequest) {
 // POST: Salvar configurações da conta/imobiliária
 export async function POST(req: NextRequest) {
   try {
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
+
     const body = await req.json()
+    // A conta alterada é sempre a do usuário autenticado (usuario_id do corpo é ignorado)
+    const usuario_id = auth.usuario.id
     const {
-      usuario_id,
       tipo,
       creci,
       foto_url,
@@ -108,13 +114,11 @@ export async function POST(req: NextRequest) {
       whatsapp_destino = 'corretor',
     } = body
 
-    if (!usuario_id) {
-      return NextResponse.json({ error: 'usuario_id é obrigatório.' }, { status: 400 })
+    if (tipo !== undefined && tipo !== null && !TIPOS_CONTA_PERMITIDOS.includes(tipo)) {
+      return NextResponse.json({ error: 'Tipo de conta inválido.' }, { status: 400 })
     }
 
-    const supabase = createSupabaseAdmin(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 1. Obter metadata atual do usuário
     const { data: userData, error: userError } = await supabase.auth.admin.getUserById(usuario_id)

@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 import path from 'path'
 import { salvarMetadadosLead } from '@/lib/leadsMetadata'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
+import { obterContextoConta, podeAcessarLead } from '@/lib/auth/contexto-conta'
 
 function obterClienteSupabase() {
-  return createClient(SUPABASE_URL, SERVICE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
+  return criarClienteAdmin()
 }
 
 // ── AUXILIAR: ARMAZENAMENTO PERSISTENTE LOCAL DE ATIVIDADES ──
@@ -50,7 +47,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'lead_id é obrigatório.' }, { status: 400 })
     }
 
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
+
     const supabase = obterClienteSupabase()
+    const ctx = await obterContextoConta(supabase, auth.usuario)
+    if (!(await podeAcessarLead(supabase, ctx, leadId))) {
+      return NextResponse.json({ error: 'Sem permissão para acessar este lead.' }, { status: 403 })
+    }
+
     let atividades: any[] = []
 
     // 1. Tentar buscar no Supabase
@@ -91,8 +96,6 @@ export async function PATCH(req: Request) {
       status,
       corretor_id,
       corretor_nome,
-      usuario_autor_id,
-      usuario_autor_nome,
       primeiro_contato,
       data_visita,
       valor_proposta,
@@ -113,6 +116,23 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'lead_id é obrigatório.' }, { status: 400 })
     }
 
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
+
+    const supabaseAuth = obterClienteSupabase()
+    const ctx = await obterContextoConta(supabaseAuth, auth.usuario)
+    if (!(await podeAcessarLead(supabaseAuth, ctx, lead_id))) {
+      return NextResponse.json({ error: 'Sem permissão para alterar este lead.' }, { status: 403 })
+    }
+
+    // Corretor vinculado (não gestor) não pode homologar vendas nem repassar o lead para outra pessoa
+    const corretorSemGestao = ctx.isCorretorVinculado && !ctx.isGestor
+    const homologando = status_homologacao === 'aprovado' || status_homologacao === 'rejeitado'
+    const repassando = corretor_id !== undefined && corretor_id !== ctx.id
+    if (corretorSemGestao && (homologando || repassando)) {
+      return NextResponse.json({ error: 'Permissão negada: ação exclusiva de gestores.' }, { status: 403 })
+    }
+
     // 1. Salvar metadados enriquecidos (proposta, visita, corretor, temperatura, homologação, etc.)
     const metaSalva: Record<string, any> = {}
     if (valor_proposta !== undefined) metaSalva.valor_proposta = valor_proposta
@@ -125,6 +145,11 @@ export async function PATCH(req: Request) {
     if (status_homologacao !== undefined) metaSalva.status_homologacao = status_homologacao
     if (homologado_por_id !== undefined) metaSalva.homologado_por_id = homologado_por_id
     if (homologado_por_nome !== undefined) metaSalva.homologado_por_nome = homologado_por_nome
+    if (homologando) {
+      // Quem homologa é sempre o usuário autenticado
+      metaSalva.homologado_por_id = ctx.id
+      metaSalva.homologado_por_nome = ctx.nome
+    }
     if (data_homologacao !== undefined) metaSalva.data_homologacao = data_homologacao
     if (motivo_rejeicao_homologacao !== undefined) metaSalva.motivo_rejeicao_homologacao = motivo_rejeicao_homologacao
     if (arquivado !== undefined) metaSalva.arquivado = arquivado
@@ -158,8 +183,8 @@ export async function PATCH(req: Request) {
     }
 
     // Registrar no histórico de atividades
-    const autorId = usuario_autor_id || 'sistema'
-    const autorNome = usuario_autor_nome || 'Gestor / Corretor'
+    const autorId = ctx.id
+    const autorNome = ctx.nome
     let tipoAtividade = 'mudanca_status'
     let descricaoAtividade = mensagem_atividade || ''
 
@@ -221,13 +246,24 @@ export async function PATCH(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { lead_id, usuario_id, usuario_nome, tipo, descricao } = body
+    const { lead_id, tipo, descricao } = body
 
     if (!lead_id || !descricao) {
       return NextResponse.json({ error: 'lead_id e descricao são obrigatórios.' }, { status: 400 })
     }
 
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
+
     const supabase = obterClienteSupabase()
+    const ctx = await obterContextoConta(supabase, auth.usuario)
+    if (!(await podeAcessarLead(supabase, ctx, lead_id))) {
+      return NextResponse.json({ error: 'Sem permissão para acessar este lead.' }, { status: 403 })
+    }
+
+    // Autor sempre é o usuário autenticado
+    const usuario_id = ctx.id
+    const usuario_nome = ctx.nome
 
     const novaAtividadeObj = {
       id: 'ativ_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),

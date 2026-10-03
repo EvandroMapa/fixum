@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
 const ASAAS_WEBHOOK_TOKEN = process.env.ASAAS_WEBHOOK_TOKEN || ''
 
 export async function POST(req: Request) {
   try {
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 1. Obter o token esperado (do .env ou do banco)
     let tokenEsperado = ASAAS_WEBHOOK_TOKEN
@@ -27,13 +23,15 @@ export async function POST(req: Request) {
       } catch {}
     }
 
-    // Validar token de autenticação do webhook se configurado
-    if (tokenEsperado) {
-      const headerToken = req.headers.get('asaas-access-token')
-      if (headerToken !== tokenEsperado) {
-        console.warn('[ASAAS-WEBHOOK] Token inválido recebido.')
-        return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-      }
+    // Validar token de autenticação do webhook (sem token configurado, nenhum evento é aceito)
+    if (!tokenEsperado) {
+      console.error('[ASAAS-WEBHOOK] ASAAS_WEBHOOK_TOKEN não configurado — evento rejeitado.')
+      return NextResponse.json({ error: 'Webhook não configurado' }, { status: 503 })
+    }
+    const headerToken = req.headers.get('asaas-access-token')
+    if (headerToken !== tokenEsperado) {
+      console.warn('[ASAAS-WEBHOOK] Token inválido recebido.')
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
     const payload = await req.json()

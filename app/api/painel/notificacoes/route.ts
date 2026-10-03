@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
+import { obterContextoConta, idsGerenciaveis } from '@/lib/auth/contexto-conta'
 
 // Armazenamento seguro de notificações corporativas (em banco/metadados com fallback em memória)
 // Para garantir 100% de disponibilidade mesmo que a tabela de notificações esteja sendo provisionada
@@ -19,17 +18,15 @@ let notificacoesFallback: Array<{
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url)
-    const usuarioId = searchParams.get('usuario_id')
-    const imobiliariaId = searchParams.get('imobiliaria_id')
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
 
-    if (!usuarioId) {
-      return NextResponse.json({ error: 'usuario_id é obrigatório.' }, { status: 400 })
-    }
+    const supabase = criarClienteAdmin()
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    // Usuário e imobiliária vêm da sessão (parâmetros da query são ignorados)
+    const ctx = await obterContextoConta(supabase, auth.usuario)
+    const usuarioId = ctx.id
+    const imobiliariaId = ctx.imobiliariaId
 
     // Tenta buscar no banco se a tabela existir
     try {
@@ -60,16 +57,22 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
-    const { acao, notificacaoId, usuario_id, titulo, mensagem, tipo, imovel_id } = body
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const body = await req.json()
+    const { acao, notificacaoId, titulo, mensagem, tipo, imovel_id } = body
+
+    const supabase = criarClienteAdmin()
+    const ctx = await obterContextoConta(supabase, auth.usuario)
 
     if (acao === 'marcar_lida') {
       try {
-        await supabase.from('notificacoes').update({ lida: true }).eq('id', notificacaoId)
+        await supabase
+          .from('notificacoes')
+          .update({ lida: true })
+          .eq('id', notificacaoId)
+          .or(`usuario_id.eq.${ctx.id},imobiliaria_id.eq.${ctx.imobiliariaId || ctx.id}`)
       } catch {}
 
       notificacoesFallback = notificacoesFallback.map((n) =>
@@ -79,6 +82,7 @@ export async function POST(req: Request) {
     }
 
     if (acao === 'marcar_todas_lidas') {
+      const usuario_id = ctx.id
       try {
         await supabase.from('notificacoes').update({ lida: true }).eq('usuario_id', usuario_id)
       } catch {}
@@ -89,7 +93,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true })
     }
 
-    // Criar nova notificação
+    // Criar nova notificação: só para si mesmo, para a própria imobiliária ou (gestor) para a equipe
+    const usuario_id = body.usuario_id || ctx.id
+    const destinatariosPermitidos = new Set([ctx.id, ...(ctx.imobiliariaId ? [ctx.imobiliariaId] : [])])
+    if (!destinatariosPermitidos.has(usuario_id) && !(ctx.isGestor && (await idsGerenciaveis(supabase, ctx)).includes(usuario_id))) {
+      return NextResponse.json({ error: 'Sem permissão para notificar este usuário.' }, { status: 403 })
+    }
+
     const novaNotif = {
       id: 'notif_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
       usuario_id,

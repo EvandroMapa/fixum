@@ -4,10 +4,7 @@
  * As credenciais podem ser carregadas das variáveis de ambiente (.env) ou da tabela configuracoes_sistema no Supabase.
  */
 
-import { createClient } from '@supabase/supabase-js'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
 
 export interface DadosClienteAsaas {
   usuarioId: string
@@ -42,9 +39,7 @@ export async function obterCredenciaisAsaas(): Promise<{ apiKey: string; apiUrl:
   let modo = process.env.ASAAS_MODO || (process.env.NODE_ENV === 'production' && !process.env.ASAAS_SANDBOX ? 'producao' : 'sandbox')
 
   try {
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     const { data: configs } = await supabase.from('configuracoes_sistema').select('*')
     if (configs) {
@@ -378,6 +373,7 @@ export async function consultarCobrancaAsaas(cobrancaId: string): Promise<{
   status: 'PENDING' | 'RECEIVED' | 'CONFIRMED' | 'OVERDUE' | 'REFUNDED' | string
   valor: number
   dataPagamento?: string
+  externalReference?: string
 }> {
   const { apiKey, apiUrl } = await obterCredenciaisAsaas()
 
@@ -415,5 +411,6 @@ export async function consultarCobrancaAsaas(cobrancaId: string): Promise<{
     status: data.status,
     valor: data.value,
     dataPagamento: data.paymentDate,
+    externalReference: data.externalReference,
   }
 }

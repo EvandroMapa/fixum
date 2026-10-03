@@ -5,9 +5,6 @@
 
 import { createClient } from '@/lib/supabase/client'
 
-// Chave Secreta Master da Fixum (pode ser sobrescrita via .env.local)
-export const CHAVE_SECRETA_ADMIN_PADRAO = process.env.NEXT_PUBLIC_ADMIN_PIN || 'FIXUM-MASTER-2026'
-
 const CHAVE_STORAGE_ADMIN = 'fixum_admin_session_token'
 const CHAVE_STORAGE_BLOQUEIO = 'fixum_admin_lock_state'
 const CHAVE_STORAGE_ULTIMA_ATIVIDADE = 'fixum_admin_last_activity'
@@ -81,16 +78,33 @@ export function bloquearTelaAdmin(): void {
 }
 
 /**
- * Desbloqueia a tela administrativa com o PIN Master
+ * Confere no servidor se a sessão atual é de administrador e, se informado, se o PIN Master está correto.
+ * O PIN nunca fica no navegador: ele é comparado em /api/admin/sessao (variável ADMIN_PIN do servidor).
  */
-export function desbloquearTelaComPin(pin: string): boolean {
+export async function verificarAdminNoServidor(pin?: string): Promise<{ ok: boolean; erro?: string }> {
+  try {
+    const res = await fetch('/api/admin/sessao', pin === undefined
+      ? { method: 'GET' }
+      : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: pin.trim() }) })
+    if (res.ok) return { ok: true }
+    const json = await res.json().catch(() => ({}))
+    return { ok: false, erro: json.error }
+  } catch {
+    return { ok: false, erro: 'Falha de comunicação com o servidor.' }
+  }
+}
+
+/**
+ * Desbloqueia a tela administrativa com o PIN Master (validado no servidor)
+ */
+export async function desbloquearTelaComPin(pin: string): Promise<boolean> {
   if (typeof window === 'undefined') return false
-  if (pin.trim() === CHAVE_SECRETA_ADMIN_PADRAO) {
+  const { ok } = await verificarAdminNoServidor(pin)
+  if (ok) {
     sessionStorage.removeItem(CHAVE_STORAGE_BLOQUEIO)
     sessionStorage.setItem(CHAVE_STORAGE_ULTIMA_ATIVIDADE, Date.now().toString())
-    return true
   }
-  return false
+  return ok
 }
 
 /**

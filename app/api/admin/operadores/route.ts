@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { CHAVE_SECRETA_ADMIN_PADRAO } from '@/lib/admin-auth'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { verificarOtpPendente } from '@/lib/otp'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirAdmin, pinAdminValido, respostaPinInvalido } from '@/lib/auth/servidor'
 
 export interface OperadorAdmin {
   id: string
@@ -17,11 +15,12 @@ export interface OperadorAdmin {
 }
 
 // ── GET: LISTAR TODOS OS OPERADORES ADMINISTRATIVOS ──
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const auth = await exigirAdmin(req)
+    if (!auth.ok) return auth.resposta
+
+    const supabase = criarClienteAdmin()
 
     // 1. Buscar todos os usuários do Auth
     const { data: authData, error: authErr } = await supabase.auth.admin.listUsers({ perPage: 1000 })
@@ -49,8 +48,7 @@ export async function GET() {
 
       const ehOperadorInterno = !isClientePlataforma && (
         u.email === 'admin@fixum.com.br' ||
-        (p?.tipo === 'admin' && p?.is_admin === true) ||
-        (u.user_metadata?.tipo === 'admin' && u.user_metadata?.is_admin === true)
+        (p?.tipo === 'admin' && p?.is_admin === true)
       )
 
       if (ehOperadorInterno) {
@@ -88,16 +86,18 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { acao, adminPin, adminEmail } = body
+    const { acao, adminPin } = body
 
-    // 1. Validação de Segurança com Chave Secreta Master
-    if (!adminPin || adminPin.trim() !== CHAVE_SECRETA_ADMIN_PADRAO) {
-      return NextResponse.json({ error: 'Chave Secreta Master inválida. Ação bloqueada.' }, { status: 403 })
+    // 1. Sessão de administrador + PIN Master (conferido no servidor) nas ações em que o admin digita o PIN
+    const auth = await exigirAdmin(req)
+    if (!auth.ok) return auth.resposta
+    const adminEmail = auth.usuario.email || 'admin'
+
+    if (['criar', 'alterar_senha', 'editar'].includes(acao) && !pinAdminValido(adminPin)) {
+      return respostaPinInvalido()
     }
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // ── AÇÃO 1: CRIAR NOVO OPERADOR ADMINISTRATIVO (COM CÓDIGO OTP) ──
     if (acao === 'criar') {
@@ -111,33 +111,12 @@ export async function POST(req: Request) {
       }
 
       const emailLimpo = email.trim().toLowerCase()
-      const emailAdminOrigem = (adminEmail || 'admin@fixum.com.br').trim().toLowerCase()
+      const emailAdminOrigem = adminEmail.trim().toLowerCase()
 
-      // Validação do Código OTP enviado ao e-mail informado do Novo Operador
-      if (codigoOtp) {
-        const codigoLimpo = codigoOtp.toString().replace(/\D/g, '')
-
-        // Buscar registro de OTP pendente para o e-mail do novo operador
-        const { data: logsOtp } = await supabase
-          .from('logs_auditoria_admin')
-          .select('*')
-          .eq('admin_email', emailLimpo)
-          .eq('tipo_acao', 'OTP_PENDENTE_NOVO_OPERADOR')
-          .order('created_at', { ascending: false })
-          .limit(1)
-
-        const ultimoOtp = logsOtp?.[0]
-        if (!ultimoOtp || !ultimoOtp.dados_novos) {
-          return NextResponse.json({ error: 'Nenhum código OTP ativo para este e-mail. Solicite um novo envio.' }, { status: 400 })
-        }
-
-        if (Date.now() > (ultimoOtp.dados_novos.expires_at || 0)) {
-          return NextResponse.json({ error: 'O código de confirmação expirou. Solicite um novo código.' }, { status: 400 })
-        }
-
-        if (ultimoOtp.dados_novos.codigo !== codigoLimpo) {
-          return NextResponse.json({ error: 'Código de verificação de 6 dígitos incorreto.' }, { status: 400 })
-        }
+      // Validação obrigatória do Código OTP enviado ao e-mail do Novo Operador
+      const otp = await verificarOtpPendente(supabase, emailLimpo, codigoOtp, { consumir: true })
+      if (!otp.ok) {
+        return NextResponse.json({ error: otp.erro }, { status: 400 })
       }
 
       // Criar usuário no Auth

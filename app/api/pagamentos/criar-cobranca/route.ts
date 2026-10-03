@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { obterPlanoPorId, calcularPrecoPeriodicidade } from '@/lib/planos'
 import {
   criarOuBuscarClienteAsaas,
@@ -7,15 +6,17 @@ import {
   criarAssinaturaCartaoAsaas,
   type DadosCartaoCredito,
 } from '@/lib/asaas'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
 
 export async function POST(req: Request) {
   try {
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
+
     const body = await req.json()
+    const usuarioId = auth.usuario.id
     const {
-      usuarioId,
       planoId,
       metodoPagamento, // 'pix' | 'cartao'
       periodicidade = 'mensal', // 'mensal' | 'trimestral' | 'semestral' | 'anual'
@@ -39,9 +40,7 @@ export async function POST(req: Request) {
     const detalhesPreco = calcularPrecoPeriodicidade(plano.preco_mensal, periodicidade)
     const valorCobrar = detalhesPreco.valorTotalComDesconto
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 1. Criar ou sincronizar cliente no Asaas
     const clienteAsaas = await criarOuBuscarClienteAsaas({

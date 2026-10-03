@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { consultarCobrancaAsaas } from '@/lib/asaas'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
 
 export async function GET(req: Request) {
   try {
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
+
     const { searchParams } = new URL(req.url)
     const cobrancaId = searchParams.get('cobrancaId')
-    const usuarioId = searchParams.get('usuarioId')
-    const planoId = searchParams.get('planoId')
+    const usuarioId = auth.usuario.id
 
     if (!cobrancaId) {
       return NextResponse.json({ error: 'cobrancaId é obrigatório' }, { status: 400 })
@@ -27,11 +27,16 @@ export async function GET(req: Request) {
     const cobranca = await consultarCobrancaAsaas(cobrancaId)
     const isPago = cobranca.status === 'RECEIVED' || cobranca.status === 'CONFIRMED'
 
+    // A cobrança precisa ser deste usuário; o plano liberado é o que está gravado na cobrança (externalReference)
+    const [donoCobranca, planoDaCobranca] = (cobranca.externalReference || '').split(':')
+    if (donoCobranca !== usuarioId) {
+      return NextResponse.json({ error: 'Cobrança não pertence a este usuário.' }, { status: 403 })
+    }
+    const planoId = planoDaCobranca || null
+
     // Se foi pago e temos os dados do usuário, ativamos no Supabase
     if (isPago && usuarioId && planoId) {
-      const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-        auth: { autoRefreshToken: false, persistSession: false },
-      })
+      const supabase = criarClienteAdmin()
 
       // Ativar assinatura
       await supabase.from('assinaturas').upsert(

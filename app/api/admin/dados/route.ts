@@ -1,23 +1,19 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { PLANOS_OFICIAIS } from '@/lib/planos'
 import { ClienteAdmin360, CorretorEquipeItem, FaturaAdmin, CancelamentoAdmin, DevolucaoAdmin, ContestacaoAdmin } from '@/lib/admin-service'
+import { lerVinculo, listarTodosUsuarios } from '@/lib/auth/contexto-conta'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirAdmin } from '@/lib/auth/servidor'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const auth = await exigirAdmin(req)
+    if (!auth.ok) return auth.resposta
+
+    const supabase = criarClienteAdmin()
 
     // 1. Buscar todos os usuários do Auth (fonte da verdade de autenticação e metadados)
-    const { data: authUsersData, error: authErr } = await supabase.auth.admin.listUsers()
-    if (authErr) {
-      return NextResponse.json({ error: authErr.message }, { status: 500 })
-    }
-    const authUsers = authUsersData.users || []
+    const authUsers = await listarTodosUsuarios(supabase)
 
     // 2. Buscar Perfis
     const { data: perfisData } = await supabase.from('perfis').select('*')
@@ -61,8 +57,9 @@ export async function GET() {
       const p = perfisMap[u.id] || {}
       const meta = u.user_metadata || {}
 
-      const tipoReal = meta.tipo || meta.tipo_anunciante || p.tipo_anunciante || (meta.imobiliaria_id ? 'corretor' : 'proprietario')
-      const imobIdReal = meta.imobiliaria_id || p.imobiliaria_id || null
+      const imobVinculo = lerVinculo(u).imobiliariaId
+      const tipoReal = meta.tipo || meta.tipo_anunciante || p.tipo_anunciante || (imobVinculo ? 'corretor' : 'proprietario')
+      const imobIdReal = imobVinculo || p.imobiliaria_id || null
       const nomeReal = p.nome || meta.nome || meta.full_name || meta.nome_fantasia || u.email?.split('@')[0] || 'Anunciante'
 
       return {

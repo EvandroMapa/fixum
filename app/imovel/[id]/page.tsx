@@ -1,10 +1,8 @@
-import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import PaginaImovelCliente from './PaginaImovelCliente'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { lerVinculo, listarMembrosEquipe } from '@/lib/auth/contexto-conta'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -15,9 +13,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params
     if (!id) return { title: 'Imóvel não encontrado • FIXUM' }
 
-    const supabase = createSupabaseAdmin(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     const { data: imovel } = await supabase
       .from('imoveis')
@@ -71,9 +67,7 @@ export default async function PaginaImovel({ params }: Props) {
     notFound()
   }
 
-  const supabase = createSupabaseAdmin(SUPABASE_URL, SERVICE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
+  const supabase = criarClienteAdmin()
 
   // Query principal - apenas fotos (FK garantida)
   const { data: imovel, error } = await supabase
@@ -105,18 +99,16 @@ export default async function PaginaImovel({ params }: Props) {
       let modoExibicaoPrecoFinal: 'visivel' | 'sob_consulta' | 'por_anuncio' = 'visivel'
       let imobIdParaBuscar: string | null = null
 
-      if (SERVICE_KEY) {
-        try {
-          const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId)
-          const meta = userData?.user?.user_metadata || {}
-          if (meta.modo_exibicao_preco) modoExibicaoPrecoFinal = meta.modo_exibicao_preco
-          const idImobVinculada = meta.imobiliaria_id
-          if (idImobVinculada) {
-            imobIdParaBuscar = idImobVinculada
-            imobiliariaId = idImobVinculada
-          }
-        } catch {}
-      }
+      try {
+        const { data: userData } = await supabase.auth.admin.getUserById(anuncianteId)
+        const meta = userData?.user?.user_metadata || {}
+        if (meta.modo_exibicao_preco) modoExibicaoPrecoFinal = meta.modo_exibicao_preco
+        const idImobVinculada = userData?.user ? lerVinculo(userData.user).imobiliariaId : null
+        if (idImobVinculada) {
+          imobIdParaBuscar = idImobVinculada
+          imobiliariaId = idImobVinculada
+        }
+      } catch {}
 
       if (p?.tipo === 'imobiliaria') {
         imobiliariaId = p.id
@@ -132,7 +124,7 @@ export default async function PaginaImovel({ params }: Props) {
           .eq('id', imobIdParaBuscar)
           .maybeSingle()
 
-        if (SERVICE_KEY && imobIdParaBuscar !== anuncianteId) {
+        if (imobIdParaBuscar !== anuncianteId) {
           try {
             const { data: imobUser } = await supabase.auth.admin.getUserById(imobIdParaBuscar)
             const imobMeta = imobUser?.user?.user_metadata || {}
@@ -161,12 +153,9 @@ export default async function PaginaImovel({ params }: Props) {
       }
 
       // Buscar todos os IDs de anunciantes vinculados a esta imobiliária
-      if (imobiliariaId && SERVICE_KEY) {
+      if (imobiliariaId) {
         try {
-          const { data: allUsers } = await supabase.auth.admin.listUsers()
-          const corretoresDaImob = (allUsers?.users || []).filter(
-            (u) => u.user_metadata?.imobiliaria_id === imobiliariaId
-          )
+          const corretoresDaImob = await listarMembrosEquipe(supabase, imobiliariaId)
           idsAnunciantes = Array.from(new Set([imobiliariaId, ...corretoresDaImob.map((c) => c.id)]))
         } catch {}
       }

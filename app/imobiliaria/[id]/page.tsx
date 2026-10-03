@@ -1,12 +1,8 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
 import PaginaImobiliariaCliente from './PaginaImobiliariaCliente'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { listarMembrosEquipe } from '@/lib/auth/contexto-conta'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -17,9 +13,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!id) return { title: 'Imobiliária | Fixum' }
 
   try {
-    const supabase = createSupabaseAdmin(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     const { data: perfil } = await supabase
       .from('perfis')
@@ -49,9 +43,7 @@ export default async function PaginaImobiliaria({ params }: Props) {
   const { id } = await params
   if (!id) notFound()
 
-  const supabase = createSupabaseAdmin(SUPABASE_URL, SERVICE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
+  const supabase = criarClienteAdmin()
 
   // 1. Buscar perfil da imobiliária
   const { data: perfil, error: erroPerfil } = await supabase
@@ -82,10 +74,7 @@ export default async function PaginaImobiliaria({ params }: Props) {
   let idsAnunciantes = [id]
   let corretores: any[] = []
   try {
-    const { data: allUsers } = await supabase.auth.admin.listUsers()
-    const membros = (allUsers?.users || []).filter(
-      (u) => u.user_metadata?.imobiliaria_id === id && u.id !== id
-    )
+    const membros = await listarMembrosEquipe(supabase, id)
     const idsMembros = membros.map((m) => m.id)
     let perfisCorretores: any[] = []
     if (idsMembros.length > 0) {

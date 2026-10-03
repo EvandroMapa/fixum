@@ -1,23 +1,23 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { obterPlanoPorId } from '@/lib/planos'
 import { obterCredenciaisAsaas } from '@/lib/asaas'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
 
 export async function POST(req: Request) {
   try {
-    const { usuarioId, novoPlanoId, tipo } = await req.json()
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
 
-    if (!usuarioId || !novoPlanoId) {
+    const { novoPlanoId, tipo } = await req.json()
+    const usuarioId = auth.usuario.id
+
+    if (!novoPlanoId) {
       return NextResponse.json({ error: 'Dados incompletos para alteração de plano.' }, { status: 400 })
     }
 
     const novoPlano = obterPlanoPorId(novoPlanoId)
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 1. Buscar assinatura atual do usuário
     const { data: assinaturaAtual } = await supabase
@@ -25,6 +25,16 @@ export async function POST(req: Request) {
       .select('*')
       .eq('usuario_id', usuarioId)
       .maybeSingle()
+
+    // Esta rota só reduz o plano (sem cobrança). Upgrade precisa passar pelo checkout com pagamento.
+    const planoAtual = obterPlanoPorId(assinaturaAtual?.plano_id || 'gratis')
+    const ehReducao = novoPlano.preco_mensal === 0 || novoPlano.preco_mensal < planoAtual.preco_mensal
+    if (!ehReducao) {
+      return NextResponse.json(
+        { error: 'Para mudar para um plano superior, conclua o pagamento pelo checkout.' },
+        { status: 400 }
+      )
+    }
 
     // 2. Se for downgrade (redução de plano)
     if (tipo === 'downgrade' || novoPlano.preco_mensal === 0) {

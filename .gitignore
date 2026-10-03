@@ -47,3 +47,7 @@ scripts/
 scratch/
 data_*.json
 
+# Mobile App (Repositório e ambiente isolado)
+/mobile/
+
+

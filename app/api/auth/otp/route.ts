@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { enviarCodigoOtpEmail } from '@/lib/email'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario, exigirAdmin } from '@/lib/auth/servidor'
+import { listarTodosUsuarios } from '@/lib/auth/contexto-conta'
+import { gerarCodigoOtp, verificarOtpPendente, verificarOtpUsuario, VALIDADE_OTP_MS } from '@/lib/otp'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+// Motivos que alteram a segurança da própria conta exigem estar logado com o mesmo e-mail
+const MOTIVOS_DA_PROPRIA_CONTA = ['ativar_2fa', 'desativar_2fa']
 
 export async function POST(req: Request) {
   try {
@@ -15,17 +18,26 @@ export async function POST(req: Request) {
     }
 
     const emailLimpo = email.trim().toLowerCase()
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
-    // 1. Localizar usuário no Supabase Auth
-    const { data: authData, error: errList } = await supabase.auth.admin.listUsers({ perPage: 1000 })
-    if (errList) {
-      return NextResponse.json({ error: 'Erro ao consultar usuários.' }, { status: 500 })
+    // Ações sobre a própria conta: o e-mail precisa ser o da sessão
+    if (acao === 'desativar_2fa' || MOTIVOS_DA_PROPRIA_CONTA.includes(motivo)) {
+      const auth = await exigirUsuario(req)
+      if (!auth.ok) return auth.resposta
+      if ((auth.usuario.email || '').toLowerCase() !== emailLimpo) {
+        return NextResponse.json({ error: 'O e-mail informado não corresponde à sua conta.' }, { status: 403 })
+      }
     }
 
-    const usuario = authData.users.find((u) => (u.email || '').toLowerCase() === emailLimpo)
+    // Envio de código para cadastrar operador administrativo: somente administradores
+    if (motivo === 'criar_operador') {
+      const admin = await exigirAdmin(req)
+      if (!admin.ok) return admin.resposta
+    }
+
+    // 1. Localizar usuário no Supabase Auth
+    const usuarios = await listarTodosUsuarios(supabase)
+    const usuario = usuarios.find((u) => (u.email || '').toLowerCase() === emailLimpo)
 
     // ── AÇÃO 1: ENVIAR CÓDIGO OTP POR E-MAIL ──
     if (acao === 'enviar') {
@@ -52,19 +64,18 @@ export async function POST(req: Request) {
         }
       }
 
-      // Gerar código de 6 dígitos numéricos
-      const codigoGerado = Math.floor(100000 + Math.random() * 900000).toString()
-      const tempoExpiracao = Date.now() + 10 * 60 * 1000 // 10 minutos de validade
+      const codigoGerado = gerarCodigoOtp()
+      const tempoExpiracao = Date.now() + VALIDADE_OTP_MS
 
       if (usuario) {
-        // Salvar nos metadados do usuário existente
-        const metaAtual = usuario.user_metadata || {}
+        // Guardar em app_metadata (o usuário não consegue ler nem alterar)
         await supabase.auth.admin.updateUserById(usuario.id, {
-          user_metadata: {
-            ...metaAtual,
+          app_metadata: {
+            ...(usuario.app_metadata || {}),
             otp_code: codigoGerado,
             otp_expires: tempoExpiracao,
             otp_motivo: motivo || 'seguranca',
+            otp_tentativas: 0,
           },
         })
       }
@@ -76,11 +87,9 @@ export async function POST(req: Request) {
           tipo_acao: usuario ? 'ENVIO_OTP_EMAIL' : 'OTP_PENDENTE_NOVO_OPERADOR',
           entidade: usuario ? 'auth.users' : 'novo_operador',
           entidade_id: usuario ? usuario.id : null,
-          dados_novos: {
-            codigo: codigoGerado,
-            expires_at: tempoExpiracao,
-            motivo: motivo || 'criar_operador',
-          },
+          dados_novos: usuario
+            ? { expires_at: tempoExpiracao, motivo: motivo || 'seguranca' }
+            : { codigo: codigoGerado, expires_at: tempoExpiracao, motivo: motivo || 'criar_operador', tentativas: 0 },
           justificativa: `Envio de código OTP para ${emailLimpo} (motivo: ${motivo || 'seguranca'})`,
           created_at: new Date().toISOString(),
         })
@@ -103,8 +112,6 @@ export async function POST(req: Request) {
         mensagem: `Código de verificação enviado com sucesso para ${emailLimpo}.`,
         enviadoPara: emailLimpo,
         emailEntregue: envioEmail.sucesso,
-        // Retornamos preview para testes imediatos em desenvolvimento
-        codigoPreview: codigoGerado,
       })
     }
 
@@ -114,31 +121,17 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Código de verificação é obrigatório.' }, { status: 400 })
       }
 
-      const codigoLimpo = codigo.toString().replace(/\D/g, '')
-
       // Se o usuário já existe no Auth
       if (usuario) {
-        const meta = usuario.user_metadata || {}
-
-        if (!meta.otp_code || !meta.otp_expires) {
-          return NextResponse.json({ error: 'Nenhum código ativo encontrado. Solicite um novo código.' }, { status: 400 })
+        const resultado = await verificarOtpUsuario(supabase, usuario, codigo, { consumir: true })
+        if (!resultado.ok) {
+          return NextResponse.json({ error: resultado.erro }, { status: 400 })
         }
 
-        if (Date.now() > meta.otp_expires) {
-          return NextResponse.json({ error: 'O código de verificação expirou. Solicite um novo código.' }, { status: 400 })
-        }
-
-        if (meta.otp_code !== codigoLimpo) {
-          return NextResponse.json({ error: 'Código de verificação incorreto. Verifique os números recebidos.' }, { status: 400 })
-        }
-
-        // Código válido: limpar código usado
         await supabase.auth.admin.updateUserById(usuario.id, {
           user_metadata: {
-            ...meta,
-            otp_code: null,
-            otp_expires: null,
-            two_factor_enabled: motivo === 'ativar_2fa' ? true : meta.two_factor_enabled,
+            ...(usuario.user_metadata || {}),
+            two_factor_enabled: motivo === 'ativar_2fa' ? true : usuario.user_metadata?.two_factor_enabled,
             email_verificado_fixum: true,
           },
         })
@@ -154,26 +147,11 @@ export async function POST(req: Request) {
         return NextResponse.json({ sucesso: true, mensagem: 'Código validado com sucesso!' })
       }
 
-      // Se o usuário ainda NÃO existe (novo operador sendo cadastrado)
-      const { data: logsOtp } = await supabase
-        .from('logs_auditoria_admin')
-        .select('*')
-        .eq('admin_email', emailLimpo)
-        .eq('tipo_acao', 'OTP_PENDENTE_NOVO_OPERADOR')
-        .order('created_at', { ascending: false })
-        .limit(1)
-
-      const ultimoOtp = logsOtp?.[0]
-      if (!ultimoOtp || !ultimoOtp.dados_novos) {
-        return NextResponse.json({ error: 'Nenhum código ativo encontrado para este e-mail. Solicite um novo código.' }, { status: 400 })
-      }
-
-      if (Date.now() > (ultimoOtp.dados_novos.expires_at || 0)) {
-        return NextResponse.json({ error: 'O código de confirmação expirou. Solicite um novo código.' }, { status: 400 })
-      }
-
-      if (ultimoOtp.dados_novos.codigo !== codigoLimpo) {
-        return NextResponse.json({ error: 'Código de verificação de 6 dígitos incorreto.' }, { status: 400 })
+      // Se o usuário ainda NÃO existe (cadastro / novo operador). O código só é consumido
+      // na criação da conta (/api/auth/cadastrar ou /api/admin/operadores), que valida de novo.
+      const resultado = await verificarOtpPendente(supabase, emailLimpo, codigo, { consumir: false })
+      if (!resultado.ok) {
+        return NextResponse.json({ error: resultado.erro }, { status: 400 })
       }
 
       return NextResponse.json({ sucesso: true, mensagem: 'Código validado com sucesso!' })

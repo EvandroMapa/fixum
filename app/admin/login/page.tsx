@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { CHAVE_SECRETA_ADMIN_PADRAO, salvarSessaoAdmin } from '@/lib/admin-auth'
+import { salvarSessaoAdmin, verificarAdminNoServidor } from '@/lib/admin-auth'
 import InputSenha from '@/components/ui/InputSenha'
 import styles from './page.module.css'
 
@@ -24,20 +24,8 @@ export default function AdminLoginPage() {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
-          // Verificar estritamente se o usuário autenticado É ADMINISTRADOR
-          const { data: perfil } = await supabase
-            .from('perfis')
-            .select('is_admin, tipo')
-            .eq('id', user.id)
-            .maybeSingle()
-
-          const ehAdmin = (
-            user.email === 'admin@fixum.com.br' ||
-            perfil?.is_admin === true ||
-            perfil?.tipo === 'admin' ||
-            user.user_metadata?.is_admin === true ||
-            user.user_metadata?.tipo === 'admin'
-          )
+          // Verificar NO SERVIDOR se o usuário autenticado É ADMINISTRADOR (perfis.is_admin)
+          const { ok: ehAdmin } = await verificarAdminNoServidor()
 
           if (ehAdmin) {
             setEmail(user.email || '')
@@ -78,10 +66,9 @@ export default function AdminLoginPage() {
     setCarregando(true)
 
     try {
-      // 1. Validação da Chave Secreta Master da Fixum
       const chaveLimpa = chaveSecreta.trim()
-      if (chaveLimpa !== CHAVE_SECRETA_ADMIN_PADRAO) {
-        setErro('Chave Secreta Master inválida. Acesso administrativo bloqueado.')
+      if (!chaveLimpa) {
+        setErro('Informe a Chave Secreta Master.')
         setCarregando(false)
         return
       }
@@ -104,23 +91,10 @@ export default function AdminLoginPage() {
         userAutenticado = authData.user
       }
 
-      // 3. Verificação ESTRITA de privilégio no perfil (is_admin / tipo)
-      const { data: perfil } = await supabase
-        .from('perfis')
-        .select('is_admin, tipo')
-        .eq('id', userAutenticado.id)
-        .maybeSingle()
-
-      const ehAdmin = (
-        userAutenticado.email === 'admin@fixum.com.br' ||
-        perfil?.is_admin === true ||
-        perfil?.tipo === 'admin' ||
-        userAutenticado.user_metadata?.is_admin === true ||
-        userAutenticado.user_metadata?.tipo === 'admin'
-      )
-
-      if (!ehAdmin) {
-        setErro(`Acesso Negado: A conta "${userAutenticado.email}" não possui permissão de Administrador Master.`)
+      // 3. Verificação NO SERVIDOR: privilégio de admin (perfis.is_admin) + Chave Secreta Master
+      const verificacao = await verificarAdminNoServidor(chaveLimpa)
+      if (!verificacao.ok) {
+        setErro(verificacao.erro || `Acesso Negado: A conta "${userAutenticado.email}" não possui permissão de Administrador Master.`)
         setCarregando(false)
         return
       }

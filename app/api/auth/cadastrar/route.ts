@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { verificarOtpPendente } from '@/lib/otp'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+const TIPOS_CADASTRO = ['proprietario', 'corretor', 'imobiliaria']
 
 export async function POST(req: Request) {
   try {
-    const { email, password, nome, tipo, telefone, imobiliaria_id, creci } = await req.json()
+    const { email, password, nome, tipo, telefone, imobiliaria_id, creci, codigo } = await req.json()
 
     if (!email || !password) {
       return NextResponse.json({ error: 'E-mail e senha são obrigatórios.' }, { status: 400 })
@@ -21,9 +21,32 @@ export async function POST(req: Request) {
       }, { status: 403 })
     }
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    if (tipo && !TIPOS_CADASTRO.includes(tipo)) {
+      return NextResponse.json({ error: 'Tipo de conta inválido.' }, { status: 400 })
+    }
+
+    const supabase = criarClienteAdmin()
+
+    // A conta é criada já confirmada, então a posse do e-mail precisa ser provada aqui com o código OTP
+    const otp = await verificarOtpPendente(supabase, emailLimpo, codigo, { consumir: true })
+    if (!otp.ok) {
+      return NextResponse.json({ error: otp.erro }, { status: 400 })
+    }
+
+    // Convite de imobiliária: o vínculo só é aceito se o ID for de uma imobiliária real
+    let imobiliariaConvite: string | null = null
+    if (imobiliaria_id) {
+      // Conta de imobiliária: perfis.tipo ou o tipo declarado no cadastro (há contas com os dois divergentes)
+      const { data: imobPerfil } = await supabase.from('perfis').select('tipo').eq('id', imobiliaria_id).maybeSingle()
+      const { data: imobAuth } = await supabase.auth.admin.getUserById(imobiliaria_id)
+      const metaImob = imobAuth?.user?.user_metadata || {}
+      const ehImobiliaria =
+        imobPerfil?.tipo === 'imobiliaria' || metaImob.tipo === 'imobiliaria' || metaImob.tipo_anunciante === 'imobiliaria'
+      if (!imobAuth?.user || !ehImobiliaria) {
+        return NextResponse.json({ error: 'Convite de imobiliária inválido.' }, { status: 400 })
+      }
+      imobiliariaConvite = imobAuth.user.id
+    }
 
     // Criar o usuário diretamente com email_confirm: true para evitar o rate limit de SMTP do Supabase
     const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
@@ -35,9 +58,11 @@ export async function POST(req: Request) {
         tipo: tipo || 'proprietario',
         tipo_anunciante: tipo || 'proprietario',
         telefone: telefone || null,
-        imobiliaria_id: imobiliaria_id || null,
+        imobiliaria_id: imobiliariaConvite,
         creci: creci || null,
       },
+      // Vínculo e papel ficam em app_metadata (somente o servidor altera); user_metadata é só espelho para a UI
+      app_metadata: imobiliariaConvite ? { imobiliaria_id: imobiliariaConvite, papel: 'corretor' } : {},
     })
 
     if (authError) {

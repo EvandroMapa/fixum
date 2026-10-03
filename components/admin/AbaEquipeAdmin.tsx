@@ -94,7 +94,6 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
           operadorId: op.id,
           novoStatus,
           justificativa: `Alteração de status realizada por ${adminEmailLogado || 'admin'}`,
-          adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || 'FIXUM-MASTER-2026',
           adminEmail: adminEmailLogado,
         }),
       })
@@ -152,7 +151,6 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
           acao: 'excluir',
           operadorId: op.id,
           justificativa: `Exclusão permanente solicitada por ${adminEmailLogado || 'admin'}`,
-          adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || 'FIXUM-MASTER-2026',
           adminEmail: adminEmailLogado,
         }),
       })

@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { salvarMetadadosLead } from '@/lib/leadsMetadata'
 import { enviarAlertaLeadEmail } from '@/lib/email'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { listarMembrosEquipe } from '@/lib/auth/contexto-conta'
 
 export async function POST(req: Request) {
   try {
@@ -15,9 +13,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'imovel_id, nome e telefone são obrigatórios.' }, { status: 400 })
     }
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 1. Buscar dados do imóvel
     const { data: imovel, error: errImovel } = await supabase
@@ -62,9 +58,9 @@ export async function POST(req: Request) {
         emailNotificacao = perfilMatriz?.email || anunciante?.email || ''
       } else if (regra === 'roleta') {
         // Modelo 2: Roleta Automática (Round-Robin entre membros da equipe)
-        const { data: usersData } = await supabase.auth.admin.listUsers()
-        const membrosEquipe = (usersData?.users || [])
-          .filter((u) => u.user_metadata?.imobiliaria_id === imobiliariaId || u.id === imobiliariaId)
+        const { data: donoImob } = await supabase.auth.admin.getUserById(imobiliariaId)
+        const membrosVinculados = await listarMembrosEquipe(supabase, imobiliariaId)
+        const membrosEquipe = (donoImob?.user ? [donoImob.user, ...membrosVinculados] : membrosVinculados)
           .map((u) => ({
             id: u.id,
             nome: u.user_metadata?.nome || u.user_metadata?.full_name || u.email?.split('@')[0] || 'Corretor',

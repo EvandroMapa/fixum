@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirAdmin, pinAdminValido, respostaPinInvalido } from '@/lib/auth/servidor'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const auth = await exigirAdmin(req)
+    if (!auth.ok) return auth.resposta
+
+    const supabase = criarClienteAdmin()
 
     const { data: planos, error } = await supabase
       .from('planos')
@@ -27,20 +26,22 @@ export async function GET() {
 
 export async function PUT(req: Request) {
   try {
-    const { planos, descontos, adminEmail, pinMaster } = await req.json()
+    const auth = await exigirAdmin(req)
+    if (!auth.ok) return auth.resposta
+    const adminEmail = auth.usuario.email || 'admin'
+
+    const { planos, descontos, pinMaster } = await req.json()
 
     if (!Array.isArray(planos) || planos.length === 0) {
       return NextResponse.json({ error: 'Nenhum plano fornecido para atualização.' }, { status: 400 })
     }
 
     // Validação de segurança básica para ações administrativas
-    if (pinMaster && pinMaster !== 'FIXUM-MASTER-2026') {
-      return NextResponse.json({ error: 'PIN Master inválido para alteração de precificação.' }, { status: 403 })
+    if (pinMaster && !pinAdminValido(pinMaster)) {
+      return respostaPinInvalido('PIN Master inválido para alteração de precificação.')
     }
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 1. Buscar os planos atuais para log de auditoria
     const { data: planosAntigos } = await supabase

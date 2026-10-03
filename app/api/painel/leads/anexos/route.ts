@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 import path from 'path'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
+import { obterContextoConta, podeAcessarLead } from '@/lib/auth/contexto-conta'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 function obterClienteSupabase() {
-  return createClient(SUPABASE_URL, SERVICE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
+  return criarClienteAdmin()
 }
 
 // ── AUXILIAR: ARMAZENAMENTO PERSISTENTE LOCAL DE ANEXOS ──
@@ -50,6 +48,42 @@ function removerAnexoLocal(anexoId: string) {
   }
 }
 
+// ── AUXILIAR: AUTORIZAÇÃO ──
+// Cabeçalhos para chamar a rota interna de atividades com a mesma sessão do usuário
+function repassarSessao(req: Request): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const cookie = req.headers.get('cookie')
+  const authorization = req.headers.get('authorization')
+  if (cookie) headers.cookie = cookie
+  if (authorization) headers.authorization = authorization
+  return headers
+}
+
+async function autorizarLead(req: Request, supabase: SupabaseClient, leadId: string | null) {
+  const auth = await exigirUsuario(req)
+  if (!auth.ok) return { erro: auth.resposta }
+
+  const ctx = await obterContextoConta(supabase, auth.usuario)
+  if (!leadId || !(await podeAcessarLead(supabase, ctx, leadId))) {
+    return { erro: NextResponse.json({ error: 'Sem permissão para acessar este lead.' }, { status: 403 }) }
+  }
+  return { ctx }
+}
+
+async function leadDoAnexo(supabase: SupabaseClient, id: string): Promise<string | null> {
+  try {
+    const { data } = await supabase.from('anexos_leads').select('lead_id').eq('id', id).maybeSingle()
+    if (data?.lead_id) return data.lead_id
+  } catch {}
+  try {
+    if (fs.existsSync(BACKUP_FILE)) {
+      const todos: { id: string; lead_id: string }[] = JSON.parse(fs.readFileSync(BACKUP_FILE, 'utf8') || '[]')
+      return todos.find((item) => item.id === id)?.lead_id || null
+    }
+  } catch {}
+  return null
+}
+
 // ── GET: Buscar anexos do lead ──
 export async function GET(req: Request) {
   try {
@@ -61,6 +95,8 @@ export async function GET(req: Request) {
     }
 
     const supabase = obterClienteSupabase()
+    const permissao = await autorizarLead(req, supabase, leadId)
+    if (permissao.erro) return permissao.erro
     let anexos: any[] = []
 
     try {
@@ -96,8 +132,6 @@ export async function POST(req: Request) {
     const formData = await req.formData()
     const file = formData.get('arquivo') as File | null
     const leadId = formData.get('lead_id') as string | null
-    const usuarioId = (formData.get('usuario_id') as string | null) || 'sistema'
-    const usuarioNome = (formData.get('usuario_nome') as string | null) || 'Equipe Fixum'
     const categoria = (formData.get('categoria') as string | null) || 'documento'
 
     if (!file || !leadId) {
@@ -105,6 +139,10 @@ export async function POST(req: Request) {
     }
 
     const supabase = obterClienteSupabase()
+    const permissao = await autorizarLead(req, supabase, leadId)
+    if (permissao.erro) return permissao.erro
+    const usuarioId = permissao.ctx.id
+    const usuarioNome = permissao.ctx.nome
 
     // 1. Determinar extensão e tipo
     const nomeOriginal = file.name
@@ -185,7 +223,7 @@ export async function POST(req: Request) {
     try {
       await fetch(new URL('/api/painel/leads', req.url).toString(), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: repassarSessao(req),
         body: JSON.stringify({
           lead_id: leadId,
           usuario_id: usuarioId,
@@ -213,6 +251,8 @@ export async function DELETE(req: Request) {
     }
 
     const supabase = obterClienteSupabase()
+    const permissao = await autorizarLead(req, supabase, await leadDoAnexo(supabase, anexoId))
+    if (permissao.erro) return permissao.erro
 
     removerAnexoLocal(anexoId)
 

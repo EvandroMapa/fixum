@@ -1,37 +1,26 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { PLANOS_OFICIAIS, obterPlanoPorId } from '@/lib/planos'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
+import { obterContextoConta, listarMembrosEquipe } from '@/lib/auth/contexto-conta'
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url)
-    const usuarioId = searchParams.get('usuario_id')
+    const auth = await exigirUsuario(req)
+    if (!auth.ok) return auth.resposta
 
-    if (!usuarioId) {
-      return NextResponse.json({ error: 'usuario_id é obrigatório.' }, { status: 400 })
-    }
+    const supabase = criarClienteAdmin()
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
-
-    // 1. Identificar usuário e metadados
-    const { data: userData, error: userError } = await supabase.auth.admin.getUserById(usuarioId)
-    if (userError || !userData?.user) {
-      return NextResponse.json({ error: 'Usuário não encontrado.' }, { status: 404 })
-    }
-
-    const user = userData.user
-    const meta = user.user_metadata || {}
+    // 1. Identificar usuário autenticado e metadados (o usuario_id da query é ignorado)
+    const usuarioId = auth.usuario.id
+    const meta = auth.usuario.user_metadata || {}
     const { data: perfil } = await supabase.from('perfis').select('*').eq('id', usuarioId).maybeSingle()
+    const ctx = await obterContextoConta(supabase, auth.usuario)
 
-    const tipo = perfil?.tipo || meta.tipo || meta.tipo_anunciante || 'proprietario'
-    const imobId = meta.imobiliaria_id || perfil?.imobiliaria_id || null
+    const tipo = ctx.tipo
+    const imobId = ctx.isCorretorVinculado ? ctx.imobiliariaId : null
     const isCorretor = tipo === 'corretor' || !!imobId
-    const isImobiliaria = tipo === 'imobiliaria'
+    const isImobiliaria = ctx.isImobiliaria
 
     const idDonoConta = (isCorretor && imobId) ? imobId : usuarioId
 
@@ -46,16 +35,11 @@ export async function GET(req: Request) {
     }
 
     // 3. Buscar equipe de corretores
-    const { data: allUsers } = await supabase.auth.admin.listUsers()
-    const todosUsuarios = allUsers?.users || []
-    
     let idsEquipe: string[] = [idDonoConta]
     const mapaNomes: Record<string, string> = { [idDonoConta]: 'Imobiliária (Direto)' }
     const listaCorretores: { id: string; nome: string; email: string }[] = []
 
-    const corretoresEquipe = todosUsuarios.filter(
-      (u) => u.user_metadata?.imobiliaria_id === idDonoConta
-    )
+    const corretoresEquipe = await listarMembrosEquipe(supabase, idDonoConta)
 
     corretoresEquipe.forEach((c) => {
       idsEquipe.push(c.id)

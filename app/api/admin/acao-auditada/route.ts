@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { CHAVE_SECRETA_ADMIN_PADRAO } from '@/lib/admin-auth'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirAdmin } from '@/lib/auth/servidor'
 
 export async function POST(req: Request) {
   try {
+    const auth = await exigirAdmin(req)
+    if (!auth.ok) return auth.resposta
+    const adminEmail = auth.usuario.email || 'admin'
+
     const body = await req.json()
     const {
       tipoAcao,
@@ -15,22 +16,13 @@ export async function POST(req: Request) {
       dadosAnteriores,
       dadosNovos,
       justificativa,
-      adminPin,
-      adminEmail,
     } = body
-
-    // 1. Validação da Chave Secreta Master
-    if (!adminPin || adminPin.trim() !== CHAVE_SECRETA_ADMIN_PADRAO) {
-      return NextResponse.json({ error: 'Chave Secreta Master inválida. Ação bloqueada.' }, { status: 403 })
-    }
 
     if (!tipoAcao || !justificativa) {
       return NextResponse.json({ error: 'Ação e justificativa obrigatória são necessárias.' }, { status: 400 })
     }
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 2. Executar ação correspondente
     if (tipoAcao === 'ALTERAR_PLANO_MANUAL' && entidadeId && dadosNovos?.plano_id) {

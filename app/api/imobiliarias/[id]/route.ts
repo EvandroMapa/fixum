@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient as createSupabaseAdmin } from '@supabase/supabase-js'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { listarMembrosEquipe, lerVinculo } from '@/lib/auth/contexto-conta'
 
 export async function GET(
   req: NextRequest,
@@ -16,9 +12,7 @@ export async function GET(
       return NextResponse.json({ error: 'ID da imobiliária é obrigatório.' }, { status: 400 })
     }
 
-    const supabase = createSupabaseAdmin(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 1. Buscar perfil da imobiliária
     const { data: perfil, error: erroPerfil } = await supabase
@@ -41,9 +35,7 @@ export async function GET(
     }
 
     // 2. Buscar corretores associados
-    const { data: allUsers } = await supabase.auth.admin.listUsers()
-    const corretores = (allUsers?.users || [])
-      .filter((u) => u.user_metadata?.imobiliaria_id === id && u.id !== id)
+    const corretores = (await listarMembrosEquipe(supabase, id))
       .map((u) => ({
         id: u.id,
         nome: u.user_metadata?.nome || u.user_metadata?.full_name || u.email?.split('@')[0] || 'Corretor',
@@ -51,7 +43,7 @@ export async function GET(
         telefone: u.user_metadata?.telefone || null,
         creci: u.user_metadata?.creci || null,
         foto_url: u.user_metadata?.foto_url || null,
-        papel: u.user_metadata?.papel || 'corretor',
+        papel: lerVinculo(u).papel || 'corretor',
         modo_exibicao_preco: modoExibicaoPreco,
       }))
 

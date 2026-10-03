@@ -8,6 +8,7 @@ import { PLANOS_OFICIAIS, formatarMoeda } from '@/lib/planos'
 import { CONFIG_PADRAO } from '@/lib/constants'
 import {
   isSessaoAdminValida,
+  verificarAdminNoServidor,
   encerrarSessaoAdmin,
   isSessaoBloqueadaPorInatividade,
   bloquearTelaAdmin,
@@ -149,20 +150,8 @@ export default function AdminPage() {
       return
     }
 
-    // 2. Verificar se o usuário autenticado É DE FATO ADMINISTRADOR
-    const { data: perfil } = await supabase
-      .from('perfis')
-      .select('is_admin, tipo')
-      .eq('id', user.id)
-      .maybeSingle()
-
-    const ehAdmin = (
-      user.email === 'admin@fixum.com.br' ||
-      perfil?.is_admin === true ||
-      perfil?.tipo === 'admin' ||
-      user.user_metadata?.is_admin === true ||
-      user.user_metadata?.tipo === 'admin'
-    )
+    // 2. Verificar NO SERVIDOR se o usuário autenticado É DE FATO ADMINISTRADOR (perfis.is_admin)
+    const { ok: ehAdmin } = await verificarAdminNoServidor()
 
     if (!ehAdmin) {
       encerrarSessaoAdmin()
@@ -331,7 +320,6 @@ export default function AdminPage() {
           entidadeId: clienteId,
           dadosNovos: { plano_id: novoPlanoId },
           justificativa,
-          adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || 'FIXUM-MASTER-2026',
           adminEmail: usuarioAtual?.email,
         }),
       })
@@ -370,7 +358,6 @@ export default function AdminPage() {
           entidade: 'perfis',
           entidadeId: clienteId,
           justificativa,
-          adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || 'FIXUM-MASTER-2026',
           adminEmail: usuarioAtual?.email,
         }),
       })
@@ -409,7 +396,6 @@ export default function AdminPage() {
         entidadeId: clienteId,
         dadosNovos: { notas_admin: notas },
         justificativa: 'Atualização de notas internas da equipe',
-        adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || 'FIXUM-MASTER-2026',
         adminEmail: usuarioAtual?.email,
       }),
     })

@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 import path from 'path'
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirUsuario } from '@/lib/auth/servidor'
+import { obterContextoConta, podeAcessarLead } from '@/lib/auth/contexto-conta'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 function obterClienteSupabase() {
-  return createClient(SUPABASE_URL, SERVICE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
+  return criarClienteAdmin()
 }
 
 // ── AUXILIAR: ARMAZENAMENTO PERSISTENTE LOCAL DE COMPROMISSOS ──
@@ -55,6 +53,42 @@ function removerCompromissoLocal(compromissoId: string) {
   }
 }
 
+// ── AUXILIAR: AUTORIZAÇÃO ──
+// Cabeçalhos para chamar a rota interna de atividades com a mesma sessão do usuário
+function repassarSessao(req: Request): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const cookie = req.headers.get('cookie')
+  const authorization = req.headers.get('authorization')
+  if (cookie) headers.cookie = cookie
+  if (authorization) headers.authorization = authorization
+  return headers
+}
+
+async function autorizarLead(req: Request, supabase: SupabaseClient, leadId: string | null) {
+  const auth = await exigirUsuario(req)
+  if (!auth.ok) return { erro: auth.resposta }
+
+  const ctx = await obterContextoConta(supabase, auth.usuario)
+  if (!leadId || !(await podeAcessarLead(supabase, ctx, leadId))) {
+    return { erro: NextResponse.json({ error: 'Sem permissão para acessar este lead.' }, { status: 403 }) }
+  }
+  return { ctx }
+}
+
+async function leadDoCompromisso(supabase: SupabaseClient, id: string): Promise<string | null> {
+  try {
+    const { data } = await supabase.from('compromissos_leads').select('lead_id').eq('id', id).maybeSingle()
+    if (data?.lead_id) return data.lead_id
+  } catch {}
+  try {
+    if (fs.existsSync(BACKUP_FILE)) {
+      const todos: { id: string; lead_id: string }[] = JSON.parse(fs.readFileSync(BACKUP_FILE, 'utf8') || '[]')
+      return todos.find((item) => item.id === id)?.lead_id || null
+    }
+  } catch {}
+  return null
+}
+
 // ── GET: Buscar compromissos do lead ──
 export async function GET(req: Request) {
   try {
@@ -66,6 +100,8 @@ export async function GET(req: Request) {
     }
 
     const supabase = obterClienteSupabase()
+    const permissao = await autorizarLead(req, supabase, leadId)
+    if (permissao.erro) return permissao.erro
     let compromissos: any[] = []
 
     try {
@@ -107,8 +143,6 @@ export async function POST(req: Request) {
       responsavel_id,
       responsavel_nome,
       responsavel_telefone,
-      usuario_autor_id,
-      usuario_autor_nome,
     } = body
 
     if (!lead_id || !titulo || !data_hora) {
@@ -116,6 +150,10 @@ export async function POST(req: Request) {
     }
 
     const supabase = obterClienteSupabase()
+    const permissao = await autorizarLead(req, supabase, lead_id)
+    if (permissao.erro) return permissao.erro
+    const usuario_autor_id = permissao.ctx.id
+    const usuario_autor_nome = permissao.ctx.nome
 
     const novoCompromisso = {
       id: 'comp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
@@ -161,7 +199,7 @@ export async function POST(req: Request) {
     try {
       await fetch(new URL('/api/painel/leads', req.url).toString(), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: repassarSessao(req),
         body: JSON.stringify({
           lead_id,
           usuario_id: usuario_autor_id,
@@ -199,6 +237,8 @@ export async function PATCH(req: Request) {
     }
 
     const supabase = obterClienteSupabase()
+    const permissao = await autorizarLead(req, supabase, await leadDoCompromisso(supabase, compromisso_id))
+    if (permissao.erro) return permissao.erro
 
     // 1. Atualizar no backup local
     if (leadIdSafe(lead_id)) {
@@ -239,6 +279,8 @@ export async function DELETE(req: Request) {
     }
 
     const supabase = obterClienteSupabase()
+    const permissao = await autorizarLead(req, supabase, await leadDoCompromisso(supabase, compromissoId))
+    if (permissao.erro) return permissao.erro
 
     removerCompromissoLocal(compromissoId)
 

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { CHAVE_SECRETA_ADMIN_PADRAO } from '@/lib/admin-auth'
+import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { exigirAdmin, pinAdminValido, respostaPinInvalido } from '@/lib/auth/servidor'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yxiaubwwzcnpmwfbvvrt.supabase.co'
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aWF1Ynd3emNucG13ZmJ2dnJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjY1OTM0NSwiZXhwIjoyMTAyMjM1MzQ1fQ.uHbg0JE9v929ErRqhuEeUxYXPvpIjAVK9Rs4YwSka3s'
 const ASAAS_API_URL = process.env.ASAAS_API_URL || (
   process.env.NODE_ENV === 'production' && !process.env.ASAAS_SANDBOX
     ? 'https://api.asaas.com/v3'
@@ -13,6 +11,10 @@ const ASAAS_API_KEY = process.env.ASAAS_API_KEY || ''
 
 export async function POST(req: Request) {
   try {
+    const auth = await exigirAdmin(req)
+    if (!auth.ok) return auth.resposta
+    const adminEmail = auth.usuario.email || 'admin'
+
     const body = await req.json()
     const {
       faturaId,
@@ -22,21 +24,18 @@ export async function POST(req: Request) {
       tipoReembolso,
       justificativa,
       adminPin,
-      adminEmail,
     } = body
 
     // 1. Validação do PIN Master do Administrador
-    if (!adminPin || adminPin.trim() !== CHAVE_SECRETA_ADMIN_PADRAO) {
-      return NextResponse.json({ error: 'PIN Master inválido. Operação de estorno rejeitada.' }, { status: 403 })
+    if (!pinAdminValido(adminPin)) {
+      return respostaPinInvalido('PIN Master inválido. Operação de estorno rejeitada.')
     }
 
     if (!faturaId || !usuarioId || !justificativa) {
       return NextResponse.json({ error: 'Parâmetros obrigatórios ausentes (faturaId, usuarioId, justificativa).' }, { status: 400 })
     }
 
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    })
+    const supabase = criarClienteAdmin()
 
     // 2. Obter dados da fatura original
     const { data: fatura, error: erroFatura } = await supabase

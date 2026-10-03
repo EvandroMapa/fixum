@@ -17,7 +17,7 @@ export default function ModalBloqueioInatividade({
   const [pin, setPin] = useState('')
   const [erro, setErro] = useState<string | null>(null)
 
-  function handleDesbloquear(e: React.FormEvent) {
+  async function handleDesbloquear(e: React.FormEvent) {
     e.preventDefault()
     setErro(null)
 
@@ -26,7 +26,7 @@ export default function ModalBloqueioInatividade({
       return
     }
 
-    const sucesso = desbloquearTelaComPin(pin)
+    const sucesso = await desbloquearTelaComPin(pin)
     if (sucesso) {
       setPin('')
       onDesbloqueado()
