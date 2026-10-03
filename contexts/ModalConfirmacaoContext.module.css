@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(22, 32, 28, 0.65);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: flex;
@@ -59,33 +59,33 @@
 }
 
 .iconePrimario {
-  background: #eff6ff;
-  border: 2px solid #bfdbfe;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  border: 2px solid var(--pedra-300);
+  color: var(--tinta-2);
 }
 
 .iconePerigo {
-  background: #fef2f2;
-  border: 2px solid #fecaca;
-  color: #dc2626;
+  background: var(--cor-erro-claro);
+  border: 2px solid #F3C3B5;
+  color: var(--marco-escuro);
 }
 
 .iconeAviso {
-  background: #fffbeb;
-  border: 2px solid #fde68a;
-  color: #d97706;
+  background: #FDF7E8;
+  border: 2px solid #F2D48E;
+  color: #C08A1E;
 }
 
 .iconeSucesso {
-  background: #f0fdf4;
-  border: 2px solid #bbf7d0;
-  color: #16a34a;
+  background: var(--cor-sucesso-claro);
+  border: 2px solid #C3DACB;
+  color: var(--cerrado);
 }
 
 .iconeInfo {
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
-  color: #475569;
+  background: var(--papel-claro);
+  border: 2px solid var(--pedra-200);
+  color: var(--pedra-600);
 }
 
 .conteudo {
@@ -96,7 +96,7 @@
 .titulo {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   letter-spacing: -0.02em;
   line-height: 1.3;
   margin-bottom: 0.5rem;
@@ -104,7 +104,7 @@
 
 .mensagem {
   font-size: 0.92rem;
-  color: #64748b;
+  color: var(--pedra-500);
   line-height: 1.55;
 }
 
@@ -124,9 +124,9 @@
   flex: 1;
   padding: 11px 16px;
   border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   background: #ffffff;
-  color: #475569;
+  color: var(--pedra-600);
   font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
@@ -135,9 +135,9 @@
 }
 
 .btnCancelar:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: var(--papel-claro);
+  border-color: var(--pedra-300);
+  color: var(--tinta);
 }
 
 .btnAcao {
@@ -155,46 +155,46 @@
 }
 
 .btnPrimario {
-  background: #1565c0;
-  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.25);
+  background: var(--tinta);
+  box-shadow: 0 4px 12px rgba(22, 32, 28, 0.25);
 }
 
 .btnPrimario:hover {
   background: #0d47a1;
-  box-shadow: 0 6px 16px rgba(21, 101, 192, 0.35);
+  box-shadow: 0 6px 16px rgba(22, 32, 28, 0.35);
   transform: translateY(-1px);
 }
 
 .btnPerigo {
-  background: #dc2626;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+  background: var(--marco-escuro);
+  box-shadow: 0 4px 12px rgba(178, 51, 24, 0.25);
 }
 
 .btnPerigo:hover {
-  background: #b91c1c;
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+  background: #8F2812;
+  box-shadow: 0 6px 16px rgba(178, 51, 24, 0.35);
   transform: translateY(-1px);
 }
 
 .btnAviso {
-  background: #ea580c;
+  background: var(--marco-escuro);
   box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
 }
 
 .btnAviso:hover {
-  background: #c2410c;
+  background: var(--marco-escuro);
   box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
   transform: translateY(-1px);
 }
 
 .btnSucesso {
-  background: #16a34a;
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  background: var(--cerrado);
+  box-shadow: 0 4px 12px rgba(46, 107, 78, 0.25);
 }
 
 .btnSucesso:hover {
-  background: #15803d;
-  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
+  background: var(--cerrado);
+  box-shadow: 0 6px 16px rgba(46, 107, 78, 0.35);
   transform: translateY(-1px);
 }
 

@@ -11,7 +11,7 @@
    ═══════════════════════════════════════════════════════════════ */
 .barraControle {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 8px;
   padding: 0.45rem 0.75rem;
   display: flex;
@@ -38,8 +38,8 @@
   padding: 5px 10px;
   border-radius: 6px;
   border: 1px solid transparent;
-  background: #f8fafc;
-  color: #475569;
+  background: var(--papel-claro);
+  color: var(--pedra-600);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -47,13 +47,13 @@
 }
 
 .btnPillStatus:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 .badgePillQtd {
-  background: #e2e8f0;
-  color: #334155;
+  background: var(--pedra-200);
+  color: var(--pedra-700);
   font-size: 0.7rem;
   padding: 1px 6px;
   border-radius: 10px;
@@ -61,57 +61,57 @@
 }
 
 .btnPillAtivoAbertos {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  border-color: var(--pedra-300);
+  color: var(--tinta-2);
 }
 
 .btnPillAtivoAbertos .badgePillQtd {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   color: #ffffff;
 }
 
 .btnPillAtivoFechados {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
-  color: #15803d;
+  background: var(--cor-sucesso-claro);
+  border-color: #C3DACB;
+  color: var(--cerrado);
 }
 
 .btnPillAtivoFechados .badgePillQtd {
-  background: #16a34a;
+  background: var(--cerrado);
   color: #ffffff;
 }
 
 .btnPillAtivoPerdidos {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #b91c1c;
+  background: var(--cor-erro-claro);
+  border-color: #F3C3B5;
+  color: #8F2812;
 }
 
 .btnPillAtivoPerdidos .badgePillQtd {
-  background: #dc2626;
+  background: var(--marco-escuro);
   color: #ffffff;
 }
 
 .btnPillAtivoArquivados {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #334155;
+  background: var(--papel);
+  border-color: var(--pedra-300);
+  color: var(--pedra-700);
 }
 
 .btnPillAtivoArquivados .badgePillQtd {
-  background: #475569;
+  background: var(--pedra-600);
   color: #ffffff;
 }
 
 .btnPillAtivoTodos {
-  background: #f8fafc;
-  border-color: #94a3b8;
-  color: #0f172a;
+  background: var(--papel-claro);
+  border-color: var(--pedra-400);
+  color: var(--tinta);
 }
 
 .btnPillAtivoTodos .badgePillQtd {
-  background: #0f172a;
+  background: var(--tinta);
   color: #ffffff;
 }
 
@@ -132,11 +132,11 @@
 
 .toggleVisualizacao {
   display: flex;
-  background: #f1f5f9;
+  background: var(--papel);
   border-radius: 8px;
   padding: 2px;
   gap: 2px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 .btnToggle {
@@ -147,7 +147,7 @@
   border-radius: 6px;
   border: none;
   background: transparent;
-  color: #475569;
+  color: var(--pedra-600);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -155,13 +155,13 @@
 }
 
 .btnToggle:hover {
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .btnToggleAtivo {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   color: #ffffff;
-  box-shadow: 0 1px 4px rgba(29, 78, 216, 0.25);
+  box-shadow: 0 1px 4px rgba(22, 32, 28, 0.25);
 }
 
 .btnRecarregarIcone {
@@ -171,9 +171,9 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   background: #ffffff;
-  color: #334155;
+  color: var(--pedra-700);
   cursor: pointer;
   transition: all 0.15s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
@@ -181,9 +181,9 @@
 }
 
 .btnRecarregarIcone:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #94a3b8;
-  color: #0f172a;
+  background: var(--papel-claro);
+  border-color: var(--pedra-400);
+  color: var(--tinta);
   transform: translateY(-1px);
 }
 
@@ -210,9 +210,9 @@
 .selectFiltro {
   padding: 5px 10px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   background: #ffffff;
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -226,8 +226,8 @@
 .campoBuscaWrapper {
   display: flex;
   align-items: center;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-300);
   border-radius: 6px;
   padding: 0 8px;
   min-width: 180px;
@@ -253,7 +253,7 @@
 .btnLimparBusca {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--pedra-400);
   cursor: pointer;
   font-size: 0.8rem;
   padding: 4px;
@@ -277,7 +277,7 @@
   min-height: 0;
   height: calc(100vh - 190px);
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f8fafc;
+  scrollbar-color: var(--pedra-300) var(--papel-claro);
 }
 
 .kanbanContainer::-webkit-scrollbar {
@@ -285,23 +285,23 @@
 }
 
 .kanbanContainer::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--papel);
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 .kanbanContainer::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--pedra-300);
   border-radius: 999px;
 }
 
 .kanbanContainer::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--pedra-400);
 }
 
 .colunaKanban {
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
   border-radius: 12px;
   overflow: hidden;
   display: flex;
@@ -316,9 +316,9 @@
 }
 
 .colunaHover {
-  background: #eff6ff !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
+  background: var(--pedra-100) !important;
+  border-color: var(--hidro) !important;
+  box-shadow: 0 0 0 2px rgba(44, 95, 138, 0.25) !important;
 }
 
 /* COLUNA COLAPSADA (FECHADOS / PERDIDOS) */
@@ -326,9 +326,9 @@
   width: 48px;
   min-width: 48px;
   flex-shrink: 0;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-top: 4px solid #cbd5e1;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
+  border-top: 4px solid var(--pedra-300);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -347,33 +347,33 @@
 }
 
 .colapsada_fechado {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
+  background: var(--cor-sucesso-claro);
+  border-color: #C3DACB;
 }
 
 .colapsada_fechado .colapsadaBadge {
-  background: #dcfce7;
-  color: #15803d;
-  border: 1px solid #86efac;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
+  border: 1px solid #A9CDB6;
 }
 
 .colapsada_fechado .colapsadaTextoRotacionado span {
-  color: #166534;
+  color: #24563E;
 }
 
 .colapsada_perdido {
-  background: #fef2f2;
-  border-color: #fecaca;
+  background: var(--cor-erro-claro);
+  border-color: #F3C3B5;
 }
 
 .colapsada_perdido .colapsadaBadge {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
+  background: var(--marco-claro);
+  color: #8F2812;
+  border: 1px solid #EBA592;
 }
 
 .colapsada_perdido .colapsadaTextoRotacionado span {
-  color: #991b1b;
+  color: #8F2812;
 }
 
 .colapsadaTopo {
@@ -392,9 +392,9 @@
   font-weight: 800;
   padding: 1px 5px;
   border-radius: 100px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1px solid var(--pedra-300);
 }
 
 .colapsadaTextoRotacionado {
@@ -408,7 +408,7 @@
 .colapsadaTextoRotacionado span {
   font-size: 0.8rem;
   font-weight: 800;
-  color: #475569;
+  color: var(--pedra-600);
   letter-spacing: 0.5px;
 }
 
@@ -417,29 +417,29 @@
   height: 24px;
   border-radius: 50%;
   background: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--pedra-700);
   font-weight: 800;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.15s ease;
 }
 
 .colunaKanbanColapsada:hover .colapsadaBotaoExpandir {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   color: #ffffff;
-  border-color: #1d4ed8;
+  border-color: var(--tinta-2);
   transform: scale(1.1);
 }
 
 .colunaCabecalho {
   padding: 10px 14px;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  border-top: 4px solid #cbd5e1;
+  border-bottom: 1px solid var(--pedra-200);
+  border-top: 4px solid var(--pedra-300);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -463,7 +463,7 @@
 .colunaTitulo {
   font-size: 0.86rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -477,9 +477,9 @@
 }
 
 .colunaContador {
-  background: #eff6ff;
-  border: 1px solid #dbeafe;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  border: 1px solid var(--pedra-200);
+  color: var(--tinta-2);
   font-size: 0.74rem;
   font-weight: 800;
   padding: 2px 8px;
@@ -490,9 +490,9 @@
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   background: #ffffff;
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.85rem;
   font-weight: bold;
   cursor: pointer;
@@ -504,9 +504,9 @@
 }
 
 .btnMinimizarColuna:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-  border-color: #94a3b8;
+  background: var(--papel);
+  color: var(--tinta);
+  border-color: var(--pedra-400);
 }
 
 .colunaCards {
@@ -517,7 +517,7 @@
   flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--pedra-300) transparent;
 }
 
 .colunaCards::-webkit-scrollbar {
@@ -525,14 +525,14 @@
 }
 
 .colunaCards::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: var(--pedra-300);
   border-radius: 10px;
 }
 
 .colunaVazia {
   padding: 2.5rem 0.75rem;
   text-align: center;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.8rem;
   font-style: italic;
 }
@@ -545,13 +545,13 @@
 
 .dropPlaceholder {
   height: 36px;
-  border: 2px dashed #2563eb;
-  background: rgba(37, 99, 235, 0.08);
+  border: 2px dashed var(--tinta);
+  background: rgba(22, 32, 28, 0.08);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1d4ed8;
+  color: var(--tinta-2);
   font-weight: 700;
   font-size: 0.74rem;
   margin: 2px 0;
@@ -561,13 +561,13 @@
 
 .dropPlaceholderVazio {
   height: 56px;
-  border: 2px dashed #3b82f6;
+  border: 2px dashed var(--hidro);
   background: rgba(239, 246, 255, 0.85);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1d4ed8;
+  color: var(--tinta-2);
   font-weight: 700;
   font-size: 0.76rem;
   margin: 6px;
@@ -591,10 +591,10 @@
    ═══════════════════════════════════════════════════════════════ */
 .cardKanban {
   background: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   border-radius: 10px;
   padding: 10px 11px;
-  box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.08), 0 1px 4px -1px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 2px 6px -1px rgba(22, 32, 28, 0.08), 0 1px 4px -1px rgba(22, 32, 28, 0.05);
   cursor: grab;
   user-select: none;
   display: flex;
@@ -606,9 +606,9 @@
 }
 
 .cardKanban:hover {
-  border-color: #60a5fa;
+  border-color: #8FB3D1;
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px -3px rgba(37, 99, 235, 0.14), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 22px -3px rgba(22, 32, 28, 0.14), 0 4px 8px -2px rgba(22, 32, 28, 0.06);
 }
 
 .cardKanban:active {
@@ -618,12 +618,12 @@
 .cardArrastando {
   opacity: 0.35;
   transform: scale(0.97);
-  border: 2px dashed #3b82f6 !important;
+  border: 2px dashed var(--hidro) !important;
   box-shadow: none !important;
 }
 
 .cardNaoAtribuido {
-  border-left: 3.5px solid #f59e0b !important;
+  border-left: 3.5px solid var(--ouro) !important;
 }
 
 /* 1. Header do Card */
@@ -674,7 +674,7 @@
 .cardNome {
   font-size: 0.84rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -697,14 +697,14 @@
 
 .cardTelefone {
   font-size: 0.71rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 500;
   white-space: nowrap;
 }
 
 .cardTempo {
   font-size: 0.675rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 500;
 }
 
@@ -717,9 +717,9 @@
 }
 
 .badgeCodigoTopoDestaque {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1.5px solid #bfdbfe;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1.5px solid var(--pedra-300);
   font-size: 0.74rem;
   font-weight: 800;
   padding: 2px 7px;
@@ -727,21 +727,21 @@
   white-space: nowrap;
   letter-spacing: 0.25px;
   line-height: 1.2;
-  box-shadow: 0 1px 2px rgba(29, 78, 216, 0.06);
+  box-shadow: 0 1px 2px rgba(22, 32, 28, 0.06);
   flex-shrink: 0;
   transition: all 0.15s ease;
 }
 
 .cardKanban:hover .badgeCodigoTopoDestaque {
-  background: #dbeafe;
-  border-color: #93c5fd;
-  color: #1e40af;
+  background: var(--pedra-200);
+  border-color: var(--pedra-400);
+  color: var(--tinta-2);
 }
 
 .badgeAguardandoCorretor {
-  background: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
+  background: #FDF7E8;
+  color: var(--ouro-escuro);
+  border: 1px solid #F2D48E;
   font-size: 0.62rem;
   font-weight: 800;
   padding: 1px 5px;
@@ -763,27 +763,27 @@
 }
 
 .tagContatoOk {
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
+  background: var(--cor-sucesso-claro);
+  color: #24563E;
+  border: 1px solid #C3DACB;
 }
 
 .tagContatoPendente {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1px solid var(--pedra-300);
 }
 
 .tagContatoAlerta {
-  background: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
+  background: #FDF7E8;
+  color: var(--ouro-escuro);
+  border: 1px solid #F2D48E;
 }
 
 .tagContatoCritico {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background: var(--cor-erro-claro);
+  color: #8F2812;
+  border: 1px solid #F3C3B5;
   animation: pulseCritico 2s infinite;
 }
 
@@ -800,14 +800,14 @@
   gap: 8px;
   padding: 6px 8px;
   border-radius: 8px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border: 1px solid var(--papel);
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .cardKanban:hover .cardImovelInfo {
-  background: #f1f5f9;
-  border-color: #e2e8f0;
+  background: var(--papel);
+  border-color: var(--pedra-200);
 }
 
 .cardImovelThumb {
@@ -816,19 +816,19 @@
   border-radius: 6px;
   object-fit: cover;
   flex-shrink: 0;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 .cardImovelThumbPlaceholder {
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.95rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   flex-shrink: 0;
 }
 
@@ -848,9 +848,9 @@
 }
 
 .badgeCodigoCardLead {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1px solid var(--pedra-300);
   font-size: 0.62rem;
   font-weight: 800;
   padding: 0 4px;
@@ -863,7 +863,7 @@
 
 .cardImovelTitulo {
   font-size: 0.74rem;
-  color: #1e293b;
+  color: var(--tinta-2);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -874,7 +874,7 @@
 .cardImovelPreco {
   font-size: 0.8rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .cardDestaqueVisita {
@@ -890,9 +890,9 @@
 .cardDestaqueProposta {
   font-size: 0.68rem;
   font-weight: 700;
-  color: #b45309;
-  background: #fffbeb;
-  border: 1px solid #fde68a;
+  color: var(--ouro-escuro);
+  background: #FDF7E8;
+  border: 1px solid #F2D48E;
   padding: 2px 5px;
   border-radius: 4px;
 }
@@ -900,9 +900,9 @@
 .cardDestaquePendente {
   font-size: 0.68rem;
   font-weight: 700;
-  color: #92400e;
-  background: #fef3c7;
-  border: 1px dashed #f59e0b;
+  color: var(--ouro-escuro);
+  background: var(--ouro-claro);
+  border: 1px dashed var(--ouro);
   padding: 2px 5px;
   border-radius: 4px;
   cursor: pointer;
@@ -913,8 +913,8 @@
 }
 
 .cardDestaquePendente:hover {
-  background: #fde68a;
-  border-color: #d97706;
+  background: #F2D48E;
+  border-color: #C08A1E;
 }
 
 /* ── HOMOLOGAÇÃO DE VENDA NO CARD ── */
@@ -942,7 +942,7 @@
 }
 
 .btnHomologarRapido {
-  background: #16a34a;
+  background: var(--cerrado);
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -954,12 +954,12 @@
 }
 
 .btnHomologarRapido:hover {
-  background: #15803d;
+  background: var(--cerrado);
   transform: scale(1.03);
 }
 
 .btnRecusarRapido {
-  background: #ef4444;
+  background: var(--marco);
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -971,16 +971,16 @@
 }
 
 .btnRecusarRapido:hover {
-  background: #dc2626;
+  background: var(--marco-escuro);
   transform: scale(1.03);
 }
 
 .cardDestaqueFechadoAprovado {
   font-size: 0.68rem;
   font-weight: 700;
-  color: #15803d;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  color: var(--cerrado);
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #C3DACB;
   padding: 2px 5px;
   border-radius: 4px;
   display: flex;
@@ -995,7 +995,7 @@
   justify-content: space-between;
   gap: 6px;
   padding-top: 6px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
   margin-top: 2px;
   flex-wrap: nowrap;
 }
@@ -1005,7 +1005,7 @@
   align-items: center;
   gap: 3px;
   font-size: 0.71rem;
-  color: #475569;
+  color: var(--pedra-600);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -1025,7 +1025,7 @@
 }
 
 .btnWhatsCard {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #3F8A66, var(--cerrado));
   color: #ffffff;
   border: none;
   font-size: 0.68rem;
@@ -1037,15 +1037,15 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 1px 4px rgba(22, 163, 74, 0.25);
+  box-shadow: 0 1px 4px rgba(46, 107, 78, 0.25);
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 }
 
 .btnWhatsCard:hover {
-  background: linear-gradient(135deg, #16a34a, #15803d);
+  background: linear-gradient(135deg, var(--cerrado), var(--cerrado));
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(22, 163, 74, 0.35);
+  box-shadow: 0 3px 8px rgba(46, 107, 78, 0.35);
 }
 
 .btnWhatsCard:active {
@@ -1057,7 +1057,7 @@
    ═══════════════════════════════════════════════════════════════ */
 .tabelaContainer {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
@@ -1075,27 +1075,27 @@
 }
 
 .tabela th {
-  background: #f8fafc;
+  background: var(--papel-claro);
   padding: 12px 16px;
   font-weight: 700;
-  color: #475569;
+  color: var(--pedra-600);
   font-size: 0.78rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--pedra-200);
 }
 
 .trLinha {
   cursor: pointer;
   transition: background 0.15s ease;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
 }
 
 .trLinha:hover {
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 .tabela td {
   padding: 14px 16px;
-  color: #1e293b;
+  color: var(--tinta-2);
   vertical-align: middle;
 }
 
@@ -1109,18 +1109,18 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--pedra-200);
 }
 
 .tabelaTelefone {
   font-size: 0.74rem;
-  color: #64748b;
+  color: var(--pedra-500);
   display: block;
 }
 
@@ -1131,7 +1131,7 @@
 
 .tabelaImovelTitulo {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   max-width: 200px;
   white-space: nowrap;
   overflow: hidden;
@@ -1140,7 +1140,7 @@
 
 .tabelaImovelPreco {
   font-size: 0.75rem;
-  color: #1d4ed8;
+  color: var(--tinta-2);
   font-weight: 700;
 }
 
@@ -1152,35 +1152,35 @@
 }
 
 .badgeOk {
-  background: #f0fdf4;
-  color: #166534;
+  background: var(--cor-sucesso-claro);
+  color: #24563E;
 }
 
 .badgePendente {
-  background: #eff6ff;
-  color: #1e40af;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
 }
 
 .badgeAlerta {
-  background: #fffbeb;
-  color: #b45309;
+  background: #FDF7E8;
+  color: var(--ouro-escuro);
 }
 
 .badgeCritico {
-  background: #fef2f2;
-  color: #991b1b;
+  background: var(--cor-erro-claro);
+  color: #8F2812;
 }
 
 .tabelaCorretor {
   font-size: 0.78rem;
-  color: #334155;
+  color: var(--pedra-700);
   font-weight: 600;
 }
 
 .selectStatusTabela {
   padding: 4px 8px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   font-size: 0.75rem;
   font-weight: 700;
   background: #ffffff;
@@ -1189,13 +1189,13 @@
 
 .tabelaData {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .btnVerLead {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  border: 1px solid var(--pedra-300);
+  color: var(--tinta-2);
   font-size: 0.76rem;
   font-weight: 700;
   padding: 6px 12px;
@@ -1205,14 +1205,14 @@
 }
 
 .btnVerLead:hover {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   color: white;
 }
 
 .vazio {
   text-align: center;
   padding: 3rem 1.5rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .vazio span {
@@ -1222,7 +1222,7 @@
 }
 
 .textoCinza {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-style: italic;
 }
 
@@ -1230,8 +1230,8 @@
    FILA DE TRIAGEM & ATRIBUIÇÃO RÁPIDA (GESTOR)
    ═══════════════════════════════════════════════════════════════ */
 .bannerTriagem {
-  background: linear-gradient(135deg, #fffdf5 0%, #fef3c7 100%);
-  border: 1px solid #fde68a;
+  background: linear-gradient(135deg, #fffdf5 0%, var(--ouro-claro) 100%);
+  border: 1px solid #F2D48E;
   border-radius: 8px;
   padding: 0.35rem 0.85rem;
   display: flex;
@@ -1247,7 +1247,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.84rem;
-  color: #92400e;
+  color: var(--ouro-escuro);
 }
 
 .bannerTriagemPulso {
@@ -1262,7 +1262,7 @@
 }
 
 .btnRoletaEmMassa {
-  background: #d97706;
+  background: #C08A1E;
   border: none;
   color: #ffffff;
   font-size: 0.76rem;
@@ -1279,7 +1279,7 @@
 }
 
 .btnRoletaEmMassa:hover {
-  background: #b45309;
+  background: var(--ouro-escuro);
   transform: translateY(-1px);
 }
 
@@ -1290,8 +1290,8 @@
 
 .btnFiltrarTriagem {
   background: #ffffff;
-  border: 1px solid #fde68a;
-  color: #92400e;
+  border: 1px solid #F2D48E;
+  color: var(--ouro-escuro);
   font-size: 0.76rem;
   font-weight: 700;
   padding: 5px 10px;
@@ -1305,26 +1305,26 @@
 }
 
 .btnFiltrarTriagem:hover {
-  background: #fef3c7;
-  border-color: #f59e0b;
+  background: var(--ouro-claro);
+  border-color: var(--ouro);
 }
 
 .btnFiltrarTriagemAtivo {
-  background: #92400e;
+  background: var(--ouro-escuro);
   color: #ffffff;
-  border-color: #92400e;
+  border-color: var(--ouro-escuro);
 }
 
 /* CARDS NÃO ATRIBUÍDOS */
 .cardNaoAtribuido {
-  border-left: 4px solid #f59e0b !important;
+  border-left: 4px solid var(--ouro) !important;
   background: linear-gradient(to bottom, #fffdfa, #ffffff) !important;
 }
 
 .badgeAguardandoCorretor {
-  background: #fef3c7;
-  color: #92400e;
-  border: 1px solid #fde68a;
+  background: var(--ouro-claro);
+  color: var(--ouro-escuro);
+  border: 1px solid #F2D48E;
   font-size: 0.65rem;
   font-weight: 800;
   padding: 2px 7px;
@@ -1337,13 +1337,13 @@
 .badgeTempoEspera {
   font-size: 0.675rem;
   font-weight: 700;
-  color: #d97706;
+  color: #C08A1E;
 }
 
 .badgeTempoUrgente {
   font-size: 0.675rem;
   font-weight: 800;
-  color: #dc2626;
+  color: var(--marco-escuro);
   animation: pulseLight 2s infinite;
 }
 
@@ -1357,12 +1357,12 @@
 }
 
 .selectAtribuirRapido {
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-300);
   border-radius: 5px;
   font-size: 0.675rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   padding: 2px 4px;
   cursor: pointer;
   outline: none;
@@ -1375,10 +1375,10 @@
 }
 
 .selectAtribuirPendente {
-  background: #fffbeb;
-  border: 1px solid #f59e0b;
+  background: #FDF7E8;
+  border: 1px solid var(--ouro);
   border-radius: 5px;
-  color: #92400e;
+  color: var(--ouro-escuro);
   font-size: 0.675rem;
   font-weight: 800;
   padding: 2px 4px;
@@ -1394,15 +1394,15 @@
 }
 
 .selectAtribuirPendente:hover {
-  background: #fef3c7;
+  background: var(--ouro-claro);
 }
 
 /* SELETOR COMPACTO PARA A TABELA LISTA */
 .selectAtribuirTabelaPendente {
-  background: #fffbeb;
-  border: 1px solid #f59e0b;
+  background: #FDF7E8;
+  border: 1px solid var(--ouro);
   border-radius: 6px;
-  color: #92400e;
+  color: var(--ouro-escuro);
   font-size: 0.74rem;
   font-weight: 800;
   padding: 3px 8px;
@@ -1418,7 +1418,7 @@
 }
 
 .selectAtribuirTabelaPendente:hover {
-  background: #fef3c7;
+  background: var(--ouro-claro);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1430,7 +1430,7 @@
   gap: 1rem;
   width: 100%;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 10px;
   padding: 1.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
@@ -1442,27 +1442,27 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   padding-bottom: 0.85rem;
 }
 
 .secaoDedicadaTitulo {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0 0 2px 0;
 }
 
 .secaoDedicadaSub {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 0;
 }
 
 .secaoDedicadaBadge {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #334155;
+  background: var(--papel);
+  border: 1px solid var(--pedra-300);
+  color: var(--pedra-700);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 10px;
@@ -1476,7 +1476,7 @@
   justify-content: center;
   padding: 3.5rem 1rem;
   text-align: center;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .vazioDedicada span {
@@ -1488,13 +1488,13 @@
 .vazioDedicada h4 {
   font-size: 1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--tinta-2);
   margin: 0 0 4px 0;
 }
 
 .vazioDedicada p {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   margin: 0;
 }
 
@@ -1506,7 +1506,7 @@
 
 .cardDedicadoItem {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 8px;
   padding: 0.85rem 1rem;
   display: flex;
@@ -1518,7 +1518,7 @@
 }
 
 .cardDedicadoItem:hover {
-  border-color: #cbd5e1;
+  border-color: var(--pedra-300);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
@@ -1539,18 +1539,18 @@
 .cardDedicadoCliente strong {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .cardDedicadoCliente span {
   font-size: 0.76rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .badgePendenteHomologacao {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  color: #b45309;
+  background: #FDF7E8;
+  border: 1px solid #F2D48E;
+  color: var(--ouro-escuro);
   font-size: 0.72rem;
   font-weight: 800;
   padding: 2px 8px;
@@ -1558,9 +1558,9 @@
 }
 
 .badgeFechadoAprovado {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #15803d;
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #C3DACB;
+  color: var(--cerrado);
   font-size: 0.72rem;
   font-weight: 800;
   padding: 2px 8px;
@@ -1568,9 +1568,9 @@
 }
 
 .badgeMotivoPerda {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #b91c1c;
+  background: var(--cor-erro-claro);
+  border: 1px solid #F3C3B5;
+  color: #8F2812;
   font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 8px;
@@ -1582,9 +1582,9 @@
 }
 
 .badgeArquivado {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #475569;
+  background: var(--papel);
+  border: 1px solid var(--pedra-300);
+  color: var(--pedra-600);
   font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 8px;
@@ -1592,8 +1592,8 @@
 }
 
 .imovelDedicadoInfo {
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border: 1px solid var(--papel);
   border-radius: 6px;
   padding: 6px 10px;
   display: flex;
@@ -1604,7 +1604,7 @@
 
 .imovelDedicadoTitulo {
   font-size: 0.78rem;
-  color: #334155;
+  color: var(--pedra-700);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -1615,7 +1615,7 @@
 .imovelDedicadoValor {
   font-size: 0.82rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .cardDedicadoRodape {
@@ -1624,12 +1624,12 @@
   justify-content: space-between;
   gap: 0.5rem;
   padding-top: 4px;
-  border-top: 1px solid #f8fafc;
+  border-top: 1px solid var(--papel-claro);
 }
 
 .metaCorretorData {
   font-size: 0.74rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .acoesDedicadasBotoes {
@@ -1639,7 +1639,7 @@
 }
 
 .btnAprovarDedicado {
-  background: #16a34a;
+  background: var(--cerrado);
   color: #ffffff;
   border: none;
   border-radius: 5px;
@@ -1651,13 +1651,13 @@
 }
 
 .btnAprovarDedicado:hover {
-  background: #15803d;
+  background: var(--cerrado);
 }
 
 .btnRecusarDedicado {
-  background: #fee2e2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  background: var(--marco-claro);
+  color: var(--marco-escuro);
+  border: 1px solid #F3C3B5;
   border-radius: 5px;
   padding: 3px 7px;
   font-size: 0.72rem;
@@ -1666,9 +1666,9 @@
 }
 
 .btnReativarDedicado {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1px solid var(--pedra-300);
   border-radius: 5px;
   padding: 4px 9px;
   font-size: 0.74rem;
@@ -1678,14 +1678,14 @@
 }
 
 .btnReativarDedicado:hover {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   color: #ffffff;
 }
 
 .btnDesarquivarDedicado {
-  background: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #93c5fd;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1px solid var(--pedra-400);
   border-radius: 5px;
   padding: 4px 10px;
   font-size: 0.74rem;
@@ -1695,16 +1695,16 @@
 }
 
 .btnDesarquivarDedicado:hover {
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
-  border-color: #2563eb;
+  border-color: var(--tinta);
   transform: translateY(-1px);
 }
 
 .btnArquivarDedicado {
-  background: #f8fafc;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  color: var(--pedra-500);
+  border: 1px solid var(--pedra-200);
   border-radius: 5px;
   padding: 4px 8px;
   font-size: 0.74rem;
@@ -1714,8 +1714,8 @@
 }
 
 .btnArquivarDedicado:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1730,7 +1730,7 @@
   align-items: center;
   gap: 16px;
   z-index: 1000;
-  background: rgba(15, 23, 42, 0.94);
+  background: rgba(22, 32, 28, 0.94);
   backdrop-filter: blur(12px);
   padding: 10px 18px;
   border-radius: 16px;
@@ -1781,26 +1781,26 @@
 }
 
 .dropZoneGanho {
-  background: rgba(22, 163, 74, 0.25);
+  background: rgba(46, 107, 78, 0.25);
   border-color: rgba(74, 222, 128, 0.5);
 }
 
 .dropZoneGanhoHover {
-  background: rgba(22, 163, 74, 0.85);
-  border-color: #86efac;
+  background: rgba(46, 107, 78, 0.85);
+  border-color: #A9CDB6;
   border-style: solid;
   transform: scale(1.04);
   box-shadow: 0 0 24px rgba(74, 222, 128, 0.4);
 }
 
 .dropZonePerda {
-  background: rgba(220, 38, 38, 0.25);
+  background: rgba(178, 51, 24, 0.25);
   border-color: rgba(248, 113, 113, 0.5);
 }
 
 .dropZonePerdaHover {
-  background: rgba(220, 38, 38, 0.85);
-  border-color: #fca5a5;
+  background: rgba(178, 51, 24, 0.85);
+  border-color: #EBA592;
   border-style: solid;
   transform: scale(1.04);
   box-shadow: 0 0 24px rgba(248, 113, 113, 0.4);
@@ -1815,7 +1815,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(22, 32, 28, 0.65);
   backdrop-filter: blur(6px);
   z-index: 2000;
   display: flex;
@@ -1850,7 +1850,7 @@
   align-items: center;
   gap: 12px;
   padding: 1.25rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
 }
 
 .iconeAcaoModal {
@@ -1860,13 +1860,13 @@
 .cardAcaoModalTopo h3 {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0 0 2px 0;
 }
 
 .cardAcaoModalTopo p {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 0;
 }
 
@@ -1880,34 +1880,34 @@
 .labelAcaoModal {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 .inputAcaoModal,
 .selectAcaoModal {
   width: 100%;
   padding: 9px 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   border-radius: 8px;
   font-size: 0.9rem;
-  color: #0f172a;
+  color: var(--tinta);
   outline: none;
-  background: #f8fafc;
+  background: var(--papel-claro);
   transition: all 0.15s ease;
 }
 
 .inputAcaoModal:focus,
 .selectAcaoModal:focus {
-  border-color: #2563eb;
+  border-color: var(--tinta);
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.15);
 }
 
 .avisoHomologacaoModal {
   font-size: 0.74rem;
-  color: #b45309;
-  background: #fffbeb;
-  border: 1px solid #fef3c7;
+  color: var(--ouro-escuro);
+  background: #FDF7E8;
+  border: 1px solid var(--ouro-claro);
   padding: 8px 10px;
   border-radius: 6px;
   line-height: 1.4;
@@ -1919,14 +1919,14 @@
   justify-content: flex-end;
   gap: 8px;
   padding: 0.9rem 1.25rem;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border-top: 1px solid var(--papel);
 }
 
 .btnCancelarModal {
   background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #475569;
+  border: 1px solid var(--pedra-300);
+  color: var(--pedra-600);
   padding: 7px 14px;
   border-radius: 6px;
   font-size: 0.82rem;
@@ -1936,12 +1936,12 @@
 }
 
 .btnCancelarModal:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 .btnConfirmarFechamentoModal {
-  background: #16a34a;
+  background: var(--cerrado);
   border: none;
   color: #ffffff;
   padding: 8px 16px;
@@ -1953,11 +1953,11 @@
 }
 
 .btnConfirmarFechamentoModal:hover {
-  background: #15803d;
+  background: var(--cerrado);
 }
 
 .btnConfirmarPerdaModal {
-  background: #dc2626;
+  background: var(--marco-escuro);
   border: none;
   color: #ffffff;
   padding: 8px 16px;
@@ -1969,7 +1969,7 @@
 }
 
 .btnConfirmarPerdaModal:hover {
-  background: #b91c1c;
+  background: #8F2812;
 }
 
 /* ═══════════════════════════════════════════════════════════════

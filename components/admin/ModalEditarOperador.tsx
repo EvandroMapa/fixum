@@ -109,7 +109,7 @@ export default function ModalEditarOperador({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {/* Cabeçalho */}
         <div className={styles.cabecalho}>
-          <div className={styles.iconeTopo} style={{ background: 'rgba(59, 130, 246, 0.18)', borderColor: 'rgba(59, 130, 246, 0.35)' }}>
+          <div className={styles.iconeTopo} style={{ background: 'rgba(44, 95, 138, 0.18)', borderColor: 'rgba(44, 95, 138, 0.35)' }}>
             ✏️
           </div>
           <div>
@@ -160,7 +160,7 @@ export default function ModalEditarOperador({
               required
             />
             {operador.is_raiz && (
-              <span style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '2px' }}>
+              <span style={{ fontSize: '0.72rem', color: '#A39A8A', marginTop: '2px' }}>
                 O e-mail da conta raiz não pode ser alterado.
               </span>
             )}
@@ -178,7 +178,7 @@ export default function ModalEditarOperador({
                 style={{ cursor: 'default' }}
               >
                 <strong style={{ color: '#ffffff', fontSize: '0.88rem' }}>👑 Master / Diretoria (Conta Raiz)</strong>
-                <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>
+                <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#A39A8A' }}>
                   Superadministrador vitalício com acesso total irrestrito.
                 </p>
               </div>
@@ -195,12 +195,12 @@ export default function ModalEditarOperador({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
                         <strong style={{ color: '#ffffff', fontSize: '0.88rem' }}>{c.titulo}</strong>
                         {selecionado && (
-                          <span style={{ color: '#38bdf8', fontSize: '0.78rem', fontWeight: 800 }}>
+                          <span style={{ color: '#F0A58F', fontSize: '0.78rem', fontWeight: 800 }}>
                             ✓ Selecionado
                           </span>
                         )}
                       </div>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', lineHeight: 1.35 }}>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#A39A8A', lineHeight: 1.35 }}>
                         {c.descricao}
                       </p>
                     </div>
@@ -223,9 +223,9 @@ export default function ModalEditarOperador({
                   style={{
                     padding: '10px',
                     borderRadius: '10px',
-                    border: `1.5px solid ${statusConta === 'ativo' ? '#10b981' : '#334155'}`,
-                    background: statusConta === 'ativo' ? 'rgba(16, 185, 129, 0.15)' : '#0f172a',
-                    color: statusConta === 'ativo' ? '#34d399' : '#94a3b8',
+                    border: `1.5px solid ${statusConta === 'ativo' ? '#3F8A66' : '#3F3B34'}`,
+                    background: statusConta === 'ativo' ? 'rgba(46, 107, 78, 0.15)' : '#16201C',
+                    color: statusConta === 'ativo' ? '#7DBB98' : '#A39A8A',
                     fontWeight: 700,
                     fontSize: '0.85rem',
                     cursor: 'pointer',
@@ -245,9 +245,9 @@ export default function ModalEditarOperador({
                   style={{
                     padding: '10px',
                     borderRadius: '10px',
-                    border: `1.5px solid ${statusConta === 'suspenso' ? '#ef4444' : '#334155'}`,
-                    background: statusConta === 'suspenso' ? 'rgba(239, 68, 68, 0.15)' : '#0f172a',
-                    color: statusConta === 'suspenso' ? '#f87171' : '#94a3b8',
+                    border: `1.5px solid ${statusConta === 'suspenso' ? '#D4401F' : '#3F3B34'}`,
+                    background: statusConta === 'suspenso' ? 'rgba(212, 64, 31, 0.15)' : '#16201C',
+                    color: statusConta === 'suspenso' ? '#E8836B' : '#A39A8A',
                     fontWeight: 700,
                     fontSize: '0.85rem',
                     cursor: 'pointer',

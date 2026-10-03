@@ -128,8 +128,8 @@ export default function AdminLoginPage() {
 
         {usuarioSessaoAtiva && (
           <div style={{
-            background: 'rgba(59, 130, 246, 0.12)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
+            background: 'rgba(44, 95, 138, 0.12)',
+            border: '1px solid rgba(44, 95, 138, 0.3)',
             borderRadius: '12px',
             padding: '12px 16px',
             marginBottom: '20px',
@@ -139,7 +139,7 @@ export default function AdminLoginPage() {
             gap: '12px',
           }}>
             <div>
-              <div style={{ fontSize: '0.72rem', color: '#93c5fd', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div style={{ fontSize: '0.72rem', color: '#A39A8A', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Conta Master Conectada
               </div>
               <div style={{ fontSize: '0.9rem', color: '#ffffff', fontWeight: 700, wordBreak: 'break-all' }}>
@@ -150,10 +150,10 @@ export default function AdminLoginPage() {
               type="button"
               onClick={handleLogoutTrocarConta}
               style={{
-                background: '#334155',
+                background: '#3F3B34',
                 border: 'none',
                 borderRadius: '8px',
-                color: '#f8fafc',
+                color: '#FAF7F1',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 padding: '6px 10px',
@@ -207,7 +207,7 @@ export default function AdminLoginPage() {
           <div className={styles.grupoInput}>
             <label htmlFor="admin-pin-master" className={styles.label}>
               <span>Chave Secreta Master / PIN</span>
-              <span style={{ fontSize: '0.75rem', color: '#f87171' }}>Obrigatório</span>
+              <span style={{ fontSize: '0.75rem', color: '#E8836B' }}>Obrigatório</span>
             </label>
             <InputSenha
               id="admin-pin-master"

@@ -58,7 +58,7 @@
 }
 
 .iconBusca {
-  color: #94a3b8;
+  color: var(--pedra-400);
   flex-shrink: 0;
 }
 
@@ -74,14 +74,14 @@
 }
 
 .input::placeholder {
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .btnLimpar {
   background: none;
   border: none;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 12px;
   padding: 4px 6px;
   border-radius: 50%;
@@ -89,8 +89,8 @@
   flex-shrink: 0;
 }
 .btnLimpar:hover {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--papel);
+  color: var(--pedra-600);
 }
 
 /* Separador vertical */
@@ -99,7 +99,7 @@
   display: block;
   width: 1px;
   height: 28px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
   flex-shrink: 0;
 }
 
@@ -170,7 +170,7 @@
 
   .btnBuscar {
     padding: 14px;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--papel);
   }
 
   .tab {

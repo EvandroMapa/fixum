@@ -456,11 +456,11 @@ function ExplorarConteudo() {
             {carregando ? (
               <span className={styles.carregando}>Buscando imóveis...</span>
             ) : isFavoritos ? (
-              <span className={styles.resultados} style={{ color: '#b91c1c' }}>
+              <span className={styles.resultados} style={{ color: '#8F2812' }}>
                 <strong>❤️ {totalResultados}</strong> {totalResultados === 1 ? 'imóvel favorito' : 'imóveis favoritos'}
               </span>
             ) : imobiliariaId ? (
-              <span className={styles.resultados} style={{ color: '#1e40af' }}>
+              <span className={styles.resultados} style={{ color: '#22302A' }}>
                 <strong>🏢 {totalResultados}</strong> {totalResultados === 1 ? 'imóvel desta imobiliária' : 'imóveis desta imobiliária'}
               </span>
             ) : filtros.cidade ? (
@@ -477,13 +477,13 @@ function ExplorarConteudo() {
           {/* Banner de contexto de localização quando pesquisado puramente por GPS sem cidade */}
           {!carregando && isOrigemGps && !filtros.cidade && totalResultados > 0 && !isFavoritos && (
             <div style={{
-              background: '#eff6ff',
-              border: '1px solid #bfdbfe',
+              background: '#EAE4D8',
+              border: '1px solid #CFC6B6',
               borderRadius: '0.75rem',
               padding: '0.65rem 0.9rem',
               marginBottom: '1rem',
               fontSize: '0.82rem',
-              color: '#1e40af',
+              color: '#22302A',
               display: 'flex',
               alignItems: 'center',
               gap: '8px'

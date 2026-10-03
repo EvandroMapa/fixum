@@ -81,7 +81,7 @@ export default function ModalAlterarSenhaOperador({
     <div className={styles.overlay} onClick={onFechar}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.cabecalho}>
-          <div className={styles.iconeTopo} style={{ background: 'rgba(245, 158, 11, 0.18)', borderColor: 'rgba(245, 158, 11, 0.35)' }}>
+          <div className={styles.iconeTopo} style={{ background: 'rgba(227, 167, 47, 0.18)', borderColor: 'rgba(227, 167, 47, 0.35)' }}>
             🔑
           </div>
           <div>
@@ -160,7 +160,7 @@ export default function ModalAlterarSenhaOperador({
             <button
               type="submit"
               className={styles.btnConfirmar}
-              style={{ background: 'linear-gradient(135deg, #d97706, #b45309)' }}
+              style={{ background: 'linear-gradient(135deg, #C08A1E, #8A5F12)' }}
               disabled={carregando}
             >
               {carregando ? 'Alterando...' : '🔑 Confirmar Nova Senha'}

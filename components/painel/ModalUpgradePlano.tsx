@@ -303,7 +303,7 @@ export default function ModalUpgradePlano({
                   {custoUnitarioDinamico > 0 && (
                     <div className={styles.beneficioItem}>
                       <span>🏷️ Custo unitário:</span>
-                      <strong style={{ color: detalhesPreco.descontoPct > 0 ? '#059669' : '#0f172a' }}>
+                      <strong style={{ color: detalhesPreco.descontoPct > 0 ? '#2E6B4E' : '#16201C' }}>
                         {formatarMoeda(custoUnitarioDinamico)} / imóvel / mês
                       </strong>
                     </div>
@@ -330,7 +330,7 @@ export default function ModalUpgradePlano({
                   <label className={styles.labelSecao}>Selecione o plano desejado:</label>
                   <button
                     type="button"
-                    style={{ background: 'none', border: 'none', color: '#3b82f6', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}
+                    style={{ background: 'none', border: 'none', color: '#2C5F8A', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 }}
                     onClick={() => setMostrarTodosPlanos(false)}
                   >
                     ← Voltar ao selecionado
@@ -387,25 +387,25 @@ export default function ModalUpgradePlano({
             {/* BANNER DE INFORMAÇÃO DE DOWNGRADE (SEM COBRANÇA AGORA) */}
             {isDowngrade && (
               <div style={{
-                background: 'rgba(59, 130, 246, 0.08)',
-                border: '1px solid rgba(59, 130, 246, 0.25)',
+                background: 'rgba(44, 95, 138, 0.08)',
+                border: '1px solid rgba(44, 95, 138, 0.25)',
                 borderRadius: '10px',
                 padding: '12px 16px',
                 marginTop: '12px',
                 fontSize: '0.85rem',
-                color: '#1e293b',
+                color: '#22302A',
                 lineHeight: '1.4'
               }}>
-                <strong style={{ color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <strong style={{ color: '#22302A', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   📉 Redução de Plano (Sem cobrança no ato)
                 </strong>
-                <p style={{ margin: '6px 0 0', color: '#475569' }}>
+                <p style={{ margin: '6px 0 0', color: '#5A5449' }}>
                   Você já possui o ciclo atual quitado até <strong>{dataFimCalculada}</strong>. Seu plano atual (<strong>{planoAtual.nome}</strong>) continuará 100% ativo até essa data.
                 </p>
-                <p style={{ margin: '4px 0 0', color: '#475569' }}>
+                <p style={{ margin: '4px 0 0', color: '#5A5449' }}>
                   A partir de <strong>{dataFimCalculada}</strong>, sua assinatura será renovada no valor reduzido de <strong>{formatarMoeda(planoSelecionado.preco_mensal)}/mês</strong>.
                 </p>
-                <div style={{ marginTop: '8px', fontWeight: 600, color: '#16a34a' }}>
+                <div style={{ marginTop: '8px', fontWeight: 600, color: '#2E6B4E' }}>
                   ✓ Custo da alteração hoje: R$ 0,00
                 </div>
               </div>

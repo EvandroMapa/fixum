@@ -714,7 +714,7 @@ export default function ModalEditarImovel({
         </div>
 
         {carregando ? (
-          <div style={{ textAlign: 'center', padding: '4rem', color: '#64748b' }}>
+          <div style={{ textAlign: 'center', padding: '4rem', color: '#7A7264' }}>
             Carregando dados do anúncio...
           </div>
         ) : (
@@ -722,14 +722,14 @@ export default function ModalEditarImovel({
             {/* ── BANNER DE MODERAÇÃO E AJUSTES SOLICITADOS PELO GESTOR ── */}
             {temAjustesPendentes && etapa === 1 && (
               <div style={{
-                background: '#fffbeb',
-                borderBottom: '1px solid #fde68a',
+                background: '#FDF7E8',
+                borderBottom: '1px solid #F2D48E',
                 padding: '10px 18px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '6px',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#92400e', fontWeight: 800, fontSize: '0.85rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8A5F12', fontWeight: 800, fontSize: '0.85rem' }}>
                   <span>⚠️</span>
                   <span>Ajustes Solicitados pela Gestão</span>
                 </div>
@@ -809,7 +809,7 @@ export default function ModalEditarImovel({
                       placeholder="0 = Sob Consulta"
                     />
                     {extrairNumero(dados.preco) === 0 && dados.preco.trim() !== '' && (
-                      <span style={{ display: 'block', fontSize: '0.725rem', color: '#0284c7', marginTop: '3px' }}>
+                      <span style={{ display: 'block', fontSize: '0.725rem', color: '#2C5F8A', marginTop: '3px' }}>
                         ℹ️ R$ 0: o anúncio será exibido automaticamente como <strong>Sob Consulta</strong>.
                       </span>
                     )}
@@ -843,7 +843,7 @@ export default function ModalEditarImovel({
                     </div>
                   </div>
                 ) : modoExibicaoPrecoConta === 'sob_consulta' ? (
-                  <div className={styles.avisoPoliticaPreco} style={{ background: '#f0f9ff', borderColor: '#bae6fd', color: '#0369a1' }}>
+                  <div className={styles.avisoPoliticaPreco} style={{ background: '#FAF7F1', borderColor: '#CFC6B6', color: '#2C5F8A' }}>
                     <span>💬 <strong>Preço Sob Consulta:</strong> Este anúncio será exibido como sob consulta conforme a política da conta.</span>
                   </div>
                 ) : (
@@ -857,7 +857,7 @@ export default function ModalEditarImovel({
                   <div className={styles.grupo} style={{ marginBottom: '10px' }}>
                     <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span>Código do Anúncio / Referência Interna</span>
-                      <span style={{ fontSize: '0.725rem', color: '#64748b', fontWeight: 'normal' }}>Opcional (CRM)</span>
+                      <span style={{ fontSize: '0.725rem', color: '#7A7264', fontWeight: 'normal' }}>Opcional (CRM)</span>
                     </label>
                     <input
                       className={styles.input}
@@ -885,9 +885,9 @@ export default function ModalEditarImovel({
                           }
                         }}
                         maxLength={9}
-                        style={erroCep ? { borderColor: '#f59e0b' } : undefined}
+                        style={erroCep ? { borderColor: '#E3A72F' } : undefined}
                       />
-                      {buscandoCep && <span style={{ alignSelf: 'center', fontSize: '0.75rem', color: '#64748b' }}>...</span>}
+                      {buscandoCep && <span style={{ alignSelf: 'center', fontSize: '0.75rem', color: '#7A7264' }}>...</span>}
                     </div>
                   </div>
 
@@ -914,9 +914,9 @@ export default function ModalEditarImovel({
                 {/* Feedback de CEP não encontrado */}
                 {erroCep && (
                   <div style={{
-                    background: '#fffbeb',
-                    border: '1px solid #fde68a',
-                    color: '#b45309',
+                    background: '#FDF7E8',
+                    border: '1px solid #F2D48E',
+                    color: '#8A5F12',
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     padding: '6px 10px',
@@ -1029,7 +1029,7 @@ export default function ModalEditarImovel({
                 </div>
 
                 <div style={{ display: 'flex', gap: '1.5rem', marginTop: '6px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#3F3B34', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={dados.aceita_pets}
@@ -1037,7 +1037,7 @@ export default function ModalEditarImovel({
                     />
                     🐾 Aceita Pets
                   </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#3F3B34', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={dados.mobiliado}
@@ -1054,7 +1054,7 @@ export default function ModalEditarImovel({
               <div className={styles.etapaConteudo}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <h2 className={styles.etapaTitulo}>Galeria de Fotos</h2>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1d4ed8', background: '#eff6ff', padding: '3px 8px', borderRadius: '16px' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#22302A', background: '#EAE4D8', padding: '3px 8px', borderRadius: '16px' }}>
                     {fotos.length} {fotos.length === 1 ? 'foto' : 'fotos'}
                   </span>
                 </div>
@@ -1082,14 +1082,14 @@ export default function ModalEditarImovel({
                   }}
                 >
                   <div className={styles.dropzoneCirculo}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16201C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                       <circle cx="8.5" cy="8.5" r="1.5" />
                       <polyline points="21 15 16 10 5 21" />
                     </svg>
                   </div>
                   <h3 className={styles.dropzoneTitulo}>
-                    Arraste suas fotos aqui ou <span style={{ color: '#2563eb', textDecoration: 'underline' }}>escolha do dispositivo</span>
+                    Arraste suas fotos aqui ou <span style={{ color: '#16201C', textDecoration: 'underline' }}>escolha do dispositivo</span>
                   </h3>
                   <p className={styles.dropzoneSub}>PNG, JPG ou WEBP • Até 20 fotos</p>
                   <button
@@ -1183,8 +1183,8 @@ export default function ModalEditarImovel({
                 {/* Caixa de Recado para Reenvio se for Corretor */}
                 {isCorretor && (
                   <div style={{
-                    background: '#eff6ff',
-                    border: '1.5px solid #bfdbfe',
+                    background: '#EAE4D8',
+                    border: '1.5px solid #CFC6B6',
                     borderRadius: '0.75rem',
                     padding: '0.85rem 1rem',
                     display: 'flex',
@@ -1192,7 +1192,7 @@ export default function ModalEditarImovel({
                     gap: '6px',
                     marginTop: '8px'
                   }}>
-                    <span style={{ fontSize: '0.825rem', fontWeight: 700, color: '#1e40af' }}>
+                    <span style={{ fontSize: '0.825rem', fontWeight: 700, color: '#22302A' }}>
                       💬 Mensagem para o Gestor (opcional ao reenviar):
                     </span>
                     <textarea
@@ -1245,7 +1245,7 @@ export default function ModalEditarImovel({
                     <button
                       type="button"
                       className={styles.btnAvancar}
-                      style={{ background: '#059669', borderColor: '#059669' }}
+                      style={{ background: '#2E6B4E', borderColor: '#2E6B4E' }}
                       onClick={handleSalvarEReenviar}
                       disabled={salvando || reenviando}
                     >

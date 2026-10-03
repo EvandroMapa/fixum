@@ -322,12 +322,12 @@ export default function AbaDesempenho({
 
             <div className={styles.listaFunil}>
               {[
-                { etapa: '1. Novos Contatos', qtd: metricas.totalLeads, cor: '#3b82f6' },
-                { etapa: '2. Em Atendimento', qtd: metricas.contatados, cor: '#0284c7' },
+                { etapa: '1. Novos Contatos', qtd: metricas.totalLeads, cor: '#2C5F8A' },
+                { etapa: '2. Em Atendimento', qtd: metricas.contatados, cor: '#2C5F8A' },
                 { etapa: '3. Visitas Agendadas', qtd: metricas.visitas, cor: '#6366f1' },
-                { etapa: '4. Propostas', qtd: metricas.propostas, cor: '#f59e0b' },
-                { etapa: '5. Em Negociação', qtd: metricas.emNegociacao, cor: '#ea580c' },
-                { etapa: '6. Negócios Fechados', qtd: metricas.fechados, cor: '#16a34a' },
+                { etapa: '4. Propostas', qtd: metricas.propostas, cor: '#E3A72F' },
+                { etapa: '5. Em Negociação', qtd: metricas.emNegociacao, cor: '#B23318' },
+                { etapa: '6. Negócios Fechados', qtd: metricas.fechados, cor: '#2E6B4E' },
               ].map((item, idx) => {
                 const perc = metricas.totalLeads > 0 ? Math.round((item.qtd / metricas.totalLeads) * 100) : 0
                 return (
@@ -335,7 +335,7 @@ export default function AbaDesempenho({
                     <div className={styles.itemFunilHeader}>
                       <span className={styles.itemFunilEtapa}>{item.etapa}</span>
                       <span className={styles.itemFunilQtd}>
-                        <strong>{item.qtd}</strong> <span style={{ color: '#64748b', fontSize: '0.75rem' }}>({perc}%)</span>
+                        <strong>{item.qtd}</strong> <span style={{ color: '#7A7264', fontSize: '0.75rem' }}>({perc}%)</span>
                       </span>
                     </div>
                     <div className={styles.funilBarraTrilha}>
@@ -417,7 +417,7 @@ export default function AbaDesempenho({
                 <tbody>
                   {tabelaCorretores.map((c, i) => (
                     <tr key={c.id}>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#64748b' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#7A7264' }}>
                         {i + 1}
                       </td>
                       <td>
@@ -449,7 +449,7 @@ export default function AbaDesempenho({
                       <td style={{ textAlign: 'right' }}>
                         {c.propostas + c.negociacoes}
                         {c.negociacoes > 0 && (
-                          <span style={{ fontSize: '0.72rem', color: '#ea580c', marginLeft: '4px', fontWeight: 600 }} title={`${c.negociacoes} em negociação avançada`}>
+                          <span style={{ fontSize: '0.72rem', color: '#B23318', marginLeft: '4px', fontWeight: 600 }} title={`${c.negociacoes} em negociação avançada`}>
                             ({c.negociacoes} 🤝)
                           </span>
                         )}
@@ -462,13 +462,13 @@ export default function AbaDesempenho({
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
+                      <td style={{ textAlign: 'right', fontWeight: 700, color: '#16201C' }}>
                         {formatarMoeda(c.vgvFechado)}
                       </td>
-                      <td style={{ textAlign: 'right', fontWeight: 600, color: Number(c.taxaConversao) > 0 ? '#15803d' : '#64748b' }}>
+                      <td style={{ textAlign: 'right', fontWeight: 600, color: Number(c.taxaConversao) > 0 ? '#2E6B4E' : '#7A7264' }}>
                         {c.taxaConversao}%
                       </td>
-                      <td style={{ textAlign: 'right', color: '#475569' }}>
+                      <td style={{ textAlign: 'right', color: '#5A5449' }}>
                         {c.ticketMedioCorretor > 0 ? formatarMoeda(c.ticketMedioCorretor) : '—'}
                       </td>
                     </tr>

@@ -1,0 +1,96 @@
+.rodape {
+  background: var(--tinta);
+  border-top: 1px solid var(--tinta-3);
+  color: color-mix(in srgb, var(--papel) 72%, transparent);
+}
+
+.inner {
+  max-width: calc(var(--largura-conteudo) + 48px);
+  margin: 0 auto;
+  padding: 64px 24px 28px;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: 40px;
+}
+
+.logo {
+  display: inline-flex;
+  color: var(--papel);
+}
+
+.assinatura {
+  margin-top: 14px;
+  font-family: var(--fonte-editorial);
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.25;
+  color: var(--papel);
+  max-width: 16ch;
+}
+
+.coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coluna strong {
+  font-family: var(--fonte-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--papel) 50%, transparent);
+  margin-bottom: 8px;
+}
+
+.coluna a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  font-size: 0.9375rem;
+  color: color-mix(in srgb, var(--papel) 82%, transparent);
+  transition: color var(--transicao);
+}
+
+.coluna a:hover {
+  color: var(--papel);
+}
+
+.base {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--tinta-3);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+}
+
+.coordenada {
+  font-family: var(--fonte-mono);
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--papel) 45%, transparent);
+}
+
+@media (max-width: 860px) {
+  .grade {
+    grid-template-columns: 1fr 1fr;
+  }
+  .marca {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .inner {
+    padding: 48px 16px 24px;
+  }
+  .grade {
+    gap: 28px 16px;
+  }
+}

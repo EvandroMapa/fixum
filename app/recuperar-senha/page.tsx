@@ -51,16 +51,16 @@ export default function RecuperarSenhaPage() {
 
           {enviado ? (
             <div style={{
-              background: '#f0fdf4',
-              border: '1px solid #bbf7d0',
+              background: '#EEF5F0',
+              border: '1px solid #C3DACB',
               borderRadius: '1rem',
               padding: '1.75rem',
               textAlign: 'center',
               marginTop: '1.5rem'
             }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📬</div>
-              <h3 style={{ color: '#15803d', fontSize: '1.2rem', marginBottom: '0.5rem' }}>E-mail enviado!</h3>
-              <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
+              <h3 style={{ color: '#2E6B4E', fontSize: '1.2rem', marginBottom: '0.5rem' }}>E-mail enviado!</h3>
+              <p style={{ color: '#5A5449', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
                 Enviamos um link de recuperação para <strong>{email}</strong>. Verifique sua caixa de entrada e spam.
               </p>
               <Link href="/login" className="btn btn-primario" style={{ width: '100%', minHeight: '44px' }}>

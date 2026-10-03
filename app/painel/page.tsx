@@ -477,20 +477,20 @@ function PainelConteudo() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        background: '#0f172a',
+        background: '#16201C',
         color: '#ffffff',
         gap: '16px',
       }}>
         <div style={{ fontSize: '2.5rem' }}>🛡️</div>
         <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>Redirecionando para o Painel Executivo Fixum...</div>
-        <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>Contas Master não utilizam o painel de anunciante</div>
+        <div style={{ fontSize: '0.875rem', color: '#A39A8A' }}>Contas Master não utilizam o painel de anunciante</div>
       </div>
     )
   }
 
   if (carregando) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#0f172a', color: '#ffffff' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#16201C', color: '#ffffff' }}>
         <div>Carregando Workspace...</div>
       </div>
     )
@@ -543,7 +543,7 @@ function PainelConteudo() {
           {isCorretorEquipe && imobiliariaDona ? (
             <div
               className={styles.badgePlanoTopbar}
-              style={{ cursor: 'default', background: '#f8fafc', borderColor: '#e2e8f0', color: '#475569' }}
+              style={{ cursor: 'default', background: '#FAF7F1', borderColor: '#E0D8CA', color: '#5A5449' }}
               title={`Vinculado à equipe de ${imobiliariaDona.nome}`}
             >
               <span>🏢 Equipe <strong>{imobiliariaDona.nome}</strong></span>
@@ -554,11 +554,11 @@ function PainelConteudo() {
               className={styles.badgePlanoTopbar}
               onClick={() => trocarAba('plano')}
               title="Gerenciar Cota de Imóveis do Corretor"
-              style={{ background: '#f0fdf4', borderColor: '#bbf7d0', color: '#166534' }}
+              style={{ background: '#EEF5F0', borderColor: '#C3DACB', color: '#24563E' }}
             >
               <span className={styles.iconePlano}>👔</span>
               <span>Cota: <strong>{usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo}</strong></span>
-              <span className={styles.vagasPill} style={{ background: '#16a34a' }}>
+              <span className={styles.vagasPill} style={{ background: '#2E6B4E' }}>
                 {usoPlano.plano.nome}
               </span>
             </button>
@@ -578,7 +578,7 @@ function PainelConteudo() {
           ) : (
             <div
               className={styles.badgePlanoTopbar}
-              style={{ cursor: 'default', background: '#f0fdf4', borderColor: '#bbf7d0', color: '#166534' }}
+              style={{ cursor: 'default', background: '#EEF5F0', borderColor: '#C3DACB', color: '#24563E' }}
               title="Proprietário Direto com 1 anúncio gratuito ativo no mapa Fixum"
             >
               <span>🏷️ <strong>1 Anúncio Grátis</strong></span>
@@ -748,7 +748,7 @@ function PainelConteudo() {
                         className={styles.planoResumoBarraPreenchimento}
                         style={{
                           width: `${Math.min(100, Math.max(5, usoPlano.porcentagemUso))}%`,
-                          backgroundColor: usoPlano.atingiuLimite ? '#ef4444' : '#0f4c81',
+                          backgroundColor: usoPlano.atingiuLimite ? '#D4401F' : '#16201C',
                         }}
                       />
                     </div>
@@ -775,10 +775,10 @@ function PainelConteudo() {
 
               <div className={styles.gridStats}>
                 {[
-                  { label: 'Total de imóveis', valor: stats.total, icone: '🏢', cor: '#0f4c81' },
-                  { label: 'Publicados', valor: stats.publicados, icone: '✅', cor: '#22c55e' },
-                  { label: 'Pausados', valor: stats.pausados, icone: '⏸️', cor: '#f59e0b' },
-                  { label: 'Leads novos', valor: stats.leadsNovos, icone: '👥', cor: '#ef4444' },
+                  { label: 'Total de imóveis', valor: stats.total, icone: '🏢', cor: '#16201C' },
+                  { label: 'Publicados', valor: stats.publicados, icone: '✅', cor: '#3F8A66' },
+                  { label: 'Pausados', valor: stats.pausados, icone: '⏸️', cor: '#E3A72F' },
+                  { label: 'Leads novos', valor: stats.leadsNovos, icone: '👥', cor: '#D4401F' },
                 ].map((s) => (
                   <div key={s.label} className={styles.statCard} style={{ borderTopColor: s.cor }}>
                     <span className={styles.statIcone}>{s.icone}</span>
@@ -875,19 +875,19 @@ function PainelConteudo() {
             isCorretor && imobiliariaDona ? (
               <div style={{
                 background: '#ffffff',
-                border: '1.5px solid #bfdbfe',
+                border: '1.5px solid #CFC6B6',
                 borderRadius: '1rem',
                 padding: '2.5rem 2rem',
                 textAlign: 'center',
                 maxWidth: '620px',
                 margin: '2rem auto',
-                boxShadow: '0 4px 20px rgba(37, 99, 235, 0.08)',
+                boxShadow: '0 4px 20px rgba(22, 32, 28, 0.08)',
               }}>
                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👔</div>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#16201C', marginBottom: '0.5rem' }}>
                   Plano Corporativo — {imobiliariaDona.nome}
                 </h2>
-                <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+                <p style={{ color: '#7A7264', fontSize: '0.95rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
                   Sua conta de corretor está vinculada à cota corporativa oficial da <strong>{imobiliariaDona.nome}</strong>.
                   Todos os seus anúncios publicados utilizam as vagas contratadas pela empresa.
                 </p>
@@ -895,9 +895,9 @@ function PainelConteudo() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  background: '#eff6ff',
-                  border: '1.5px solid #93c5fd',
-                  color: '#1d4ed8',
+                  background: '#EAE4D8',
+                  border: '1.5px solid #A39A8A',
+                  color: '#22302A',
                   padding: '10px 18px',
                   borderRadius: '10px',
                   fontWeight: 700,
@@ -905,7 +905,7 @@ function PainelConteudo() {
                 }}>
                   ⚡ Cota da Imobiliária: {usoPlano.imoveisAtivos} / {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
                 </div>
-                <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '1.75rem' }}>
+                <p style={{ fontSize: '0.8rem', color: '#A39A8A', marginTop: '1.75rem' }}>
                   ℹ️ Para solicitar ampliação de vagas ou alterações contratuais, consulte a administração da {imobiliariaDona.nome}.
                 </p>
               </div>

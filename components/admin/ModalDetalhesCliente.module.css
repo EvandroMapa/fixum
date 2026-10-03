@@ -17,8 +17,8 @@
 }
 
 .modal {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 16px;
   width: 100%;
   max-width: 800px;
@@ -32,11 +32,11 @@
 /* ── CABEÇALHO ── */
 .cabecalho {
   padding: 20px 24px;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--pedra-700);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  background: #0f172a;
+  background: var(--tinta);
 }
 
 .perfilTopo {
@@ -49,14 +49,14 @@
   width: 52px;
   height: 52px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0284c7, #2563eb);
+  background: linear-gradient(135deg, var(--hidro), var(--tinta));
   color: #ffffff;
   font-size: 1.5rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(22, 32, 28, 0.3);
 }
 
 .linhaNome {
@@ -74,7 +74,7 @@
 }
 
 .sub {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.85rem;
   margin: 4px 0 0 0;
 }
@@ -87,18 +87,18 @@
 }
 
 .statusAtivo {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+  background: rgba(46, 107, 78, 0.2);
+  color: #7DBB98;
 }
 
 .statusSuspenso {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
+  background: rgba(212, 64, 31, 0.2);
+  color: #E8836B;
 }
 
 .badgeTipo {
-  background: #334155;
-  color: #cbd5e1;
+  background: var(--pedra-700);
+  color: var(--pedra-300);
   padding: 3px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -108,7 +108,7 @@
 .btnFechar {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 1.2rem;
   cursor: pointer;
   padding: 4px 8px;
@@ -117,7 +117,7 @@
 }
 
 .btnFechar:hover {
-  background: #334155;
+  background: var(--pedra-700);
   color: #ffffff;
 }
 
@@ -132,8 +132,8 @@
 
 /* BANNER EQUIPE VINCULADA */
 .bannerEquipeVinculada {
-  background: rgba(2, 132, 199, 0.12);
-  border: 1.5px solid #0284c7;
+  background: rgba(44, 95, 138, 0.12);
+  border: 1.5px solid var(--hidro);
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
@@ -152,20 +152,20 @@
 }
 
 .bannerEquipeTexto strong {
-  color: #38bdf8;
+  color: #F0A58F;
   font-size: 0.95rem;
   display: block;
 }
 
 .bannerEquipeTexto p {
-  color: #cbd5e1;
+  color: var(--pedra-300);
   font-size: 0.85rem;
   margin: 4px 0 0 0;
   line-height: 1.4;
 }
 
 .btnVerImobiliariaDona {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
   border: none;
   padding: 8px 14px;
@@ -177,7 +177,7 @@
 }
 
 .btnVerImobiliariaDona:hover {
-  background: #0369a1;
+  background: var(--hidro);
 }
 
 .gridCards {
@@ -187,8 +187,8 @@
 }
 
 .cardInfo {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   border-radius: 10px;
   padding: 14px;
   display: flex;
@@ -197,7 +197,7 @@
 }
 
 .cardLabel {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.75rem;
   text-transform: uppercase;
   font-weight: 600;
@@ -210,19 +210,19 @@
 }
 
 .cardValorPlano {
-  color: #38bdf8;
+  color: #F0A58F;
   font-size: 1.15rem;
   font-weight: 800;
 }
 
 .cardValorPequeno {
-  color: #e2e8f0;
+  color: var(--pedra-200);
   font-size: 0.95rem;
   font-weight: 700;
 }
 
 .cardSub {
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.75rem;
 }
 
@@ -231,8 +231,8 @@
 .secaoContatos,
 .secaoPlano,
 .secaoNotas {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   border-radius: 12px;
   padding: 16px 18px;
   display: flex;
@@ -253,21 +253,21 @@
 
 .tabelaEquipe th {
   padding: 8px 10px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.75rem;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--pedra-700);
 }
 
 .tabelaEquipe td {
   padding: 10px;
-  border-bottom: 1px solid #1e293b;
-  color: #e2e8f0;
+  border-bottom: 1px solid var(--tinta-2);
+  color: var(--pedra-200);
 }
 
 .btnVerCorretor {
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
+  color: #F0A58F;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -276,12 +276,12 @@
 }
 
 .btnVerCorretor:hover {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
 }
 
 .secaoTitulo {
-  color: #f8fafc;
+  color: var(--papel-claro);
   font-size: 0.95rem;
   font-weight: 700;
   margin: 0;
@@ -295,7 +295,7 @@
 }
 
 .btnWhats {
-  background: #059669;
+  background: var(--cerrado);
   color: #ffffff;
   text-decoration: none;
   padding: 8px 14px;
@@ -309,12 +309,12 @@
 }
 
 .btnWhats:hover {
-  background: #10b981;
+  background: #3F8A66;
 }
 
 .btnEmail {
-  background: #334155;
-  color: #f8fafc;
+  background: var(--pedra-700);
+  color: var(--papel-claro);
   text-decoration: none;
   padding: 8px 14px;
   border-radius: 8px;
@@ -327,11 +327,11 @@
 }
 
 .btnEmail:hover {
-  background: #475569;
+  background: var(--pedra-600);
 }
 
 .btnVerImoveis {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
   border: none;
   padding: 8px 14px;
@@ -343,11 +343,11 @@
 }
 
 .btnVerImoveis:hover {
-  background: #0369a1;
+  background: var(--hidro);
 }
 
 .dadoVazio {
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.85rem;
 }
 
@@ -361,9 +361,9 @@
 }
 
 .btnEditarPlano {
-  background: #334155;
-  border: 1px solid #475569;
-  color: #38bdf8;
+  background: var(--pedra-700);
+  border: 1px solid var(--pedra-600);
+  color: #F0A58F;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -373,9 +373,9 @@
 }
 
 .btnEditarPlano:hover {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 .formPlano {
@@ -392,7 +392,7 @@
 }
 
 .labelForm {
-  color: #cbd5e1;
+  color: var(--pedra-300);
   font-size: 0.85rem;
   font-weight: 600;
   display: flex;
@@ -401,8 +401,8 @@
 
 .selectForm,
 .inputForm {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   color: #ffffff;
   padding: 10px 14px;
   border-radius: 8px;
@@ -412,7 +412,7 @@
 .selectForm:focus,
 .inputForm:focus {
   outline: none;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 .linhaBotoesPlano {
@@ -421,7 +421,7 @@
 }
 
 .btnSalvarPlano {
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   padding: 10px 16px;
@@ -433,13 +433,13 @@
 }
 
 .btnSalvarPlano:hover {
-  background: #1d4ed8;
+  background: var(--tinta-2);
 }
 
 .btnCancelarPlano {
   background: transparent;
-  border: 1px solid #475569;
-  color: #94a3b8;
+  border: 1px solid var(--pedra-600);
+  color: var(--pedra-400);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -448,8 +448,8 @@
 
 /* ── ANOTAÇÕES ── */
 .textareaNotas {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   color: #ffffff;
   padding: 10px 14px;
   border-radius: 8px;
@@ -460,14 +460,14 @@
 
 .textareaNotas:focus {
   outline: none;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 .btnSalvarNotas {
   align-self: flex-end;
-  background: #334155;
-  border: 1px solid #475569;
-  color: #f8fafc;
+  background: var(--pedra-700);
+  border: 1px solid var(--pedra-600);
+  color: var(--papel-claro);
   padding: 8px 14px;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -477,12 +477,12 @@
 }
 
 .btnSalvarNotas:hover {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
 }
 
 .msgSucesso {
-  color: #34d399;
+  color: #7DBB98;
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -490,11 +490,11 @@
 /* ── RODAPÉ ── */
 .rodape {
   padding: 16px 24px;
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--pedra-700);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #0f172a;
+  background: var(--tinta);
   gap: 12px;
 }
 
@@ -509,31 +509,31 @@
 }
 
 .btnSuspender {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(212, 64, 31, 0.15);
+  color: #E8836B;
+  border: 1px solid rgba(212, 64, 31, 0.3);
 }
 
 .btnSuspender:hover {
-  background: #dc2626;
+  background: var(--marco-escuro);
   color: #ffffff;
 }
 
 .btnReativar {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(46, 107, 78, 0.15);
+  color: #7DBB98;
+  border: 1px solid rgba(46, 107, 78, 0.3);
 }
 
 .btnReativar:hover {
-  background: #059669;
+  background: var(--cerrado);
   color: #ffffff;
 }
 
 .btnFecharRodape {
-  background: #334155;
+  background: var(--pedra-700);
   border: none;
-  color: #f8fafc;
+  color: var(--papel-claro);
   padding: 10px 18px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -542,5 +542,5 @@
 }
 
 .btnFecharRodape:hover {
-  background: #475569;
+  background: var(--pedra-600);
 }

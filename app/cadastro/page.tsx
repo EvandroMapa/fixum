@@ -291,7 +291,7 @@ function CadastroConteudo() {
           </div>
 
           <div style={{ marginBottom: '0.85rem' }}>
-            <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#16201C', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
               {passo === 3
                 ? "Verificação de Segurança"
                 : imobiliariaId
@@ -302,7 +302,7 @@ function CadastroConteudo() {
                 ? "Cadastro de Corretor"
                 : "Criar sua conta"}
             </h1>
-            <p style={{ color: '#64748b', fontSize: '0.84rem', margin: 0, lineHeight: 1.4 }}>
+            <p style={{ color: '#7A7264', fontSize: '0.84rem', margin: 0, lineHeight: 1.4 }}>
               {passo === 3
                 ? `Informe o código enviado para ${email}`
                 : imobiliariaId
@@ -321,9 +321,9 @@ function CadastroConteudo() {
               alignItems: "center",
               gap: "6px",
               padding: "5px 12px",
-              background: "#f0fdf4",
-              border: "1px solid #86efac",
-              color: "#15803d",
+              background: "#EEF5F0",
+              border: "1px solid #A9CDB6",
+              color: "#2E6B4E",
               borderRadius: "6px",
               fontSize: "0.78rem",
               fontWeight: 700,
@@ -339,9 +339,9 @@ function CadastroConteudo() {
               alignItems: "center",
               gap: "6px",
               padding: "5px 12px",
-              background: "#eff6ff",
-              border: "1px solid #bfdbfe",
-              color: "#1d4ed8",
+              background: "#EAE4D8",
+              border: "1px solid #CFC6B6",
+              color: "#22302A",
               borderRadius: "6px",
               fontSize: "0.78rem",
               fontWeight: 700,
@@ -412,7 +412,7 @@ function CadastroConteudo() {
           {passo === 2 && (
             <form onSubmit={handleAvancarParaOtp} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#334155' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>
                   {isImobiliaria ? "Nome da Imobiliária / Razão Social" : "Nome completo"}
                 </label>
                 <input
@@ -428,7 +428,7 @@ function CadastroConteudo() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#334155' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>
                   {isImobiliaria ? "E-mail Corporativo" : "E-mail"}
                 </label>
                 <input
@@ -445,7 +445,7 @@ function CadastroConteudo() {
               {(isImobiliaria || isCorretor) && (
                 <div style={{ display: 'grid', gridTemplateColumns: isCorretor ? '1.2fr 0.8fr' : '1fr', gap: '8px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#334155' }}>WhatsApp / Telefone</label>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>WhatsApp / Telefone</label>
                     <input
                       type="tel"
                       className="campo"
@@ -458,7 +458,7 @@ function CadastroConteudo() {
 
                   {isCorretor && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#334155' }}>CRECI (Opcional)</label>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>CRECI (Opcional)</label>
                       <input
                         type="text"
                         className="campo"
@@ -473,7 +473,7 @@ function CadastroConteudo() {
               )}
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#334155' }}>Criar Senha</label>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>Criar Senha</label>
                 <InputSenha
                   placeholder="Mínimo 8 caracteres"
                   value={senha}
@@ -486,28 +486,28 @@ function CadastroConteudo() {
               {senha.length > 0 && (
                 <div style={{ margin: '2px 0 4px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginBottom: '2px' }}>
-                    <span style={{ color: "#64748b" }}>Força:</span>
+                    <span style={{ color: "#7A7264" }}>Força:</span>
                     <strong style={{
-                      color: senha.length < 8 ? "#ef4444" : (/[A-Z]/.test(senha) && /[0-9]/.test(senha)) ? "#10b981" : "#f59e0b"
+                      color: senha.length < 8 ? "#D4401F" : (/[A-Z]/.test(senha) && /[0-9]/.test(senha)) ? "#3F8A66" : "#E3A72F"
                     }}>
                       {senha.length < 8 ? "Muito curta (min. 8)" : (/[A-Z]/.test(senha) && /[0-9]/.test(senha)) ? "Forte" : "Média"}
                     </strong>
                   </div>
                   <div style={{ display: "flex", gap: "3px", height: "3px" }}>
-                    <div style={{ flex: 1, borderRadius: "2px", background: senha.length >= 8 ? (/[A-Z]/.test(senha) && /[0-9]/.test(senha) ? "#10b981" : "#f59e0b") : "#ef4444" }} />
-                    <div style={{ flex: 1, borderRadius: "2px", background: senha.length >= 8 ? (/[A-Z]/.test(senha) && /[0-9]/.test(senha) ? "#10b981" : "#f59e0b") : "#e2e8f0" }} />
-                    <div style={{ flex: 1, borderRadius: "2px", background: (senha.length >= 8 && /[A-Z]/.test(senha) && /[0-9]/.test(senha)) ? "#10b981" : "#e2e8f0" }} />
+                    <div style={{ flex: 1, borderRadius: "2px", background: senha.length >= 8 ? (/[A-Z]/.test(senha) && /[0-9]/.test(senha) ? "#3F8A66" : "#E3A72F") : "#D4401F" }} />
+                    <div style={{ flex: 1, borderRadius: "2px", background: senha.length >= 8 ? (/[A-Z]/.test(senha) && /[0-9]/.test(senha) ? "#3F8A66" : "#E3A72F") : "#E0D8CA" }} />
+                    <div style={{ flex: 1, borderRadius: "2px", background: (senha.length >= 8 && /[A-Z]/.test(senha) && /[0-9]/.test(senha)) ? "#3F8A66" : "#E0D8CA" }} />
                   </div>
                 </div>
               )}
 
               {erro && (
                 <div style={{
-                  background: '#fef2f2',
-                  border: '1px solid #fecaca',
+                  background: '#FDF1EC',
+                  border: '1px solid #F3C3B5',
                   borderRadius: '8px',
                   padding: '8px 12px',
-                  color: '#991b1b',
+                  color: '#8F2812',
                   fontSize: '0.78rem',
                   lineHeight: 1.4,
                 }}>
@@ -546,11 +546,11 @@ function CadastroConteudo() {
             <form onSubmit={handleConfirmarCadastro} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {sucesso && (
                 <div style={{
-                  background: "#f0fdf4",
-                  border: "1px solid #86efac",
+                  background: "#EEF5F0",
+                  border: "1px solid #A9CDB6",
                   borderRadius: "8px",
                   padding: "10px 12px",
-                  color: "#15803d",
+                  color: "#2E6B4E",
                   fontSize: "0.82rem",
                   fontWeight: 600,
                   display: "flex",
@@ -564,11 +564,11 @@ function CadastroConteudo() {
 
               {erro && (
                 <div style={{
-                  background: '#fef2f2',
-                  border: '1px solid #fecaca',
+                  background: '#FDF1EC',
+                  border: '1px solid #F3C3B5',
                   borderRadius: '8px',
                   padding: '8px 12px',
-                  color: '#991b1b',
+                  color: '#8F2812',
                   fontSize: '0.78rem',
                 }}>
                   {erro}
@@ -576,7 +576,7 @@ function CadastroConteudo() {
               )}
 
               <div style={{ textAlign: "center", padding: '8px 0' }}>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: '0.82rem', color: '#5A5449', fontWeight: 600 }}>
                   Digite o código de 6 dígitos recebido por e-mail:
                 </label>
                 <input
@@ -605,7 +605,7 @@ function CadastroConteudo() {
                 <button
                   type="button"
                   onClick={() => setPasso(2)}
-                  style={{ background: "none", border: "none", color: "#64748b", fontSize: "0.78rem", cursor: "pointer", fontWeight: 600 }}
+                  style={{ background: "none", border: "none", color: "#7A7264", fontSize: "0.78rem", cursor: "pointer", fontWeight: 600 }}
                 >
                   ← Corrigir dados
                 </button>
@@ -617,7 +617,7 @@ function CadastroConteudo() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: timerReenvio > 0 ? "#94a3b8" : "var(--cor-primaria)",
+                    color: timerReenvio > 0 ? "#A39A8A" : "var(--cor-primaria)",
                     fontSize: "0.78rem",
                     cursor: timerReenvio > 0 ? "not-allowed" : "pointer",
                     fontWeight: 600,
@@ -638,9 +638,9 @@ function CadastroConteudo() {
             </form>
           )}
 
-          <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.82rem', color: '#64748b' }}>
+          <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid #F3EEE4', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.82rem', color: '#7A7264' }}>
             <span>Já tem conta?</span>
-            <Link href="/login" style={{ color: '#1565c0', fontWeight: 700, textDecoration: 'none' }}>
+            <Link href="/login" style={{ color: '#16201C', fontWeight: 700, textDecoration: 'none' }}>
               Entrar
             </Link>
           </div>
@@ -660,21 +660,21 @@ function CadastroConteudo() {
           {imobiliariaId ? (
             /* ── BANNER DEDICADO PARA CONVITE DE EQUIPE ── */
             <>
-              <div className={styles.badgeDestaque} style={{ borderColor: 'rgba(56, 189, 248, 0.4)', color: '#38bdf8' }}>
+              <div className={styles.badgeDestaque} style={{ borderColor: 'rgba(240, 165, 143, 0.4)', color: '#F0A58F' }}>
                 <span className={styles.pontoVerde} />
                 <span>🤝 CONVITE OFICIAL DE EQUIPE</span>
               </div>
 
               <h2 style={{ fontSize: 'clamp(1.7rem, 2.8vw, 2.3rem)', marginBottom: '0.85rem' }}>
-                Seja muito bem-vindo à equipe da <span style={{ color: '#38bdf8' }}>{empresaNome}</span>!
+                Seja muito bem-vindo à equipe da <span style={{ color: '#F0A58F' }}>{empresaNome}</span>!
               </h2>
 
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem', color: '#cbd5e1' }}>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem', color: '#CFC6B6' }}>
                 Você foi convidado para compor o time oficial de corretores da imobiliária no Fixum. Conecte-se agora para acelerar suas vendas com inteligência de mapa.
               </p>
 
               {/* Card Flutuante de Perfil da Imobiliária e Benefícios */}
-              <div className={styles.cardPreviewGlass} style={{ background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(56, 189, 248, 0.25)', padding: '1.25rem' }}>
+              <div className={styles.cardPreviewGlass} style={{ background: 'rgba(22, 32, 28, 0.65)', border: '1px solid rgba(240, 165, 143, 0.25)', padding: '1.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '12px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
                   <div style={{
                     width: '48px',
@@ -701,7 +701,7 @@ function CadastroConteudo() {
                     <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1rem', fontWeight: 800 }}>
                       {empresaNome}
                     </h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontSize: '0.75rem', color: '#38bdf8' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontSize: '0.75rem', color: '#F0A58F' }}>
                       <span>✓ Imobiliária Parceira Oficial</span>
                       {imobiliariaInfo?.cidade && <span>• {imobiliariaInfo.cidade}/{imobiliariaInfo.estado || 'MG'}</span>}
                     </div>
@@ -713,7 +713,7 @@ function CadastroConteudo() {
                     <span style={{ fontSize: '1.1rem' }}>⚡</span>
                     <div>
                       <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Inventário Conectado</strong>
-                      <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Publique e gerencie seus anúncios no portfólio da imobiliária.</div>
+                      <div style={{ color: '#A39A8A', fontSize: '0.75rem' }}>Publique e gerencie seus anúncios no portfólio da imobiliária.</div>
                     </div>
                   </div>
 
@@ -721,7 +721,7 @@ function CadastroConteudo() {
                     <span style={{ fontSize: '1.1rem' }}>📱</span>
                     <div>
                       <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Leads Diretos no WhatsApp</strong>
-                      <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Interessados entram em contato direto com você em 1 toque.</div>
+                      <div style={{ color: '#A39A8A', fontSize: '0.75rem' }}>Interessados entram em contato direto com você em 1 toque.</div>
                     </div>
                   </div>
 
@@ -729,13 +729,13 @@ function CadastroConteudo() {
                     <span style={{ fontSize: '1.1rem' }}>🗺️</span>
                     <div>
                       <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Destaque Geolocalizado</strong>
-                      <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Máxima visibilidade nas buscas de compradores por bairro e mapa.</div>
+                      <div style={{ color: '#A39A8A', fontSize: '0.75rem' }}>Máxima visibilidade nas buscas de compradores por bairro e mapa.</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.78rem', color: '#94a3b8' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.78rem', color: '#A39A8A' }}>
                 <span>🔒 Acesso 100% gratuito para corretores</span>
                 <span>•</span>
                 <span>⚡ Ativação imediata</span>
@@ -750,7 +750,7 @@ function CadastroConteudo() {
               </div>
 
               <h2>
-                Anuncie com precisão e <span style={{ color: '#38bdf8' }}>venda mais rápido</span>
+                Anuncie com precisão e <span style={{ color: '#F0A58F' }}>venda mais rápido</span>
               </h2>
 
               <p>
@@ -763,12 +763,12 @@ function CadastroConteudo() {
                   <span className={styles.horarioLead}>Agora mesmo</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '6px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 800, fontSize: '0.85rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#16201C', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 800, fontSize: '0.85rem' }}>
                     F
                   </div>
                   <div>
                     <div style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.85rem' }}>Novo interessado no seu imóvel</div>
-                    <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Bairro Funcionários • Belo Horizonte</div>
+                    <div style={{ color: '#A39A8A', fontSize: '0.75rem' }}>Bairro Funcionários • Belo Horizonte</div>
                   </div>
                 </div>
               </div>

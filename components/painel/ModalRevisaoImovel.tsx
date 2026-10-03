@@ -190,12 +190,12 @@ export default function ModalRevisaoImovel({
           {/* Banner de Auditoria se estiver Ativo */}
           {isAtivo && (
             <div style={{
-              background: '#fffbeb',
-              border: '1.5px solid #fde68a',
+              background: '#FDF7E8',
+              border: '1.5px solid #F2D48E',
               borderRadius: '0.75rem',
               padding: '0.85rem 1rem',
               fontSize: '0.825rem',
-              color: '#92400e',
+              color: '#8A5F12',
               lineHeight: '1.4',
               display: 'flex',
               alignItems: 'center',
@@ -210,7 +210,7 @@ export default function ModalRevisaoImovel({
 
           {/* Galeria de Fotos */}
           <div>
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '6px' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#5A5449', display: 'block', marginBottom: '6px' }}>
               📸 Fotos do Imóvel ({fotos.length}):
             </span>
             {fotos.length > 0 ? (
@@ -226,7 +226,7 @@ export default function ModalRevisaoImovel({
                 ))}
               </div>
             ) : (
-              <div style={{ padding: '1rem', background: '#f1f5f9', borderRadius: '8px', color: '#64748b', fontSize: '0.85rem' }}>
+              <div style={{ padding: '1rem', background: '#F3EEE4', borderRadius: '8px', color: '#7A7264', fontSize: '0.85rem' }}>
                 ⚠️ Nenhuma foto cadastrada neste anúncio.
               </div>
             )}
@@ -237,7 +237,7 @@ export default function ModalRevisaoImovel({
             <div className={styles.linhaTituloPreco}>
               <div>
                 <h3 className={styles.tituloImovel}>{imovel.titulo}</h3>
-                <span style={{ fontSize: '0.825rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.825rem', color: '#7A7264' }}>
                   📍 {imovel.cidade} {imovel.bairro ? `• ${imovel.bairro}` : ''} {imovel.endereco ? `• ${imovel.endereco}` : ''}
                 </span>
               </div>
@@ -275,7 +275,7 @@ export default function ModalRevisaoImovel({
 
             {imovel.descricao && (
               <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#7A7264', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
                   Descrição do Anúncio:
                 </span>
                 <div className={styles.descricaoTexto}>
@@ -325,7 +325,7 @@ export default function ModalRevisaoImovel({
                   className={styles.btnRecusar}
                   onClick={() => setExibirRecusa(true)}
                   disabled={salvando}
-                  style={isAtivo ? { background: '#fffbeb', borderColor: '#f59e0b', color: '#b45309' } : {}}
+                  style={isAtivo ? { background: '#FDF7E8', borderColor: '#E3A72F', color: '#8A5F12' } : {}}
                 >
                   {isAtivo ? '⚠️ Solicitar Ajustes (Suspender do Mapa)' : '❌ Solicitar Ajustes'}
                 </button>
@@ -347,7 +347,7 @@ export default function ModalRevisaoImovel({
                 <span className={styles.boxRecusaTitulo}>
                   ⚠️ O que o corretor <strong>{nomeCorretor}</strong> precisa corrigir?
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.75rem', color: '#7A7264' }}>
                   O corretor receberá esta instrução no painel dele.
                 </span>
               </div>
@@ -374,7 +374,7 @@ export default function ModalRevisaoImovel({
                 <button
                   type="button"
                   className="btn btn-sm"
-                  style={{ background: '#dc2626', color: '#ffffff', fontWeight: 700, padding: '0.5rem 1.25rem' }}
+                  style={{ background: '#B23318', color: '#ffffff', fontWeight: 700, padding: '0.5rem 1.25rem' }}
                   onClick={handleConfirmarRecusa}
                   disabled={salvando || !motivoRecusa.trim()}
                 >

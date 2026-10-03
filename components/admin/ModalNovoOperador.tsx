@@ -275,12 +275,12 @@ export default function ModalNovoOperador({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
                         <strong style={{ color: '#ffffff', fontSize: '0.88rem' }}>{c.titulo}</strong>
                         {selecionado && (
-                          <span style={{ color: '#38bdf8', fontSize: '0.78rem', fontWeight: 800 }}>
+                          <span style={{ color: '#F0A58F', fontSize: '0.78rem', fontWeight: 800 }}>
                             ✓ Selecionado
                           </span>
                         )}
                       </div>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', lineHeight: 1.35 }}>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#A39A8A', lineHeight: 1.35 }}>
                         {c.descricao}
                       </p>
                     </div>
@@ -332,11 +332,11 @@ export default function ModalNovoOperador({
           <form onSubmit={handleConfirmarCriacao} className={styles.corpo}>
             {sucesso && (
               <div style={{
-                background: 'rgba(34, 197, 94, 0.15)',
-                border: '1px solid rgba(34, 197, 94, 0.3)',
+                background: 'rgba(46, 107, 78, 0.15)',
+                border: '1px solid rgba(46, 107, 78, 0.3)',
                 borderRadius: '10px',
                 padding: '12px 16px',
-                color: '#4ade80',
+                color: '#7DBB98',
                 fontSize: '0.85rem',
                 display: 'flex',
                 alignItems: 'center',
@@ -355,10 +355,10 @@ export default function ModalNovoOperador({
             )}
 
             <div style={{ textAlign: 'center', padding: '8px 0' }}>
-              <p style={{ color: '#cbd5e1', fontSize: '0.875rem', margin: '0 0 6px 0' }}>
+              <p style={{ color: '#CFC6B6', fontSize: '0.875rem', margin: '0 0 6px 0' }}>
                 Para validação da conta, informe o código de 6 dígitos enviado para:
               </p>
-              <strong style={{ color: '#38bdf8', fontSize: '0.95rem' }}>
+              <strong style={{ color: '#F0A58F', fontSize: '0.95rem' }}>
                 {email.trim().toLowerCase()}
               </strong>
             </div>
@@ -379,7 +379,7 @@ export default function ModalNovoOperador({
                   fontSize: '1.5rem',
                   letterSpacing: '0.35em',
                   fontWeight: 800,
-                  color: '#38bdf8',
+                  color: '#F0A58F',
                   padding: '12px',
                 }}
                 autoFocus
@@ -394,7 +394,7 @@ export default function ModalNovoOperador({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#94a3b8',
+                  color: '#A39A8A',
                   fontSize: '0.8rem',
                   cursor: 'pointer',
                   fontWeight: 600,
@@ -410,7 +410,7 @@ export default function ModalNovoOperador({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: timerReenvio > 0 ? '#64748b' : '#38bdf8',
+                  color: timerReenvio > 0 ? '#7A7264' : '#F0A58F',
                   fontSize: '0.8rem',
                   cursor: timerReenvio > 0 ? 'not-allowed' : 'pointer',
                   fontWeight: 600,

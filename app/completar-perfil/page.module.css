@@ -4,7 +4,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
 .pagina {
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(160deg, #0d3a6a 0%, #1565c0 60%, #1e88e5 100%);
+  background: linear-gradient(160deg, var(--tinta-profunda) 0%, var(--tinta) 60%, var(--tinta) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,7 +54,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
 .avatar {
   width: 60px; height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-size: 1.6rem;
   font-weight: 700;
@@ -62,21 +62,21 @@ html, body { margin: 0; padding: 0; height: 100%; }
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
-  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
+  box-shadow: 0 4px 16px rgba(22, 32, 28, 0.3);
   flex-shrink: 0;
 }
 
 .titulo {
   font-size: 20px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 4px;
   text-align: center;
 }
 
 .subtitulo {
   font-size: 13px;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 24px;
   text-align: center;
 }
@@ -92,17 +92,17 @@ html, body { margin: 0; padding: 0; height: 100%; }
 .label {
   font-size: 12px;
   font-weight: 600;
-  color: #374151;
+  color: var(--pedra-700);
 }
 
-.opcional { font-weight: 400; color: #94a3b8; }
+.opcional { font-weight: 400; color: var(--pedra-400); }
 
 .input {
   padding: 10px 13px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 10px;
   font-size: 14px;
-  color: #0f172a;
+  color: var(--tinta);
   transition: all 0.2s;
   width: 100%;
   box-sizing: border-box;
@@ -111,8 +111,8 @@ html, body { margin: 0; padding: 0; height: 100%; }
 
 .input:focus {
   outline: none;
-  border-color: #1565c0;
-  box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28,0.1);
 }
 
 .gridTipos {
@@ -127,7 +127,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
   flex-direction: column;
   gap: 3px;
   padding: 12px 14px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 12px;
   background: white;
   cursor: pointer;
@@ -135,36 +135,36 @@ html, body { margin: 0; padding: 0; height: 100%; }
   text-align: left;
 }
 
-.tipoBtn:hover { border-color: #93c5fd; background: #f0f9ff; }
+.tipoBtn:hover { border-color: var(--pedra-400); background: var(--papel-claro); }
 
 .tipoBtnAtivo {
-  border-color: #1565c0 !important;
-  background: #eff6ff !important;
-  box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  box-shadow: 0 0 0 3px rgba(22, 32, 28,0.1);
 }
 
 .tipoIcone { font-size: 1.3rem; }
-.tipoLabel { font-size: 12px; font-weight: 700; color: #0f172a; }
-.tipoDesc  { font-size: 10px; color: #64748b; line-height: 1.3; }
+.tipoLabel { font-size: 12px; font-weight: 700; color: var(--tinta); }
+.tipoDesc  { font-size: 10px; color: var(--pedra-500); line-height: 1.3; }
 
 .btnSalvar {
   width: 100%;
   padding: 13px;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 16px rgba(21,101,192,0.3);
+  box-shadow: 0 4px 16px rgba(22, 32, 28,0.3);
   margin-top: 4px;
 }
 
 .btnSalvar:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(21,101,192,0.4);
+  box-shadow: 0 8px 24px rgba(22, 32, 28,0.4);
 }
 
 .btnDesabilitado { opacity: 0.4; cursor: not-allowed; }

@@ -17,8 +17,8 @@
 }
 
 .modal {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 16px;
   width: 100%;
   max-width: 580px;
@@ -31,16 +31,16 @@
 
 .cabecalho {
   padding: 20px 24px;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--pedra-700);
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #0f172a;
+  background: var(--tinta);
 }
 
 .iconeAlerta {
   font-size: 2rem;
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(212, 64, 31, 0.2);
   width: 48px;
   height: 48px;
   border-radius: 12px;
@@ -57,7 +57,7 @@
 }
 
 .subtitulo {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.8rem;
   margin: 4px 0 0 0;
 }
@@ -66,7 +66,7 @@
   margin-left: auto;
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 1.2rem;
   cursor: pointer;
   padding: 4px 8px;
@@ -74,17 +74,17 @@
 }
 
 .btnFechar:hover {
-  background: #334155;
+  background: var(--pedra-700);
   color: #ffffff;
 }
 
 .boxErro {
   margin: 16px 24px 0 24px;
   padding: 12px 16px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(212, 64, 31, 0.15);
+  border: 1px solid rgba(212, 64, 31, 0.3);
   border-radius: 8px;
-  color: #f87171;
+  color: #E8836B;
   font-size: 0.85rem;
   display: flex;
   align-items: center;
@@ -100,8 +100,8 @@
 }
 
 .cardFatura {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   border-radius: 10px;
   padding: 14px 16px;
   display: flex;
@@ -119,27 +119,27 @@
 }
 
 .faturaLabel {
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .faturaValor {
-  color: #f8fafc;
+  color: var(--papel-claro);
 }
 
 .valorDestaque {
-  color: #38bdf8;
+  color: #F0A58F;
   font-size: 1.15rem;
   font-weight: 800;
 }
 
 .faturaMetodo {
-  color: #34d399;
+  color: #7DBB98;
   font-weight: 600;
 }
 
 .codigoAsaas {
-  background: #1e293b;
-  color: #94a3b8;
+  background: var(--tinta-2);
+  color: var(--pedra-400);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: monospace;
@@ -153,7 +153,7 @@
 }
 
 .label {
-  color: #cbd5e1;
+  color: var(--pedra-300);
   font-size: 0.85rem;
   font-weight: 600;
   display: flex;
@@ -163,8 +163,8 @@
 .select,
 .textarea,
 .inputPin {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   color: #ffffff;
   padding: 10px 14px;
   border-radius: 8px;
@@ -175,7 +175,7 @@
 .textarea:focus,
 .inputPin:focus {
   outline: none;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 .textarea {
@@ -184,11 +184,11 @@
 }
 
 .avisoRegra {
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(227, 167, 47, 0.1);
+  border: 1px solid rgba(227, 167, 47, 0.3);
   border-radius: 8px;
   padding: 12px 14px;
-  color: #fbbf24;
+  color: #E8B84A;
   font-size: 0.8rem;
   line-height: 1.4;
 }
@@ -203,8 +203,8 @@
 
 .btnCancelar {
   background: transparent;
-  border: 1px solid #475569;
-  color: #94a3b8;
+  border: 1px solid var(--pedra-600);
+  color: var(--pedra-400);
   padding: 10px 18px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -212,12 +212,12 @@
 }
 
 .btnCancelar:hover {
-  background: #334155;
+  background: var(--pedra-700);
   color: #ffffff;
 }
 
 .btnConfirmar {
-  background: #dc2626;
+  background: var(--marco-escuro);
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -229,5 +229,5 @@
 }
 
 .btnConfirmar:hover {
-  background: #b91c1c;
+  background: #8F2812;
 }

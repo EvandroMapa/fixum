@@ -2,16 +2,16 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--tinta);
+  color: var(--papel-claro);
   font-family: inherit;
 }
 
 /* ── SIDEBAR ADMIN DARK / EXECUTIVA ── */
 .sidebar {
   width: 280px;
-  background: #1e293b;
-  border-right: 1px solid #334155;
+  background: var(--tinta-2);
+  border-right: 1px solid var(--pedra-700);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -21,7 +21,7 @@
 
 .sidebarHeader {
   padding: 24px 20px;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--pedra-700);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,7 +35,7 @@
 }
 
 .badgeAdmin {
-  background: #ef4444;
+  background: var(--marco);
   color: white;
   font-size: 10px;
   font-weight: 800;
@@ -60,7 +60,7 @@
   gap: 12px;
   padding: 12px 14px;
   border-radius: 10px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.88rem;
   font-weight: 600;
   background: transparent;
@@ -73,14 +73,14 @@
 }
 
 .navItem:hover {
-  background: #334155;
-  color: #f8fafc;
+  background: var(--pedra-700);
+  color: var(--papel-claro);
 }
 
 .navItemAtivo {
-  background: #0284c7 !important;
+  background: var(--hidro) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 4px 14px rgba(44, 95, 138, 0.4);
 }
 
 .navIcone {
@@ -89,7 +89,7 @@
 
 .badgeAlertaNav {
   margin-left: auto;
-  background: #ef4444;
+  background: var(--marco);
   color: #ffffff;
   font-size: 0.7rem;
   font-weight: 800;
@@ -99,7 +99,7 @@
 
 .sidebarFooter {
   padding: 16px 20px;
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--pedra-700);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -115,12 +115,12 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: #0f172a;
+  background: var(--tinta);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
-  border: 1px solid #334155;
+  border: 1px solid var(--pedra-700);
 }
 
 .userDados {
@@ -131,7 +131,7 @@
 .userNome {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--papel-claro);
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -140,7 +140,7 @@
 
 .userRole {
   font-size: 0.7rem;
-  color: #34d399;
+  color: #7DBB98;
 }
 
 /* ── CONTEÚDO PRINCIPAL ── */
@@ -156,8 +156,8 @@
 
 .topbar {
   height: 70px;
-  background: #1e293b;
-  border-bottom: 1px solid #334155;
+  background: var(--tinta-2);
+  border-bottom: 1px solid var(--pedra-700);
   padding: 0 32px;
   display: flex;
   align-items: center;
@@ -183,9 +183,9 @@
 }
 
 .btnBloquearTela {
-  background: #334155;
-  border: 1px solid #475569;
-  color: #e2e8f0;
+  background: var(--pedra-700);
+  border: 1px solid var(--pedra-600);
+  color: var(--pedra-200);
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -195,13 +195,13 @@
 }
 
 .btnBloquearTela:hover {
-  background: #475569;
+  background: var(--pedra-600);
 }
 
 .btnVoltarSite {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: #F0A58F;
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -211,14 +211,14 @@
 }
 
 .btnVoltarSite:hover {
-  background: #38bdf8;
-  color: #0f172a;
+  background: #F0A58F;
+  color: var(--tinta);
 }
 
 .btnSairAdmin {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #f87171;
+  background: rgba(212, 64, 31, 0.15);
+  border: 1px solid rgba(212, 64, 31, 0.4);
+  color: #E8836B;
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -228,7 +228,7 @@
 }
 
 .btnSairAdmin:hover {
-  background: #dc2626;
+  background: var(--marco-escuro);
   color: #ffffff;
 }
 
@@ -247,15 +247,15 @@
   justify-content: center;
   gap: 16px;
   padding: 80px 0;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.95rem;
 }
 
 .spinner {
   width: 36px;
   height: 36px;
-  border: 3px solid rgba(56, 189, 248, 0.2);
-  border-top-color: #38bdf8;
+  border: 3px solid rgba(240, 165, 143, 0.2);
+  border-top-color: #F0A58F;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -266,8 +266,8 @@
 
 /* ── PAINEL BOX & TABELAS ── */
 .painelBox {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -298,7 +298,7 @@
 }
 
 .painelSub {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.8rem;
 }
 
@@ -310,8 +310,8 @@
 }
 
 .campoBusca {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   color: #ffffff;
   padding: 9px 14px;
   border-radius: 8px;
@@ -321,12 +321,12 @@
 
 .campoBusca:focus {
   outline: none;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 .selectFiltro {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   color: #ffffff;
   padding: 9px 14px;
   border-radius: 8px;
@@ -336,13 +336,13 @@
 
 .selectFiltro:focus {
   outline: none;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 .btnExportarCSV {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: #F0A58F;
   padding: 9px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -352,7 +352,7 @@
 }
 
 .btnExportarCSV:hover {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
 }
 
@@ -370,9 +370,9 @@
 
 .tabela th {
   padding: 12px 14px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 600;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--pedra-700);
   text-transform: uppercase;
   font-size: 0.72rem;
   letter-spacing: 0.05em;
@@ -381,7 +381,7 @@
 
 .tabela td {
   padding: 14px;
-  color: #e2e8f0;
+  color: var(--pedra-200);
   border-bottom: 1px solid #283548;
 }
 
@@ -403,18 +403,18 @@
 }
 
 .badgeAtivo {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+  background: rgba(46, 107, 78, 0.2);
+  color: #7DBB98;
 }
 
 .badgeInativo {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
+  background: rgba(212, 64, 31, 0.2);
+  color: #E8836B;
 }
 
 .badgePendente {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fbbf24;
+  background: rgba(227, 167, 47, 0.2);
+  color: #E8B84A;
 }
 
 .badgeEstorno {
@@ -423,18 +423,18 @@
 }
 
 .badgeDisputa {
-  background: #dc2626;
+  background: var(--marco-escuro);
   color: #ffffff;
 }
 
-.badgeImobiliaria { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+.badgeImobiliaria { background: rgba(240, 165, 143, 0.2); color: #F0A58F; }
 .badgeCorretor { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
-.badgeProprietario { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+.badgeProprietario { background: rgba(227, 167, 47, 0.2); color: #E8B84A; }
 
 .badgePlano {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: #F0A58F;
   padding: 3px 8px;
   border-radius: 6px;
   font-weight: 700;
@@ -442,8 +442,8 @@
 }
 
 .tagPix {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background: rgba(46, 107, 78, 0.15);
+  color: #7DBB98;
   font-weight: 700;
   font-size: 0.75rem;
   padding: 3px 8px;
@@ -451,8 +451,8 @@
 }
 
 .tagCartao {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
+  background: rgba(240, 165, 143, 0.15);
+  color: #F0A58F;
   font-weight: 700;
   font-size: 0.75rem;
   padding: 3px 8px;
@@ -460,16 +460,16 @@
 }
 
 .tagMotivo {
-  background: #0f172a;
-  color: #cbd5e1;
+  background: var(--tinta);
+  color: var(--pedra-300);
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
 }
 
 .tagCanal {
-  background: #334155;
-  color: #38bdf8;
+  background: var(--pedra-700);
+  color: #F0A58F;
   padding: 3px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -477,9 +477,9 @@
 }
 
 .badgeLogAcao {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: #F0A58F;
   padding: 3px 8px;
   border-radius: 6px;
   font-weight: 700;
@@ -488,15 +488,15 @@
 }
 
 .valorDestaqueVerde {
-  color: #34d399;
+  color: #7DBB98;
 }
 
 .valorDestaqueVermelho {
-  color: #f87171;
+  color: #E8836B;
 }
 
 .linkAsaas {
-  color: #38bdf8;
+  color: #F0A58F;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.75rem;
@@ -508,9 +508,9 @@
 
 /* ── BOTÕES DE TABELA ── */
 .btnAcaoTabela {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: #F0A58F;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -520,12 +520,12 @@
 }
 
 .btnAcaoTabela:hover {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
 }
 
 .btnAcaoTabelaVerde {
-  background: #059669;
+  background: var(--cerrado);
   border: none;
   color: #ffffff;
   padding: 6px 10px;
@@ -536,13 +536,13 @@
 }
 
 .btnAcaoTabelaVerde:hover {
-  background: #10b981;
+  background: #3F8A66;
 }
 
 .btnAcaoTabelaVermelho {
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #f87171;
+  background: rgba(212, 64, 31, 0.2);
+  border: 1px solid rgba(212, 64, 31, 0.4);
+  color: #E8836B;
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -551,14 +551,14 @@
 }
 
 .btnAcaoTabelaVermelho:hover {
-  background: #dc2626;
+  background: var(--marco-escuro);
   color: #ffffff;
 }
 
 .btnAcao {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #94a3b8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: var(--pedra-400);
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -567,17 +567,17 @@
 }
 
 .btnAcao:hover {
-  background: #334155;
+  background: var(--pedra-700);
   color: #ffffff;
 }
 
 .btnAcaoPerigo {
-  color: #f87171;
-  border-color: rgba(239, 68, 68, 0.3);
+  color: #E8836B;
+  border-color: rgba(212, 64, 31, 0.3);
 }
 
 .btnAcaoPerigo:hover {
-  background: #dc2626;
+  background: var(--marco-escuro);
   color: #ffffff;
 }
 
@@ -585,15 +585,15 @@
 .subAbasNav {
   display: flex;
   gap: 10px;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--pedra-700);
   padding-bottom: 12px;
   flex-wrap: wrap;
 }
 
 .subAbaBtn {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #94a3b8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: var(--pedra-400);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -603,26 +603,26 @@
 }
 
 .subAbaBtn:hover {
-  border-color: #38bdf8;
-  color: #f8fafc;
+  border-color: #F0A58F;
+  color: var(--papel-claro);
 }
 
 .subAbaAtiva {
-  background: #0284c7 !important;
+  background: var(--hidro) !important;
   color: #ffffff !important;
-  border-color: #38bdf8 !important;
+  border-color: #F0A58F !important;
 }
 
 .boxSucessoZeroDisputas {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(46, 107, 78, 0.1);
+  border: 1px solid rgba(46, 107, 78, 0.3);
   border-radius: 12px;
   padding: 24px;
   display: flex;
   align-items: center;
   gap: 16px;
   font-size: 1.8rem;
-  color: #34d399;
+  color: #7DBB98;
 }
 
 /* ── FORMULÁRIO DE CONFIGURAÇÕES ── */
@@ -634,8 +634,8 @@
 }
 
 .secaoConfigCard {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -647,7 +647,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--tinta-2);
   padding-bottom: 12px;
 }
 
@@ -658,14 +658,14 @@
 }
 
 .labelForm {
-  color: #cbd5e1;
+  color: var(--pedra-300);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .inputForm {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
   color: #ffffff;
   padding: 10px 14px;
   border-radius: 8px;
@@ -674,22 +674,22 @@
 
 .inputForm:focus {
   outline: none;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 .alertaAmarelo {
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  color: #fbbf24;
+  background: rgba(227, 167, 47, 0.15);
+  border: 1px solid rgba(227, 167, 47, 0.3);
+  color: #E8B84A;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
 }
 
 .alertaVerde {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34d399;
+  background: rgba(46, 107, 78, 0.15);
+  border: 1px solid rgba(46, 107, 78, 0.3);
+  color: #7DBB98;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -697,7 +697,7 @@
 
 .btnSalvarConfig {
   align-self: flex-start;
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
   border: none;
   padding: 12px 20px;
@@ -709,7 +709,7 @@
 }
 
 .btnSalvarConfig:hover {
-  background: #0369a1;
+  background: var(--hidro);
 }
 
 /* ── MODO ADMIN POCKET MOBILE (VISÃO EXECUTIVA INFORMATIVA) ── */
@@ -744,7 +744,7 @@
     top: 0;
     z-index: 100;
     background: #090d16;
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid var(--tinta-2);
     padding: 8px 14px;
     height: 52px;
     box-sizing: border-box;
@@ -773,9 +773,9 @@
   }
 
   .pocketBadge {
-    background: rgba(56, 189, 248, 0.1);
-    color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.25);
+    background: rgba(240, 165, 143, 0.1);
+    color: #F0A58F;
+    border: 1px solid rgba(240, 165, 143, 0.25);
     font-size: 0.62rem;
     font-weight: 700;
     height: 20px;
@@ -800,7 +800,7 @@
   .pocketBtnIcone {
     background: #162032;
     border: 1px solid #24334d;
-    color: #cbd5e1;
+    color: var(--pedra-300);
     width: 32px;
     height: 32px;
     padding: 0;
@@ -815,14 +815,14 @@
   }
 
   .pocketBtnIcone:hover {
-    background: #1e293b;
+    background: var(--tinta-2);
     color: #ffffff;
   }
 
   .pocketBtnSair {
-    color: #f87171 !important;
-    border: 1px solid rgba(239, 68, 68, 0.3) !important;
-    background: rgba(239, 68, 68, 0.08) !important;
+    color: #E8836B !important;
+    border: 1px solid rgba(212, 64, 31, 0.3) !important;
+    background: rgba(212, 64, 31, 0.08) !important;
     height: 32px;
     padding: 0 10px;
     border-radius: 8px;
@@ -837,7 +837,7 @@
   }
 
   .pocketBtnSair:hover {
-    background: rgba(239, 68, 68, 0.2) !important;
+    background: rgba(212, 64, 31, 0.2) !important;
   }
 
   /* 4 ABAS EM GRID DE 4 COLUNAS — 100% SEM ROLAGEM */
@@ -847,7 +847,7 @@
     gap: 4px;
     padding: 8px 12px;
     background: #0d1322;
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid var(--tinta-2);
     width: 100%;
     box-sizing: border-box;
   }
@@ -855,7 +855,7 @@
   .pocketNavPill {
     background: #162032;
     border: 1px solid #24334d;
-    color: #94a3b8;
+    color: var(--pedra-400);
     height: 36px;
     padding: 0 4px;
     border-radius: 8px;
@@ -874,11 +874,11 @@
   }
 
   .pocketNavPillAtivo {
-    background: #0284c7 !important;
-    border-color: #0284c7 !important;
+    background: var(--hidro) !important;
+    border-color: var(--hidro) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
-    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    box-shadow: 0 2px 8px rgba(44, 95, 138, 0.35);
   }
 
   .pocketCorpo {
@@ -889,8 +889,8 @@
   }
 
   .pocketCardKpi {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: var(--tinta-2);
+    border: 1px solid var(--pedra-700);
     border-radius: 12px;
     padding: 16px;
     display: flex;
@@ -908,7 +908,7 @@
   .pocketKpiLabel {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--pedra-400);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -922,7 +922,7 @@
 
   .pocketKpiSub {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--pedra-500);
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -935,8 +935,8 @@
   }
 
   .pocketItemCard {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: var(--tinta-2);
+    border: 1px solid var(--pedra-700);
     border-radius: 10px;
     padding: 12px 14px;
     display: flex;
@@ -954,7 +954,7 @@
   .pocketItemNome {
     font-size: 0.88rem;
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--papel-claro);
   }
 
   .pocketBadgeStatus {
@@ -966,21 +966,21 @@
   }
 
   .pocketBadgePago {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: rgba(46, 107, 78, 0.15);
+    color: #7DBB98;
+    border: 1px solid rgba(46, 107, 78, 0.3);
   }
 
   .pocketBadgePendente {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    background: rgba(227, 167, 47, 0.15);
+    color: #E8B84A;
+    border: 1px solid rgba(227, 167, 47, 0.3);
   }
 
   .pocketBadgeAtrasado {
-    background: rgba(239, 68, 68, 0.15);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(212, 64, 31, 0.15);
+    color: #E8836B;
+    border: 1px solid rgba(212, 64, 31, 0.3);
   }
 
   /* Seletor de Período Pocket */
@@ -988,8 +988,8 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    background: #0f172a;
-    border: 1px solid #1e293b;
+    background: var(--tinta);
+    border: 1px solid var(--tinta-2);
     border-radius: 8px;
     padding: 3px;
     overflow-x: auto;
@@ -1002,7 +1002,7 @@
   .pocketBtnPeriodo {
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: var(--pedra-400);
     padding: 4px 8px;
     border-radius: 6px;
     font-size: 0.72rem;
@@ -1013,8 +1013,8 @@
   }
 
   .pocketBtnPeriodoAtivo {
-    background: #1e293b;
-    color: #38bdf8;
+    background: var(--tinta-2);
+    color: #F0A58F;
     font-weight: 700;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
@@ -1027,8 +1027,8 @@
   }
 
   .pocketCardKpiMini {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: var(--tinta-2);
+    border: 1px solid var(--pedra-700);
     border-radius: 10px;
     padding: 12px;
     display: flex;
@@ -1039,7 +1039,7 @@
   .pocketKpiMiniLabel {
     font-size: 0.72rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--pedra-400);
     display: flex;
     align-items: center;
     gap: 4px;
@@ -1053,13 +1053,13 @@
 
   .pocketKpiMiniSub {
     font-size: 0.68rem;
-    color: #64748b;
+    color: var(--pedra-500);
   }
 
   /* Card de Crescimento e Churn */
   .pocketCardGrowth {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: var(--tinta-2);
+    border: 1px solid var(--pedra-700);
     border-radius: 12px;
     padding: 14px;
     display: flex;
@@ -1075,8 +1075,8 @@
   }
 
   .pocketGrowthItem {
-    background: #0f172a;
-    border: 1px solid #1e293b;
+    background: var(--tinta);
+    border: 1px solid var(--tinta-2);
     border-radius: 8px;
     padding: 8px 4px;
     display: flex;
@@ -1086,31 +1086,31 @@
 
   .pocketGrowthLabel {
     font-size: 0.68rem;
-    color: #94a3b8;
+    color: var(--pedra-400);
   }
 
   .pocketGrowthNumPositivo {
     font-size: 0.95rem;
     font-weight: 800;
-    color: #34d399;
+    color: #7DBB98;
   }
 
   .pocketGrowthNumNegativo {
     font-size: 0.95rem;
     font-weight: 800;
-    color: #f87171;
+    color: #E8836B;
   }
 
   .pocketGrowthNumAzul {
     font-size: 0.95rem;
     font-weight: 800;
-    color: #38bdf8;
+    color: #F0A58F;
   }
 
   /* Card de Planos */
   .pocketCardPlanos {
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: var(--tinta-2);
+    border: 1px solid var(--pedra-700);
     border-radius: 12px;
     padding: 14px;
     display: flex;
@@ -1139,38 +1139,38 @@
 
   .pocketPlanoNome {
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--papel-claro);
   }
 
   .pocketPlanoValores {
-    color: #94a3b8;
+    color: var(--pedra-400);
   }
 
   .pocketPlanoValores strong {
-    color: #34d399;
+    color: #7DBB98;
   }
 
   .pocketPlanoFundo {
     height: 6px;
-    background: #0f172a;
+    background: var(--tinta);
     border-radius: 4px;
     overflow: hidden;
   }
 
   .pocketPlanoBarra {
     height: 100%;
-    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    background: linear-gradient(90deg, var(--hidro), #F0A58F);
     border-radius: 4px;
     transition: width 0.3s ease;
   }
 
   .pocketAvisoDesktop {
-    background: #0f172a;
-    border: 1px dashed #334155;
+    background: var(--tinta);
+    border: 1px dashed var(--pedra-700);
     border-radius: 10px;
     padding: 12px 14px;
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: var(--pedra-400);
     line-height: 1.4;
     text-align: center;
     margin-top: 8px;

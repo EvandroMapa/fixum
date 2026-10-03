@@ -1,68 +1,98 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
-
 /* ============================================
-   DESIGN TOKENS
+   FIXUM — TOKENS DE MARCA
+   Fonte de verdade: brand/brandbook-fixum.html
+   Fontes carregadas via next/font em app/layout.tsx
    ============================================ */
 :root {
-  /* Cores Primárias */
-  --cor-primaria: #0f4c81;
-  --cor-primaria-hover: #0a3d6b;
-  --cor-primaria-claro: #e8f1fa;
-  --cor-primaria-rgb: 15, 76, 129;
+  /* Paleta da marca */
+  --tinta: #16201C;            /* Tinta Topográfica — texto, logo, primário */
+  --tinta-2: #22302A;
+  --tinta-3: #33433C;
+  --tinta-profunda: #0F1714;
+  --papel: #F3EEE4;            /* Papel Cartográfico — fundo da marca */
+  --papel-claro: #FAF7F1;
+  --marco: #D4401F;            /* Vermelho Marco — CTA, ponto do logo. Raro de propósito */
+  --marco-escuro: #B23318;
+  --marco-claro: #FBE6DF;
+  --cerrado: #2E6B4E;          /* Verde Cerrado — perto de, sucesso */
+  --cerrado-claro: #DCE9DF;
+  --hidro: #2C5F8A;            /* Azul Hidrografia — links, informação */
+  --hidro-claro: #DCE7F0;
+  --ouro: #E3A72F;             /* Ouro de Minas — destaque / planos */
+  --ouro-escuro: #8A5F12;
+  --ouro-claro: #FBEFD3;
+  --pedra-100: #EAE4D8;
+  --pedra-200: #E0D8CA;
+  --pedra-300: #CFC6B6;
+  --pedra-400: #A39A8A;
+  --pedra-500: #7A7264;
+  --pedra-600: #5A5449;
+  --pedra-700: #3F3B34;
 
-  /* Cores de Acento */
-  --cor-acento: #ff6b35;
-  --cor-acento-hover: #e55a24;
-  --cor-acento-claro: #fff0eb;
+  /* Cores Primárias (nomes legados — apontam para a marca) */
+  --cor-primaria: var(--tinta);
+  --cor-primaria-hover: var(--tinta-2);
+  --cor-primaria-claro: var(--pedra-100);
+  --cor-primaria-rgb: 22, 32, 28;
 
-  /* Cores de Superfície */
-  --cor-fundo: #f7f8fa;
-  --cor-fundo-alt: #eef1f6;
+  /* Acento = Vermelho Marco */
+  --cor-acento: var(--marco);
+  --cor-acento-hover: var(--marco-escuro);
+  --cor-acento-claro: var(--marco-claro);
+  --cor-acento-rgb: 212, 64, 31;
+  --cor-destaque: var(--ouro);
+
+  /* Superfícies */
+  --cor-fundo: var(--papel-claro);
+  --cor-fundo-alt: var(--papel);
   --cor-superficie: #ffffff;
   --cor-superficie-elevada: #ffffff;
 
-  /* Cores de Texto */
-  --cor-texto: #0d1117;
-  --cor-texto-secundario: #4a5568;
-  --cor-texto-terciario: #718096;
-  --cor-texto-placeholder: #a0aec0;
-  --cor-texto-invertido: #ffffff;
+  /* Texto */
+  --cor-texto: var(--tinta);
+  --cor-texto-secundario: var(--pedra-600);
+  --cor-texto-terciario: var(--pedra-500);
+  --cor-texto-placeholder: var(--pedra-400);
+  --cor-texto-invertido: var(--papel);
 
   /* Bordas */
-  --cor-borda: #e2e8f0;
-  --cor-borda-foco: #0f4c81;
-  --cor-borda-hover: #cbd5e0;
+  --cor-borda: var(--pedra-200);
+  --cor-borda-foco: var(--tinta);
+  --cor-borda-hover: var(--pedra-300);
 
   /* Feedback */
-  --cor-sucesso: #22c55e;
-  --cor-sucesso-claro: #f0fdf4;
-  --cor-erro: #ef4444;
-  --cor-erro-claro: #fef2f2;
-  --cor-aviso: #f59e0b;
-  --cor-aviso-claro: #fffbeb;
-  --cor-info: #3b82f6;
+  --cor-sucesso: var(--cerrado);
+  --cor-sucesso-claro: #EEF5F0;
+  --cor-erro: var(--marco-escuro);
+  --cor-erro-claro: #FDF1EC;
+  --cor-aviso: var(--ouro);
+  --cor-aviso-claro: var(--ouro-claro);
+  --cor-info: var(--hidro);
 
-  /* Sombras */
-  --sombra-xs: 0 1px 2px rgba(0,0,0,0.06);
-  --sombra-sm: 0 2px 8px rgba(0,0,0,0.08);
-  --sombra-md: 0 4px 16px rgba(0,0,0,0.10);
-  --sombra-lg: 0 8px 32px rgba(0,0,0,0.12);
-  --sombra-xl: 0 16px 48px rgba(0,0,0,0.15);
-  --sombra-card: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
-  --sombra-card-hover: 0 8px 32px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.06);
+  /* Sombras — tingidas de Tinta, nunca preto puro */
+  --sombra-xs: 0 1px 2px rgba(22, 32, 28, 0.06);
+  --sombra-sm: 0 2px 8px rgba(22, 32, 28, 0.07);
+  --sombra-md: 0 4px 16px rgba(22, 32, 28, 0.09);
+  --sombra-lg: 0 10px 32px rgba(22, 32, 28, 0.12);
+  --sombra-xl: 0 20px 56px rgba(22, 32, 28, 0.16);
+  --sombra-card: 0 1px 2px rgba(22, 32, 28, 0.05), 0 0 0 1px rgba(22, 32, 28, 0.06);
+  --sombra-card-hover: 0 12px 32px rgba(22, 32, 28, 0.12), 0 0 0 1px rgba(22, 32, 28, 0.08);
+  --sombra-pin: 0 1px 2px rgba(22, 32, 28, 0.18), 0 4px 14px rgba(22, 32, 28, 0.14);
 
   /* Raios de Borda */
   --raio-xs: 4px;
   --raio-sm: 8px;
   --raio-md: 12px;
   --raio-lg: 16px;
-  --raio-xl: 20px;
+  --raio-xl: 18px;
   --raio-2xl: 24px;
   --raio-full: 9999px;
 
-  /* Tipografia */
-  --fonte-principal: 'Inter', -apple-system, sans-serif;
-  --fonte-display: 'Outfit', -apple-system, sans-serif;
+  /* Tipografia (variáveis de next/font definidas no <html>) */
+  --fonte-principal: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --fonte-display: var(--font-bricolage), var(--font-inter), 'Inter', sans-serif;
+  --fonte-editorial: var(--font-instrument), Georgia, serif;
+  --fonte-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
 
   /* Tamanhos de Fonte */
   --texto-xs: 0.75rem;
@@ -90,12 +120,13 @@
 
   /* Layout */
   --largura-max: 1400px;
-  --largura-conteudo: 1200px;
-  --altura-header: 68px;
+  --largura-conteudo: 1240px;
+  --altura-header: 64px;
+  --altura-toque: 48px;
 
   /* Transições */
-  --transicao: 200ms ease;
-  --transicao-suave: 300ms ease;
+  --transicao: 180ms ease;
+  --transicao-suave: 280ms cubic-bezier(.2, .7, .2, 1);
   --transicao-lenta: 500ms ease;
 
   /* Z-index */
@@ -167,8 +198,45 @@ ul, ol {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--fonte-display);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   color: var(--cor-texto);
+}
+
+::selection {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 2px;
+}
+
+/* Utilitários de marca */
+.fonte-editorial {
+  font-family: var(--fonte-editorial);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.fonte-mono {
+  font-family: var(--fonte-mono);
+  letter-spacing: 0.04em;
+}
+
+.rotulo-mapa {
+  font-family: var(--fonte-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--marco);
+}
+
+.numeros-tabulares {
+  font-variant-numeric: tabular-nums;
 }
 
 h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
@@ -191,11 +259,12 @@ p {
   align-items: center;
   justify-content: center;
   gap: var(--espaco-2);
-  padding: 12px 24px;
+  min-height: 44px;
+  padding: 12px 22px;
   border-radius: var(--raio-md);
-  font-size: var(--texto-sm);
+  font-size: 0.9375rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
   transition: all var(--transicao);
   white-space: nowrap;
   position: relative;
@@ -221,25 +290,20 @@ p {
 .btn-primario {
   background: var(--cor-primaria);
   color: var(--cor-texto-invertido);
-  box-shadow: 0 2px 8px rgba(var(--cor-primaria-rgb), 0.35);
 }
 
 .btn-primario:hover {
   background: var(--cor-primaria-hover);
-  box-shadow: 0 4px 16px rgba(var(--cor-primaria-rgb), 0.45);
-  transform: translateY(-1px);
 }
 
+/* CTA principal — no máximo um por tela */
 .btn-acento {
   background: var(--cor-acento);
-  color: var(--cor-texto-invertido);
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.35);
+  color: #ffffff;
 }
 
 .btn-acento:hover {
   background: var(--cor-acento-hover);
-  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.45);
-  transform: translateY(-1px);
 }
 
 .btn-outline {
@@ -251,7 +315,6 @@ p {
 .btn-outline:hover {
   border-color: var(--cor-primaria);
   color: var(--cor-primaria);
-  background: var(--cor-primaria-claro);
 }
 
 .btn-ghost {
@@ -265,6 +328,7 @@ p {
 }
 
 .btn-sm {
+  min-height: 36px;
   padding: 8px 16px;
   font-size: var(--texto-xs);
   border-radius: var(--raio-sm);
@@ -287,10 +351,11 @@ p {
    ============================================ */
 .campo {
   width: 100%;
+  min-height: 48px;
   padding: 12px 16px;
-  border: 1.5px solid var(--cor-borda);
+  border: 1.5px solid var(--cor-borda-hover);
   border-radius: var(--raio-md);
-  font-size: var(--texto-sm);
+  font-size: 16px;
   color: var(--cor-texto);
   background: var(--cor-superficie);
   transition: all var(--transicao);
@@ -356,8 +421,8 @@ p {
 }
 
 .badge-destaque {
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-  color: white;
+  background: var(--ouro);
+  color: var(--tinta);
 }
 
 /* ============================================
@@ -389,24 +454,16 @@ p {
    GRADIENTES ESPECIAIS
    ============================================ */
 .gradiente-primario {
-  background: linear-gradient(135deg, var(--cor-primaria) 0%, #1a6bb5 100%);
+  background: var(--tinta);
 }
 
 .gradiente-hero {
-  background: linear-gradient(
-    160deg,
-    #0a2540 0%,
-    #0f4c81 40%,
-    #1a6bb5 70%,
-    #0f4c81 100%
-  );
+  background: var(--tinta);
 }
 
+/* Mantido por compatibilidade: a marca não usa texto em gradiente */
 .gradiente-texto {
-  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-acento));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--marco);
 }
 
 /* ============================================
@@ -463,7 +520,7 @@ p {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--cor-fundo);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -514,38 +571,214 @@ p {
 }
 
 /* ============================================
-   POPUP DO MAPA (Mapbox) — estilo Airbnb
+   POPUP DO MAPA (Mapbox)
    ============================================ */
 .fixum-popup .mapboxgl-popup-content {
   padding: 0 !important;
   border-radius: 16px !important;
   overflow: hidden;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10) !important;
+  box-shadow: 0 16px 44px rgba(22, 32, 28, 0.22), 0 2px 8px rgba(22, 32, 28, 0.08) !important;
   border: none !important;
 }
 
 .fixum-popup .mapboxgl-popup-close-button {
   top: 8px !important;
   right: 8px !important;
-  width: 28px !important;
-  height: 28px !important;
+  width: 30px !important;
+  height: 30px !important;
   border-radius: 50% !important;
-  background: rgba(255,255,255,0.92) !important;
-  backdrop-filter: blur(8px) !important;
-  font-size: 16px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  font-size: 18px !important;
   line-height: 1 !important;
-  color: #374151 !important;
+  color: var(--tinta) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   z-index: 10 !important;
-  transition: background 0.15s !important;
+  box-shadow: 0 1px 4px rgba(22, 32, 28, 0.18);
 }
 
 .fixum-popup .mapboxgl-popup-close-button:hover {
-  background: white !important;
+  background: #ffffff !important;
 }
 
 .fixum-popup .mapboxgl-popup-tip {
-  border-top-color: white !important;
+  border-top-color: #ffffff !important;
+}
+
+.fx-popup {
+  width: 272px;
+  font-family: var(--fonte-principal);
+  color: var(--tinta);
+}
+
+.fx-popup--compacto {
+  width: 208px;
+}
+
+.fx-popup-link {
+  display: block;
+  color: inherit;
+}
+
+.fx-popup-foto {
+  position: relative;
+  height: 156px;
+  background: var(--papel);
+  overflow: hidden;
+}
+
+.fx-popup--compacto .fx-popup-foto {
+  height: 96px;
+}
+
+.fx-popup-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.fx-popup-link:hover .fx-popup-foto img {
+  transform: scale(1.03);
+}
+
+.fx-popup-semfoto {
+  width: 100%;
+  height: 100%;
+  background:
+    repeating-radial-gradient(circle at 70% 40%, transparent 0 14px, rgba(22, 32, 28, 0.06) 14px 15px),
+    var(--papel);
+}
+
+.fx-popup-teste {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: rgba(22, 32, 28, 0.82);
+  color: var(--ouro);
+  font-family: var(--fonte-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.fx-popup-corpo {
+  padding: 12px 14px 14px;
+}
+
+.fx-popup--compacto .fx-popup-corpo {
+  padding: 9px 10px 10px;
+}
+
+.fx-popup-preco {
+  font-family: var(--fonte-display);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.fx-popup-preco--consulta {
+  font-family: var(--fonte-principal);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--pedra-600);
+}
+
+.fx-popup--compacto .fx-popup-preco {
+  font-size: 1rem;
+}
+
+.fx-popup-titulo {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fx-popup-local,
+.fx-popup-detalhes {
+  font-size: 0.75rem;
+  color: var(--pedra-500);
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fx-popup-detalhes {
+  color: var(--pedra-600);
+}
+
+.fx-popup-rodape {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--pedra-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fx-popup-anunciante {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--pedra-600);
+}
+
+.fx-popup-anunciante span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fx-popup-anunciante img,
+.fx-popup-iniciais {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.fx-popup-iniciais {
+  display: grid;
+  place-items: center;
+  background: var(--pedra-100);
+  color: var(--tinta);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.fx-popup-ref {
+  flex-shrink: 0;
+  font-family: var(--fonte-mono);
+  font-size: 10px;
+  color: var(--pedra-500);
+  letter-spacing: 0.02em;
+}
+
+/* Controles do Mapbox no tom da marca */
+.mapboxgl-ctrl-group {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(22, 32, 28, 0.12), 0 4px 14px rgba(22, 32, 28, 0.1) !important;
+}
+
+.mapboxgl-ctrl-group button {
+  width: 36px !important;
+  height: 36px !important;
 }

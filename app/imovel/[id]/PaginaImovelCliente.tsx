@@ -300,7 +300,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             <span>›</span>
             <Link href={origemParam === 'mapa' ? '/explorar?vista=mapa' : '/explorar'}>Explorar</Link>
             <span>›</span>
-            <span style={{ color: '#475569' }}>{imovel.cidade}</span>
+            <span style={{ color: '#5A5449' }}>{imovel.cidade}</span>
             <span>›</span>
             <span className={styles.breadcrumbTitulo}>{imovel.titulo}</span>
           </div>
@@ -322,7 +322,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               className={styles.btnAcaoTopo}
               onClick={handleCompartilharWhatsApp}
               title="Compartilhar este imóvel no WhatsApp"
-              style={{ color: '#16a34a', borderColor: '#bbf7d0', background: '#f0fdf4' }}
+              style={{ color: '#2E6B4E', borderColor: '#C3DACB', background: '#EEF5F0' }}
             >
               <IconeWhatsApp size={14} />
               <span className={styles.txtAcao}>WhatsApp</span>
@@ -497,7 +497,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               {/* Bloco de Preço & Custos */}
               <div className={styles.blocoPrecoCard}>
                 <div className={styles.linhaPrecoPrincipal}>
-                  <span className={styles.precoValorDestaque} style={isSobConsulta ? { color: '#0284c7' } : undefined}>
+                  <span className={styles.precoValorDestaque} style={isSobConsulta ? { color: '#2C5F8A' } : undefined}>
                     {isSobConsulta ? 'Preço sob consulta' : formatarPreco(imovel.preco, imovel.negociacao)}
                   </span>
                   {!isSobConsulta && imovel.negociacao === 'aluguel' && (
@@ -506,7 +506,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                 </div>
 
                 {isSobConsulta ? (
-                  <div style={{ fontSize: '0.8rem', color: '#0369a1', background: '#f0f9ff', border: '1px solid #bae6fd', padding: '8px 12px', borderRadius: '6px', marginTop: '2px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#2C5F8A', background: '#FAF7F1', border: '1px solid #CFC6B6', padding: '8px 12px', borderRadius: '6px', marginTop: '2px', lineHeight: 1.4 }}>
                     💬 Consulte valores atualizados, condições especiais e agende uma visita diretamente com a nossa equipe.
                   </div>
                 ) : (
@@ -620,7 +620,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               <p className={styles.enderecoCompleto}>
                 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade} - {imovel.estado || 'MG'}
               </p>
-              <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '-4px 0 12px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <p style={{ fontSize: '0.82rem', color: '#7A7264', margin: '-4px 0 12px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <span>🛡️</span> Região aproximada para privacidade e segurança do imóvel. O endereço exato é fornecido no agendamento da visita.
               </p>
               <div className={styles.mapaImovelWrapper}>
@@ -736,7 +736,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                   {anunciante?.foto_url ? (
                     <img src={anunciante.foto_url} alt={isImob ? nomeImobiliaria : nomeAnunciante} className={styles.bannerImobLogoImg} />
                   ) : (
-                    <div className={styles.anuncianteAvatarPlaceholder} style={{ fontSize: '1.2rem', fontWeight: 800, color: isImob ? '#1d4ed8' : '#047857' }}>
+                    <div className={styles.anuncianteAvatarPlaceholder} style={{ fontSize: '1.2rem', fontWeight: 800, color: isImob ? '#22302A' : '#24563E' }}>
                       {(isImob ? nomeImobiliaria : nomeAnunciante).slice(0, 2).toUpperCase()}
                     </div>
                   )}
@@ -867,7 +867,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
       {/* ── BARRA FIXA DE CONTATO MOBILE (BOTTOM BAR) ── */}
       <div className={styles.barraContatoMobile}>
         <div className={styles.precoMobileInfo}>
-          <span className={styles.precoMobileValor} style={isSobConsulta ? { color: '#0284c7', fontSize: '1.05rem' } : undefined}>
+          <span className={styles.precoMobileValor} style={isSobConsulta ? { color: '#2C5F8A', fontSize: '1.05rem' } : undefined}>
             {isSobConsulta ? 'Preço sob consulta' : formatarPreco(imovel.preco, imovel.negociacao)}
           </span>
           {!isSobConsulta && imovel.condominio && (

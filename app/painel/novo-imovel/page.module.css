@@ -1,7 +1,7 @@
 /* ── Layout Geral ── */
 .pagina {
   min-height: 100vh;
-  background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #1565c0 100%);
+  background: linear-gradient(160deg, var(--tinta) 0%, #1e3a5f 60%, var(--tinta) 100%);
   display: flex;
   flex-direction: column;
 }
@@ -78,7 +78,7 @@
   gap: 0;
   padding: 6px 16px;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--pedra-200);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
@@ -94,14 +94,14 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #f1f5f9;
-  border: 1.5px solid #cbd5e1;
+  background: var(--papel);
+  border: 1.5px solid var(--pedra-300);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--pedra-500);
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
@@ -109,44 +109,44 @@
 .etapaLabel {
   font-size: 10.5px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   transition: all 0.2s ease;
 }
 
 .etapaAtiva .etapaBolha {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--tinta);
+  border-color: var(--tinta);
   color: #ffffff;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.2);
   transform: scale(1.05);
 }
 
 .etapaAtiva .etapaLabel {
-  color: #1d4ed8;
+  color: var(--tinta-2);
   font-weight: 700;
 }
 
 .etapaConcluida .etapaBolha {
-  background: #10b981;
-  border-color: #10b981;
+  background: #3F8A66;
+  border-color: #3F8A66;
   color: #ffffff;
 }
 
 .etapaConcluida .etapaLabel {
-  color: #059669;
+  color: var(--cerrado);
 }
 
 .etapaLinha {
   width: 20px;
   height: 2px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
   margin: 0 4px;
   border-radius: 999px;
   transition: all 0.2s ease;
 }
 
 .etapaLinhaAtiva {
-  background: #10b981;
+  background: #3F8A66;
 }
 
 /* ── Wrapper central ── */
@@ -160,7 +160,7 @@
 .card {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 680px;
@@ -175,13 +175,13 @@
 .etapaTitulo {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 2px;
 }
 
 .etapaSubtitulo {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 10px;
 }
 
@@ -200,7 +200,7 @@
   justify-content: center;
   gap: 3px;
   padding: 6px 4px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 8px;
   background: #ffffff;
   cursor: pointer;
@@ -209,15 +209,15 @@
 }
 
 .tipoCard:hover {
-  border-color: #93c5fd;
-  background: #f0f9ff;
+  border-color: var(--pedra-400);
+  background: var(--papel-claro);
   transform: translateY(-1px);
 }
 
 .tipoSelecionado {
-  border-color: #2563eb !important;
-  background: #eff6ff !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.2);
 }
 
 .tipoIcone {
@@ -228,7 +228,7 @@
 .tipoLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--tinta-2);
   text-align: center;
   line-height: 1.1;
   max-width: 100%;
@@ -243,20 +243,20 @@
 
 .btnOpcao {
   padding: 6px 10px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 6px;
-  background: #f8fafc;
+  background: var(--papel-claro);
   font-size: 0.84rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--pedra-600);
   cursor: pointer;
   transition: all 0.12s ease;
 }
 
 /* ── Revisão e Publicação (Etapa 5) ── */
 .revisaoCard {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 8px;
   padding: 4px 14px;
   margin-bottom: 6px;
@@ -267,9 +267,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 5px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   font-size: 0.82rem;
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .revisaoLinha:last-child {
@@ -277,13 +277,13 @@
 }
 
 .revisaoLinha strong {
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .revisaoPreco {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #2563eb !important;
+  color: var(--tinta) !important;
 }
 
 /* ── Barra de Navegação Inferior ── */
@@ -292,12 +292,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 18px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
   background: #ffffff;
 }
 
 .btnAvancar {
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   padding: 7px 18px;
   border-radius: 8px;
@@ -309,34 +309,34 @@
 }
 
 .btnAvancar:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--tinta-2);
 }
 
 .btnDesabilitado {
-  background: #94a3b8 !important;
+  background: var(--pedra-400) !important;
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 .btnVoltar2 {
   background: transparent;
-  color: #64748b;
+  color: var(--pedra-500);
   padding: 7px 14px;
   border-radius: 8px;
   font-size: 0.82rem;
   font-weight: 600;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .btnVoltar2:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 .btnPublicar {
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   padding: 7px 18px;
   border-radius: 8px;
@@ -351,7 +351,7 @@
 }
 
 .btnPublicar:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--tinta-2);
 }
 
 .btnCarregando {
@@ -360,13 +360,13 @@
 }
 
 .btnOpcao:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: var(--papel);
+  border-color: var(--pedra-300);
 }
 
 .btnOpcaoAtivo {
-  background: #2563eb !important;
-  border-color: #2563eb !important;
+  background: var(--tinta) !important;
+  border-color: var(--tinta) !important;
   color: #ffffff !important;
 }
 
@@ -381,16 +381,16 @@
 .label {
   font-size: 0.775rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 .input {
   width: 100%;
   padding: 6px 10px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 6px;
   font-size: 0.85rem;
-  color: #0f172a;
+  color: var(--tinta);
   background: #ffffff;
   transition: all 0.12s ease;
   box-sizing: border-box;
@@ -398,17 +398,17 @@
 
 .input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.1);
 }
 
 .textarea {
   width: 100%;
   padding: 6px 10px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 6px;
   font-size: 0.85rem;
-  color: #0f172a;
+  color: var(--tinta);
   background: #ffffff;
   resize: vertical;
   box-sizing: border-box;
@@ -417,8 +417,8 @@
 
 .textarea:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.1);
 }
 
 .grid2 {
@@ -455,25 +455,25 @@
 .negBtn {
   flex: 1;
   padding: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
   border-radius: 10px;
   background: white;
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
 }
 
 .negBtn:hover {
-  border-color: #93c5fd;
-  color: #1565c0;
+  border-color: var(--pedra-400);
+  color: var(--tinta);
 }
 
 .negBtnAtivo {
-  border-color: #1565c0 !important;
-  background: #1565c0 !important;
+  border-color: var(--tinta) !important;
+  background: var(--tinta) !important;
   color: white !important;
 }
 
@@ -488,15 +488,15 @@
 .label {
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: var(--pedra-700);
 }
 
 .input {
   padding: 12px 14px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 10px;
   font-size: 15px;
-  color: #0f172a;
+  color: var(--tinta);
   transition: border-color 0.2s;
   background: white;
   width: 100%;
@@ -506,12 +506,12 @@
 
 .input:focus {
   outline: none;
-  border-color: #1565c0;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.1);
 }
 
 .inputCarregando {
-  background: #f8fafc;
+  background: var(--papel-claro);
   opacity: 0.7;
 }
 
@@ -522,7 +522,7 @@
 
 .contador {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   text-align: right;
 }
 
@@ -546,25 +546,25 @@
 
 .btnOpcao {
   padding: 10px 20px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 8px;
   background: white;
   font-size: 14px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btnOpcao:hover {
-  border-color: #93c5fd;
-  color: #1565c0;
+  border-color: var(--pedra-400);
+  color: var(--tinta);
 }
 
 .btnOpcaoAtivo {
-  border-color: #1565c0 !important;
-  background: #eff6ff !important;
-  color: #1565c0 !important;
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  color: var(--tinta) !important;
   font-weight: 700 !important;
 }
 
@@ -581,20 +581,20 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #374151;
+  color: var(--pedra-700);
   cursor: pointer;
 }
 
 .checkboxItem input {
   width: 18px;
   height: 18px;
-  accent-color: #1565c0;
+  accent-color: var(--tinta);
   cursor: pointer;
 }
 
 /* ── Dropzone ── */
 .dropzone {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--pedra-300);
   border-radius: 14px;
   padding: 40px 20px;
   text-align: center;
@@ -608,8 +608,8 @@
 }
 
 .dropzone:hover {
-  border-color: #1565c0;
-  background: #f0f9ff;
+  border-color: var(--tinta);
+  background: var(--papel-claro);
 }
 
 .dropzoneIcone {
@@ -619,13 +619,13 @@
 .dropzone p {
   font-size: 14px;
   font-weight: 600;
-  color: #374151;
+  color: var(--pedra-700);
   margin: 0;
 }
 
 .dropzoneHint {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 /* ── Grid de Fotos ── */
@@ -640,12 +640,12 @@
   border-radius: 10px;
   overflow: hidden;
   aspect-ratio: 1;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
 }
 
 .fotoPrincipal {
-  border-color: #1565c0;
-  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.2);
 }
 
 .fotoPreview {
@@ -658,7 +658,7 @@
   position: absolute;
   top: 6px;
   left: 6px;
-  background: #1565c0;
+  background: var(--tinta);
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -698,7 +698,7 @@
 }
 
 .fotoBtnRemover {
-  background: rgba(239, 68, 68, 0.9);
+  background: rgba(212, 64, 31, 0.9);
   color: white;
 }
 
@@ -729,7 +729,7 @@
 
 /* ── Revisão ── */
 .revisaoCard {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: 20px;
@@ -740,7 +740,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 13px 18px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
 }
 
 .revisaoLinha:last-child {
@@ -749,18 +749,18 @@
 
 .revisaoLinha span {
   font-size: 13px;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .revisaoLinha strong {
   font-size: 14px;
-  color: #0f172a;
+  color: var(--tinta);
   text-align: right;
   max-width: 60%;
 }
 
 .revisaoPreco {
-  color: #1565c0 !important;
+  color: var(--tinta) !important;
   font-size: 18px !important;
 }
 
@@ -780,7 +780,7 @@
   height: 75px;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
 }
 
 .revisaoFotoItem img {
@@ -790,15 +790,15 @@
 }
 
 .revisaoFotoCapa {
-  border-color: #1565c0;
-  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.2);
 }
 
 .revisaoFotoBadge {
   position: absolute;
   bottom: 4px;
   left: 4px;
-  background: #1565c0;
+  background: var(--tinta);
   color: white;
   font-size: 9px;
   font-weight: 700;
@@ -812,41 +812,41 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px 28px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
 }
 
 .btnVoltar2 {
   padding: 11px 22px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 10px;
   background: white;
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btnVoltar2:hover {
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .btnAvancar {
   padding: 11px 28px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 3px 12px rgba(21, 101, 192, 0.3);
+  box-shadow: 0 3px 12px rgba(22, 32, 28, 0.3);
 }
 
 .btnAvancar:hover {
   transform: translateY(-1px);
-  box-shadow: 0 5px 16px rgba(21, 101, 192, 0.4);
+  box-shadow: 0 5px 16px rgba(22, 32, 28, 0.4);
 }
 
 .btnDesabilitado {
@@ -859,18 +859,18 @@
   padding: 13px 32px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
+  box-shadow: 0 4px 16px rgba(22, 32, 28, 0.3);
 }
 
 .btnPublicar:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.4);
+  box-shadow: 0 6px 20px rgba(22, 32, 28, 0.4);
 }
 
 .btnCarregando {
@@ -885,7 +885,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(22, 32, 28, 0.85);
   backdrop-filter: blur(12px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 14px 28px;
@@ -927,12 +927,12 @@
   padding: 11px 28px;
   border-radius: 10px;
   border: none;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.4);
+  box-shadow: 0 4px 14px rgba(22, 32, 28, 0.4);
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
@@ -942,7 +942,7 @@
 
 .btnSalvar:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(21, 101, 192, 0.5);
+  box-shadow: 0 6px 18px rgba(22, 32, 28, 0.5);
 }
 
 .btnSalvar:disabled {
@@ -958,18 +958,18 @@
   border-radius: 12px;
   padding: 14px 20px;
   margin-bottom: 20px;
-  color: #d1fae5;
+  color: var(--cerrado-claro);
   font-weight: 600;
   font-size: 14px;
 }
 
 .alertaErro {
   background: rgba(153, 27, 27, 0.9);
-  border: 1px solid #fca5a5;
+  border: 1px solid #EBA592;
   border-radius: 12px;
   padding: 14px 20px;
   margin-bottom: 20px;
-  color: #fee2e2;
+  color: var(--marco-claro);
   font-weight: 600;
   font-size: 14px;
 }
@@ -987,21 +987,21 @@
 .secaoTitulo {
   font-size: 17px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 4px;
 }
 
 .secaoSub {
   font-size: 13px;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 20px;
 }
 
 .erro {
-  color: #dc2626;
+  color: var(--marco-escuro);
   font-size: 13px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--cor-erro-claro);
+  border: 1px solid #F3C3B5;
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 16px;
@@ -1010,8 +1010,8 @@
 
 /* ── Galeria Pro & Dropzone Compacta ── */
 .dropzonePro {
-  border: 2px dashed #93c5fd;
-  background: #f8fafc;
+  border: 2px dashed var(--pedra-400);
+  background: var(--papel-claro);
   border-radius: 12px;
   padding: 1.25rem 1rem;
   text-align: center;
@@ -1026,10 +1026,10 @@
 
 .dropzonePro:hover,
 .dropzoneArrastando {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--tinta);
+  background: var(--pedra-100);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.06);
+  box-shadow: 0 4px 16px rgba(22, 32, 28, 0.06);
 }
 
 .dropzoneCirculo {
@@ -1037,29 +1037,29 @@
   height: 44px;
   border-radius: 50%;
   background: #ffffff;
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--pedra-300);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.08);
 }
 
 .dropzoneTitulo {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
 }
 
 .dropzoneSub {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 0;
 }
 
 .btnSelecionarFotos {
   margin-top: 0.25rem;
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   font-size: 0.8rem;
@@ -1071,7 +1071,7 @@
 }
 
 .btnSelecionarFotos:hover {
-  background: #1d4ed8;
+  background: var(--tinta-2);
 }
 
 /* ── Grid de Fotos Pro Compacto ── */
@@ -1086,8 +1086,8 @@
   border-radius: 12px;
   overflow: hidden;
   aspect-ratio: 4 / 3;
-  border: 2px solid #e2e8f0;
-  background: #0f172a;
+  border: 2px solid var(--pedra-200);
+  background: var(--tinta);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
 }
@@ -1098,8 +1098,8 @@
 }
 
 .fotoCardCapa {
-  border: 3px solid #2563eb !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+  border: 3px solid var(--tinta) !important;
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.2) !important;
 }
 
 .fotoImgPro {
@@ -1113,7 +1113,7 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   font-size: 0.7rem;
   font-weight: 800;
@@ -1128,7 +1128,7 @@
   bottom: 8px;
   left: 8px;
   right: 8px;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(22, 32, 28, 0.85);
   backdrop-filter: blur(4px);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1143,8 +1143,8 @@
 }
 
 .btnTornarCapa:hover {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--tinta);
+  border-color: var(--tinta);
   opacity: 1;
 }
 
@@ -1152,7 +1152,7 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(239, 68, 68, 0.9);
+  background: rgba(212, 64, 31, 0.9);
   color: #ffffff;
   border: none;
   width: 26px;
@@ -1170,7 +1170,7 @@
 }
 
 .btnRemoverFoto:hover {
-  background: #dc2626;
+  background: var(--marco-escuro);
   transform: scale(1.1);
 }
 
@@ -1178,7 +1178,7 @@
   position: absolute;
   bottom: 8px;
   right: 8px;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(22, 32, 28, 0.75);
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 800;

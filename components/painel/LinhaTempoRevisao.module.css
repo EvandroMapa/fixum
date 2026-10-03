@@ -8,7 +8,7 @@
 .tituloSecao {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -27,26 +27,26 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 0.75rem;
   padding: 0.85rem 1rem;
   transition: all 0.15s ease;
 }
 
 .itemTimelineSolicitacao {
-  background: #fffbeb;
-  border-color: #fde68a;
+  background: #FDF7E8;
+  border-color: #F2D48E;
 }
 
 .itemTimelineAprovacao {
-  background: #ecfdf5;
-  border-color: #a7f3d0;
+  background: var(--cor-sucesso-claro);
+  border-color: #C3DACB;
 }
 
 .itemTimelineResposta {
-  background: #eff6ff;
-  border-color: #bfdbfe;
+  background: var(--pedra-100);
+  border-color: var(--pedra-300);
 }
 
 .avatarAutor {
@@ -81,7 +81,7 @@
 .autorNome {
   font-size: 0.825rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .badgePapel {
@@ -93,24 +93,24 @@
 }
 
 .badgeGestor {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--ouro-claro);
+  color: var(--ouro-escuro);
 }
 
 .badgeCorretor {
-  background: #eff6ff;
-  color: #1e40af;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
 }
 
 .dataHora {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 500;
 }
 
 .mensagemTexto {
   font-size: 0.825rem;
-  color: #334155;
+  color: var(--pedra-700);
   line-height: 1.45;
   white-space: pre-wrap;
 }
@@ -118,9 +118,9 @@
 .boxSemHistorico {
   padding: 1.25rem;
   text-align: center;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
+  background: var(--papel-claro);
+  border: 1px dashed var(--pedra-300);
   border-radius: 0.75rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.8rem;
 }

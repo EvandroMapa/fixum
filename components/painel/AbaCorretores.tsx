@@ -176,9 +176,9 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
         <div style={{
           padding: '12px 16px',
           borderRadius: '8px',
-          background: mensagemFeedback.tipo === 'sucesso' ? '#f0fdf4' : '#fef2f2',
-          border: `1px solid ${mensagemFeedback.tipo === 'sucesso' ? '#86efac' : '#fecaca'}`,
-          color: mensagemFeedback.tipo === 'sucesso' ? '#15803d' : '#b91c1c',
+          background: mensagemFeedback.tipo === 'sucesso' ? '#EEF5F0' : '#FDF1EC',
+          border: `1px solid ${mensagemFeedback.tipo === 'sucesso' ? '#A9CDB6' : '#F3C3B5'}`,
+          color: mensagemFeedback.tipo === 'sucesso' ? '#2E6B4E' : '#8F2812',
           fontWeight: 600,
           fontSize: '0.875rem',
         }}>
@@ -191,7 +191,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
       <div className={styles.gridSuperiorEquipe}>
         {/* Card 1: Gestores */}
         <div className={styles.cardMetricaEquipe}>
-          <div className={styles.iconeMetricaEquipe} style={{ background: '#fef3c7', color: '#b45309' }}>
+          <div className={styles.iconeMetricaEquipe} style={{ background: '#FBEFD3', color: '#8A5F12' }}>
             👑
           </div>
           <div>
@@ -202,7 +202,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
 
         {/* Card 2: Corretores */}
         <div className={styles.cardMetricaEquipe}>
-          <div className={styles.iconeMetricaEquipe} style={{ background: '#eff6ff', color: '#1d4ed8' }}>
+          <div className={styles.iconeMetricaEquipe} style={{ background: '#EAE4D8', color: '#22302A' }}>
             👔
           </div>
           <div>
@@ -253,7 +253,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
         </div>
 
         {carregando ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+          <div style={{ textAlign: 'center', padding: '40px', color: '#7A7264' }}>
             Carregando equipe...
           </div>
         ) : membros.length === 0 ? (
@@ -293,7 +293,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                               className={styles.corretorAvatar}
                               style={{
                                 background: isPrincipal
-                                  ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                                  ? 'linear-gradient(135deg, #E3A72F, #C08A1E)'
                                   : obterGradienteUsuario(c.id || c.email || c.nome),
                                 color: '#ffffff',
                                 boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
@@ -306,7 +306,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                             <div className={styles.corretorNome}>
                               {c.nome} {isPrincipal ? '(Você / Titular)' : ''}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{c.email}</div>
+                            <div style={{ fontSize: '0.75rem', color: '#7A7264' }}>{c.email}</div>
                           </div>
                         </div>
                       </td>
@@ -319,9 +319,9 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                           borderRadius: '999px',
                           fontSize: '0.75rem',
                           fontWeight: 700,
-                          background: isPrincipal ? '#fef3c7' : isGestor ? '#eff6ff' : '#f1f5f9',
-                          color: isPrincipal ? '#b45309' : isGestor ? '#1d4ed8' : '#475569',
-                          border: `1px solid ${isPrincipal ? '#fde68a' : isGestor ? '#bfdbfe' : '#e2e8f0'}`,
+                          background: isPrincipal ? '#FBEFD3' : isGestor ? '#EAE4D8' : '#F3EEE4',
+                          color: isPrincipal ? '#8A5F12' : isGestor ? '#22302A' : '#5A5449',
+                          border: `1px solid ${isPrincipal ? '#F2D48E' : isGestor ? '#CFC6B6' : '#E0D8CA'}`,
                         }}>
                           {isPrincipal ? '👑 Gestor Titular' : isGestor ? '🛡️ Gestor' : '👔 Corretor'}
                         </span>
@@ -361,7 +361,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                                 <button
                                   type="button"
                                   className="btn btn-outline btn-sm"
-                                  style={{ fontSize: '0.75rem', padding: '4px 8px', borderColor: '#bfdbfe', color: '#1d4ed8' }}
+                                  style={{ fontSize: '0.75rem', padding: '4px 8px', borderColor: '#CFC6B6', color: '#22302A' }}
                                   onClick={() => handleAlterarPapel(c.id, c.nome, 'gestor')}
                                   title="Promover membro a Gestor com poder de aprovar anúncios"
                                 >

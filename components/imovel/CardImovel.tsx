@@ -6,6 +6,7 @@ import { type Imovel } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } from '@/lib/utils'
 import { useFavorito } from '@/hooks/useFavorito'
 import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
+import Icone from '@/components/ui/Icone'
 import styles from './CardImovel.module.css'
 
 interface Props {
@@ -75,15 +76,29 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
     onHover?.(null)
   }
 
+  const sobConsulta =
+    resolverExibicaoPreco(imovel.anunciante?.modo_exibicao_preco, imovel.modo_exibicao_preco, (imovel as any).exibir_preco, imovel.preco) === 'sob_consulta'
+  const area = imovel.area || imovel.area_construida
+  const local = [imovel.bairro, imovel.cidade].filter(Boolean).join(', ')
+
   return (
-    <div
+    <article
       id={`card-imovel-${imovel.id}`}
       className={`${styles.card} ${destacado ? styles.destacado : ''} ${selecionado ? styles.selecionado : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => onSelecionar?.(imovel.id)}
     >
-      {/* ── CARROSSEL DE FOTOS ── */}
+      {/* Link que cobre o card inteiro; botões internos ficam por cima */}
+      <Link
+        href={`/imovel/${imovel.id}`}
+        className={styles.linkCobertura}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${imovel.titulo} — ver detalhes`}
+      />
+
+      {/* ── FOTOS ── */}
       <div
         className={styles.fotoWrapper}
         onTouchStart={handleTouchStart}
@@ -94,55 +109,36 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
           {fotoAtual ? (
             <img
               src={fotoAtual}
-              alt={imovel.titulo}
+              alt=""
               className={styles.fotoImg}
               loading="lazy"
               onError={(e) => {
-                const target = e.currentTarget
-                target.onerror = null
-                target.src = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'
+                // Foto quebrada: some e mostra o fundo neutro (nunca uma foto que não é do imóvel)
+                e.currentTarget.style.display = 'none'
               }}
             />
-          ) : (
-            <div className={styles.fotoPlaceholder} />
-          )}
+          ) : null}
+          <div className={styles.fotoPlaceholder} aria-hidden="true" />
 
-          {/* Marca d'água sutil de teste */}
           <MarcaDaguaTeste variante="padrao" />
 
-          {/* Selos */}
           <div className={styles.selos}>
-            {imovel.destaque && (
-              <span className="badge badge-destaque">⭐ Destaque</span>
-            )}
-            <span className={`badge ${imovel.negociacao === 'venda' ? 'badge-primario' : 'badge-acento'}`}>
-              {imovel.negociacao === 'venda' ? 'Venda' : 'Aluguel'}
-            </span>
+            {imovel.destaque && <span className={styles.seloDestaque}>Destaque</span>}
+            <span className={styles.selo}>{imovel.negociacao === 'venda' ? 'Venda' : 'Aluguel'}</span>
           </div>
 
-          {/* Botão Favoritar */}
           <button
             type="button"
             className={`${styles.btnFavoritar} ${favoritado ? styles.favoritado : ''}`}
-            onClick={(e) => { e.stopPropagation(); toggleFavorito() }}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); toggleFavorito() }}
             disabled={carregando}
-            aria-label={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+            aria-pressed={favoritado}
+            aria-label={favoritado ? 'Desafixar imóvel' : 'Fixar imóvel'}
+            title={favoritado ? 'Desafixar' : 'Fixar para comparar depois'}
           >
-            <svg
-              width="17"
-              height="17"
-              viewBox="0 0 24 24"
-              fill={favoritado ? '#e53e3e' : 'rgba(0, 0, 0, 0.05)'}
-              stroke={favoritado ? '#e53e3e' : '#334155'}
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
+            <Icone nome="fixar" tamanho={20} preenchido={favoritado} />
           </button>
 
-          {/* Setas de navegação — aparecem no hover */}
           {fotos.length > 1 && hovering && (
             <>
               <button
@@ -151,7 +147,7 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
                 onClick={irAnterior}
                 aria-label="Foto anterior"
               >
-                ‹
+                <Icone nome="chevronEsquerda" tamanho={18} />
               </button>
               <button
                 type="button"
@@ -159,21 +155,20 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
                 onClick={irProxima}
                 aria-label="Próxima foto"
               >
-                ›
+                <Icone nome="chevronDireita" tamanho={18} />
               </button>
             </>
           )}
 
-          {/* Pontos indicadores */}
           {fotos.length > 1 && (
             <div className={styles.pontos}>
-              {fotos.map((_, idx) => (
+              {fotos.slice(0, 6).map((_, idx) => (
                 <button
                   key={idx}
                   type="button"
                   className={`${styles.ponto} ${idx === fotoAtiva ? styles.pontoAtivo : ''}`}
                   onClick={(e) => irPara(e, idx)}
-                  aria-label={`Foto ${idx + 1}`}
+                  aria-label={`Foto ${idx + 1} de ${fotos.length}`}
                 />
               ))}
             </div>
@@ -183,90 +178,70 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
 
       {/* ── INFORMAÇÕES ── */}
       <div className={styles.info}>
-        {/* Preço */}
         <div className={styles.preco}>
-          {resolverExibicaoPreco(imovel.anunciante?.modo_exibicao_preco, imovel.modo_exibicao_preco, (imovel as any).exibir_preco, imovel.preco) === 'sob_consulta' ? (
+          {sobConsulta ? (
             <span className={styles.sobConsulta}>Preço sob consulta</span>
           ) : (
             <>
               {formatarPreco(imovel.preco, imovel.negociacao)}
-              {imovel.condominio && imovel.negociacao === 'aluguel' && (
+              {imovel.condominio && imovel.negociacao === 'aluguel' ? (
                 <span className={styles.condominio}>
                   + R$ {imovel.condominio.toLocaleString('pt-BR')} cond.
                 </span>
-              )}
+              ) : null}
             </>
           )}
         </div>
 
-        {/* Tipo e título */}
-        <div className={styles.tipo}>{labelTipoImovel(imovel.tipo)}</div>
         <h3 className={styles.titulo}>{imovel.titulo}</h3>
-
-        {/* Características */}
-        <div className={styles.caracteristicas}>
-          {imovel.quartos !== undefined && imovel.quartos > 0 && (
-            <span className={styles.car}>
-              🛏️ {imovel.quartos} {imovel.quartos === 1 ? 'quarto' : 'quartos'}
-            </span>
-          )}
-          {imovel.banheiros !== undefined && imovel.banheiros > 0 && (
-            <span className={styles.car}>🚿 {imovel.banheiros}</span>
-          )}
-          {imovel.vagas !== undefined && imovel.vagas > 0 && (
-            <span className={styles.car}>🚗 {imovel.vagas}</span>
-          )}
-          {(imovel.area || imovel.area_construida) && (
-            <span className={styles.car}>
-              📐 {formatarArea((imovel.area || imovel.area_construida)!)}
-            </span>
-          )}
-        </div>
-
-        {/* Localização */}
         <div className={styles.localizacao}>
-          📍 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade}
+          {labelTipoImovel(imovel.tipo)}
+          {local && <> · {local}</>}
         </div>
 
-        {/* Anunciante / Imobiliária & Código Ref */}
+        {(imovel.quartos || imovel.banheiros || imovel.vagas || area) ? (
+          <ul className={styles.caracteristicas}>
+            {imovel.quartos ? (
+              <li className={styles.car} title={`${imovel.quartos} ${imovel.quartos === 1 ? 'quarto' : 'quartos'}`}>
+                <Icone nome="quarto" tamanho={17} /> {imovel.quartos}
+              </li>
+            ) : null}
+            {imovel.banheiros ? (
+              <li className={styles.car} title={`${imovel.banheiros} ${imovel.banheiros === 1 ? 'banheiro' : 'banheiros'}`}>
+                <Icone nome="banho" tamanho={17} /> {imovel.banheiros}
+              </li>
+            ) : null}
+            {imovel.vagas ? (
+              <li className={styles.car} title={`${imovel.vagas} ${imovel.vagas === 1 ? 'vaga' : 'vagas'}`}>
+                <Icone nome="vaga" tamanho={17} /> {imovel.vagas}
+              </li>
+            ) : null}
+            {area ? (
+              <li className={styles.car} title="Área">
+                <Icone nome="area" tamanho={17} /> {formatarArea(area)}
+              </li>
+            ) : null}
+          </ul>
+        ) : null}
+
         <div className={styles.blocoAnuncianteCard}>
           <div className={styles.anuncianteInfo}>
             {imovel.anunciante?.foto_url ? (
-              <img
-                src={imovel.anunciante.foto_url}
-                alt={imovel.anunciante.nome}
-                className={styles.anuncianteLogoImg}
-              />
+              <img src={imovel.anunciante.foto_url} alt="" className={styles.anuncianteLogoImg} />
             ) : (
-              <div className={styles.anuncianteIniciais}>
-                {imovel.anunciante?.nome?.slice(0, 2).toUpperCase() || '🏢'}
-              </div>
+              <span className={styles.anuncianteIniciais} aria-hidden="true">
+                {imovel.anunciante?.nome?.slice(0, 2).toUpperCase() || 'FX'}
+              </span>
             )}
-            <span className={styles.anuncianteNome}>
-              {imovel.anunciante?.nome || 'Imobiliária Parceira'}
-            </span>
+            <span className={styles.anuncianteNome}>{imovel.anunciante?.nome || 'Anunciante'}</span>
           </div>
-
           {imovel.codigo && (
-            <span className={styles.badgeCodigoCard} title="Código de Referência">
-              Ref: {imovel.codigo}
+            <span className={styles.badgeCodigoCard} title="Código do anúncio">
+              {imovel.codigo}
             </span>
           )}
         </div>
-
-        {/* Rodapé */}
-        <div className={styles.rodapeCard}>
-          <Link
-            href={`/imovel/${imovel.id}`}
-            className={styles.btnVisualizar}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Visualizar Imóvel →
-          </Link>
-        </div>
       </div>
-    </div>
+    </article>
   )
 }

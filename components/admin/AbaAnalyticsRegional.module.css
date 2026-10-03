@@ -6,8 +6,8 @@
 
 /* ── BARRA DE FILTROS ── */
 .barraFiltros {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 14px;
   padding: 18px 20px;
   display: flex;
@@ -28,7 +28,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #cbd5e1;
+  color: var(--pedra-300);
   font-size: 0.9rem;
   min-width: 220px;
 }
@@ -47,9 +47,9 @@
 
 .btnRegiao,
 .btnPeriodo {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #94a3b8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: var(--pedra-400);
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -60,16 +60,16 @@
 
 .btnRegiao:hover,
 .btnPeriodo:hover {
-  border-color: #38bdf8;
-  color: #f8fafc;
+  border-color: #F0A58F;
+  color: var(--papel-claro);
 }
 
 .btnRegiaoAtivo,
 .btnPeriodoAtivo {
-  background: #0284c7 !important;
-  border-color: #38bdf8 !important;
+  background: var(--hidro) !important;
+  border-color: #F0A58F !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 2px 10px rgba(44, 95, 138, 0.4);
 }
 
 /* ── BANNER DE ESCOPO ── */
@@ -81,14 +81,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #e0f2fe;
+  color: var(--pedra-100);
   font-size: 0.9rem;
   flex-wrap: wrap;
   gap: 8px;
 }
 
 .tagPeriodo {
-  background: #0369a1;
+  background: var(--hidro);
   color: #ffffff;
   padding: 4px 10px;
   border-radius: 6px;
@@ -106,8 +106,8 @@
 }
 
 .cardKpi {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 14px;
   padding: 20px;
   display: flex;
@@ -123,10 +123,10 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-.kpiVerde { border-left: 4px solid #10b981; }
-.kpiAzul { border-left: 4px solid #38bdf8; }
+.kpiVerde { border-left: 4px solid #3F8A66; }
+.kpiAzul { border-left: 4px solid #F0A58F; }
 .kpiRoxo { border-left: 4px solid #a855f7; }
-.kpiDourado { border-left: 4px solid #f59e0b; }
+.kpiDourado { border-left: 4px solid var(--ouro); }
 
 .kpiInfo {
   display: flex;
@@ -135,7 +135,7 @@
 }
 
 .kpiTitulo {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -150,7 +150,7 @@
 }
 
 .kpiDesc {
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.75rem;
 }
 
@@ -175,7 +175,7 @@
 }
 
 .secaoSub {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.85rem;
 }
 
@@ -187,8 +187,8 @@
 }
 
 .cardGrowth {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 14px;
   padding: 18px 20px;
   display: flex;
@@ -203,8 +203,8 @@
 }
 
 .growthBadgeVerde {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+  background: rgba(46, 107, 78, 0.2);
+  color: #7DBB98;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 3px 8px;
@@ -212,8 +212,8 @@
 }
 
 .growthBadgeVermelho {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
+  background: rgba(212, 64, 31, 0.2);
+  color: #E8836B;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 3px 8px;
@@ -221,8 +221,8 @@
 }
 
 .growthBadgeAzul {
-  background: rgba(56, 189, 248, 0.2);
-  color: #38bdf8;
+  background: rgba(240, 165, 143, 0.2);
+  color: #F0A58F;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 3px 8px;
@@ -245,13 +245,13 @@
 .growthValorVerde {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #10b981;
+  color: #3F8A66;
 }
 
 .growthValorVermelho {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #ef4444;
+  color: var(--marco);
 }
 
 .growthValor {
@@ -260,15 +260,15 @@
 }
 
 .growthPositivo {
-  color: #10b981;
+  color: #3F8A66;
 }
 
 .growthNegativo {
-  color: #ef4444;
+  color: var(--marco);
 }
 
 .growthSub {
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.75rem;
 }
 
@@ -282,25 +282,25 @@
 .taxaValor {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #f87171;
+  color: #E8836B;
 }
 
 .taxaValorVerde {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #34d399;
+  color: #7DBB98;
 }
 
 .taxaSub {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   text-transform: uppercase;
 }
 
 .divisorVertical {
   width: 1px;
   height: 36px;
-  background: #334155;
+  background: var(--pedra-700);
 }
 
 /* ── GRID DE GRÁFICOS VISUAIS ── */
@@ -311,8 +311,8 @@
 }
 
 .cardGrafico {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 14px;
   padding: 20px;
   display: flex;
@@ -321,7 +321,7 @@
 }
 
 .cardGraficoTitulo {
-  color: #f8fafc;
+  color: var(--papel-claro);
   font-size: 1rem;
   font-weight: 700;
 }
@@ -345,38 +345,38 @@
 }
 
 .itemBarraNome {
-  color: #cbd5e1;
+  color: var(--pedra-300);
   font-weight: 600;
 }
 
 .itemBarraValores {
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .barraFundo {
   width: 100%;
   height: 10px;
-  background: #0f172a;
+  background: var(--tinta);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .barraPreenchimento {
   height: 100%;
-  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  background: linear-gradient(90deg, var(--hidro), #F0A58F);
   border-radius: 999px;
   transition: width 0.6s ease;
 }
 
 .barraPreenchimentoCancelamento {
   height: 100%;
-  background: linear-gradient(90deg, #dc2626, #f87171);
+  background: linear-gradient(90deg, var(--marco-escuro), #E8836B);
   border-radius: 999px;
   transition: width 0.6s ease;
 }
 
 .vazio {
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.85rem;
   padding: 24px 0;
   text-align: center;
@@ -384,8 +384,8 @@
 
 /* ── RANKING DE CIDADES ── */
 .painelRanking {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 14px;
   padding: 20px;
   display: flex;
@@ -400,7 +400,7 @@
 }
 
 .rankingTitulo {
-  color: #f8fafc;
+  color: var(--papel-claro);
   font-size: 1.05rem;
   font-weight: 700;
 }
@@ -418,9 +418,9 @@
 
 .tabela th {
   padding: 12px 14px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 600;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--pedra-700);
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.04em;
@@ -428,7 +428,7 @@
 
 .tabela td {
   padding: 14px;
-  color: #e2e8f0;
+  color: var(--pedra-200);
   border-bottom: 1px solid #283548;
 }
 
@@ -439,8 +439,8 @@
 }
 
 .badgePosicao {
-  background: #334155;
-  color: #38bdf8;
+  background: var(--pedra-700);
+  color: #F0A58F;
   font-weight: 800;
   font-size: 0.75rem;
   padding: 2px 6px;
@@ -455,19 +455,19 @@
 }
 
 .taxaBaixa {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+  background: rgba(46, 107, 78, 0.2);
+  color: #7DBB98;
 }
 
 .taxaAlta {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
+  background: rgba(212, 64, 31, 0.2);
+  color: #E8836B;
 }
 
 .btnFiltrarCidade {
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--tinta);
+  border: 1px solid var(--pedra-700);
+  color: #F0A58F;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -477,9 +477,9 @@
 }
 
 .btnFiltrarCidade:hover {
-  background: #0284c7;
+  background: var(--hidro);
   color: #ffffff;
-  border-color: #38bdf8;
+  border-color: #F0A58F;
 }
 
 /* ── RESPONSIVIDADE (MOBILE-FIRST) ── */

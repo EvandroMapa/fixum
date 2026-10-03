@@ -5,7 +5,9 @@ import Link from 'next/link'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { type Imovel } from '@/lib/types'
-import { resolverExibicaoPreco } from '@/lib/utils'
+import { resolverExibicaoPreco, formatarPrecoCurto } from '@/lib/utils'
+import { aplicarEstiloFixum, ESTILO_BASE } from '@/lib/estilo-mapa'
+import Icone from '@/components/ui/Icone'
 import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import styles from './MapaExplorar.module.css'
 
@@ -33,6 +35,15 @@ function precoLabel(preco: number): string {
     currency: 'BRL',
     maximumFractionDigits: 0,
   }).format(preco)
+}
+
+function escaparHtml(texto: string): string {
+  return texto
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
 function calcularDistanciaKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -131,7 +142,7 @@ export default function MapaExplorar({
 
     const mapa = new mapboxgl.Map({
       container: containerRef.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: ESTILO_BASE,
       center: centroCalculado,
       zoom: zoomCalculado,
       attributionControl: false,
@@ -152,6 +163,8 @@ export default function MapaExplorar({
     mapa.addControl(geolocateControl, 'top-right')
 
     mapa.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right')
+
+    mapa.on('style.load', () => aplicarEstiloFixum(mapa))
 
     mapa.on('load', () => {
       setMapaPronto(true)
@@ -212,7 +225,7 @@ export default function MapaExplorar({
       el.className = styles.marcadorUsuario
       el.title = 'Sua localização atual'
 
-      const popup = new mapboxgl.Popup({ offset: 12, closeButton: false }).setText('📍 Você está aqui')
+      const popup = new mapboxgl.Popup({ offset: 12, closeButton: false }).setText('Você está aqui')
 
       marcadorUsuarioRef.current = new mapboxgl.Marker({ element: el })
         .setLngLat(centroInicial)
@@ -384,23 +397,26 @@ export default function MapaExplorar({
     return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [])
 
-  // Helper síncrono para criar SVG do coração
+  // Ícone "fixar" (alfinete com x) desenhado de forma síncrona para não piscar
   function criarSvgHeart(cheio: boolean): SVGSVGElement {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    svg.setAttribute('width', '14')
-    svg.setAttribute('height', '14')
+    const ns = 'http://www.w3.org/2000/svg'
+    const svg = document.createElementNS(ns, 'svg')
+    svg.setAttribute('width', '15')
+    svg.setAttribute('height', '15')
     svg.setAttribute('viewBox', '0 0 24 24')
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    path.setAttribute(
-      'd',
-      'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'
-    )
-    path.setAttribute('fill', cheio ? '#e53e3e' : 'none')
-    path.setAttribute('stroke', cheio ? '#e53e3e' : '#94a3b8')
-    path.setAttribute('stroke-width', '2.5')
-    path.setAttribute('stroke-linecap', 'round')
-    path.setAttribute('stroke-linejoin', 'round')
-    svg.appendChild(path)
+    const pino = document.createElementNS(ns, 'path')
+    pino.setAttribute('d', 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z')
+    pino.setAttribute('fill', cheio ? '#D4401F' : 'none')
+    pino.setAttribute('stroke', cheio ? '#D4401F' : 'currentColor')
+    pino.setAttribute('stroke-width', '2')
+    pino.setAttribute('stroke-linejoin', 'round')
+    const x = document.createElementNS(ns, 'path')
+    x.setAttribute('d', 'M10 8l4 4M14 8l-4 4')
+    x.setAttribute('stroke', cheio ? '#ffffff' : 'currentColor')
+    x.setAttribute('stroke-width', '2')
+    x.setAttribute('stroke-linecap', 'round')
+    svg.appendChild(pino)
+    svg.appendChild(x)
     return svg
   }
 
@@ -415,7 +431,8 @@ export default function MapaExplorar({
     aplicarDispersaoCoordenadas(imoveis).forEach(({ imovel: i, lng, lat }) => {
         const modoFinal = resolverExibicaoPreco(i.anunciante?.modo_exibicao_preco, i.modo_exibicao_preco, (i as any).exibir_preco, i.preco)
         const isSobConsulta = modoFinal === 'sob_consulta'
-        const label = isSobConsulta ? 'Sob Consulta' : precoLabel(i.preco || 0)
+        const label = isSobConsulta ? 'Sob consulta' : precoLabel(i.preco || 0)
+        const labelPin = formatarPrecoCurto(i.preco, i.negociacao, modoFinal)
         const isFavoritado = favoritosSetRef.current.has(i.id)
 
         // wrapper transparente — o Mapbox aplica o transform nele para posicionar
@@ -426,18 +443,21 @@ export default function MapaExplorar({
         const inner = document.createElement('div')
         inner.className = styles.marcador
         inner.dataset.id = i.id
+        if (i.destaque) inner.classList.add(styles.marcadorDestaque)
 
         // Texto do preço
         const precoSpan = document.createElement('span')
-        precoSpan.textContent = label
+        precoSpan.textContent = labelPin
         inner.appendChild(precoSpan)
 
         // Coração no marcador — já nasce perfeitamente preenchido e visível se for favorito (sem piscar!)
         const btnHeart = document.createElement('button')
         btnHeart.type = 'button'
-        btnHeart.title = isFavoritado ? 'Remover dos favoritos' : 'Favoritar'
+        btnHeart.title = isFavoritado ? 'Desafixar' : 'Fixar'
+        btnHeart.setAttribute('aria-label', isFavoritado ? 'Desafixar imóvel' : 'Fixar imóvel')
         btnHeart.dataset.favoritado = String(isFavoritado)
-        btnHeart.style.cssText = `background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;line-height:1;transition:transform 0.15s,opacity 0.15s;opacity:${isFavoritado ? '1' : '0'}`
+        btnHeart.className = styles.marcadorFixar
+        btnHeart.style.opacity = isFavoritado ? '1' : '0'
         btnHeart.appendChild(criarSvgHeart(isFavoritado))
         inner.appendChild(btnHeart)
 
@@ -458,7 +478,7 @@ export default function MapaExplorar({
             const { data: { session } } = await sb.auth.getSession()
             if (!session?.user) {
               window.dispatchEvent(new CustomEvent('fixum:abrirModalLogin', {
-                detail: { mensagem: 'Entre para salvar imóveis favoritos' }
+                detail: { mensagem: 'Entre para fixar imóveis e comparar depois.' }
               }))
               return
             }
@@ -550,52 +570,36 @@ export default function MapaExplorar({
         const popupPrecoTexto = isSobConsulta ? 'Preço sob consulta' : `${label}${negociacaoLabel}`
 
         const isMobile = window.innerWidth < 768
-        const popupW = isMobile ? 200 : 270
-        const fotoH = isMobile ? 90 : 160
+
+        // Todo texto vindo do anúncio é escapado antes de entrar no HTML do popup
+        const titulo = escaparHtml(i.titulo || '')
+        const anuncianteNome = escaparHtml(i.anunciante?.nome || 'Anunciante')
+        const iniciais = escaparHtml((i.anunciante?.nome || 'FX').slice(0, 2).toUpperCase())
 
         const popupEl = document.createElement('div')
-        popupEl.style.cssText = `font-family:system-ui,-apple-system,sans-serif;width:${popupW}px;overflow:hidden;border-radius:${isMobile ? '12px' : '16px'};cursor:pointer;`
+        popupEl.className = `fx-popup${isMobile ? ' fx-popup--compacto' : ''}`
         popupEl.innerHTML = `
-          <a href="/imovel/${i.id}?origem=mapa" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;display:block;">
-            ${fotoUrl ? `
-              <div style="position:relative;height:${fotoH}px;overflow:hidden;border-radius:${isMobile ? '10px 10px 0 0' : '12px 12px 0 0'};">
-                <img src="${fotoUrl}" alt="${i.titulo || ''}"
-                  style="width:100%;height:100%;object-fit:cover;display:block;"
-                />
-                <div style="position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(245,158,11,0.1) 12px,rgba(245,158,11,0.1) 24px);pointer-events:none;"></div>
-                <div style="position:absolute;top:${isMobile ? '5px' : '8px'};left:${isMobile ? '6px' : '10px'};background:rgba(15,23,42,0.85);color:#fbbf24;font-size:${isMobile ? '8.5px' : '10px'};font-weight:800;padding:2px 6px;border-radius:4px;border:1px solid #f59e0b;letter-spacing:0.04em;">
-                  ⚠️ ANÚNCIO FICTÍCIO (TESTE)
-                </div>
-                <div style="position:absolute;bottom:${isMobile ? '6px' : '10px'};left:${isMobile ? '8px' : '12px'};background:white;color:${isSobConsulta ? '#0284c7' : '#1a56db'};font-size:${isMobile ? '11px' : '13px'};font-weight:800;padding:${isMobile ? '2px 7px' : '3px 9px'};border-radius:20px;letter-spacing:-0.02em;box-shadow:0 2px 6px rgba(0,0,0,0.12);">
-                  ${popupPrecoTexto}
-                </div>
-              </div>
-            ` : `
-              <div style="height:${isMobile ? '48px' : '80px'};background:linear-gradient(135deg,#e0eaff,#c7d7f7);border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;">
-                <span style="font-size:${isMobile ? '11px' : '13px'};font-weight:800;color:${isSobConsulta ? '#0284c7' : '#1a56db'};">${popupPrecoTexto}</span>
-              </div>
-            `}
-            <div style="padding:${isMobile ? '8px 10px 10px' : '12px 14px 14px'};">
-              <div style="font-size:${isMobile ? '11px' : '13px'};font-weight:700;color:#0f172a;line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                ${i.titulo || ''}
-              </div>
-              ${localidade ? `<div style="font-size:${isMobile ? '10px' : '12px'};color:#64748b;margin-bottom:${detalhes ? '4px' : '0'};">${localidade}</div>` : ''}
-              ${detalhes ? `<div style="font-size:${isMobile ? '10px' : '11.5px'};color:#94a3b8;">${detalhes}</div>` : ''}
+          <a href="/imovel/${encodeURIComponent(i.id)}?origem=mapa" target="_blank" rel="noopener noreferrer" class="fx-popup-link">
+            <div class="fx-popup-foto">
+              ${fotoUrl
+                ? `<img src="${escaparHtml(fotoUrl)}" alt="${titulo}" loading="lazy" />`
+                : `<div class="fx-popup-semfoto"></div>`}
+              <span class="fx-popup-teste">Anúncio fictício · teste</span>
+            </div>
+            <div class="fx-popup-corpo">
+              <div class="fx-popup-preco${isSobConsulta ? ' fx-popup-preco--consulta' : ''}">${escaparHtml(popupPrecoTexto)}</div>
+              <div class="fx-popup-titulo">${titulo}</div>
+              ${localidade ? `<div class="fx-popup-local">${escaparHtml(localidade)}</div>` : ''}
+              ${detalhes ? `<div class="fx-popup-detalhes">${escaparHtml(detalhes)}</div>` : ''}
               ${!isMobile ? `
-                <div style="margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:6px;">
-                  <div style="display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;">
-                    ${i.anunciante?.foto_url ? `
-                      <img src="${i.anunciante.foto_url}" alt="Logo" style="width:18px;height:18px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #cbd5e1;" />
-                    ` : `
-                      <div style="width:18px;height:18px;border-radius:50%;background:#eff6ff;color:#2563eb;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                        ${(i.anunciante?.nome || 'FX').slice(0, 2).toUpperCase()}
-                      </div>
-                    `}
-                    <span style="font-size:11px;font-weight:700;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                      ${i.anunciante?.nome || 'Imobiliária'}
-                    </span>
-                  </div>
-                  ${i.codigo ? `<span style="font-size:10px;font-weight:800;color:#1e40af;background:#dbeafe;border:1px solid #bfdbfe;padding:1px 5px;border-radius:4px;white-space:nowrap;flex-shrink:0;">Ref: ${i.codigo}</span>` : '<span style="font-size:11px;font-weight:700;color:#1a56db;flex-shrink:0;">Ver →</span>'}
+                <div class="fx-popup-rodape">
+                  <span class="fx-popup-anunciante">
+                    ${i.anunciante?.foto_url
+                      ? `<img src="${escaparHtml(i.anunciante.foto_url)}" alt="" />`
+                      : `<span class="fx-popup-iniciais">${iniciais}</span>`}
+                    <span>${anuncianteNome}</span>
+                  </span>
+                  ${i.codigo ? `<span class="fx-popup-ref">${escaparHtml(i.codigo)}</span>` : ''}
                 </div>
               ` : ''}
             </div>
@@ -624,28 +628,15 @@ export default function MapaExplorar({
     }
   }, [imoveis, mapaPronto, onSelecionarImovel])
 
-  // Hover/selecao — estilizar apenas o .inner, nunca o wrapper (que o Mapbox controla)
+  // Hover/seleção — só classes no .inner, nunca no wrapper (que o Mapbox posiciona)
   useEffect(() => {
-    marcadoresMapRef.current.forEach(({ inner }, id) => {
-      if (id === imovelSelecionado) {
-        inner.style.borderColor = '#1565c0'
-        inner.style.backgroundColor = '#1565c0'
-        inner.style.color = '#fff'
-        inner.style.boxShadow = '0 0 0 4px rgba(21,101,192,0.35)'
-        inner.style.zIndex = '20'
-      } else if (id === imovelHover) {
-        inner.style.borderColor = '#ff6b35'
-        inner.style.backgroundColor = '#fff7ed'
-        inner.style.color = '#ea580c'
-        inner.style.boxShadow = '0 0 0 3px rgba(255,107,53,0.3)'
-        inner.style.zIndex = '10'
-      } else {
-        inner.style.borderColor = ''
-        inner.style.backgroundColor = ''
-        inner.style.color = ''
-        inner.style.boxShadow = ''
-        inner.style.zIndex = ''
-      }
+    marcadoresMapRef.current.forEach(({ inner, marcador }, id) => {
+      const selecionado = id === imovelSelecionado
+      const emFoco = id === imovelHover
+      inner.classList.toggle(styles.marcadorSelecionado, selecionado)
+      inner.classList.toggle(styles.marcadorHover, emFoco && !selecionado)
+      // traz o pin ativo para frente dos vizinhos
+      marcador.getElement().style.zIndex = selecionado ? '3' : emFoco ? '2' : ''
     })
   }, [imovelHover, imovelSelecionado])
 
@@ -667,7 +658,7 @@ export default function MapaExplorar({
 
       {mostrarBannerDistante && (
         <div className={styles.bannerDistante}>
-          <span>📍 Imóveis disponíveis em outras cidades</span>
+          <span>Nenhum imóvel por aqui ainda. Há anúncios em outras regiões.</span>
           <button
             type="button"
             className={styles.btnVerTodosMapa}
@@ -687,7 +678,7 @@ export default function MapaExplorar({
             onClick={() => setImovelCardMobile(null)}
             aria-label="Fechar prévia"
           >
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
           <Link
             href={`/imovel/${imovelCardMobile.id}?origem=mapa`}
@@ -711,7 +702,7 @@ export default function MapaExplorar({
               <span className={styles.precoBadgeMobile}>
                 {resolverExibicaoPreco(imovelCardMobile.anunciante?.modo_exibicao_preco, imovelCardMobile.modo_exibicao_preco, (imovelCardMobile as any).exibir_preco, imovelCardMobile.preco) === 'sob_consulta'
                   ? 'Preço sob consulta'
-                  : `${precoLabel(imovelCardMobile.preco || 0)}${imovelCardMobile.negociacao === 'aluguel' ? '/mês' : ''}`}
+                  : formatarPrecoCurto(imovelCardMobile.preco, imovelCardMobile.negociacao)}
               </span>
             </div>
             <div className={styles.infoCardMobile}>
@@ -726,13 +717,13 @@ export default function MapaExplorar({
                   imovelCardMobile.vagas ? `${imovelCardMobile.vagas} ${imovelCardMobile.vagas === 1 ? 'vaga' : 'vagas'}` : null,
                 ]
                   .filter(Boolean)
-                  .join(' · ') || 'Consulte detalhes'}
+                  .join(' · ') || 'Veja os detalhes'}
               </p>
               <div className={styles.rodapeCardMobile}>
                 <span className={styles.anuncianteCardMobile}>
                   {imovelCardMobile.anunciante?.nome || 'Imobiliária parceira'}
                 </span>
-                <span className={styles.btnVerCardMobile}>Ver imóvel →</span>
+                <span className={styles.btnVerCardMobile}>Ver imóvel <Icone nome="chevronDireita" tamanho={14} /></span>
               </div>
             </div>
           </Link>
@@ -742,7 +733,7 @@ export default function MapaExplorar({
       {!mapaPronto && (
         <div className={styles.loading}>
           <div className={styles.loadingSpinner} />
-          <span>Carregando mapa...</span>
+          <span>Carregando o mapa…</span>
         </div>
       )}
     </div>

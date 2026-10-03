@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(22, 32, 28, 0.75);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -41,9 +41,9 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #f1f5f9;
+  background: var(--papel);
   border: none;
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -55,13 +55,13 @@
 }
 
 .btnFechar:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--pedra-200);
+  color: var(--tinta);
 }
 
 /* ── TOPO / RESUMO DO PLANO ── */
 .topoPlano {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, var(--tinta) 0%, var(--tinta-2) 100%);
   color: #ffffff;
   padding: 24px;
   border-radius: 20px 20px 0 0;
@@ -75,14 +75,14 @@
   right: -30px;
   width: 150px;
   height: 150px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(22, 32, 28, 0.4) 0%, transparent 70%);
 }
 
 .badgePlano {
   display: inline-block;
-  background: rgba(37, 99, 235, 0.35);
+  background: rgba(22, 32, 28, 0.35);
   border: 1px solid rgba(147, 197, 253, 0.4);
-  color: #93c5fd;
+  color: var(--pedra-400);
   font-size: 0.72rem;
   font-weight: 800;
   padding: 2px 10px;
@@ -109,13 +109,13 @@
 .valorGrande {
   font-size: 1.8rem;
   font-weight: 900;
-  color: #60a5fa;
+  color: #8FB3D1;
   letter-spacing: -0.02em;
 }
 
 .periodo {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 /* ── CORPO DO MODAL ── */
@@ -131,7 +131,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  background: #f1f5f9;
+  background: var(--papel);
   padding: 4px;
   border-radius: 12px;
 }
@@ -147,14 +147,14 @@
   border-radius: 9px;
   font-size: 0.88rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .abaBtnAtiva {
   background: #ffffff;
-  color: #0f172a;
+  color: var(--tinta);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -180,24 +180,24 @@
 .campo label {
   font-size: 0.78rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .campo input {
   height: 42px;
   padding: 0 14px;
   border-radius: 10px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   font-size: 0.9rem;
-  color: #0f172a;
+  color: var(--tinta);
   outline: none;
   transition: border-color 0.15s;
   background: #ffffff;
 }
 
 .campo input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.12);
 }
 
 /* ── ÁREA DO PIX ── */
@@ -208,8 +208,8 @@
   text-align: center;
   gap: 16px;
   padding: 16px;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
   border-radius: 16px;
 }
 
@@ -242,15 +242,15 @@
   height: 38px;
   padding: 0 12px;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--pedra-500);
   background: #ffffff;
   text-overflow: ellipsis;
 }
 
 .btnCopiarPix {
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   padding: 10px 16px;
@@ -266,7 +266,7 @@
 }
 
 .btnCopiarPix:hover {
-  background: #1d4ed8;
+  background: var(--tinta-2);
 }
 
 .radarStatus {
@@ -274,7 +274,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
 }
 
@@ -282,23 +282,23 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  background: #3F8A66;
+  box-shadow: 0 0 0 0 rgba(46, 107, 78, 0.7);
   animation: pulse 1.6s infinite;
 }
 
 @keyframes pulse {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    box-shadow: 0 0 0 0 rgba(46, 107, 78, 0.7);
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 8px rgba(46, 107, 78, 0);
   }
   100% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 0 rgba(46, 107, 78, 0);
   }
 }
 
@@ -306,7 +306,7 @@
 .btnPrincipal {
   width: 100%;
   min-height: 48px;
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   border-radius: 12px;
@@ -318,13 +318,13 @@
   justify-content: center;
   gap: 8px;
   transition: all 0.15s ease;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 12px rgba(22, 32, 28, 0.25);
 }
 
 .btnPrincipal:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 6px 16px rgba(22, 32, 28, 0.35);
 }
 
 .btnPrincipal:disabled {
@@ -333,9 +333,9 @@
 }
 
 .alertaErro {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background: var(--cor-erro-claro);
+  border: 1px solid #F3C3B5;
+  color: #8F2812;
   padding: 10px 14px;
   border-radius: 10px;
   font-size: 0.82rem;
@@ -355,8 +355,8 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
   font-size: 2rem;
   font-weight: 800;
   display: flex;
@@ -367,13 +367,13 @@
 .telaSucesso h3 {
   font-size: 1.35rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
 }
 
 .telaSucesso p {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 0;
 }
 

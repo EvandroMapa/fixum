@@ -141,9 +141,9 @@ function ModalLoginInterno({
           style={{
             position: 'absolute', top: '16px', right: '16px',
             width: '32px', height: '32px', borderRadius: '50%',
-            border: 'none', background: '#f1f5f9', cursor: 'pointer',
+            border: 'none', background: '#F3EEE4', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '18px', color: '#64748b',
+            fontSize: '18px', color: '#7A7264',
           }}
         >×</button>
 
@@ -156,10 +156,10 @@ function ModalLoginInterno({
             margin: '0 auto 12px', fontSize: '26px',
             boxShadow: '0 8px 24px rgba(238,90,36,0.35)',
           }}>❤️</div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#16201C', margin: '0 0 6px' }}>
             {mensagem ?? 'Entre para salvar imóveis'}
           </h2>
-          <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
+          <p style={{ fontSize: '14px', color: '#7A7264', margin: 0 }}>
             Salve seus imóveis favoritos e acesse de qualquer dispositivo.
           </p>
         </div>
@@ -171,13 +171,13 @@ function ModalLoginInterno({
           disabled={carregandoGoogle}
           style={{
             width: '100%', padding: '12px', borderRadius: '12px',
-            border: '1.5px solid #e2e8f0', background: 'white',
+            border: '1.5px solid #E0D8CA', background: 'white',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             gap: '10px', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-            color: '#0f172a', marginBottom: '16px',
+            color: '#16201C', marginBottom: '16px',
             transition: 'all 0.15s',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = '#f8fafc')}
+          onMouseEnter={(e) => (e.currentTarget.style.background = '#FAF7F1')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
         >
           <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
@@ -192,11 +192,11 @@ function ModalLoginInterno({
         {/* Divisor */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: '12px',
-          marginBottom: '16px', color: '#94a3b8', fontSize: '13px',
+          marginBottom: '16px', color: '#A39A8A', fontSize: '13px',
         }}>
-          <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+          <div style={{ flex: 1, height: '1px', background: '#E0D8CA' }} />
           ou
-          <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+          <div style={{ flex: 1, height: '1px', background: '#E0D8CA' }} />
         </div>
 
         {/* Form */}
@@ -209,11 +209,11 @@ function ModalLoginInterno({
             required
             style={{
               padding: '12px 14px', borderRadius: '12px',
-              border: '1.5px solid #e2e8f0', fontSize: '14px',
+              border: '1.5px solid #E0D8CA', fontSize: '14px',
               outline: 'none', transition: 'border 0.15s',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = '#3b82f6')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = '#e2e8f0')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#2C5F8A')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = '#E0D8CA')}
           />
           <input
             type="password"
@@ -223,17 +223,17 @@ function ModalLoginInterno({
             required
             style={{
               padding: '12px 14px', borderRadius: '12px',
-              border: '1.5px solid #e2e8f0', fontSize: '14px',
+              border: '1.5px solid #E0D8CA', fontSize: '14px',
               outline: 'none', transition: 'border 0.15s',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = '#3b82f6')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = '#e2e8f0')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#2C5F8A')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = '#E0D8CA')}
           />
 
           {erro && (
             <div style={{
-              background: '#fef2f2', border: '1px solid #fecaca',
-              color: '#dc2626', padding: '10px 12px', borderRadius: '10px',
+              background: '#FDF1EC', border: '1px solid #F3C3B5',
+              color: '#B23318', padding: '10px 12px', borderRadius: '10px',
               fontSize: '13px',
             }}>{erro}</div>
           )}
@@ -243,11 +243,11 @@ function ModalLoginInterno({
             disabled={carregando}
             style={{
               padding: '13px', borderRadius: '12px', border: 'none',
-              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+              background: 'linear-gradient(135deg, #2C5F8A, #22302A)',
               color: 'white', fontSize: '15px', fontWeight: 700,
               cursor: carregando ? 'not-allowed' : 'pointer',
               opacity: carregando ? 0.7 : 1, transition: 'all 0.15s',
-              boxShadow: '0 4px 14px rgba(59,130,246,0.4)',
+              boxShadow: '0 4px 14px rgba(44, 95, 138,0.4)',
             }}
           >
             {carregando ? 'Entrando...' : 'Entrar'}
@@ -257,12 +257,12 @@ function ModalLoginInterno({
         {/* Cadastro */}
         <p style={{
           textAlign: 'center', marginTop: '20px',
-          fontSize: '13px', color: '#64748b',
+          fontSize: '13px', color: '#7A7264',
         }}>
           Não tem conta?{' '}
           <a
             href="/cadastro"
-            style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}
+            style={{ color: '#2C5F8A', fontWeight: 600, textDecoration: 'none' }}
           >
             Criar conta grátis
           </a>

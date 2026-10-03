@@ -1,7 +1,7 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(22, 32, 28, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -20,8 +20,8 @@
 .modalBox {
   background: #ffffff;
   border-radius: 1.15rem;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  border: 1px solid var(--pedra-200);
+  box-shadow: 0 25px 50px -12px rgba(22, 32, 28, 0.25);
   width: 100%;
   max-width: 800px;
   height: 550px;
@@ -46,7 +46,7 @@
 /* ── CABEÇALHO DO MODAL (FIXO) ── */
 .headerModal {
   padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -64,8 +64,8 @@
   font-size: 1.15rem;
   width: 34px;
   height: 34px;
-  background: #eff6ff;
-  border: 1.5px solid #bfdbfe;
+  background: var(--pedra-100);
+  border: 1.5px solid var(--pedra-300);
   border-radius: 9px;
   display: flex;
   align-items: center;
@@ -76,21 +76,21 @@
 .titulo {
   font-size: 1rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
   line-height: 1.2;
 }
 
 .subtitulo {
   font-size: 0.725rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 2px 0 0;
 }
 
 .btnFechar {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
+  color: var(--pedra-500);
   width: 30px;
   height: 30px;
   border-radius: 8px;
@@ -103,8 +103,8 @@
 }
 
 .btnFechar:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 /* ── CORPO COM SIDEBAR LATERAL E CONTEÚDO ── */
@@ -112,14 +112,14 @@
   display: flex;
   flex: 1;
   min-height: 0;
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 /* SIDEBAR DE ABAS */
 .sidebarAbas {
   width: 220px;
-  background: #f8fafc;
-  border-right: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border-right: 1px solid var(--pedra-200);
   padding: 0.85rem 0.65rem;
   display: flex;
   flex-direction: column;
@@ -135,7 +135,7 @@
   border-radius: 0.65rem;
   border: 1px solid transparent;
   background: transparent;
-  color: #475569;
+  color: var(--pedra-600);
   font-size: 0.825rem;
   font-weight: 600;
   cursor: pointer;
@@ -145,16 +145,16 @@
 }
 
 .btnAba:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 .btnAbaAtiva {
   background: #ffffff;
-  color: #1d4ed8;
+  color: var(--tinta-2);
   font-weight: 700;
-  border-color: #bfdbfe;
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+  border-color: var(--pedra-300);
+  box-shadow: 0 1px 3px rgba(22, 32, 28, 0.08);
 }
 
 .iconeAba {
@@ -173,13 +173,13 @@
 
 .descAba {
   font-size: 0.65rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 400;
   margin-top: 1px;
 }
 
 .btnAbaAtiva .descAba {
-  color: #3b82f6;
+  color: var(--hidro);
 }
 
 /* ÁREA DE CONTEÚDO DA ABA (SCROLL INTERNO) */
@@ -198,13 +198,13 @@
 .secaoTitulo {
   font-size: 0.9rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   display: block;
 }
 
 .secaoSubtitulo {
   font-size: 0.715rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-top: 1px;
   display: block;
 }
@@ -217,8 +217,8 @@
 }
 
 .cardTipoConta {
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
   border-radius: 0.75rem;
   padding: 0.75rem 0.9rem;
   display: flex;
@@ -229,14 +229,14 @@
 }
 
 .cardTipoConta:hover {
-  border-color: #93c5fd;
+  border-color: var(--pedra-400);
   background: #ffffff;
 }
 
 .cardTipoContaSelecionado {
-  border-color: #2563eb;
-  background: #eff6ff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  border-color: var(--tinta);
+  background: var(--pedra-100);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.08);
 }
 
 .tipoContaIcone {
@@ -248,12 +248,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   flex-shrink: 0;
 }
 
 .cardTipoContaSelecionado .tipoContaIcone {
-  border-color: #bfdbfe;
+  border-color: var(--pedra-300);
 }
 
 .tipoContaInfo {
@@ -264,12 +264,12 @@
 .tipoContaInfo strong {
   font-size: 0.825rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .tipoContaInfo span {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-top: 1px;
 }
 
@@ -279,13 +279,13 @@
   gap: 6px;
   margin-top: 1rem;
   padding-top: 0.85rem;
-  border-top: 1px dashed #e2e8f0;
+  border-top: 1px dashed var(--pedra-200);
 }
 
 .labelCampo {
   font-size: 0.775rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -294,20 +294,20 @@
 .opcionalPill {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--tinta);
+  background: var(--pedra-100);
   padding: 1px 6px;
   border-radius: 999px;
 }
 
 .inputCreci {
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   outline: none;
   transition: border-color 0.15s ease;
   width: 100%;
@@ -315,17 +315,17 @@
 }
 
 .inputCreci:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.15);
 }
 
 .avisoVinculoEquipe {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: var(--pedra-100);
+  border: 1px solid var(--pedra-300);
   border-radius: 0.65rem;
   padding: 0.85rem;
   font-size: 0.775rem;
-  color: #1e40af;
+  color: var(--tinta-2);
   line-height: 1.4;
 }
 
@@ -336,8 +336,8 @@
   justify-content: space-between;
   gap: 12px;
   padding: 8px 12px;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
   border-radius: 10px;
   margin-bottom: 0.65rem;
 }
@@ -354,7 +354,7 @@
   border-radius: 50%;
   overflow: hidden;
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -370,7 +370,7 @@
 .logoPlaceholderCompacto {
   font-size: 0.85rem;
   font-weight: 800;
-  color: #2563eb;
+  color: var(--tinta);
 }
 
 .logoTextosCompacto {
@@ -382,7 +382,7 @@
 .logoTituloCompacto {
   font-size: 0.775rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   line-height: 1.1;
 }
 
@@ -396,11 +396,11 @@
 .btnUploadLogoCompacto {
   padding: 3px 8px;
   background: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   border-radius: 5px;
   font-size: 0.685rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   cursor: pointer;
   transition: all 0.15s;
   display: inline-flex;
@@ -408,18 +408,18 @@
 }
 
 .btnUploadLogoCompacto:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-  border-color: #94a3b8;
+  background: var(--papel);
+  color: var(--tinta);
+  border-color: var(--pedra-400);
 }
 
 .btnRemoverLogoCompacto {
   width: 20px;
   height: 20px;
   border-radius: 4px;
-  border: 1px solid #fee2e2;
-  background: #fef2f2;
-  color: #ef4444;
+  border: 1px solid var(--marco-claro);
+  background: var(--cor-erro-claro);
+  color: var(--marco);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -429,7 +429,7 @@
 }
 
 .btnRemoverLogoCompacto:hover {
-  background: #fee2e2;
+  background: var(--marco-claro);
 }
 
 .marcaTopoDireita {
@@ -447,18 +447,18 @@
 .labelPrefixoCompacto {
   font-size: 0.725rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--pedra-600);
   white-space: nowrap;
 }
 
 .inputPrefixoCompacto {
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 6px;
   padding: 4px 6px;
   font-size: 0.8rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   outline: none;
   width: 52px;
   text-align: center;
@@ -467,15 +467,15 @@
 }
 
 .inputPrefixoCompacto:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.15);
 }
 
 .pillExemploCodigoCompacto {
   font-size: 0.675rem;
-  color: #1e40af;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  color: var(--tinta-2);
+  background: var(--pedra-100);
+  border: 1px solid var(--pedra-300);
   padding: 3px 7px;
   border-radius: 5px;
   white-space: nowrap;
@@ -497,8 +497,8 @@
 }
 
 .cardModo {
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
   border-radius: 0.65rem;
   padding: 0.55rem 0.75rem;
   cursor: pointer;
@@ -509,14 +509,14 @@
 }
 
 .cardModo:hover {
-  border-color: #93c5fd;
+  border-color: var(--pedra-400);
   background: #ffffff;
 }
 
 .cardModoSelecionado {
-  border-color: #2563eb;
-  background: #eff6ff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  border-color: var(--tinta);
+  background: var(--pedra-100);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.08);
 }
 
 .cardModoTopo {
@@ -529,14 +529,14 @@
 .cardModoTitulo {
   font-size: 0.775rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .badgeRecomendado {
   font-size: 0.585rem;
   font-weight: 800;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--pedra-200);
+  color: var(--tinta-2);
   padding: 1px 5px;
   border-radius: 999px;
 }
@@ -544,15 +544,15 @@
 .badgeEstrategico {
   font-size: 0.585rem;
   font-weight: 800;
-  background: #e0f2fe;
-  color: #0284c7;
+  background: var(--pedra-100);
+  color: var(--hidro);
   padding: 1px 5px;
   border-radius: 999px;
 }
 
 .cardModoTexto {
   font-size: 0.685rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 2px 0 5px;
   line-height: 1.25;
 }
@@ -561,8 +561,8 @@
   font-size: 0.65rem;
   font-family: monospace;
   font-weight: 700;
-  color: #2563eb;
-  background: rgba(37, 99, 235, 0.06);
+  color: var(--tinta);
+  background: rgba(22, 32, 28, 0.06);
   padding: 2px 6px;
   border-radius: 4px;
   display: inline-block;
@@ -577,8 +577,8 @@
 }
 
 .cardRegraItem {
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
   border-radius: 0.75rem;
   padding: 0.75rem 0.85rem;
   cursor: pointer;
@@ -590,14 +590,14 @@
 }
 
 .cardRegraItem:hover {
-  border-color: #93c5fd;
+  border-color: var(--pedra-400);
   background: #ffffff;
 }
 
 .cardRegraItemAtivo {
-  border-color: #2563eb;
-  background: #eff6ff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  border-color: var(--tinta);
+  background: var(--pedra-100);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.08);
 }
 
 .regraItemHeader {
@@ -609,7 +609,7 @@
 .regraItemTitulo {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -617,7 +617,7 @@
 
 .regraItemDesc {
   font-size: 0.685rem;
-  color: #64748b;
+  color: var(--pedra-500);
   line-height: 1.35;
 }
 
@@ -626,8 +626,8 @@
   font-weight: 800;
   padding: 1px 6px;
   border-radius: 999px;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--pedra-200);
+  color: var(--tinta-2);
 }
 
 .linhaDestinoWhatsapp {
@@ -636,7 +636,7 @@
   gap: 0.45rem;
   margin-top: 0.85rem;
   padding-top: 0.75rem;
-  border-top: 1px dashed #e2e8f0;
+  border-top: 1px dashed var(--pedra-200);
 }
 
 .opcoesRadioWhatsapp {
@@ -645,14 +645,14 @@
   gap: 1rem;
   flex-wrap: wrap;
   font-size: 0.775rem;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 /* ── RODAPÉ COM BOTÕES DE AÇÃO (FIXO) ── */
 .rodapeModal {
   padding: 0.75rem 1.25rem;
   background: #ffffff;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -663,9 +663,9 @@
 .btnCancelar {
   padding: 7px 14px;
   background: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   border-radius: 8px;
-  color: #475569;
+  color: var(--pedra-600);
   font-size: 0.825rem;
   font-weight: 600;
   cursor: pointer;
@@ -673,20 +673,20 @@
 }
 
 .btnCancelar:hover {
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--papel-claro);
+  color: var(--tinta);
 }
 
 .btnSalvar {
   padding: 7px 18px;
-  background: #0f4c81;
+  background: var(--tinta);
   border: none;
   border-radius: 8px;
   color: #ffffff;
   font-size: 0.825rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(15, 76, 129, 0.2);
+  box-shadow: 0 2px 4px rgba(22, 32, 28, 0.2);
   transition: all 0.15s;
 }
 
@@ -715,7 +715,7 @@
     width: 100%;
     flex-direction: row;
     border-right: none;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--pedra-200);
     padding: 0.5rem;
     overflow-x: auto;
   }
@@ -740,7 +740,7 @@
     width: 100%;
     justify-content: space-between;
     padding-top: 6px;
-    border-top: 1px dashed #e2e8f0;
+    border-top: 1px dashed var(--pedra-200);
   }
 
   .gridModos {

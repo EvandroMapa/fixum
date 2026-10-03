@@ -3,7 +3,7 @@
   position: fixed;
   inset: 0;
   z-index: 1050;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(22, 32, 28, 0.65);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -21,7 +21,7 @@
 .modalCard {
   background: #ffffff;
   border-radius: 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 720px;
@@ -43,14 +43,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border-bottom: 1px solid var(--pedra-200);
 }
 
 .modalHeaderTitulo {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -60,7 +60,7 @@
   background: transparent;
   border: none;
   font-size: 1.15rem;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 6px;
@@ -69,8 +69,8 @@
 }
 
 .btnFechar:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--pedra-200);
+  color: var(--tinta);
 }
 
 /* ── Corpo com Scroll ── */
@@ -93,16 +93,16 @@
 .label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 .input, .textarea, .select {
   width: 100%;
   padding: 8px 12px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 8px;
   font-size: 0.85rem;
-  color: #0f172a;
+  color: var(--tinta);
   background: #ffffff;
   font-family: inherit;
   transition: all 0.15s ease;
@@ -110,8 +110,8 @@
 
 .input:focus, .textarea:focus, .select:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.15);
 }
 
 .textarea {
@@ -135,22 +135,22 @@
   gap: 8px;
   padding: 8px 10px;
   border-radius: 8px;
-  border: 1.5px solid #e2e8f0;
-  background: #f8fafc;
+  border: 1.5px solid var(--pedra-200);
+  background: var(--papel-claro);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: left;
 }
 
 .tipoCard:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: var(--papel);
+  border-color: var(--pedra-300);
 }
 
 .tipoSelecionado {
-  border-color: #2563eb;
-  background: #eff6ff;
-  color: #1d4ed8;
+  border-color: var(--tinta);
+  background: var(--pedra-100);
+  color: var(--tinta-2);
   font-weight: 700;
 }
 
@@ -172,23 +172,23 @@
   flex: 1;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   background: #ffffff;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--pedra-600);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
 }
 
 .btnOpcao:hover {
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 .btnOpcaoAtivo {
-  border-color: #2563eb;
-  background: #2563eb;
+  border-color: var(--tinta);
+  background: var(--tinta);
   color: #ffffff;
 }
 
@@ -230,21 +230,21 @@
   aspect-ratio: 4/3;
   border-radius: 8px;
   overflow: hidden;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   background-size: cover;
   background-position: center;
 }
 
 .fotoCardCapa {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.25);
 }
 
 .badgeCapa {
   position: absolute;
   top: 4px;
   left: 4px;
-  background: rgba(37, 99, 235, 0.9);
+  background: rgba(22, 32, 28, 0.9);
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -257,7 +257,7 @@
   bottom: 4px;
   left: 4px;
   right: 4px;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(22, 32, 28, 0.75);
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 600;
@@ -272,7 +272,7 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background: rgba(220, 38, 38, 0.85);
+  background: rgba(178, 51, 24, 0.85);
   color: #ffffff;
   border: none;
   border-radius: 50%;
@@ -288,8 +288,8 @@
 /* ── Rodapé ── */
 .modalRodape {
   padding: 12px 20px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border-top: 1px solid var(--pedra-200);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -307,8 +307,8 @@
 .blocoModoPreco {
   margin-top: 0.4rem;
   margin-bottom: 0.65rem;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1.5px solid var(--pedra-200);
   border-radius: 8px;
   padding: 8px 10px;
 }
@@ -338,57 +338,57 @@
   gap: 2px;
   padding: 6px 8px;
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
   font-size: 0.775rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   text-align: center;
 }
 
 .btnModoPreco small {
   font-size: 0.65rem;
   font-weight: normal;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .btnModoPreco:hover {
-  border-color: #94a3b8;
-  background: #f1f5f9;
+  border-color: var(--pedra-400);
+  background: var(--papel);
 }
 
 .btnModoPrecoAtivo {
-  border-color: #2563eb !important;
-  background: #eff6ff !important;
-  color: #1e40af !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  color: var(--tinta-2) !important;
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.15);
 }
 
 .btnModoPrecoAtivo small {
-  color: #2563eb !important;
+  color: var(--tinta) !important;
 }
 
 .btnModoPrecoAtivoSobConsulta {
-  border-color: #0284c7 !important;
-  background: #f0f9ff !important;
-  color: #0369a1 !important;
-  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+  border-color: var(--hidro) !important;
+  background: var(--papel-claro) !important;
+  color: var(--hidro) !important;
+  box-shadow: 0 0 0 2px rgba(44, 95, 138, 0.15);
 }
 
 .btnModoPrecoAtivoSobConsulta small {
-  color: #0284c7 !important;
+  color: var(--hidro) !important;
 }
 
 .avisoPoliticaPreco {
   margin-top: 0.35rem;
   margin-bottom: 0.65rem;
   padding: 6px 10px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 6px;
   font-size: 0.735rem;
-  color: #475569;
+  color: var(--pedra-600);
   line-height: 1.3;
 }

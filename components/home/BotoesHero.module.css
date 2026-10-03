@@ -72,7 +72,7 @@
 .dropdownLabel {
   font-size: 11px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--pedra-400);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 10px;
@@ -90,20 +90,20 @@
 }
 
 .dropdownOpcao:hover {
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .dropdownOpcao strong {
   display: block;
   font-size: 14px;
-  color: #1e293b;
+  color: var(--tinta-2);
   font-weight: 700;
 }
 
 .dropdownOpcao small {
   display: block;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   margin-top: 1px;
 }
 

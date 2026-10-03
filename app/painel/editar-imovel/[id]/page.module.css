@@ -1,7 +1,7 @@
 /* ── Layout Geral ── */
 .pagina {
   min-height: 100vh;
-  background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #1565c0 100%);
+  background: linear-gradient(160deg, var(--tinta) 0%, #1e3a5f 60%, var(--tinta) 100%);
   display: flex;
   flex-direction: column;
 }
@@ -77,7 +77,7 @@
   gap: 8px;
   padding: 14px 28px;
   background: white;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--pedra-200);
 }
 
 .etapa {
@@ -86,44 +86,44 @@
   gap: 8px;
   font-size: 12px;
   font-weight: 500;
-  color: #94a3b8;
+  color: var(--pedra-400);
   transition: all 0.2s;
 }
 
 .etapaAtiva {
-  color: #1565c0;
+  color: var(--tinta);
 }
 
 .etapaCompleta {
-  color: #22c55e;
+  color: #3F8A66;
 }
 
 .etapaNum {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #f1f5f9;
-  border: 1.5px solid #e2e8f0;
+  background: var(--papel);
+  border: 1.5px solid var(--pedra-200);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .etapaAtiva .etapaNum {
-  background: #1565c0;
-  border-color: #1565c0;
+  background: var(--tinta);
+  border-color: var(--tinta);
   color: white;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.15);
 }
 
 .etapaCompleta .etapaNum {
-  background: #f0fdf4;
-  border-color: #22c55e;
-  color: #22c55e;
+  background: var(--cor-sucesso-claro);
+  border-color: #3F8A66;
+  color: #3F8A66;
 }
 
 .etapaLabel {
@@ -133,7 +133,7 @@
 .etapaSep {
   width: 32px;
   height: 1.5px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
   border-radius: 2px;
 }
 
@@ -148,7 +148,7 @@
 .card {
   background: white;
   border-radius: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   width: 100%;
   max-width: 720px;
@@ -172,13 +172,13 @@
 .etapaTitulo {
   font-size: 20px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 4px;
 }
 
 .etapaSubtitulo {
   font-size: 13px;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 28px;
 }
 
@@ -196,7 +196,7 @@
   align-items: center;
   gap: 8px;
   padding: 18px 10px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
   border-radius: 14px;
   background: white;
   cursor: pointer;
@@ -204,14 +204,14 @@
 }
 
 .tipoCard:hover {
-  border-color: #93c5fd;
-  background: #f0f9ff;
+  border-color: var(--pedra-400);
+  background: var(--papel-claro);
 }
 
 .tipoSelecionado {
-  border-color: #1565c0 !important;
-  background: #eff6ff !important;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.12);
 }
 
 .tipoBtn {
@@ -220,7 +220,7 @@
   align-items: center;
   gap: 8px;
   padding: 18px 10px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
   border-radius: 14px;
   background: white;
   cursor: pointer;
@@ -228,14 +228,14 @@
 }
 
 .tipoBtn:hover {
-  border-color: #93c5fd;
-  background: #f0f9ff;
+  border-color: var(--pedra-400);
+  background: var(--papel-claro);
 }
 
 .tipoBtnAtivo {
-  border-color: #1565c0 !important;
-  background: #eff6ff !important;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.12);
 }
 
 .tipoIcone {
@@ -245,7 +245,7 @@
 .tipoLabel {
   font-size: 12px;
   font-weight: 600;
-  color: #374151;
+  color: var(--pedra-700);
 }
 
 /* ── Negociacao ── */
@@ -258,25 +258,25 @@
 .negBtn {
   flex: 1;
   padding: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
   border-radius: 10px;
   background: white;
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
 }
 
 .negBtn:hover {
-  border-color: #93c5fd;
-  color: #1565c0;
+  border-color: var(--pedra-400);
+  color: var(--tinta);
 }
 
 .negBtnAtivo {
-  border-color: #1565c0 !important;
-  background: #1565c0 !important;
+  border-color: var(--tinta) !important;
+  background: var(--tinta) !important;
   color: white !important;
 }
 
@@ -291,15 +291,15 @@
 .label {
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: var(--pedra-700);
 }
 
 .input {
   padding: 12px 14px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 10px;
   font-size: 15px;
-  color: #0f172a;
+  color: var(--tinta);
   transition: border-color 0.2s;
   background: white;
   width: 100%;
@@ -309,12 +309,12 @@
 
 .input:focus {
   outline: none;
-  border-color: #1565c0;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.1);
 }
 
 .inputCarregando {
-  background: #f8fafc;
+  background: var(--papel-claro);
   opacity: 0.7;
 }
 
@@ -325,7 +325,7 @@
 
 .contador {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   text-align: right;
 }
 
@@ -349,25 +349,25 @@
 
 .btnOpcao {
   padding: 10px 20px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 8px;
   background: white;
   font-size: 14px;
   font-weight: 500;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btnOpcao:hover {
-  border-color: #93c5fd;
-  color: #1565c0;
+  border-color: var(--pedra-400);
+  color: var(--tinta);
 }
 
 .btnOpcaoAtivo {
-  border-color: #1565c0 !important;
-  background: #eff6ff !important;
-  color: #1565c0 !important;
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  color: var(--tinta) !important;
   font-weight: 700 !important;
 }
 
@@ -384,20 +384,20 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #374151;
+  color: var(--pedra-700);
   cursor: pointer;
 }
 
 .checkboxItem input {
   width: 18px;
   height: 18px;
-  accent-color: #1565c0;
+  accent-color: var(--tinta);
   cursor: pointer;
 }
 
 /* ── Dropzone ── */
 .dropzone {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--pedra-300);
   border-radius: 14px;
   padding: 40px 20px;
   text-align: center;
@@ -411,8 +411,8 @@
 }
 
 .dropzone:hover {
-  border-color: #1565c0;
-  background: #f0f9ff;
+  border-color: var(--tinta);
+  background: var(--papel-claro);
 }
 
 .dropzoneIcone {
@@ -422,13 +422,13 @@
 .dropzone p {
   font-size: 14px;
   font-weight: 600;
-  color: #374151;
+  color: var(--pedra-700);
   margin: 0;
 }
 
 .dropzoneHint {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 /* ── Grid de Fotos ── */
@@ -443,12 +443,12 @@
   border-radius: 10px;
   overflow: hidden;
   aspect-ratio: 1;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
 }
 
 .fotoPrincipal {
-  border-color: #1565c0;
-  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.2);
 }
 
 .fotoPreview {
@@ -461,7 +461,7 @@
   position: absolute;
   top: 6px;
   left: 6px;
-  background: #1565c0;
+  background: var(--tinta);
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -501,7 +501,7 @@
 }
 
 .fotoBtnRemover {
-  background: rgba(239, 68, 68, 0.9);
+  background: rgba(212, 64, 31, 0.9);
   color: white;
 }
 
@@ -532,7 +532,7 @@
 
 /* ── Revisão ── */
 .revisaoCard {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: 20px;
@@ -543,7 +543,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 13px 18px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
 }
 
 .revisaoLinha:last-child {
@@ -552,18 +552,18 @@
 
 .revisaoLinha span {
   font-size: 13px;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .revisaoLinha strong {
   font-size: 14px;
-  color: #0f172a;
+  color: var(--tinta);
   text-align: right;
   max-width: 60%;
 }
 
 .revisaoPreco {
-  color: #1565c0 !important;
+  color: var(--tinta) !important;
   font-size: 18px !important;
 }
 
@@ -583,7 +583,7 @@
   height: 75px;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
 }
 
 .revisaoFotoItem img {
@@ -593,15 +593,15 @@
 }
 
 .revisaoFotoCapa {
-  border-color: #1565c0;
-  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.2);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.2);
 }
 
 .revisaoFotoBadge {
   position: absolute;
   bottom: 4px;
   left: 4px;
-  background: #1565c0;
+  background: var(--tinta);
   color: white;
   font-size: 9px;
   font-weight: 700;
@@ -615,41 +615,41 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px 28px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
 }
 
 .btnVoltar2 {
   padding: 11px 22px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 10px;
   background: white;
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btnVoltar2:hover {
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .btnAvancar {
   padding: 11px 28px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 3px 12px rgba(21, 101, 192, 0.3);
+  box-shadow: 0 3px 12px rgba(22, 32, 28, 0.3);
 }
 
 .btnAvancar:hover {
   transform: translateY(-1px);
-  box-shadow: 0 5px 16px rgba(21, 101, 192, 0.4);
+  box-shadow: 0 5px 16px rgba(22, 32, 28, 0.4);
 }
 
 .btnDesabilitado {
@@ -662,18 +662,18 @@
   padding: 13px 32px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
+  box-shadow: 0 4px 16px rgba(22, 32, 28, 0.3);
 }
 
 .btnPublicar:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.4);
+  box-shadow: 0 6px 20px rgba(22, 32, 28, 0.4);
 }
 
 .btnCarregando {
@@ -688,7 +688,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(22, 32, 28, 0.85);
   backdrop-filter: blur(12px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 14px 28px;
@@ -730,12 +730,12 @@
   padding: 11px 28px;
   border-radius: 10px;
   border: none;
-  background: linear-gradient(135deg, #1565c0, #0d3a6a);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-profunda));
   color: white;
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.4);
+  box-shadow: 0 4px 14px rgba(22, 32, 28, 0.4);
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
@@ -745,7 +745,7 @@
 
 .btnSalvar:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(21, 101, 192, 0.5);
+  box-shadow: 0 6px 18px rgba(22, 32, 28, 0.5);
 }
 
 .btnSalvar:disabled {
@@ -761,18 +761,18 @@
   border-radius: 12px;
   padding: 14px 20px;
   margin-bottom: 20px;
-  color: #d1fae5;
+  color: var(--cerrado-claro);
   font-weight: 600;
   font-size: 14px;
 }
 
 .alertaErro {
   background: rgba(153, 27, 27, 0.9);
-  border: 1px solid #fca5a5;
+  border: 1px solid #EBA592;
   border-radius: 12px;
   padding: 14px 20px;
   margin-bottom: 20px;
-  color: #fee2e2;
+  color: var(--marco-claro);
   font-weight: 600;
   font-size: 14px;
 }
@@ -790,21 +790,21 @@
 .secaoTitulo {
   font-size: 17px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 4px;
 }
 
 .secaoSub {
   font-size: 13px;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 20px;
 }
 
 .erro {
-  color: #dc2626;
+  color: var(--marco-escuro);
   font-size: 13px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--cor-erro-claro);
+  border: 1px solid #F3C3B5;
   border-radius: 8px;
   padding: 10px 14px;
   margin-bottom: 16px;

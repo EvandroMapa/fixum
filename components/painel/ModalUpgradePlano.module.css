@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(22, 32, 28, 0.75);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -33,7 +33,7 @@
   background: transparent;
   border: none;
   font-size: 1.1rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   cursor: pointer;
   width: 30px;
   height: 30px;
@@ -45,8 +45,8 @@
 }
 
 .btnFechar:hover {
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--papel);
+  color: var(--pedra-700);
 }
 
 .cabecalho {
@@ -57,20 +57,20 @@
 .titulo {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.1rem;
 }
 
 .subtitulo {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .labelSecao {
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--pedra-600);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.75rem;
@@ -90,8 +90,8 @@
 }
 
 .cardPlanoItem {
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 2px solid var(--pedra-200);
   border-radius: 0.75rem;
   padding: 0.75rem 0.5rem;
   cursor: pointer;
@@ -103,24 +103,24 @@
 }
 
 .cardPlanoItem:hover {
-  border-color: #cbd5e1;
+  border-color: var(--pedra-300);
   background: #ffffff;
 }
 
 .cardPlanoItemAtivo {
-  border-color: #0f4c81 !important;
-  background: #eff6ff !important;
-  box-shadow: 0 4px 6px -1px rgba(15, 76, 129, 0.1);
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  box-shadow: 0 4px 6px -1px rgba(22, 32, 28, 0.1);
 }
 
 .cardPlanoItemAtual {
-  background: #f0fdf4;
-  border-color: #86efac;
+  background: var(--cor-sucesso-claro);
+  border-color: #A9CDB6;
 }
 
 .cardPlanoItemDesabilitado {
   opacity: 0.55;
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .cardPlanoTopo {
@@ -134,13 +134,13 @@
 .nomePlano {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .badgeAtual {
   font-size: 0.6rem;
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
   font-weight: 700;
   padding: 1px 4px;
   border-radius: 4px;
@@ -148,33 +148,33 @@
 
 .capacidadePlano {
   font-size: 0.75rem;
-  color: #475569;
+  color: var(--pedra-600);
   margin-bottom: 0.4rem;
 }
 
 .precoPlano {
   font-size: 0.85rem;
-  color: #0f4c81;
+  color: var(--tinta);
   font-weight: 700;
 }
 
 .precoPlano small {
   font-size: 0.65rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: normal;
 }
 
 .custoUnitarioMini {
   font-size: 0.65rem;
-  color: #15803d;
+  color: var(--cerrado);
   font-weight: 600;
   margin-top: 0.2rem;
 }
 
 /* ── FAIXA COMPARATIVA DO PLANO ATUAL ── */
 .faixaPlanoAtual {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 8px;
   padding: 5px 10px;
   margin-bottom: 8px;
@@ -196,21 +196,21 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #475569;
-  background: #e2e8f0;
+  color: var(--pedra-600);
+  background: var(--pedra-200);
   padding: 1px 5px;
   border-radius: 4px;
 }
 
 .nomePlanoAtual {
   font-size: 0.8rem;
-  color: #0f172a;
+  color: var(--tinta);
   font-weight: 700;
 }
 
 .faixaPlanoAtualPreco {
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
 }
 
@@ -228,12 +228,12 @@
 
 .labelPlanoAtual {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .valorPlanoAtual {
   font-size: 0.74rem;
-  color: #1e293b;
+  color: var(--tinta-2);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -243,22 +243,22 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .resumoLinha strong {
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .valorDestaque {
   font-size: 1.1rem !important;
-  color: #0f4c81 !important;
+  color: var(--tinta) !important;
 }
 
 .alertaBloqueio {
-  background: #fffbeb;
-  border: 1px solid #fef3c7;
-  color: #b45309;
+  background: #FDF7E8;
+  border: 1px solid var(--ouro-claro);
+  color: var(--ouro-escuro);
   padding: 0.85rem;
   border-radius: 0.75rem;
   font-size: 0.85rem;
@@ -267,9 +267,9 @@
 }
 
 .alertaErro {
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
-  color: #dc2626;
+  background: var(--cor-erro-claro);
+  border: 1px solid var(--marco-claro);
+  color: var(--marco-escuro);
   padding: 0.85rem;
   border-radius: 0.75rem;
   font-size: 0.85rem;
@@ -293,7 +293,7 @@
   gap: 0.65rem;
   padding: 0.65rem 0.85rem;
   background: #ffffff;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
   border-radius: 0.75rem;
   cursor: pointer;
   text-align: left;
@@ -302,13 +302,13 @@
 }
 
 .opcaoPagamento:hover {
-  border-color: #93c5fd;
-  background: #f8fafc;
+  border-color: var(--pedra-400);
+  background: var(--papel-claro);
 }
 
 .opcaoAtiva {
-  border-color: #2563eb !important;
-  background: #eff6ff !important;
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
 }
 
 .iconePagamento {
@@ -323,12 +323,12 @@
 
 .infoPagamento strong {
   font-size: 0.85rem;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .infoPagamento small {
   font-size: 0.725rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .rodapeAcoes {
@@ -341,7 +341,7 @@
 .btnConfirmar {
   width: 100%;
   min-height: 44px;
-  background: #1d4ed8;
+  background: var(--tinta-2);
   color: #ffffff;
   border: none;
   border-radius: 0.65rem;
@@ -355,7 +355,7 @@
 }
 
 .btnConfirmar:hover:not(:disabled) {
-  background: #1e40af;
+  background: var(--tinta-2);
 }
 
 .btnConfirmar:disabled {
@@ -367,7 +367,7 @@
   width: 100%;
   min-height: 36px;
   background: transparent;
-  color: #64748b;
+  color: var(--pedra-500);
   border: none;
   border-radius: 0.65rem;
   font-size: 0.85rem;
@@ -376,7 +376,7 @@
 }
 
 .btnCancelar:hover {
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .containerSucesso {
@@ -388,8 +388,8 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
   font-size: 2rem;
   font-weight: bold;
   display: flex;
@@ -400,21 +400,21 @@
 
 .containerSucesso h3 {
   font-size: 1.3rem;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.5rem;
 }
 
 /* Card Resumo do Plano Selecionado */
 .cardResumoPlano {
-  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
-  border: 2px solid #3b82f6;
+  background: linear-gradient(135deg, var(--pedra-100) 0%, var(--papel-claro) 100%);
+  border: 2px solid var(--hidro);
   border-radius: 0.85rem;
   padding: 0.75rem 1rem;
   margin-bottom: 0.6rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.08);
+  box-shadow: 0 4px 14px rgba(44, 95, 138, 0.08);
 }
 
 .resumoTopo {
@@ -427,7 +427,7 @@
 
 .badgePlanoAlvo {
   display: inline-block;
-  background: #3b82f6;
+  background: var(--hidro);
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -441,13 +441,13 @@
 .resumoNome {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
 }
 
 .resumoDesc {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .resumoPrecoBox {
@@ -467,7 +467,7 @@
 
 .resumoPrecoTotal {
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
   margin-top: 1px;
   white-space: nowrap;
@@ -476,25 +476,25 @@
 .resumoValor {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #1d4ed8;
+  color: var(--tinta-2);
   line-height: 1;
 }
 
 .resumoPeriodo {
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 500;
 }
 
 .valorSobConsulta {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1d4ed8;
+  color: var(--tinta-2);
 }
 
 .seletorCicloBox {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 8px;
   padding: 6px 8px;
   display: flex;
@@ -505,7 +505,7 @@
 .seletorCicloLabel {
   font-size: 0.74rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   margin: 0;
 }
 
@@ -517,8 +517,8 @@
 
 .btnCiclo {
   background: #ffffff;
-  color: #475569;
-  border: 1.5px solid #cbd5e1;
+  color: var(--pedra-600);
+  border: 1.5px solid var(--pedra-300);
   border-radius: 6px;
   padding: 4px 2px;
   font-size: 0.72rem;
@@ -534,17 +534,17 @@
 }
 
 .btnCicloAtivo {
-  background: #0f4c81 !important;
+  background: var(--tinta) !important;
   color: #ffffff !important;
-  border-color: #0f4c81 !important;
+  border-color: var(--tinta) !important;
   font-weight: 700 !important;
 }
 
 .tagCicloOff {
   font-size: 0.62rem;
   font-weight: 800;
-  background: #ecfdf5;
-  color: #059669;
+  background: var(--cor-sucesso-claro);
+  color: var(--cerrado);
   padding: 1px 5px;
   border-radius: 10px;
 }
@@ -567,15 +567,15 @@
 }
 
 .statusPromocional {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #059669;
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #C3DACB;
+  color: var(--cerrado);
 }
 
 .statusMensal {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  border: 1px solid var(--pedra-200);
+  color: var(--pedra-600);
 }
 
 .resumoBeneficios {
@@ -583,7 +583,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0.4rem;
   padding-top: 0.45rem;
-  border-top: 1px solid #dbeafe;
+  border-top: 1px solid var(--pedra-200);
 }
 
 .beneficioItem {
@@ -591,11 +591,11 @@
   flex-direction: column;
   gap: 1px;
   font-size: 0.72rem;
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .beneficioItem strong {
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 0.78rem;
   white-space: nowrap;
 }
@@ -603,7 +603,7 @@
 .btnTrocarPlano {
   background: transparent;
   border: none;
-  color: #2563eb;
+  color: var(--tinta);
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;

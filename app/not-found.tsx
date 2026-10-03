@@ -14,14 +14,14 @@ export default function NotFound() {
           justifyContent: 'center',
           padding: '2rem 1.5rem',
           textAlign: 'center',
-          background: '#f8fafc',
+          background: '#FAF7F1',
         }}
       >
         <div
           style={{
             maxWidth: '520px',
             background: '#ffffff',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #E0D8CA',
             borderRadius: '1.5rem',
             padding: '3rem 2rem',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
@@ -36,7 +36,7 @@ export default function NotFound() {
             style={{
               fontSize: '1.6rem',
               fontWeight: 800,
-              color: '#0f172a',
+              color: '#16201C',
               letterSpacing: '-0.02em',
               marginTop: '0.5rem',
             }}
@@ -46,7 +46,7 @@ export default function NotFound() {
           <p
             style={{
               fontSize: '0.95rem',
-              color: '#64748b',
+              color: '#7A7264',
               lineHeight: 1.6,
               marginBottom: '1rem',
             }}

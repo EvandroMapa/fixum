@@ -1,120 +1,115 @@
+/* ============================================
+   BUSCA DA HOME — Fixum
+   ============================================ */
 .container {
   width: 100%;
-  max-width: 740px;
-  margin: 0 auto 36px;
+  max-width: 760px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 10;
+  gap: 14px;
 }
 
-/* ===== ABAS COMPRAR / ALUGAR ===== */
+/* ── Comprar / Alugar ── */
 .abasWrapper {
   display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(15, 23, 42, 0.55);
-  padding: 5px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(12px);
-  margin-bottom: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  align-self: flex-start;
+  padding: 4px;
+  gap: 2px;
+  background: var(--pedra-100);
+  border-radius: var(--raio-md);
 }
 
 .aba {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.75);
+  min-height: 40px;
+  padding: 0 20px;
+  border-radius: 9px;
   font-size: 0.9375rem;
   font-weight: 600;
-  padding: 8px 20px;
-  border-radius: 999px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: -0.01em;
+  color: var(--pedra-600);
+  transition: background var(--transicao), color var(--transicao), box-shadow var(--transicao);
 }
 
 .aba:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--tinta);
 }
 
 .abaAtiva {
-  background: white !important;
-  color: #0f172a !important;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  transform: scale(1.02);
+  background: var(--cor-superficie);
+  color: var(--tinta);
+  box-shadow: 0 1px 3px rgba(22, 32, 28, 0.12);
 }
 
-/* ===== BARRA DE BUSCA UNIFICADA ===== */
+/* ── Barra ── */
 .barraBusca {
-  width: 100%;
   display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  padding: 6px 8px 6px 16px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12);
-  gap: 10px;
-  transition: all 0.2s ease;
+  align-items: stretch;
+  gap: 8px;
+  padding: 8px;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-xl);
+  box-shadow: 0 12px 40px rgba(22, 32, 28, 0.1);
+  transition: border-color var(--transicao), box-shadow var(--transicao);
 }
 
 .barraBusca:focus-within {
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(255, 107, 53, 0.35);
-  background: #ffffff;
+  border-color: var(--pedra-300);
+  box-shadow: 0 12px 40px rgba(22, 32, 28, 0.14), 0 0 0 4px rgba(22, 32, 28, 0.06);
 }
 
-/* Input e Lupa */
 .inputContainer {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0;
+  padding: 0 8px 0 12px;
+  cursor: text;
 }
 
 .iconeLupa {
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  color: var(--marco);
   flex-shrink: 0;
 }
 
-.barraBusca:focus-within .iconeLupa {
-  color: #1565c0;
+.inputTextos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.inputRotulo {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tinta);
+  line-height: 1.2;
 }
 
 .input {
-  flex: 1;
-  border: none;
+  width: 100%;
+  border: 0;
   outline: none;
   background: transparent;
-  font-size: 1.0625rem;
-  color: #0f172a;
-  font-family: inherit;
-  font-weight: 500;
-  min-width: 0;
-  padding: 8px 0;
+  font-size: 16px;
+  color: var(--tinta);
+  padding: 2px 0;
+  min-height: 26px;
 }
 
 .input::placeholder {
-  color: #94a3b8;
-  font-weight: 400;
+  color: var(--pedra-400);
 }
 
-/* Spinner e Limpar */
-.spinner {
+.spinner,
+.spinnerGps {
   width: 16px;
   height: 16px;
-  border: 2px solid #e2e8f0;
-  border-top-color: #1565c0;
+  border: 2px solid var(--pedra-200);
+  border-top-color: var(--tinta);
   border-radius: 50%;
   animation: girar 0.7s linear infinite;
   flex-shrink: 0;
@@ -125,270 +120,166 @@
 }
 
 .btnLimpar {
-  background: #f1f5f9;
-  border: none;
-  cursor: pointer;
-  padding: 4px 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  font-size: 11px;
-  transition: all 0.15s;
+  display: grid;
+  place-items: center;
+  color: var(--pedra-500);
   flex-shrink: 0;
 }
 
 .btnLimpar:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
-/* Botão GPS */
 .btnGps {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 10px 14px;
-  border-radius: 14px;
-  cursor: pointer;
+  gap: 8px;
+  padding: 0 14px;
+  min-height: 52px;
+  border-radius: var(--raio-md);
+  color: var(--tinta);
+  font-size: 0.9375rem;
+  font-weight: 500;
   white-space: nowrap;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
+  transition: background var(--transicao);
 }
 
 .btnGps:hover {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+  background: var(--papel);
 }
 
 .btnGpsLoading {
-  opacity: 0.7;
-  pointer-events: none;
+  cursor: progress;
+  color: var(--pedra-500);
 }
 
-.spinnerGps {
-  width: 14px;
-  height: 14px;
-  border: 2px solid #bfdbfe;
-  border-top-color: #1d4ed8;
-  border-radius: 50%;
-  animation: girar 0.7s linear infinite;
-}
-
-/* Botão Buscar no Mapa */
 .btnBuscar {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #ff6b35 0%, #e0531e 100%);
-  color: white;
-  border: none;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  padding: 12px 22px;
-  border-radius: 14px;
-  cursor: pointer;
+  padding: 0 22px;
+  min-height: 52px;
+  border-radius: var(--raio-md);
+  background: var(--marco);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
   white-space: nowrap;
-  flex-shrink: 0;
-  box-shadow: 0 4px 18px rgba(255, 107, 53, 0.4);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: -0.01em;
+  transition: background var(--transicao);
 }
 
 .btnBuscar:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(255, 107, 53, 0.55);
+  background: var(--marco-escuro);
 }
 
-.btnBuscarIcone {
-  font-size: 1.1rem;
-}
-
-/* Aviso de Erro GPS */
 .avisoErro {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 0.8125rem;
-  color: #fca5a5;
-  background: rgba(185, 28, 28, 0.35);
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  padding: 4px 12px;
-  border-radius: 8px;
-}
-
-/* Rodapé / Link Secundário */
-.rodapeAtalhos {
-  margin-top: 14px;
-}
-
-.linkExplorarLivre {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: color 0.15s ease;
-  text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.3);
-  text-underline-offset: 4px;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--marco-escuro);
 }
 
-.linkExplorarLivre:hover {
-  color: white;
-  text-decoration-color: white;
-}
-
-/* ===== DROPDOWN DE SUGESTÕES (PORTAL) ===== */
+/* ── Sugestões ── */
 .dropdown {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.08);
   list-style: none;
+  padding: 6px;
   margin: 0;
-  padding: 8px;
-  overflow-y: auto;
-  max-height: 320px;
-  animation: dropdownAbaixo 0.16s ease-out;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-xl);
+  animation: aparecer 0.14s ease;
 }
 
 .dropdownAcima {
-  animation: dropdownAcimaAnim 0.16s ease-out;
+  animation-name: aparecerAcima;
 }
 
-@keyframes dropdownAbaixo {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-4px); }
 }
 
-@keyframes dropdownAcimaAnim {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes aparecerAcima {
+  from { opacity: 0; transform: translateY(4px); }
 }
 
 .itemDropdown {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  border-radius: 10px;
+  min-height: 52px;
+  padding: 8px 10px;
+  border-radius: var(--raio-sm);
   cursor: pointer;
-  transition: background 0.1s ease;
 }
 
 .itemDropdown:hover,
 .itemDropdownAtivo {
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .itemIcone {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #eff6ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--raio-sm);
+  background: var(--papel);
+  color: var(--tinta);
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
-  color: #1d4ed8;
+}
+
+.itemDropdownAtivo .itemIcone {
+  background: var(--cor-superficie);
 }
 
 .itemTexto {
   display: flex;
   flex-direction: column;
-  gap: 2px;
   min-width: 0;
-  flex: 1;
 }
 
 .itemNome {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #0f172a;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.25;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--tinta);
 }
 
 .itemDetalhe {
   font-size: 0.8125rem;
-  color: #64748b;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.3;
+  color: var(--pedra-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ===== RESPONSIVIDADE MOBILE ===== */
-@media (max-width: 768px) {
-  .container {
-    max-width: 100%;
-    margin-bottom: 28px;
-  }
-
-  .abasWrapper {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .aba {
-    flex: 1;
-    justify-content: center;
-    padding: 10px 12px;
-    font-size: 0.875rem;
-  }
-
+/* ── Responsivo ── */
+@media (max-width: 720px) {
   .barraBusca {
-    flex-direction: column;
-    padding: 12px;
-    border-radius: 18px;
-    gap: 10px;
+    flex-wrap: wrap;
+    padding: 6px;
   }
-
   .inputContainer {
-    width: 100%;
-    padding: 2px 4px 6px;
-    border-bottom: 1px solid #f1f5f9;
+    flex-basis: 100%;
+    min-height: 56px;
+    border-bottom: 1px solid var(--cor-borda);
   }
-
-  .input {
-    font-size: 16px; /* Evita auto-zoom no Safari/iOS */
-    padding: 4px 0;
-  }
-
   .btnGps {
-    width: 100%;
-    justify-content: center;
-    min-height: 44px;
-    font-size: 0.9rem;
+    flex: 0 0 auto;
   }
-
   .btnBuscar {
-    width: 100%;
-    justify-content: center;
-    min-height: 48px;
-    font-size: 1rem;
+    flex: 1;
+  }
+}
+
+@media (max-width: 380px) {
+  .textoGps {
+    display: none;
   }
 }

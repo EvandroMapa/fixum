@@ -1,3 +1,8 @@
+/* ============================================
+   HEADER — Fixum
+   Claro sobre Papel. Transparente no topo da home, sólido ao rolar
+   e em todas as outras páginas.
+   ============================================ */
 .header {
   position: fixed;
   top: 0;
@@ -5,539 +10,385 @@
   right: 0;
   z-index: 1000;
   height: var(--altura-header);
-  transition: background 0.25s ease, box-shadow 0.25s ease;
-  /* Default: transparente (home com hero escuro) */
   background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background var(--transicao), border-color var(--transicao);
 }
 
-/* Solido: em outras paginas ou apos scroll na home */
 .header.solido {
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 1px 0 rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
+  background: color-mix(in srgb, var(--papel-claro) 92%, transparent);
+  backdrop-filter: saturate(1.2) blur(14px);
+  -webkit-backdrop-filter: saturate(1.2) blur(14px);
+  border-bottom-color: var(--cor-borda);
 }
 
-/* Linha gradiente de marca na base do header solido */
-.header.solido::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #1a56db 0%, #3b82f6 40%, #f97316 70%, #fb923c 100%);
-  opacity: 0.7;
-}
-
-/* Cores do logo/nav quando transparente (home hero) */
-.logoMarca { flex-shrink: 0; transition: opacity 0.25s; }
-.logoTexto { color: white; transition: color 0.25s; }
-.navLink   { color: rgba(255,255,255,0.85); }
-.navLink:hover { color: white; background: rgba(255,255,255,0.12); }
-.btnAnunciar { border-color: rgba(255,255,255,0.45); color: white; }
-.btnImobiliaria {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #ffffff;
-}
-.btnImobiliaria:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.6);
-  color: #ffffff;
-}
-.burger, .burger::before, .burger::after { background: white; }
-
-/* Cores quando solido */
-.solido .logoMarca { opacity: 1; }
-.solido .logoTexto { color: #0f172a; }
-.solido .navLink   { color: #475569; }
-.solido .navLink:hover { color: #1a56db; background: #eff6ff; }
-.solido .navLink:hover::after { opacity: 1; }
-.solido .btnAnunciar {
-  background: linear-gradient(135deg, #1a56db, #2563eb);
-  color: white;
-  border-color: transparent;
-  box-shadow: 0 2px 8px rgba(26,86,219,0.25);
-}
-.solido .btnAnunciar:hover {
-  background: linear-gradient(135deg, #1e40af, #1a56db);
-  box-shadow: 0 4px 16px rgba(26,86,219,0.35);
-  transform: translateY(-1px);
-}
-.solido .btnImobiliaria {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1a56db;
-  box-shadow: 0 1px 3px rgba(26, 86, 219, 0.1);
-}
-.solido .btnImobiliaria:hover {
-  background: #dbeafe;
-  border-color: #93c5fd;
-  color: #1e40af;
-  transform: translateY(-1px);
-}
-.solido .burger,
-.solido .burger::before,
-.solido .burger::after { background: #334155; }
-
-/* ---- Layout interno ---- */
 .inner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: var(--altura-header);
-  max-width: var(--largura-max);
+  height: 100%;
+  max-width: calc(var(--largura-conteudo) + 48px);
   margin: 0 auto;
-  padding: 0 var(--espaco-6);
-  gap: var(--espaco-4);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
 }
 
-/* Logo */
+/* ── Logo ─────────────────────────────── */
 .logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  text-decoration: none;
   flex-shrink: 0;
-  white-space: nowrap;
+  color: var(--tinta);
+  min-height: 44px;
 }
 
-.logoMarca { flex-shrink: 0; }
-
-.logoTextos {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-  gap: 1px;
-}
-
-.logoTexto {
-  font-family: var(--fonte-display);
-  font-size: 1.25rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
-.logoSlogan {
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  opacity: 0;
-  color: #f97316;
-  transition: opacity 0.25s;
-  text-transform: none;
-  white-space: nowrap;
-}
-
-/* Slogan só aparece no header sólido */
-.solido .logoSlogan {
-  opacity: 1;
-}
-
-/* Nav - Centralizada perfeitamente no meio da tela */
+/* ── Navegação ────────────────────────── */
 .nav {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 0;
-  white-space: nowrap;
-}
-
-/* Separador entre links */
-.nav .navLink + .navLink::before {
-  content: '';
-  display: inline-block;
-  width: 1px;
-  height: 14px;
-  background: currentColor;
-  opacity: 0.2;
-  margin-right: 2px;
-  vertical-align: middle;
+  gap: 2px;
+  flex: 1;
 }
 
 .navLink {
   position: relative;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--raio-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--pedra-600);
   white-space: nowrap;
-  letter-spacing: 0.01em;
+  transition: color var(--transicao), background var(--transicao);
 }
 
-/* Linha underline animada */
-.navLink::after {
+.navLink:hover {
+  color: var(--tinta);
+  background: color-mix(in srgb, var(--tinta) 6%, transparent);
+}
+
+.navLinkAtivo {
+  color: var(--tinta);
+}
+
+.navLinkAtivo::after {
   content: '';
   position: absolute;
+  left: 12px;
+  right: 12px;
   bottom: 4px;
-  left: 16px;
-  right: 16px;
   height: 2px;
   border-radius: 2px;
-  background: currentColor;
-  transform: scaleX(0);
-  transition: transform 0.2s ease;
-  opacity: 0.6;
+  background: var(--tinta);
 }
 
-.navLink:hover::after {
-  transform: scaleX(1);
-}
-
-/* Acoes */
+/* ── Ações ────────────────────────────── */
 .acoes {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
+  gap: 8px;
+  margin-left: auto;
 }
 
 .btnAnunciar {
-  padding: 7px 16px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  border: 1.5px solid;
-  transition: all 0.2s;
-  white-space: nowrap;
-  transform: translateY(0);
-}
-
-.btnImobiliaria {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 0.84rem;
+  min-height: 40px;
+  padding: 0 14px 0 12px;
+  border-radius: var(--raio-md);
+  border: 1.5px solid var(--pedra-300);
+  color: var(--tinta);
+  font-size: 0.9375rem;
   font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
   white-space: nowrap;
+  transition: border-color var(--transicao), background var(--transicao);
 }
 
+.btnAnunciar:hover {
+  border-color: var(--tinta);
+  background: var(--cor-superficie);
+}
+
+.btnEntrar {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: var(--raio-md);
+  background: var(--tinta);
+  color: var(--papel);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background var(--transicao);
+}
+
+.btnEntrar:hover {
+  background: var(--tinta-2);
+}
+
+/* Fixados */
 .btnFavoritos {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  color: #ef4444;
-  text-decoration: none;
-  font-size: 1rem;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--raio-md);
+  display: grid;
+  place-items: center;
+  color: var(--tinta);
+  transition: background var(--transicao), color var(--transicao);
 }
 
 .btnFavoritos:hover {
-  transform: scale(1.08);
-  border-color: #fca5a5;
-  background: #fef2f2;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  background: color-mix(in srgb, var(--tinta) 6%, transparent);
 }
 
 .btnFavoritosAtivo {
-  background: #fee2e2 !important;
-  border-color: #ef4444 !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2), 0 2px 8px rgba(239, 68, 68, 0.15) !important;
-  transform: scale(1.05);
-}
-
-.iconeFavorito {
-  display: inline-block;
-  line-height: 1;
-  font-size: 0.95rem;
+  color: var(--marco);
+  background: var(--marco-claro);
 }
 
 .badgeFavoritos {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #ef4444;
-  color: #ffffff;
-  font-size: 0.65rem;
-  font-weight: 800;
-  min-width: 17px;
-  height: 17px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-  animation: surgimentoBadge 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  top: 3px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--marco);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 2px var(--papel-claro);
 }
 
-@keyframes surgimentoBadge {
-  from { transform: scale(0); }
-  to { transform: scale(1); }
-}
-
-@media (max-width: 990px) {
-  .btnImobiliaria {
-    display: none;
-  }
-}
-
-/* Burger */
-.menuBurger {
-  display: none;
-  width: 36px;
-  height: 36px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  flex-shrink: 0;
-}
-
-.burger {
-  display: block;
-  width: 18px;
-  height: 2px;
-  border-radius: 2px;
-  position: relative;
-  transition: all 0.2s;
-}
-.burger::before, .burger::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  border-radius: 2px;
-  transition: all 0.2s;
-}
-.burger::before { top: -6px; }
-.burger::after  { top: 6px; }
-.burgerAberto { background: transparent !important; }
-.burgerAberto::before { top: 0; transform: rotate(45deg); }
-.burgerAberto::after  { top: 0; transform: rotate(-45deg); }
-
-/* Menu Mobile */
-.menuMobile {
-  position: absolute;
-  top: var(--altura-header);
-  left: 0;
-  right: 0;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  z-index: 999;
-}
-.menuMobile a {
-  padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 0.9375rem;
-  color: #0f172a;
-  font-weight: 500;
-  transition: all 0.15s;
-  text-decoration: none;
-}
-.menuMobile a:hover { background: #eff6ff; color: #1565c0; }
-
-@media (max-width: 768px) {
-  .inner { padding: 0 16px; }
-  .nav { display: none; }
-  .menuBurger { display: flex; }
-  .btnAnunciar { display: none; }
-}
-
-/* ---- Avatar + Dropdown ---- */
+/* ── Avatar e menu da conta ───────────── */
 .avatarWrap {
   position: relative;
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1565c0, #1e88e5);
-  color: white;
+  display: grid;
+  place-items: center;
+  color: #fff;
   font-size: 0.875rem;
   font-weight: 700;
-  border: 2px solid rgba(255,255,255,0.3);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(21,101,192,0.3);
-  flex-shrink: 0;
+  letter-spacing: 0.02em;
+  transition: box-shadow var(--transicao);
 }
 
-.avatar:hover {
-  transform: scale(1.08);
-  box-shadow: 0 4px 16px rgba(21,101,192,0.4);
+.avatar:hover,
+.avatar[aria-expanded='true'] {
+  box-shadow: 0 0 0 3px var(--papel-claro), 0 0 0 5px var(--pedra-300);
 }
 
 .dropdown {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
-  min-width: 210px;
-  padding: 8px;
-  z-index: 2000;
-  animation: dropdownEntrar 0.15s ease;
-}
-
-@keyframes dropdownEntrar {
-  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  width: 260px;
+  padding: 6px;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-lg);
+  animation: fadeIn 0.16s ease;
+  z-index: 10;
 }
 
 .dropdownUsuario {
-  padding: 8px 12px 10px;
-  border-bottom: 1px solid #f1f5f9;
-  margin-bottom: 4px;
+  padding: 12px 12px 10px;
 }
 
 .dropdownNome {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #0f172a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--tinta);
+  font-size: 0.9375rem;
 }
 
 .dropdownEmail {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  font-weight: 500;
-  white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--pedra-500);
+  margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-top: 2px;
+  white-space: nowrap;
 }
 
-.dropdownItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 0.875rem;
+.badgeAdminMaster {
+  font-family: var(--fonte-mono);
+  font-size: 0.625rem;
   font-weight: 500;
-  color: #334155;
-  text-decoration: none;
-  transition: all 0.15s;
-  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--tinta);
+  color: var(--papel);
 }
 
-.dropdownItem:hover {
-  background: #eff6ff;
-  color: #1565c0;
-}
-
-.dropdownDivider {
-  border: none;
-  border-top: 1px solid #f1f5f9;
-  margin: 4px 0;
-}
-
+.dropdownItem,
 .dropdownSair {
   display: flex;
   align-items: center;
+  gap: 10px;
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #ef4444;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: var(--raio-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--tinta);
   text-align: left;
+  transition: background var(--transicao);
 }
 
+.dropdownItem svg,
+.dropdownSair svg {
+  color: var(--pedra-500);
+}
+
+.dropdownItem:hover,
 .dropdownSair:hover {
-  background: #fef2f2;
+  background: var(--papel);
 }
 
-/* ---- Estilos Específicos para Administrador Master ---- */
-.badgeAdminMaster {
-  display: inline-block;
-  padding: 2px 6px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
-  border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  margin-left: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  vertical-align: middle;
+.dropdownSair {
+  color: var(--marco-escuro);
 }
 
-.dropdownItemAdmin {
+.dropdownSair svg {
+  color: currentColor;
+}
+
+.dropdownDivider {
+  border: 0;
+  border-top: 1px solid var(--cor-borda);
+  margin: 6px 0;
+}
+
+/* ── Menu mobile ──────────────────────── */
+.menuBurger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--raio-md);
+  place-items: center;
+  color: var(--tinta);
+}
+
+.menuBurger:hover {
+  background: color-mix(in srgb, var(--tinta) 6%, transparent);
+}
+
+.menuMobile {
+  position: fixed;
+  top: var(--altura-header);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  background: var(--papel-claro);
+  border-top: 1px solid var(--cor-borda);
+  padding: 8px 16px calc(24px + env(safe-area-inset-bottom));
+  animation: fadeIn 0.18s ease;
+}
+
+.menuMobileGrupo {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.menuMobileGrupo:last-child {
+  border-bottom: 0;
+}
+
+.menuMobileGrupo a:not(:global(.btn)),
+.menuMobileSair {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
+  min-height: 52px;
+  padding: 0 8px;
+  border-radius: var(--raio-sm);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--tinta);
+  text-align: left;
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #0f172a;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  text-decoration: none;
-  transition: all 0.15s;
-  cursor: pointer;
-  margin-bottom: 4px;
 }
 
-.dropdownItemAdmin:hover {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+.menuMobileGrupo a:not(:global(.btn)) svg,
+.menuMobileSair svg {
+  color: var(--pedra-500);
 }
 
-.btnAdminHeader {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  border: 1px solid #334155;
-  border-radius: 10px;
-  color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
-  transition: all 0.2s;
+.menuMobileGrupo a:not(:global(.btn)):active,
+.menuMobileSair:active {
+  background: var(--papel);
 }
 
-.btnAdminHeader:hover {
-  background: #334155;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35);
+.menuMobileSair {
+  color: var(--marco-escuro);
+}
+
+.menuMobileRotulo {
+  font-family: var(--fonte-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pedra-500);
+  padding: 10px 8px 4px;
+}
+
+.menuMobileBotoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.menuMobileBotoes :global(.btn) {
+  min-height: 48px;
+}
+
+/* ── Responsivo ───────────────────────── */
+@media (max-width: 1080px) {
+  .nav {
+    display: none;
+  }
+  .menuBurger {
+    display: grid;
+  }
+}
+
+@media (max-width: 640px) {
+  .inner {
+    padding: 0 12px 0 16px;
+    gap: 12px;
+  }
+  .btnAnunciar span,
+  .btnEntrar {
+    display: none;
+  }
+  .btnAnunciar {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
 }

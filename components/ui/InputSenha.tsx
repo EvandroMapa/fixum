@@ -34,13 +34,13 @@ export default function InputSenha({ className = 'campo', estiloDark = false, ..
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: estiloDark ? '#94a3b8' : '#64748b',
+          color: estiloDark ? '#A39A8A' : '#7A7264',
           transition: 'color 0.15s ease',
           outline: 'none',
           userSelect: 'none',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = estiloDark ? '#f8fafc' : '#0f172a')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = estiloDark ? '#94a3b8' : '#64748b')}
+        onMouseEnter={(e) => (e.currentTarget.style.color = estiloDark ? '#FAF7F1' : '#16201C')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = estiloDark ? '#A39A8A' : '#7A7264')}
       >
         {mostrar ? (
           /* Olho riscado (Ocultar) */

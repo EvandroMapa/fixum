@@ -10,33 +10,83 @@
   height: 100%;
 }
 
-/* Marcadores */
+/* Marcadores — pin de preço (brandbook, seção 06) */
 .marcador {
-  background: white;
-  border: 2px solid var(--cor-primaria);
-  border-radius: var(--raio-full);
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--cor-primaria);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  white-space: nowrap;
-  font-family: var(--fonte-display);
-  user-select: none;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: var(--raio-full);
+  background: #ffffff;
+  color: var(--tinta);
+  font-family: var(--fonte-principal);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+  box-shadow: var(--sombra-pin);
+  transform-origin: 50% 100%;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Rabicho que aponta para o local exato */
+.marcador::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 9px;
+  height: 9px;
+  background: inherit;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 0 0 2px 0;
+  z-index: -1;
 }
 
 .marcador:hover,
 .marcadorHover {
-  background: var(--cor-primaria);
-  color: white;
-  transform: scale(1.1);
-  z-index: 10;
-  box-shadow: 0 4px 16px rgba(var(--cor-primaria-rgb), 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px var(--tinta), 0 8px 20px rgba(22, 32, 28, 0.2);
+}
+
+.marcadorSelecionado {
+  background: var(--tinta);
+  color: var(--papel);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(22, 32, 28, 0.32);
+}
+
+/* Anúncio em destaque (plano pago): ponto Ouro antes do preço */
+.marcadorDestaque::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ouro);
+  flex-shrink: 0;
+}
+
+.marcadorFixar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-right: -4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: currentColor;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.marcadorFixar:hover {
+  transform: scale(1.15);
 }
 
 /* Popup */
@@ -103,10 +153,10 @@
 .marcadorUsuario {
   width: 22px;
   height: 22px;
-  background: #2563eb;
+  background: var(--tinta);
   border: 3px solid #ffffff;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
+  box-shadow: 0 0 10px rgba(22, 32, 28, 0.6);
   position: relative;
   cursor: pointer;
 }
@@ -119,7 +169,7 @@
   right: -8px;
   bottom: -8px;
   border-radius: 50%;
-  background: rgba(37, 99, 235, 0.35);
+  background: rgba(22, 32, 28, 0.35);
   animation: pulsar 2s infinite ease-out;
   pointer-events: none;
 }
@@ -135,7 +185,7 @@
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(22, 32, 28, 0.9);
   backdrop-filter: blur(8px);
   color: #ffffff;
   padding: 10px 18px;
@@ -152,7 +202,7 @@
 }
 
 .btnVerTodosMapa {
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   padding: 4px 12px;
@@ -164,7 +214,7 @@
 }
 
 .btnVerTodosMapa:hover {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   transform: scale(1.03);
 }
 
@@ -259,7 +309,7 @@
     flex-shrink: 0;
     border-radius: 12px;
     overflow: hidden;
-    background: #f1f5f9;
+    background: var(--papel);
   }
 
   .fotoCardMobile img {
@@ -276,7 +326,7 @@
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #e0eaff, #c7d7f7);
-    color: #1a56db;
+    color: var(--tinta);
     font-weight: 800;
     font-size: 0.85rem;
   }
@@ -285,7 +335,7 @@
     position: absolute;
     bottom: 6px;
     left: 6px;
-    background: rgba(15, 23, 42, 0.88);
+    background: rgba(22, 32, 28, 0.88);
     color: #ffffff;
     font-size: 0.72rem;
     font-weight: 800;
@@ -307,7 +357,7 @@
   .tituloCardMobile {
     font-size: 0.84rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--tinta);
     line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
@@ -317,7 +367,7 @@
 
   .localCardMobile {
     font-size: 0.74rem;
-    color: #64748b;
+    color: var(--pedra-500);
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -326,7 +376,7 @@
 
   .detalhesCardMobile {
     font-size: 0.72rem;
-    color: #94a3b8;
+    color: var(--pedra-400);
     margin: 1px 0 0;
     white-space: nowrap;
     overflow: hidden;
@@ -340,13 +390,13 @@
     gap: 6px;
     margin-top: 4px;
     padding-top: 4px;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--papel);
   }
 
   .anuncianteCardMobile {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #475569;
+    color: var(--pedra-600);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -356,7 +406,7 @@
   .btnVerCardMobile {
     font-size: 0.72rem;
     font-weight: 700;
-    color: #1a56db;
+    color: var(--tinta);
     flex-shrink: 0;
   }
 
@@ -367,9 +417,9 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: #f1f5f9;
+    background: var(--papel);
     border: none;
-    color: #64748b;
+    color: var(--pedra-500);
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
@@ -381,7 +431,7 @@
   }
 
   .btnFecharCardMobile:active {
-    background: #e2e8f0;
-    color: #0f172a;
+    background: var(--pedra-200);
+    color: var(--tinta);
   }
 }

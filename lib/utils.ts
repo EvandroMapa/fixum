@@ -40,6 +40,29 @@ export function formatarPreco(preco?: number | null, negociacao?: string, modoEx
   return formatado
 }
 
+/**
+ * Preço abreviado para pins do mapa e chips (brandbook, seção 05):
+ * venda → "R$ 450 mil", "R$ 1,2 mi"; aluguel → "R$ 1.800/mês"; sem preço → "Consulte".
+ */
+export function formatarPrecoCurto(preco?: number | null, negociacao?: string, modoExibicao?: string): string {
+  if (modoExibicao === 'sob_consulta' || !preco || preco <= 0) return 'Consulte'
+
+  if (negociacao === 'aluguel') {
+    return `R$ ${Math.round(preco).toLocaleString('pt-BR')}/mês`
+  }
+  if (preco >= 1_000_000) {
+    const mi = preco / 1_000_000
+    const texto = mi >= 10 ? Math.round(mi).toString() : mi.toLocaleString('pt-BR', { maximumFractionDigits: 1 })
+    return `R$ ${texto} mi`
+  }
+  if (preco >= 1_000) {
+    const mil = preco / 1_000
+    const texto = mil >= 100 ? Math.round(mil).toString() : mil.toLocaleString('pt-BR', { maximumFractionDigits: 1 })
+    return `R$ ${texto} mil`
+  }
+  return `R$ ${Math.round(preco).toLocaleString('pt-BR')}`
+}
+
 export function formatarMoeda(valor?: number | null): string {
   if (valor === undefined || valor === null) return 'R$ 0'
   return new Intl.NumberFormat('pt-BR', {
@@ -150,19 +173,18 @@ export function obterIniciaisUsuario(nome?: string | null, email?: string | null
  * Paleta harmônica de gradientes vibrantes e elegantes para identificação de usuários.
  * Cada usuário/corretor recebe determinísticamente uma cor única baseada no seu identificador (id, email ou nome).
  */
+// Cores sólidas da paleta Fixum (sem gradientes): tons terrosos e cartográficos
 const PALETA_AVATARES = [
-  'linear-gradient(135deg, #2563eb, #1d4ed8)', // Azul Real
-  'linear-gradient(135deg, #7c3aed, #6d28d9)', // Roxo Violeta
-  'linear-gradient(135deg, #059669, #047857)', // Esmeralda
-  'linear-gradient(135deg, #d97706, #b45309)', // Âmbar Dourado
-  'linear-gradient(135deg, #db2777, #be185d)', // Magenta Pink
-  'linear-gradient(135deg, #0891b2, #0e7490)', // Ciano Oceano
-  'linear-gradient(135deg, #4f46e5, #4338ca)', // Índigo Nobre
-  'linear-gradient(135deg, #ea580c, #c2410c)', // Laranja Coral
-  'linear-gradient(135deg, #0d9488, #115e59)', // Verde Petróleo
-  'linear-gradient(135deg, #e11d48, #be123c)', // Rubi Carmim
-  'linear-gradient(135deg, #475569, #1e293b)', // Grafite Slate
-  'linear-gradient(135deg, #6366f1, #4338ca)', // Lilás Índigo
+  '#16201C', // Tinta
+  '#2E6B4E', // Cerrado
+  '#2C5F8A', // Hidro
+  '#8A5F12', // Ouro escuro
+  '#B23318', // Marco escuro
+  '#5A5449', // Pedra
+  '#3E5A50', // Musgo
+  '#6B4A3A', // Terra
+  '#45566B', // Ardósia
+  '#7A5A2E', // Barro
 ]
 
 export function obterGradienteUsuario(identificador?: string | null): string {

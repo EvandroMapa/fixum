@@ -128,7 +128,7 @@ export default function LinhaTempoRevisao({
       </div>
 
       {carregando ? (
-        <div style={{ fontSize: '0.8rem', color: '#64748b', padding: '0.5rem 0' }}>
+        <div style={{ fontSize: '0.8rem', color: '#7A7264', padding: '0.5rem 0' }}>
           Carregando mensagens da moderação...
         </div>
       ) : eventos.length === 0 ? (
@@ -137,7 +137,7 @@ export default function LinhaTempoRevisao({
           <div className={`${styles.itemTimeline} ${styles.itemTimelineSolicitacao}`}>
             <div
               className={styles.avatarAutor}
-              style={{ background: 'linear-gradient(135deg, #d97706, #b45309)' }}
+              style={{ background: 'linear-gradient(135deg, #C08A1E, #8A5F12)' }}
             >
               GS
             </div>
@@ -186,7 +186,7 @@ export default function LinhaTempoRevisao({
                     <span className={styles.dataHora}>{formatarDataHora(ev.created_at)}</span>
                   </div>
 
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#5A5449', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span>{icone}</span>
                     <span>{titulo}</span>
                   </div>

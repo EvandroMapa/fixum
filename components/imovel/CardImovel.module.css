@@ -1,375 +1,317 @@
+/* ============================================
+   CARD DE IMÓVEL — Fixum
+   ============================================ */
 .card {
-  background: var(--cor-superficie);
-  border-radius: var(--raio-xl);
-  overflow: hidden;
-  transition: all var(--transicao-suave);
-  border: 1.5px solid var(--cor-borda);
+  position: relative;
   display: flex;
   flex-direction: column;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-xl);
+  overflow: hidden;
   cursor: pointer;
-  position: relative;
+  transition: border-color var(--transicao), box-shadow var(--transicao-suave), transform var(--transicao-suave);
 }
 
 .card:hover {
+  border-color: var(--pedra-300);
   box-shadow: var(--sombra-card-hover);
-  border-color: var(--cor-primaria-claro);
-  transform: translateY(-2px);
 }
 
 .destacado {
-  border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 2px rgba(var(--cor-primaria-rgb), 0.2), var(--sombra-card-hover);
+  border-color: var(--tinta);
 }
 
 .selecionado {
-  border-color: #1565c0 !important;
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.3), var(--sombra-card-hover) !important;
-  transform: translateY(-2px);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 1px var(--tinta), var(--sombra-card-hover);
 }
 
-/* Foto */
+/* Link que cobre o card inteiro */
+.linkCobertura {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.linkCobertura:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 2px;
+}
+
+/* ── Fotos ── */
 .fotoWrapper {
-  display: block;
-  text-decoration: none;
-  flex-shrink: 0;
-  overflow: hidden;
   position: relative;
-  border-radius: var(--raio-xl) var(--raio-xl) 0 0;
+  padding: 8px 8px 0;
 }
 
 .foto {
-  height: 160px;
   position: relative;
-  background-color: var(--cor-fundo-alt);
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
   overflow: hidden;
+  background: var(--papel);
 }
 
 .fotoPlaceholder {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #e0eaff 0%, #c7d7f7 100%);
+  z-index: 0;
+  background:
+    repeating-radial-gradient(circle at 72% 38%, transparent 0 16px, rgba(22, 32, 28, 0.05) 16px 17px),
+    var(--papel);
 }
 
 .fotoImg {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s cubic-bezier(.2, .7, .2, 1);
 }
 
 .card:hover .fotoImg {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
-/* Setas do carrossel */
+.selos {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+}
+
+.selo,
+.seloDestaque {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--tinta);
+}
+
+.seloDestaque::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ouro);
+}
+
+.btnFavoritar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--tinta);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 1px 3px rgba(22, 32, 28, 0.16);
+  transition: transform var(--transicao), color var(--transicao);
+}
+
+.btnFavoritar:hover {
+  transform: scale(1.06);
+}
+
+.btnFavoritar:disabled {
+  cursor: progress;
+}
+
+.favoritado {
+  color: var(--marco);
+}
+
 .setaCarrossel {
   position: absolute;
   top: 50%;
+  z-index: 3;
   transform: translateY(-50%);
-  z-index: 4;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(6px);
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0f172a;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  transition: all 0.15s;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--tinta);
+  box-shadow: 0 1px 4px rgba(22, 32, 28, 0.18);
   animation: fadeIn 0.15s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-50%) scale(0.8); }
-  to   { opacity: 1; transform: translateY(-50%) scale(1); }
-}
-
 .setaCarrossel:hover {
-  background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  transform: translateY(-50%) scale(1.08);
+  background: #fff;
 }
 
 .setaEsq { left: 8px; }
 .setaDir { right: 8px; }
 
-/* Pontos indicadores */
 .pontos {
   position: absolute;
   bottom: 10px;
   left: 50%;
+  z-index: 3;
   transform: translateX(-50%);
   display: flex;
   gap: 5px;
-  z-index: 4;
 }
 
 .ponto {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.55);
-  border: none;
-  cursor: pointer;
   padding: 0;
-  transition: all 0.2s;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transition: background var(--transicao), transform var(--transicao);
 }
 
 .pontoAtivo {
-  background: white;
-  width: 18px;
-  border-radius: 3px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  background: #fff;
+  transform: scale(1.15);
 }
 
-.selos {
-  position: absolute;
-  top: var(--espaco-3);
-  left: var(--espaco-3);
-  display: flex;
-  gap: var(--espaco-2);
-  flex-wrap: wrap;
-  z-index: 2;
-}
-
-.btnFavoritar {
-  position: absolute;
-  top: var(--espaco-3);
-  right: var(--espaco-3);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
-  transition: all 0.2s ease;
-  z-index: 3;
-}
-
-.btnFavoritar:hover {
-  transform: scale(1.12);
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
-}
-
-.favoritado {
-  animation: pulsar 0.3s ease;
-}
-
-/* Info */
+/* ── Informações ── */
 .info {
-  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  padding: 14px 16px 16px;
   flex: 1;
 }
 
 .preco {
-  font-family: var(--fonte-display);
-  font-size: var(--texto-lg);
-  font-weight: 800;
-  color: var(--cor-primaria);
   display: flex;
   align-items: baseline;
-  gap: var(--espaco-2);
   flex-wrap: wrap;
+  gap: 2px 8px;
+  font-family: var(--fonte-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
 }
 
 .sobConsulta {
-  font-size: 0.885rem;
-  font-weight: 800;
-  color: #0369a1;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  padding: 3px 9px;
-  border-radius: 6px;
-  letter-spacing: -0.01em;
-  display: inline-flex;
-  align-items: center;
+  font-family: var(--fonte-principal);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--pedra-600);
 }
 
 .condominio {
-  font-size: var(--texto-xs);
+  font-family: var(--fonte-principal);
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--cor-texto-terciario);
-}
-
-.tipo {
-  font-size: var(--texto-xs);
-  font-weight: 600;
-  color: var(--cor-texto-terciario);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
+  color: var(--pedra-500);
 }
 
 .titulo {
-  font-size: var(--texto-sm);
-  font-weight: 600;
-  color: var(--cor-texto);
-  line-height: 1.3;
   font-family: var(--fonte-principal);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.35;
+  color: var(--tinta);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+.localizacao {
+  font-size: 0.8125rem;
+  color: var(--pedra-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .caracteristicas {
   display: flex;
-  align-items: center;
-  gap: var(--espaco-3);
   flex-wrap: wrap;
-  padding: var(--espaco-2) 0;
-  border-top: 1px solid var(--cor-borda);
-  border-bottom: 1px solid var(--cor-borda);
+  gap: 4px 14px;
+  margin-top: 8px;
 }
 
 .car {
-  font-size: var(--texto-xs);
-  color: var(--cor-texto-secundario);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--pedra-700);
+  font-variant-numeric: tabular-nums;
 }
 
-.localizacao {
-  font-size: var(--texto-xs);
-  color: var(--cor-texto-terciario);
-  display: flex;
-  align-items: center;
-  gap: var(--espaco-1);
+.car svg {
+  color: var(--pedra-500);
 }
 
-/* ── BLOCO DA IMOBILIÁRIA / ANUNCIANTE ── */
 .blocoAnuncianteCard {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 6px 8px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  margin-top: 4px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--pedra-100);
 }
 
 .anuncianteInfo {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
-  overflow: hidden;
 }
 
-.anuncianteLogoImg {
+.anuncianteLogoImg,
+.anuncianteIniciais {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  object-fit: contain;
-  background: #ffffff;
-  padding: 1.5px;
   flex-shrink: 0;
-  border: 1px solid #cbd5e1;
+  object-fit: cover;
 }
 
 .anuncianteIniciais {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #eff6ff;
-  color: #2563eb;
-  font-size: 10px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #bfdbfe;
+  display: grid;
+  place-items: center;
+  background: var(--pedra-100);
+  color: var(--tinta);
+  font-size: 0.625rem;
+  font-weight: 700;
 }
 
 .anuncianteNome {
-  font-size: 11px;
-  font-weight: 700;
-  color: #334155;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--pedra-600);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .badgeCodigoCard {
-  font-size: 10px;
-  font-weight: 800;
-  color: #1e40af;
-  background: #dbeafe;
-  border: 1px solid #bfdbfe;
-  padding: 2px 6px;
-  border-radius: 6px;
-  white-space: nowrap;
   flex-shrink: 0;
-}
-
-/* Rodape com Botao Visualizar */
-.rodapeCard {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: var(--espaco-2);
-  margin-top: auto;
-}
-
-.btnVisualizar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: #f1f5f9;
-  color: #1565c0;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  border: 1px solid #e2e8f0;
-  margin-left: auto;
-}
-
-.btnVisualizar:hover {
-  background: #1565c0;
-  color: white;
-  border-color: #1565c0;
-  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
-  transform: translateY(-1px);
-}
-
-@media (max-width: 768px) {
-  .foto {
-    height: 190px;
-  }
-  .info {
-    padding: 12px 14px 14px;
-    gap: 8px;
-  }
-  .preco {
-    font-size: 1.25rem;
-  }
-  .btnVisualizar {
-    width: 100%;
-    padding: 10px 16px;
-    font-size: 14px;
-    min-height: 42px;
-  }
+  font-family: var(--fonte-mono);
+  font-size: 0.6875rem;
+  color: var(--pedra-500);
+  letter-spacing: 0.02em;
 }

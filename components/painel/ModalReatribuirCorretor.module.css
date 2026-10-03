@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.65);
+  background-color: rgba(22, 32, 28, 0.65);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -35,7 +35,7 @@
 
 .header {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,7 +54,7 @@
 .header h2 {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
 }
 
@@ -62,7 +62,7 @@
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   cursor: pointer;
   padding: 4px;
   border-radius: 6px;
@@ -73,8 +73,8 @@
 }
 
 .btnFechar:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 .corpo {
@@ -86,14 +86,14 @@
 
 .descricao {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--pedra-500);
   line-height: 1.5;
   margin: 0;
 }
 
 .alertaImoveis {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 0.75rem;
   padding: 0.875rem 1rem;
   display: flex;
@@ -112,7 +112,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--pedra-200);
   padding-top: 6px;
 }
 
@@ -120,9 +120,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1px solid var(--pedra-300);
   padding: 3px 8px;
   border-radius: 6px;
   font-size: 0.825rem;
@@ -131,14 +131,14 @@
 .alertaTitulo {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--pedra-500);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
 
 .alertaTexto {
   font-size: 0.875rem;
-  color: #0f172a;
+  color: var(--tinta);
   font-weight: 700;
 }
 
@@ -151,17 +151,17 @@
 .label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 .select {
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 0.625rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   background-color: #ffffff;
   font-size: 0.925rem;
-  color: #0f172a;
+  color: var(--tinta);
   font-weight: 500;
   transition: border-color 0.15s, box-shadow 0.15s;
   cursor: pointer;
@@ -169,14 +169,14 @@
 
 .select:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.15);
 }
 
 .rodape {
   padding: 1rem 1.5rem;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border-top: 1px solid var(--papel);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -187,8 +187,8 @@
   padding: 0.65rem 1.25rem;
   border-radius: 0.5rem;
   background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #475569;
+  border: 1px solid var(--pedra-300);
+  color: var(--pedra-600);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -196,14 +196,14 @@
 }
 
 .btnCancelar:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  background: var(--papel);
+  border-color: var(--pedra-400);
 }
 
 .btnConfirmar {
   padding: 0.65rem 1.25rem;
   border-radius: 0.5rem;
-  background: #2563eb;
+  background: var(--tinta);
   border: none;
   color: #ffffff;
   font-size: 0.875rem;
@@ -216,7 +216,7 @@
 }
 
 .btnConfirmar:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--tinta-2);
 }
 
 .btnConfirmar:disabled {

@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import { encerrarSessaoAdmin } from '@/lib/admin-auth'
-import LogoGota from '@/components/ui/LogoGota'
+import { Logotipo } from '@/components/ui/Logo'
+import Icone from '@/components/ui/Icone'
 import styles from './Header.module.css'
 
 function HeaderConteudo() {
@@ -152,62 +153,44 @@ function HeaderConteudo() {
   const inicialAvatar = obterIniciaisUsuario(nomeUsuario || usuario?.user_metadata?.nome, usuario?.email)
   const gradienteAvatar = obterGradienteUsuario(usuario?.id || usuario?.email || nomeUsuario)
 
+  const linkAtivo = (neg: string | null) =>
+    pathname.startsWith('/explorar') && !isFavoritosAtivo && (negociacaoAtual ?? null) === neg
+
   return (
     <header className={`${styles.header} ${solido ? styles.solido : ''}`}>
       <div className={styles.inner}>
-        {/* Logo */}
-        <Link href="/" className={styles.logo}>
-          <LogoGota size={32} className={styles.logoMarca} />
-          <div className={styles.logoTextos}>
-            <span className={styles.logoTexto}>FIXUM</span>
-            <span className={styles.logoSlogan}>Encontre seu lugar.</span>
-          </div>
+        <Link href="/" className={styles.logo} aria-label="Fixum — página inicial">
+          <Logotipo largura={86} />
         </Link>
 
-        {/* Nav Desktop - oculto no explorar pois os filtros ja tem Comprar/Alugar */}
+        {/* Nav desktop — oculto no explorar (os filtros já têm Comprar/Alugar) e na página do imóvel */}
         {!ocultarNav && (
-          <nav className={styles.nav}>
-            <Link href="/explorar?negociacao=venda" className={styles.navLink}>🏠 Comprar</Link>
-            <Link href="/explorar?negociacao=aluguel" className={styles.navLink}>🔑 Alugar</Link>
-            <Link href="/explorar" className={styles.navLink}>🗺️ Explorar</Link>
-            <Link href="/planos" className={styles.navLink}>💳 Planos</Link>
+          <nav className={styles.nav} aria-label="Principal">
+            <Link href="/explorar?negociacao=venda" className={`${styles.navLink} ${linkAtivo('venda') ? styles.navLinkAtivo : ''}`}>Comprar</Link>
+            <Link href="/explorar?negociacao=aluguel" className={`${styles.navLink} ${linkAtivo('aluguel') ? styles.navLinkAtivo : ''}`}>Alugar</Link>
+            <Link href="/planos" className={`${styles.navLink} ${pathname.startsWith('/planos') ? styles.navLinkAtivo : ''}`}>Planos</Link>
+            <Link href="/para-imobiliarias" className={`${styles.navLink} ${pathname.startsWith('/para-imobiliarias') ? styles.navLinkAtivo : ''}`}>Para imobiliárias</Link>
           </nav>
         )}
 
-        {/* Acoes */}
         <div className={styles.acoes}>
-          {!naPaginaImovel && (
-            <Link
-              href="/para-imobiliarias"
-              className={styles.btnImobiliaria}
-              title="Conheça nossos planos corporativos para imobiliárias e redes"
-            >
-              <span>🏢</span>
-              <span>Para Imobiliárias</span>
-            </Link>
-          )}
-
           {isAdmin ? (
-            <Link
-              href="/admin"
-              className={styles.btnAdminHeader}
-              title="Acessar o Painel Executivo / BI Fixum"
-            >
-              <span>🛡️</span>
-              <span>Painel Executivo</span>
+            <Link href="/admin" className={styles.btnAnunciar} title="Painel executivo da Fixum">
+              <Icone nome="escudo" tamanho={18} />
+              <span>Painel executivo</span>
             </Link>
           ) : (
             <Link
               href={usuario ? '/painel/novo-imovel' : '/login?next=/painel/novo-imovel'}
               className={styles.btnAnunciar}
             >
-              Anunciar
+              <Icone nome="mais" tamanho={18} />
+              <span>Anunciar</span>
             </Link>
           )}
 
-          {/* Botão de Favoritos com Toggle e Badge — exibido apenas para usuário logado e fora da página de detalhes do imóvel */}
-          {usuario && !pathname.startsWith('/imovel/') && (() => {
-            const negociacaoAtual = searchParams?.get('negociacao')
+          {/* Fixados (favoritos) — só para usuário logado e fora da página do imóvel */}
+          {usuario && !naPaginaImovel && (() => {
             const hrefFavoritos = isFavoritosAtivo
               ? (negociacaoAtual ? `/explorar?negociacao=${negociacaoAtual}` : '/explorar')
               : (negociacaoAtual ? `/explorar?favoritos=true&negociacao=${negociacaoAtual}` : '/explorar?favoritos=true')
@@ -218,137 +201,118 @@ function HeaderConteudo() {
                 className={`${styles.btnFavoritos} ${isFavoritosAtivo ? styles.btnFavoritosAtivo : ''}`}
                 title={
                   isFavoritosAtivo
-                    ? '❤️ Favoritos ativos. Clique para ver todos os imóveis.'
+                    ? 'Mostrando só os fixados. Clique para ver todos.'
                     : totalFavoritos > 0
-                    ? `${totalFavoritos} imóvel(is) nos favoritos. Clique para filtrar.`
-                    : 'Meus Imóveis Favoritos'
+                    ? `${totalFavoritos} ${totalFavoritos === 1 ? 'imóvel fixado' : 'imóveis fixados'}`
+                    : 'Seus imóveis fixados aparecem aqui'
                 }
-                aria-label="Imóveis Favoritos"
+                aria-label="Imóveis fixados"
               >
-                <span className={styles.iconeFavorito}>❤️</span>
+                <Icone nome="fixar" tamanho={20} preenchido={isFavoritosAtivo} />
                 {totalFavoritos > 0 && <span className={styles.badgeFavoritos}>{totalFavoritos}</span>}
               </Link>
             )
           })()}
 
           {usuario ? (
-            // Avatar + Dropdown do usuário logado
             <div className={styles.avatarWrap} ref={dropdownRef}>
               <button
                 className={styles.avatar}
                 onClick={() => setDropdownAberto(!dropdownAberto)}
-                aria-label="Menu do usuário"
-                title={nomeUsuario || usuario.email || 'Minha Conta'}
-                style={{ background: isAdmin ? 'linear-gradient(135deg, #0f172a, #1e293b)' : gradienteAvatar }}
+                aria-label="Menu da conta"
+                aria-expanded={dropdownAberto}
+                title={nomeUsuario || usuario.email || 'Minha conta'}
+                style={{ background: isAdmin ? '#16201C' : gradienteAvatar }}
               >
-                {isAdmin ? '🛡️' : inicialAvatar}
+                {isAdmin ? <Icone nome="escudo" tamanho={18} /> : inicialAvatar}
               </button>
               {dropdownAberto && (
                 <div className={styles.dropdown}>
                   <div className={styles.dropdownUsuario}>
                     <div className={styles.dropdownNome}>
-                      {nomeUsuario || (isAdmin ? 'Administrador Master' : 'Minha Conta')}
+                      {nomeUsuario || (isAdmin ? 'Administrador' : 'Minha conta')}
                       {isAdmin && <span className={styles.badgeAdminMaster}>Master</span>}
                     </div>
                     <div className={styles.dropdownEmail}>{usuario.email}</div>
                   </div>
 
                   {isAdmin ? (
-                    <>
-                      <Link href="/admin" className={styles.dropdownItemAdmin} onClick={() => setDropdownAberto(false)}>
-                        🛡️ Painel Executivo Fixum
-                      </Link>
-                    </>
+                    <Link href="/admin" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
+                      <Icone nome="escudo" tamanho={18} /> Painel executivo
+                    </Link>
                   ) : (
                     <>
                       <Link href="/painel" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
-                        🏠 Meu Painel
+                        <Icone nome="painel" tamanho={18} /> Meu painel
+                      </Link>
+                      <Link href="/explorar?favoritos=true" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
+                        <Icone nome="fixar" tamanho={18} /> Fixados
                       </Link>
                       <Link href="/painel?aba=plano" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
-                        💳 Meu Plano
+                        <Icone nome="cartao" tamanho={18} /> Meu plano
                       </Link>
                     </>
                   )}
 
                   <hr className={styles.dropdownDivider} />
                   <button className={styles.dropdownSair} onClick={handleSair}>
-                    {isAdmin ? 'Encerrar Sessão' : 'Sair'}
+                    <Icone nome="sair" tamanho={18} /> {isAdmin ? 'Encerrar sessão' : 'Sair'}
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            /* Botão de Entrada Direto e Infalível */
-            <Link
-              href="/login"
-              className="btn btn-primario btn-sm"
-              style={{ fontWeight: 700, textDecoration: 'none' }}
-            >
+            <Link href="/login" className={styles.btnEntrar}>
               Entrar
             </Link>
           )}
 
-          <button className={styles.menuBurger} onClick={() => setMenuAberto(!menuAberto)} aria-label="Menu">
-            <span className={`${styles.burger} ${menuAberto ? styles.burgerAberto : ''}`} />
+          <button
+            className={styles.menuBurger}
+            onClick={() => setMenuAberto(!menuAberto)}
+            aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={menuAberto}
+          >
+            <Icone nome={menuAberto ? 'fechar' : 'menu'} tamanho={22} />
           </button>
         </div>
       </div>
 
-      {/* Menu Mobile */}
+      {/* Menu mobile */}
       {menuAberto && (
         <div className={styles.menuMobile}>
-          <Link href="/explorar?negociacao=venda" onClick={() => setMenuAberto(false)}>Comprar</Link>
-          <Link href="/explorar?negociacao=aluguel" onClick={() => setMenuAberto(false)}>Alugar</Link>
-          <Link href="/explorar" onClick={() => setMenuAberto(false)}>Explorar pelo Mapa</Link>
-          <Link href="/planos" onClick={() => setMenuAberto(false)}>Planos Individuais</Link>
-          <Link href="/para-imobiliarias" onClick={() => setMenuAberto(false)} style={{ color: '#0f4c81', fontWeight: 700 }}>
-            🏢 Para Imobiliárias & Redes
-          </Link>
-          {isAdmin ? (
-            <>
-              <Link href="/admin" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
-                🛡️ Painel Executivo Admin
-              </Link>
-              <hr style={{ margin: '8px 0', borderColor: '#f1f5f9' }} />
-              <button
-                onClick={handleSair}
-                style={{
-                  background: 'none', border: 'none', textAlign: 'left',
-                  padding: '10px 14px', color: '#ef4444', fontWeight: 600,
-                  fontSize: '0.9375rem', cursor: 'pointer', width: '100%'
-                }}
-              >
-                Encerrar Sessão
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/painel/novo-imovel" onClick={() => setMenuAberto(false)}>Anunciar Imóvel</Link>
-              <hr style={{ margin: '8px 0', borderColor: '#f1f5f9' }} />
-              {usuario ? (
-                <>
-                  <Link href="/painel" onClick={() => setMenuAberto(false)}>Meu Painel</Link>
-                  <button
-                    onClick={handleSair}
-                    style={{
-                      background: 'none', border: 'none', textAlign: 'left',
-                      padding: '10px 14px', color: '#ef4444', fontWeight: 600,
-                      fontSize: '0.9375rem', cursor: 'pointer', width: '100%'
-                    }}
-                  >
-                    Sair da Conta
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" onClick={() => setMenuAberto(false)} style={{ color: '#1d4ed8', fontWeight: 700 }}>
-                    🔑 Entrar na Conta
-                  </Link>
-                  <Link href="/cadastro" onClick={() => setMenuAberto(false)}>Criar Conta</Link>
-                </>
-              )}
-            </>
-          )}
+          <nav className={styles.menuMobileGrupo} aria-label="Menu">
+            <Link href="/explorar?negociacao=venda" onClick={() => setMenuAberto(false)}><Icone nome="casa" /> Comprar</Link>
+            <Link href="/explorar?negociacao=aluguel" onClick={() => setMenuAberto(false)}><Icone nome="chave" /> Alugar</Link>
+            <Link href="/explorar" onClick={() => setMenuAberto(false)}><Icone nome="mapa" /> Explorar o mapa</Link>
+            {usuario && !isAdmin && (
+              <Link href="/explorar?favoritos=true" onClick={() => setMenuAberto(false)}><Icone nome="fixar" /> Fixados</Link>
+            )}
+          </nav>
+          <div className={styles.menuMobileGrupo}>
+            <span className={styles.menuMobileRotulo}>Para quem anuncia</span>
+            <Link href={usuario ? '/painel/novo-imovel' : '/login?next=/painel/novo-imovel'} onClick={() => setMenuAberto(false)}><Icone nome="mais" /> Anunciar imóvel</Link>
+            <Link href="/planos" onClick={() => setMenuAberto(false)}><Icone nome="cartao" /> Planos</Link>
+            <Link href="/para-imobiliarias" onClick={() => setMenuAberto(false)}><Icone nome="predio" /> Para imobiliárias</Link>
+          </div>
+          <div className={styles.menuMobileGrupo}>
+            {isAdmin ? (
+              <>
+                <Link href="/admin" onClick={() => setMenuAberto(false)}><Icone nome="escudo" /> Painel executivo</Link>
+                <button onClick={handleSair} className={styles.menuMobileSair}><Icone nome="sair" /> Encerrar sessão</button>
+              </>
+            ) : usuario ? (
+              <>
+                <Link href="/painel" onClick={() => setMenuAberto(false)}><Icone nome="painel" /> Meu painel</Link>
+                <button onClick={handleSair} className={styles.menuMobileSair}><Icone nome="sair" /> Sair da conta</button>
+              </>
+            ) : (
+              <div className={styles.menuMobileBotoes}>
+                <Link href="/login" onClick={() => setMenuAberto(false)} className="btn btn-primario">Entrar</Link>
+                <Link href="/cadastro" onClick={() => setMenuAberto(false)} className="btn btn-outline">Criar conta</Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </header>

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createPortal } from 'react-dom'
+import Icone from '@/components/ui/Icone'
 import styles from './HeroBusca.module.css'
 
 interface Sugestao {
@@ -176,7 +177,7 @@ export default function HeroBusca() {
   function handleUsarGps() {
     if (typeof window !== 'undefined') sessionStorage.removeItem('fixum_mapa_pos')
     if (!navigator.geolocation) {
-      setGeoErro('Navegador sem suporte a GPS')
+      setGeoErro('Seu navegador não informa a localização. Digite a cidade ou o bairro.')
       return
     }
     setGeoCarregando(true)
@@ -196,9 +197,9 @@ export default function HeroBusca() {
       (err) => {
         setGeoCarregando(false)
         if (err.code === err.PERMISSION_DENIED) {
-          setGeoErro('Permissão de GPS negada')
+          setGeoErro('A localização não foi liberada. Digite a cidade ou o bairro.')
         } else {
-          setGeoErro('Não foi possível obter localização')
+          setGeoErro('Não conseguimos sua localização agora. Tente digitar o bairro.')
         }
       },
       {
@@ -262,10 +263,7 @@ export default function HeroBusca() {
           aria-selected={idx === indiceAtivo}
         >
           <span className={styles.itemIcone}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-              <circle cx="12" cy="10" r="3" />
-            </svg>
+            <Icone nome="local" tamanho={18} />
           </span>
           <div className={styles.itemTexto}>
             <span className={styles.itemNome}>{s.nome}</span>
@@ -278,108 +276,89 @@ export default function HeroBusca() {
 
   return (
     <div className={styles.container} ref={wrapperRef}>
-      {/* Abas: Comprar / Alugar */}
-      <div className={styles.abasWrapper}>
+      {/* Comprar / Alugar */}
+      <div className={styles.abasWrapper} role="tablist" aria-label="Tipo de negociação">
         <button
           type="button"
+          role="tab"
+          aria-selected={negociacao === 'venda'}
           className={`${styles.aba} ${negociacao === 'venda' ? styles.abaAtiva : ''}`}
           onClick={() => setNegociacao('venda')}
         >
-          <span>🏠</span> Quero Comprar
+          Comprar
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={negociacao === 'aluguel'}
           className={`${styles.aba} ${negociacao === 'aluguel' ? styles.abaAtiva : ''}`}
           onClick={() => setNegociacao('aluguel')}
         >
-          <span>🔑</span> Quero Alugar
+          Alugar
         </button>
       </div>
 
-      {/* Caixa de Busca Unificada */}
       <div className={styles.barraBusca}>
-        <div className={styles.inputContainer}>
+        <label className={styles.inputContainer}>
           <span className={styles.iconeLupa}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
+            <Icone nome="local" tamanho={22} />
           </span>
-          <input
-            ref={inputRef}
-            type="text"
-            className={styles.input}
-            placeholder="Qual cidade, bairro ou região você procura?"
-            value={texto}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            onFocus={() => {
-              if (sugestoes.length > 0) {
-                atualizarPosicaoDropdown()
-                setDropdownAberto(true)
-              }
-            }}
-            autoComplete="off"
-            spellCheck={false}
-          />
+          <span className={styles.inputTextos}>
+            <span className={styles.inputRotulo}>Onde</span>
+            <input
+              ref={inputRef}
+              type="text"
+              className={styles.input}
+              placeholder="Cidade, bairro ou rua"
+              value={texto}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => {
+                if (sugestoes.length > 0) {
+                  atualizarPosicaoDropdown()
+                  setDropdownAberto(true)
+                }
+              }}
+              autoComplete="off"
+              spellCheck={false}
+              aria-label="Cidade, bairro ou rua"
+            />
+          </span>
           {carregandoSugestoes && <span className={styles.spinner} />}
           {texto && !carregandoSugestoes && (
             <button
               className={styles.btnLimpar}
               onClick={handleLimparInput}
               type="button"
-              aria-label="Limpar texto"
+              aria-label="Limpar"
             >
-              ✕
+              <Icone nome="fechar" tamanho={16} />
             </button>
           )}
-        </div>
+        </label>
 
-        {/* Botão GPS */}
         <button
           type="button"
           className={`${styles.btnGps} ${geoCarregando ? styles.btnGpsLoading : ''}`}
           onClick={handleUsarGps}
           disabled={geoCarregando}
-          title="Buscar imóveis perto da minha localização atual"
+          title="Ver imóveis perto de onde você está"
         >
-          {geoCarregando ? (
-            <span className={styles.spinnerGps} />
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-            </svg>
-          )}
-          <span className={styles.textoGps}>
-            {geoCarregando ? 'Localizando...' : 'Perto de mim'}
-          </span>
+          {geoCarregando ? <span className={styles.spinnerGps} /> : <Icone nome="mira" tamanho={18} />}
+          <span className={styles.textoGps}>{geoCarregando ? 'Localizando…' : 'Perto de mim'}</span>
         </button>
 
-        {/* Botão Principal de Busca */}
-        <button
-          type="button"
-          className={styles.btnBuscar}
-          onClick={executarBusca}
-          title="Ver imóveis no mapa"
-        >
-          <span className={styles.btnBuscarIcone}>🗺️</span>
-          <span>Buscar no Mapa</span>
+        <button type="button" className={styles.btnBuscar} onClick={executarBusca}>
+          <Icone nome="mapa" tamanho={18} />
+          <span>Explorar no mapa</span>
         </button>
       </div>
 
-      {geoErro && <span className={styles.avisoErro}>⚠️ {geoErro}</span>}
-
-      {/* Link Secundário de Exploração Livre */}
-      <div className={styles.rodapeAtalhos}>
-        <button
-          type="button"
-          className={styles.linkExplorarLivre}
-          onClick={() => router.push(`/explorar?negociacao=${negociacao}`)}
-        >
-          Ou navegue livremente pelo mapa interativo →
-        </button>
-      </div>
+      {geoErro && (
+        <span className={styles.avisoErro} role="alert">
+          <Icone nome="alerta" tamanho={16} /> {geoErro}
+        </span>
+      )}
 
       {montado && dropdownMenu && createPortal(dropdownMenu, document.body)}
     </div>

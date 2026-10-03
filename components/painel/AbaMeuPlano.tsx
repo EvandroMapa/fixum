@@ -38,10 +38,10 @@ export default function AbaMeuPlano({
 
   // Cor da barra de progresso
   const corProgresso = atingiuLimite
-    ? '#ef4444' // vermelho
+    ? '#D4401F' // vermelho
     : porcentagemUso >= 80
-    ? '#f59e0b' // amarelo
-    : '#10b981' // verde
+    ? '#E3A72F' // amarelo
+    : '#3F8A66' // verde
 
   return (
     <div className={styles.container}>

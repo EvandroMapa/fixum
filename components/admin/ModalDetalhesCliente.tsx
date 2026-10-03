@@ -283,7 +283,7 @@ export default function ModalDetalhesCliente({
             </div>
 
             {cliente.is_corretor_vinculado ? (
-              <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: '4px 0 0 0' }}>
+              <p style={{ color: '#A39A8A', fontSize: '0.85rem', margin: '4px 0 0 0' }}>
                 ℹ️ Este corretor utiliza o plano corporativo da imobiliária. Para alterar capacidade, altere o plano da <strong>{cliente.imobiliaria_nome}</strong>.
               </p>
             ) : editandoPlano ? (
@@ -306,7 +306,7 @@ export default function ModalDetalhesCliente({
                 <div className={styles.campoForm}>
                   <label className={styles.labelForm}>
                     <span>Justificativa Obrigatória para Auditoria:</span>
-                    <span style={{ color: '#f87171', fontSize: '0.75rem' }}>* Obrigatório</span>
+                    <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Obrigatório</span>
                   </label>
                   <input
                     type="text"

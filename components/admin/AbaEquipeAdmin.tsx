@@ -181,13 +181,13 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
   function labelCargo(cargo: string) {
     switch (cargo) {
       case 'master':
-        return { label: '👑 Master / Diretoria', cor: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' }
+        return { label: '👑 Master / Diretoria', cor: '#E3A72F', bg: 'rgba(227, 167, 47, 0.12)' }
       case 'financeiro':
-        return { label: '💳 Gestor Financeiro', cor: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' }
+        return { label: '💳 Gestor Financeiro', cor: '#2C5F8A', bg: 'rgba(44, 95, 138, 0.12)' }
       case 'suporte':
-        return { label: '🎧 Suporte & Moderação', cor: '#10b981', bg: 'rgba(16, 185, 129, 0.12)' }
+        return { label: '🎧 Suporte & Moderação', cor: '#3F8A66', bg: 'rgba(46, 107, 78, 0.12)' }
       default:
-        return { label: '👤 Operador', cor: '#94a3b8', bg: 'rgba(148, 163, 184, 0.12)' }
+        return { label: '👤 Operador', cor: '#A39A8A', bg: 'rgba(163, 154, 138, 0.12)' }
     }
   }
 
@@ -199,7 +199,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
           <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
             👥 Equipe & Administradores Fixum
           </h2>
-          <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0' }}>
+          <p style={{ fontSize: '0.85rem', color: '#A39A8A', margin: '4px 0 0' }}>
             Gestão exclusiva de operadores e acessos institucionais do Backoffice
           </p>
         </div>
@@ -208,7 +208,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
           type="button"
           onClick={() => setModalNovoAberto(true)}
           style={{
-            background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+            background: 'linear-gradient(135deg, #16201C, #22302A)',
             border: 'none',
             borderRadius: '10px',
             color: '#ffffff',
@@ -219,7 +219,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
+            boxShadow: '0 4px 14px rgba(22, 32, 28, 0.35)',
             transition: 'transform 0.15s ease',
           }}
         >
@@ -241,8 +241,8 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
               className={styles.inputBusca}
               style={{
                 width: '100%',
-                background: '#0f172a',
-                border: '1.5px solid #334155',
+                background: '#16201C',
+                border: '1.5px solid #3F3B34',
                 borderRadius: '10px',
                 padding: '10px 14px',
                 color: '#ffffff',
@@ -260,8 +260,8 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
               onChange={(e) => setFiltroCargo(e.target.value)}
               className={styles.selectFiltro}
               style={{
-                background: '#0f172a',
-                border: '1.5px solid #334155',
+                background: '#16201C',
+                border: '1.5px solid #3F3B34',
                 borderRadius: '10px',
                 padding: '10px 14px',
                 color: '#ffffff',
@@ -280,8 +280,8 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
               onChange={(e) => setFiltroStatus(e.target.value)}
               className={styles.selectFiltro}
               style={{
-                background: '#0f172a',
-                border: '1.5px solid #334155',
+                background: '#16201C',
+                border: '1.5px solid #3F3B34',
                 borderRadius: '10px',
                 padding: '10px 14px',
                 color: '#ffffff',
@@ -313,13 +313,13 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
           <tbody>
             {carregando ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#A39A8A' }}>
                   Carregando operadores administrativos...
                 </td>
               </tr>
             ) : operadoresFiltrados.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#A39A8A' }}>
                   Nenhum operador administrativo encontrado com os filtros atuais.
                 </td>
               </tr>
@@ -358,9 +358,9 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                                 style={{
                                   fontSize: '0.65rem',
                                   fontWeight: 800,
-                                  background: 'rgba(239, 68, 68, 0.2)',
-                                  color: '#f87171',
-                                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                                  background: 'rgba(212, 64, 31, 0.2)',
+                                  color: '#E8836B',
+                                  border: '1px solid rgba(212, 64, 31, 0.4)',
                                   padding: '1px 6px',
                                   borderRadius: '999px',
                                   textTransform: 'uppercase',
@@ -370,7 +370,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                               </span>
                             )}
                           </div>
-                          <span style={{ fontSize: '0.785rem', color: '#94a3b8' }}>{op.email}</span>
+                          <span style={{ fontSize: '0.785rem', color: '#A39A8A' }}>{op.email}</span>
                         </div>
                       </div>
                     </td>
@@ -394,23 +394,23 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
 
                     <td>
                       {op.status_conta === 'suspenso' ? (
-                        <span style={{ color: '#f87171', background: 'rgba(239, 68, 68, 0.15)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                        <span style={{ color: '#E8836B', background: 'rgba(212, 64, 31, 0.15)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
                           🔴 Suspenso
                         </span>
                       ) : (
-                        <span style={{ color: '#4ade80', background: 'rgba(34, 197, 94, 0.15)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                        <span style={{ color: '#7DBB98', background: 'rgba(46, 107, 78, 0.15)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
                           🟢 Ativo
                         </span>
                       )}
                     </td>
 
-                    <td style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
+                    <td style={{ fontSize: '0.8rem', color: '#CFC6B6' }}>
                       {op.last_sign_in_at
                         ? new Date(op.last_sign_in_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
                         : 'Nunca acessou'}
                     </td>
 
-                    <td style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                    <td style={{ fontSize: '0.8rem', color: '#A39A8A' }}>
                       {new Date(op.created_at).toLocaleDateString('pt-BR')}
                     </td>
 
@@ -423,9 +423,9 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                           className={styles.btnAcaoTabela}
                           title="Editar Cadastro e Permissões"
                           style={{
-                            background: '#1e293b',
-                            border: '1px solid #334155',
-                            color: '#38bdf8',
+                            background: '#22302A',
+                            border: '1px solid #3F3B34',
+                            color: '#F0A58F',
                             borderRadius: '8px',
                             padding: '6px 10px',
                             fontSize: '0.75rem',
@@ -443,9 +443,9 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                           className={styles.btnAcaoTabela}
                           title="Redefinir Senha do Operador"
                           style={{
-                            background: '#1e293b',
-                            border: '1px solid #334155',
-                            color: '#fbbf24',
+                            background: '#22302A',
+                            border: '1px solid #3F3B34',
+                            color: '#E8B84A',
                             borderRadius: '8px',
                             padding: '6px 10px',
                             fontSize: '0.75rem',
@@ -464,9 +464,9 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                             className={styles.btnAcaoTabela}
                             title={op.status_conta === 'suspenso' ? 'Reativar Acesso' : 'Suspender Acesso'}
                             style={{
-                              background: op.status_conta === 'suspenso' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                              border: `1px solid ${op.status_conta === 'suspenso' ? '#22c55e' : '#ef4444'}`,
-                              color: op.status_conta === 'suspenso' ? '#4ade80' : '#f87171',
+                              background: op.status_conta === 'suspenso' ? 'rgba(46, 107, 78, 0.15)' : 'rgba(212, 64, 31, 0.15)',
+                              border: `1px solid ${op.status_conta === 'suspenso' ? '#3F8A66' : '#D4401F'}`,
+                              color: op.status_conta === 'suspenso' ? '#7DBB98' : '#E8836B',
                               borderRadius: '8px',
                               padding: '6px 10px',
                               fontSize: '0.75rem',
@@ -486,9 +486,9 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                             className={styles.btnAcaoTabela}
                             title="Excluir Definitivamente"
                             style={{
-                              background: '#1e293b',
-                              border: '1px solid #334155',
-                              color: '#94a3b8',
+                              background: '#22302A',
+                              border: '1px solid #3F3B34',
+                              color: '#A39A8A',
                               borderRadius: '8px',
                               padding: '6px 10px',
                               fontSize: '0.75rem',

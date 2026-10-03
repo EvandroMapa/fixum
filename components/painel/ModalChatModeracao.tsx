@@ -207,16 +207,16 @@ export default function ModalChatModeracao({
                   style={{
                     background:
                       imovel.status === 'em_analise' || imovel.status === 'rascunho'
-                        ? '#fef3c7'
+                        ? '#FBEFD3'
                         : imovel.status === 'ativo' || imovel.status === 'publicado'
-                          ? '#ecfdf5'
-                          : '#f1f5f9',
+                          ? '#EEF5F0'
+                          : '#F3EEE4',
                     color:
                       imovel.status === 'em_analise' || imovel.status === 'rascunho'
-                        ? '#b45309'
+                        ? '#8A5F12'
                         : imovel.status === 'ativo' || imovel.status === 'publicado'
-                          ? '#059669'
-                          : '#475569',
+                          ? '#2E6B4E'
+                          : '#5A5449',
                   }}
                 >
                   {imovel.status === 'em_analise' || imovel.status === 'rascunho'
@@ -226,7 +226,7 @@ export default function ModalChatModeracao({
                       : '⏸️ Pausado'}
                 </span>
               </div>
-              <div style={{ fontSize: '0.675rem', color: '#64748b', marginTop: '1px' }}>
+              <div style={{ fontSize: '0.675rem', color: '#7A7264', marginTop: '1px' }}>
                 👤 Corretor: <strong>{nomeCorretor}</strong>
               </div>
             </div>
@@ -250,11 +250,11 @@ export default function ModalChatModeracao({
           </div>
 
           {carregando ? (
-            <div style={{ textAlign: 'center', color: '#64748b', fontSize: '0.775rem', padding: '1rem' }}>
+            <div style={{ textAlign: 'center', color: '#7A7264', fontSize: '0.775rem', padding: '1rem' }}>
               Carregando histórico de mensagens...
             </div>
           ) : mensagens.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#64748b', fontSize: '0.8rem', padding: '2rem 1rem' }}>
+            <div style={{ textAlign: 'center', color: '#7A7264', fontSize: '0.8rem', padding: '2rem 1rem' }}>
               Nenhuma mensagem trocada ainda. Inicie a conversa abaixo para alinhar os ajustes deste anúncio! 💬
             </div>
           ) : (

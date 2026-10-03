@@ -79,7 +79,7 @@
   border-right: 1px solid var(--cor-borda);
   background: var(--cor-fundo);
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--pedra-300) transparent;
 }
 
 .lista::-webkit-scrollbar {
@@ -87,7 +87,7 @@
 }
 
 .lista::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--pedra-300);
   border-radius: 4px;
 }
 
@@ -257,7 +257,7 @@
     gap: 8px;
     padding: 12px 24px;
     min-height: 46px;
-    background: #0f172a;
+    background: var(--tinta);
     color: white;
     border-radius: 100px;
     font-size: 14px;
@@ -273,7 +273,7 @@
 
   .btnFlutuanteMobile:active {
     transform: translateX(-50%) scale(0.95);
-    background: #1e293b;
+    background: var(--tinta-2);
   }
 
   .iconeFlutuante {
@@ -288,8 +288,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border: 1.5px solid #93c5fd;
+  background: linear-gradient(135deg, var(--pedra-100) 0%, var(--pedra-200) 100%);
+  border: 1.5px solid var(--pedra-400);
   border-radius: 0.85rem;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
@@ -306,7 +306,7 @@
 .iconeFiltroImob {
   font-size: 1.4rem;
   background: #ffffff;
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--pedra-300);
   border-radius: 8px;
   padding: 4px 6px;
   display: flex;
@@ -319,7 +319,7 @@
   display: block;
   font-size: 0.95rem;
   font-weight: 800;
-  color: #1e3a8a;
+  color: var(--tinta-profunda);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -328,14 +328,14 @@
 .subFiltroImob {
   display: block;
   font-size: 0.775rem;
-  color: #2563eb;
+  color: var(--tinta);
   font-weight: 500;
 }
 
 .btnLimparFiltroImob {
   background: #ffffff;
-  border: 1px solid #bfdbfe;
-  color: #1e40af;
+  border: 1px solid var(--pedra-300);
+  color: var(--tinta-2);
   font-size: 0.775rem;
   font-weight: 700;
   padding: 6px 12px;
@@ -346,9 +346,9 @@
 }
 
 .btnLimparFiltroImob:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
-  color: #991b1b;
+  background: var(--marco-claro);
+  border-color: #EBA592;
+  color: #8F2812;
 }
 
 @media (max-width: 600px) {

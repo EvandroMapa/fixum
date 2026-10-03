@@ -271,7 +271,7 @@ export default function ModalCheckoutPlano({
             )}
           </div>
           {detalhesPreco.descontoPct > 0 && (
-            <div style={{ marginTop: '6px', fontSize: '0.78rem', color: '#a7f3d0', fontWeight: 600 }}>
+            <div style={{ marginTop: '6px', fontSize: '0.78rem', color: '#C3DACB', fontWeight: 600 }}>
               🎉 {detalhesPreco.descontoPct}% de Desconto Incluso (Equiv. {formatarMoeda(detalhesPreco.valorMensalEquivalente)}/mês)
             </div>
           )}
@@ -326,7 +326,7 @@ export default function ModalCheckoutPlano({
                       className={styles.qrCodeImg}
                     />
                   ) : (
-                    <div style={{ width: 180, height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '10px', fontSize: '0.8rem', color: '#94a3b8' }}>
+                    <div style={{ width: 180, height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '10px', fontSize: '0.8rem', color: '#A39A8A' }}>
                       <span>⚠️ QR Code aguardando emissão</span>
                     </div>
                   )}
@@ -360,7 +360,7 @@ export default function ModalCheckoutPlano({
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '6px',
-                        color: '#38bdf8',
+                        color: '#F0A58F',
                         fontSize: '0.85rem',
                         fontWeight: 600,
                         textDecoration: 'underline',
@@ -385,7 +385,7 @@ export default function ModalCheckoutPlano({
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#94a3b8',
+                    color: '#A39A8A',
                     fontSize: '0.8rem',
                     cursor: 'pointer',
                     marginTop: '12px',

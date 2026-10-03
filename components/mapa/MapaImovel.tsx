@@ -68,7 +68,7 @@ export default function MapaImovel({
       if (coordenadasValidas) {
         if (publico === true) {
           // Marcador preciso do Imóvel
-          new mapboxgl.Marker({ color: '#0f4c81' })
+          new mapboxgl.Marker({ color: '#16201C' })
             .setLngLat([finalLng, finalLat])
             .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(titulo))
             .addTo(mapa)
@@ -101,10 +101,10 @@ export default function MapaImovel({
                 16, 130,
                 18, 260,
               ],
-              'circle-color': '#2563eb',
+              'circle-color': '#16201C',
               'circle-opacity': 0.16,
               'circle-stroke-width': 2,
-              'circle-stroke-color': '#1d4ed8',
+              'circle-stroke-color': '#22302A',
               'circle-stroke-opacity': 0.55,
             },
           })
@@ -116,7 +116,7 @@ export default function MapaImovel({
             source: 'area-aproximada',
             paint: {
               'circle-radius': 6,
-              'circle-color': '#1d4ed8',
+              'circle-color': '#22302A',
               'circle-stroke-width': 2.5,
               'circle-stroke-color': '#ffffff',
               'circle-opacity': 0.9,
@@ -173,12 +173,12 @@ export default function MapaImovel({
       const inner = document.createElement('div')
       inner.style.cssText = `
         background: #ffffff;
-        border: 2px solid #2563eb;
+        border: 2px solid #16201C;
         border-radius: 20px;
         padding: 4px 9px;
         font-size: 12px;
         font-weight: 800;
-        color: #1e293b;
+        color: #22302A;
         box-shadow: 0 4px 14px rgba(0,0,0,0.18);
         display: flex;
         align-items: center;
@@ -192,21 +192,21 @@ export default function MapaImovel({
 
       wrapper.addEventListener('mouseenter', () => {
         inner.style.transform = 'scale(1.12)'
-        inner.style.borderColor = '#1d4ed8'
-        inner.style.background = '#f8fafc'
+        inner.style.borderColor = '#22302A'
+        inner.style.background = '#FAF7F1'
       })
       wrapper.addEventListener('mouseleave', () => {
         inner.style.transform = 'scale(1)'
-        inner.style.borderColor = '#2563eb'
+        inner.style.borderColor = '#16201C'
         inner.style.background = '#ffffff'
       })
 
       const popup = new mapboxgl.Popup({ offset: 20, closeButton: false }).setHTML(`
         <div style="font-family: system-ui, sans-serif; padding: 4px; max-width: 220px;">
-          <div style="font-size: 13px; font-weight: 800; color: #0f172a; line-height: 1.2;">
+          <div style="font-size: 13px; font-weight: 800; color: #16201C; line-height: 1.2;">
             ${poi.icone} ${poi.nome}
           </div>
-          <div style="font-size: 11px; color: #475569; margin-top: 4px; font-weight: 600;">
+          <div style="font-size: 11px; color: #5A5449; margin-top: 4px; font-weight: 600;">
             📍 ${poi.distanciaFormatada} · 🚶 ${poi.tempoPe}
           </div>
         </div>

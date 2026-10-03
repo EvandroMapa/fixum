@@ -3,7 +3,7 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(22, 32, 28, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 1200;
@@ -32,7 +32,7 @@
 .headerChat {
   background: #ffffff;
   padding: 0.85rem 1.15rem;
-  border-bottom: 1.5px solid #f1f5f9;
+  border-bottom: 1.5px solid var(--papel);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,7 +54,7 @@
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -67,7 +67,7 @@
 .tituloImovel {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -76,7 +76,7 @@
 
 .subtituloHeader {
   font-size: 0.725rem;
-  color: #64748b;
+  color: var(--pedra-500);
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -95,8 +95,8 @@
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--papel);
+  color: var(--pedra-500);
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -107,8 +107,8 @@
 }
 
 .btnFechar:hover {
-  background: #fee2e2;
-  color: #ef4444;
+  background: var(--marco-claro);
+  color: var(--marco);
   transform: rotate(90deg);
 }
 
@@ -134,7 +134,7 @@
   border-radius: 0.5rem;
   font-size: 0.675rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--pedra-600);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
@@ -144,21 +144,21 @@
 }
 
 .pilulaAjuste {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  color: #92400e;
+  background: #FDF7E8;
+  border: 1px solid #F2D48E;
+  color: var(--ouro-escuro);
 }
 
 .pilulaAprovado {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #065f46;
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #C3DACB;
+  color: #24563E;
 }
 
 .pilulaReenvio {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1e40af;
+  background: var(--pedra-100);
+  border: 1px solid var(--pedra-300);
+  color: var(--tinta-2);
 }
 
 /* ── BOLHAS DE CONVERSA (BALÕES ESTILO WHATSAPP) ── */
@@ -213,11 +213,11 @@
 }
 
 .autorNomeGestor {
-  color: #b45309;
+  color: var(--ouro-escuro);
 }
 
 .autorNomeCorretor {
-  color: #1d4ed8;
+  color: var(--tinta-2);
 }
 
 .badgePapelBalao {
@@ -228,13 +228,13 @@
 }
 
 .badgeGestorBalao {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--ouro-claro);
+  color: var(--ouro-escuro);
 }
 
 .badgeCorretorBalao {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--pedra-200);
+  color: var(--tinta-2);
 }
 
 .textoMensagem {
@@ -258,7 +258,7 @@
 .rodapeChat {
   background: #f0f2f5;
   padding: 0.65rem 0.85rem;
-  border-top: 1.5px solid #e2e8f0;
+  border-top: 1.5px solid var(--pedra-200);
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
@@ -267,7 +267,7 @@
 .inputMensagemWrapper {
   flex: 1;
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 1.25rem;
   padding: 0.45rem 0.85rem;
   display: flex;
@@ -276,8 +276,8 @@
 }
 
 .inputMensagemWrapper:focus-within {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.1);
 }
 
 .textareaMensagem {
@@ -285,7 +285,7 @@
   border: none;
   background: transparent;
   font-size: 0.825rem;
-  color: #0f172a;
+  color: var(--tinta);
   resize: none;
   max-height: 90px;
   line-height: 1.4;
@@ -294,7 +294,7 @@
 }
 
 .textareaMensagem::placeholder {
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .btnEnviar {
@@ -302,7 +302,7 @@
   height: 38px;
   border-radius: 50%;
   border: none;
-  background: #059669;
+  background: var(--cerrado);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -313,12 +313,12 @@
 }
 
 .btnEnviar:hover:not(:disabled) {
-  background: #047857;
+  background: #24563E;
   transform: scale(1.05);
 }
 
 .btnEnviar:disabled {
-  background: #cbd5e1;
+  background: var(--pedra-300);
   cursor: not-allowed;
   opacity: 0.7;
 }

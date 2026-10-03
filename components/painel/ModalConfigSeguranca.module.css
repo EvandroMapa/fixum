@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(22, 32, 28, 0.75);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -33,7 +33,7 @@
   background: transparent;
   border: none;
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   cursor: pointer;
   width: 36px;
   height: 36px;
@@ -45,8 +45,8 @@
 }
 
 .btnFechar:hover {
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--papel);
+  color: var(--pedra-700);
 }
 
 .cabecalho {
@@ -63,19 +63,19 @@
 .cabecalho h2 {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.25rem;
 }
 
 .subtitulo {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .alertaSucesso {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #15803d;
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #C3DACB;
+  color: var(--cerrado);
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
   font-size: 0.85rem;
@@ -84,9 +84,9 @@
 }
 
 .alertaErro {
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
-  color: #dc2626;
+  background: var(--cor-erro-claro);
+  border: 1px solid var(--marco-claro);
+  color: var(--marco-escuro);
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
   font-size: 0.85rem;
@@ -94,8 +94,8 @@
 }
 
 .secaoCard {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 1rem;
   padding: 1.25rem;
   margin-bottom: 1.25rem;
@@ -111,13 +111,13 @@
 .secaoHeader h3 {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.2rem;
 }
 
 .secaoHeader p {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   line-height: 1.4;
 }
 
@@ -130,13 +130,13 @@
 }
 
 .badgeAtivo {
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
 }
 
 .badgeInativo {
-  background: #fef3c7;
-  color: #b45309;
+  background: var(--ouro-claro);
+  color: var(--ouro-escuro);
 }
 
 .mfaAtivoBox {
@@ -150,14 +150,14 @@
 
 .mfaAtivoBox p {
   font-size: 0.85rem;
-  color: #334155;
+  color: var(--pedra-700);
   margin: 0;
 }
 
 .btnDesativarMfa {
-  background: #fee2e2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
+  background: var(--marco-claro);
+  color: var(--marco-escuro);
+  border: 1px solid #F3C3B5;
   padding: 0.4rem 0.85rem;
   border-radius: 0.5rem;
   font-size: 0.8rem;
@@ -167,7 +167,7 @@
 }
 
 .btnDesativarMfa:hover {
-  background: #fecaca;
+  background: #F3C3B5;
 }
 
 .mfaInativoBox {
@@ -176,7 +176,7 @@
 
 .mfaInativoBox p {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 0.75rem;
 }
 
@@ -190,7 +190,7 @@
 
 .instrucoesMfa {
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--pedra-600);
   margin-bottom: 1rem;
   text-align: left;
   width: 100%;
@@ -203,7 +203,7 @@
 .qrCodeWrapper {
   background: #ffffff;
   padding: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 1rem;
   margin-bottom: 1rem;
   display: flex;
@@ -218,13 +218,13 @@
 
 .segredoManual {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 1.25rem;
 }
 
 .segredoManual code {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--pedra-200);
+  color: var(--tinta);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: monospace;
@@ -241,7 +241,7 @@
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--pedra-700);
   margin-bottom: 0.5rem;
 }
 
@@ -251,7 +251,7 @@
   letter-spacing: 0.25em;
   text-align: center;
   padding: 0.6rem;
-  border: 2px solid #0f4c81;
+  border: 2px solid var(--tinta);
   border-radius: 0.5rem;
   outline: none;
   margin: 0 auto;
@@ -267,8 +267,8 @@
 
 .btnDesconectarOutros {
   background: #ffffff;
-  color: #475569;
-  border: 1px solid #cbd5e1;
+  color: var(--pedra-600);
+  border: 1px solid var(--pedra-300);
   padding: 0.6rem 1rem;
   border-radius: 0.5rem;
   font-size: 0.85rem;
@@ -280,8 +280,8 @@
 }
 
 .btnDesconectarOutros:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--papel);
+  color: var(--tinta);
 }
 
 .rodape {

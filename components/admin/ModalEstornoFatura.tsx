@@ -151,7 +151,7 @@ export default function ModalEstornoFatura({
           <div className={styles.campo}>
             <label className={styles.label}>
               <span>Justificativa Obrigatória da Equipe:</span>
-              <span style={{ color: '#f87171', fontSize: '0.75rem' }}>* Trilha de Auditoria</span>
+              <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Trilha de Auditoria</span>
             </label>
             <textarea
               rows={3}
@@ -167,7 +167,7 @@ export default function ModalEstornoFatura({
           <div className={styles.campo}>
             <label className={styles.label}>
               <span>PIN Master / Chave Secreta Master:</span>
-              <span style={{ color: '#f87171', fontSize: '0.75rem' }}>* Blindagem de Segurança</span>
+              <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Blindagem de Segurança</span>
             </label>
             <InputSenha
               value={adminPin}

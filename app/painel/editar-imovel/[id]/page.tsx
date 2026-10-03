@@ -465,7 +465,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
   if (carregando) {
     return (
       <div className={styles.pagina}>
-        <div style={{ textAlign: "center", padding: "4rem", color: "#64748b" }}>
+        <div style={{ textAlign: "center", padding: "4rem", color: "#7A7264" }}>
           <p>Carregando dados do imóvel...</p>
         </div>
       </div>
@@ -490,8 +490,8 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
             {/* ── BANNER DE MODERAÇÃO E AJUSTES SOLICITADOS PELO GESTOR ── */}
             {temAjustesPendentes && (
               <div style={{
-                background: '#fffbeb',
-                border: '1.5px solid #fde68a',
+                background: '#FDF7E8',
+                border: '1.5px solid #F2D48E',
                 borderRadius: '0.75rem',
                 padding: '1.25rem',
                 marginBottom: '1.5rem',
@@ -499,7 +499,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 flexDirection: 'column',
                 gap: '0.85rem'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#92400e', fontWeight: 800, fontSize: '0.95rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8A5F12', fontWeight: 800, fontSize: '0.95rem' }}>
                   <span>⚠️</span>
                   <span>Ajustes Solicitados pela Gestão da Imobiliária</span>
                 </div>
@@ -515,9 +515,9 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
 
             {sucesso && (
               <div style={{
-                background: "#ecfdf5",
-                border: "1px solid #a7f3d0",
-                color: "#065f46",
+                background: "#EEF5F0",
+                border: "1px solid #C3DACB",
+                color: "#24563E",
                 padding: "0.75rem 1rem",
                 borderRadius: "0.5rem",
                 marginBottom: "1rem",
@@ -530,9 +530,9 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
 
             {erro && (
               <div style={{
-                background: "#fef2f2",
-                border: "1px solid #fee2e2",
-                color: "#991b1b",
+                background: "#FDF1EC",
+                border: "1px solid #FBE6DF",
+                color: "#8F2812",
                 padding: "0.75rem 1rem",
                 borderRadius: "0.5rem",
                 marginBottom: "1rem",
@@ -591,7 +591,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
             <div className={styles.grupo} style={{ marginTop: "0.5rem" }}>
               <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>Código do Anúncio / Referência {modoCodigo === 'proprio' ? '*' : '(Ref)'}</span>
-                <span style={{ fontSize: '0.725rem', color: modoCodigo === 'proprio' ? '#c2410c' : '#64748b', fontWeight: 'normal' }}>
+                <span style={{ fontSize: '0.725rem', color: modoCodigo === 'proprio' ? '#B23318' : '#7A7264', fontWeight: 'normal' }}>
                   {modoCodigo === 'proprio'
                     ? (dados.codigo ? '✓ Código Próprio/CRM' : '⚠️ Obrigatório (Modo Próprio/CRM)')
                     : (dados.codigo ? 'Personalizado' : `Automático (${prefixo || 'FIX'}-XXXX)`)}
@@ -617,7 +617,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 placeholder="0 = Sob Consulta"
               />
               {dados.preco && dados.preco.replace(/\D/g, "") === "0" && (
-                <span style={{ display: 'block', fontSize: '0.725rem', color: '#0284c7', marginTop: '3px' }}>
+                <span style={{ display: 'block', fontSize: '0.725rem', color: '#2C5F8A', marginTop: '3px' }}>
                   ℹ️ R$ 0: o anúncio será exibido automaticamente como <strong>Sob Consulta</strong>.
                 </span>
               )}
@@ -642,7 +642,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   data-lpignore="true"
                   data-form-type="other"
                 />
-                {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.8rem", color: "#64748b" }}>Buscando...</span>}
+                {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.8rem", color: "#7A7264" }}>Buscando...</span>}
               </div>
             </div>
 
@@ -764,7 +764,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 <button
                   type="button"
                   onClick={() => inputFotoRef.current?.click()}
-                  style={{ background: "none", border: "none", color: "#2563eb", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}
+                  style={{ background: "none", border: "none", color: "#16201C", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}
                 >
                   + Adicionar fotos
                 </button>
@@ -818,11 +818,11 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
             </div>
 
             {/* Botões Salvar / Reenviar */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid #e2e8f0" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid #E0D8CA" }}>
               {modalReenvioAberto && (
                 <div style={{
-                  background: '#f8fafc',
-                  border: '1.5px solid #cbd5e1',
+                  background: '#FAF7F1',
+                  border: '1.5px solid #CFC6B6',
                   borderRadius: '0.75rem',
                   padding: '1rem',
                   display: 'flex',
@@ -830,7 +830,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   gap: '0.5rem',
                   animation: 'fadeIn 0.2s ease'
                 }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#22302A' }}>
                     💬 Descreva brevemente as correções feitas (opcional):
                   </span>
                   <textarea
@@ -838,7 +838,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                       width: '100%',
                       padding: '0.65rem 0.75rem',
                       borderRadius: '0.5rem',
-                      border: '1px solid #cbd5e1',
+                      border: '1px solid #CFC6B6',
                       fontSize: '0.85rem',
                       fontFamily: 'inherit',
                       resize: 'vertical',
@@ -873,7 +873,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                     className="btn btn-primario"
                     onClick={() => setModalReenvioAberto(true)}
                     disabled={salvando || reenviando}
-                    style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#059669', borderColor: '#059669' }}
+                    style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#2E6B4E', borderColor: '#2E6B4E' }}
                   >
                     📤 Reenviar para Revisão do Gestor
                   </button>
@@ -883,7 +883,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                     className="btn btn-primario"
                     onClick={handleSalvarEReenviar}
                     disabled={salvando || reenviando}
-                    style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#059669', borderColor: '#059669' }}
+                    style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#2E6B4E', borderColor: '#2E6B4E' }}
                   >
                     {reenviando ? "Reenviando..." : "✅ Confirmar e Notificar Gestor"}
                   </button>

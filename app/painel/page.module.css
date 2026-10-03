@@ -3,14 +3,14 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 /* TOPBAR CORPORATIVO DO PAINEL */
 .topbar {
   height: 64px;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--pedra-200);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -41,12 +41,12 @@
 .logoTexto {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   letter-spacing: -0.02em;
 }
 
 .badgePro {
-  background: #1e3a8a;
+  background: var(--tinta-profunda);
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 800;
@@ -58,7 +58,7 @@
 .divisorVertical {
   width: 1px;
   height: 28px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
 }
 
 .usuarioPerfilTopbar {
@@ -72,21 +72,21 @@
 }
 
 .usuarioPerfilTopbar:hover {
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 .usuarioAvatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  background: linear-gradient(135deg, var(--tinta-2), var(--tinta));
   color: #ffffff;
   font-weight: 800;
   font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.25);
   flex-shrink: 0;
   border: 2px solid #ffffff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -94,7 +94,7 @@
 
 .usuarioPerfilTopbar:hover .usuarioAvatar {
   transform: scale(1.06);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 12px rgba(22, 32, 28, 0.35);
 }
 
 .empresaInfo {
@@ -105,12 +105,12 @@
 .empresaNome {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .empresaTipo {
   font-size: 0.725rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 500;
 }
 
@@ -124,9 +124,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1e3a8a;
+  background: var(--pedra-100);
+  border: 1px solid var(--pedra-300);
+  color: var(--tinta-profunda);
   font-size: 0.8rem;
   padding: 6px 12px;
   border-radius: 8px;
@@ -135,12 +135,12 @@
 }
 
 .badgePlanoTopbar:hover {
-  background: #dbeafe;
-  border-color: #93c5fd;
+  background: var(--pedra-200);
+  border-color: var(--pedra-400);
 }
 
 .vagasPill {
-  background: #1d4ed8;
+  background: var(--tinta-2);
   color: #ffffff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -153,7 +153,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: linear-gradient(135deg, #1a56db, #2563eb);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta));
   color: #ffffff;
   font-weight: 700;
   font-size: 0.825rem;
@@ -163,12 +163,12 @@
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(26, 86, 219, 0.25);
+  box-shadow: 0 2px 6px rgba(22, 32, 28, 0.25);
 }
 
 .btnNovoImovelTopbar:hover {
-  background: linear-gradient(135deg, #1e40af, #1a56db);
-  box-shadow: 0 4px 12px rgba(26, 86, 219, 0.35);
+  background: linear-gradient(135deg, var(--tinta-2), var(--tinta));
+  box-shadow: 0 4px 12px rgba(22, 32, 28, 0.35);
   transform: translateY(-1px);
 }
 
@@ -184,9 +184,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
+  color: var(--pedra-600);
   font-size: 0.825rem;
   font-weight: 600;
   padding: 6px 12px;
@@ -196,39 +196,39 @@
 }
 
 .btnVerPortal:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-  border-color: #cbd5e1;
+  background: var(--papel);
+  color: var(--tinta);
+  border-color: var(--pedra-300);
 }
 
 .avatarTopbarDireita {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  background: linear-gradient(135deg, var(--tinta-2), var(--tinta));
   color: #ffffff;
   font-weight: 800;
   font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.25);
   flex-shrink: 0;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--pedra-200);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .avatarTopbarDireita:hover {
   transform: scale(1.08);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-  border-color: #3b82f6;
+  box-shadow: 0 4px 14px rgba(22, 32, 28, 0.4);
+  border-color: var(--hidro);
 }
 
 .btnSairTopbar {
   background: transparent;
-  border: 1px solid #fee2e2;
-  color: #ef4444;
+  border: 1px solid var(--marco-claro);
+  color: var(--marco);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 6px 12px;
@@ -238,7 +238,7 @@
 }
 
 .btnSairTopbar:hover {
-  background: #ef4444;
+  background: var(--marco);
   color: #ffffff;
 }
 
@@ -258,7 +258,7 @@
 
 /* SIDEBAR */
 .sidebar {
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(180deg, var(--tinta) 0%, var(--tinta-2) 100%);
   border-right: none;
   display: flex;
   flex-direction: column;
@@ -311,7 +311,7 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #94a3b8;
+  color: var(--pedra-400);
   cursor: pointer;
   transition: all 0.15s ease;
   border: none;
@@ -323,11 +323,11 @@
 
 .sidebarItem:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
+  color: var(--papel-claro);
 }
 
 .sidebarItemAtivo {
-  background: #2563eb !important;
+  background: var(--tinta) !important;
   color: #ffffff !important;
   font-weight: 700;
 }
@@ -361,7 +361,7 @@
   position: absolute;
   top: -6px;
   right: -8px;
-  background: #ef4444;
+  background: var(--marco);
   color: #ffffff;
   font-size: 0.62rem;
   font-weight: 800;
@@ -371,14 +371,14 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.5);
-  border: 1.5px solid #0f172a;
+  box-shadow: 0 2px 5px rgba(212, 64, 31, 0.5);
+  border: 1.5px solid var(--tinta);
   line-height: 1;
 }
 
 .badgeSidebarPill {
   margin-left: auto;
-  background: #ef4444;
+  background: var(--marco);
   color: #ffffff;
   font-size: 0.72rem;
   font-weight: 800;
@@ -389,14 +389,14 @@
   align-items: center;
   justify-content: center;
   padding: 0 6px;
-  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 2px 6px rgba(212, 64, 31, 0.4);
   line-height: 1;
   animation: pulseBadge 2.5s infinite;
 }
 
 .sidebarItemAtivo .badgeSidebarPill {
   background: #ffffff;
-  color: #1d4ed8;
+  color: var(--tinta-2);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
@@ -432,7 +432,7 @@
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -442,7 +442,7 @@
 
 .btnFixarSidebar:hover {
   background: rgba(255, 255, 255, 0.12);
-  color: #f8fafc;
+  color: var(--papel-claro);
   border-color: rgba(255, 255, 255, 0.18);
 }
 
@@ -491,7 +491,7 @@
   padding: 1rem 1.25rem;
   height: 100%;
   overflow-y: auto;
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .secao {
@@ -523,7 +523,7 @@
 /* Card de Resumo do Plano (Dashboard) */
 .cardPlanoResumo {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 1rem;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
@@ -556,8 +556,8 @@
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #0f4c81;
-  background: #eff6ff;
+  color: var(--tinta);
+  background: var(--pedra-100);
   padding: 3px 10px;
   border-radius: 999px;
   letter-spacing: 0.02em;
@@ -566,7 +566,7 @@
 
 .planoResumoContador {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 500;
 }
 
@@ -574,7 +574,7 @@
   width: 100%;
   max-width: 260px;
   height: 6px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
   border-radius: 999px;
   overflow: hidden;
   margin-top: 2px;
@@ -595,8 +595,8 @@
 
 /* Card de Boas-Vindas do Proprietário Direto */
 .cardProprietarioBoasVindas {
-  background: linear-gradient(135deg, #ffffff, #f0fdf4);
-  border: 1.5px solid #bbf7d0;
+  background: linear-gradient(135deg, #ffffff, var(--cor-sucesso-claro));
+  border: 1.5px solid #C3DACB;
   border-radius: 1rem;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
@@ -607,7 +607,7 @@
   flex-wrap: wrap;
   width: 100%;
   box-sizing: border-box;
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
+  box-shadow: 0 2px 8px rgba(46, 107, 78, 0.08);
 }
 
 .proprietarioInfo {
@@ -629,8 +629,8 @@
   font-size: 0.775rem;
   font-weight: 800;
   text-transform: uppercase;
-  color: #166534;
-  background: #dcfce7;
+  color: #24563E;
+  background: var(--cerrado-claro);
   padding: 3px 10px;
   border-radius: 999px;
   letter-spacing: 0.02em;
@@ -639,13 +639,13 @@
 
 .proprietarioStatusBadge {
   font-size: 0.825rem;
-  color: #15803d;
+  color: var(--cerrado);
   font-weight: 700;
 }
 
 .proprietarioDescricao {
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--pedra-600);
   margin: 2px 0 0;
   line-height: 1.4;
 }
@@ -806,9 +806,9 @@
 .status_publicado { background: var(--cor-sucesso-claro); color: var(--cor-sucesso); }
 .status_pausado { background: var(--cor-aviso-claro); color: var(--cor-aviso); }
 .status_rascunho { background: var(--cor-fundo-alt); color: var(--cor-texto-terciario); }
-.status_em_analise { background: #eff6ff; color: #3b82f6; }
+.status_em_analise { background: var(--pedra-100); color: var(--hidro); }
 .status_vendido,
-.status_alugado { background: #f0fdf4; color: #16a34a; }
+.status_alugado { background: var(--cor-sucesso-claro); color: var(--cerrado); }
 
 .imovelAcoes {
   display: flex;
@@ -972,7 +972,7 @@
     padding: 6px 4px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 9999 !important;
     background: #ffffff !important;
-    border-top: 1px solid #e2e8f0 !important;
+    border-top: 1px solid var(--pedra-200) !important;
     border-right: none !important;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
     gap: 0 !important;
@@ -998,7 +998,7 @@
     gap: 2px !important;
     padding: 4px 2px !important;
     background: transparent !important;
-    color: #64748b !important;
+    color: var(--pedra-500) !important;
     font-size: 11px !important;
     font-weight: 600 !important;
     text-align: center !important;
@@ -1009,7 +1009,7 @@
 
   .sidebarItemAtivo {
     background: transparent !important;
-    color: #1a56db !important;
+    color: var(--tinta) !important;
     font-weight: 800 !important;
   }
 
@@ -1051,7 +1051,7 @@
   .conteudo {
     width: 100% !important;
     padding: 16px 14px calc(90px + env(safe-area-inset-bottom, 0px)) !important;
-    background: #f8fafc !important;
+    background: var(--papel-claro) !important;
     min-height: calc(100vh - 56px) !important;
   }
 

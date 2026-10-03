@@ -87,7 +87,7 @@ export default function ParaImobiliariasPage() {
               <Link href="/cadastro?tipo=imobiliaria" className="btn btn-primario btn-lg">
                 🏢 Cadastrar Minha Imobiliária
               </Link>
-              <Link href="/painel" className="btn btn-outline btn-lg" style={{ background: '#ffffff', color: '#0f4c81', borderColor: '#cbd5e1' }}>
+              <Link href="/painel" className="btn btn-outline btn-lg" style={{ background: '#ffffff', color: '#16201C', borderColor: '#CFC6B6' }}>
                 🔑 Acessar Painel Imobiliário
               </Link>
               <a

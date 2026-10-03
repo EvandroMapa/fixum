@@ -945,7 +945,7 @@ export default function AdminPage() {
                   {/* GRID 2x2 DE KPIS EXECUTIVOS */}
                   <div className={styles.pocketGridKpis}>
                     {/* MRR */}
-                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #10b981' }}>
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #3F8A66' }}>
                       <span className={styles.pocketKpiMiniLabel}>💰 MRR (Recorrente)</span>
                       <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.mrr)}</div>
                       <span className={styles.pocketKpiMiniSub}>Mensalidade ativa</span>
@@ -959,14 +959,14 @@ export default function AdminPage() {
                     </div>
 
                     {/* ARR PROJETADO */}
-                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #0284c7' }}>
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #2C5F8A' }}>
                       <span className={styles.pocketKpiMiniLabel}>📈 ARR Projetado</span>
                       <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.arr)}</div>
                       <span className={styles.pocketKpiMiniSub}>MRR × 12 meses</span>
                     </div>
 
                     {/* TICKET MÉDIO */}
-                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #f59e0b' }}>
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #E3A72F' }}>
                       <span className={styles.pocketKpiMiniLabel}>🏷️ Ticket Médio</span>
                       <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.ticketMedio)}</div>
                       <span className={styles.pocketKpiMiniSub}>Média por venda</span>
@@ -977,7 +977,7 @@ export default function AdminPage() {
                   <div className={styles.pocketCardGrowth}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>🚀 Contratações & Net Growth</strong>
-                      <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 600 }}>
+                      <span style={{ fontSize: '0.72rem', color: '#F0A58F', fontWeight: 600 }}>
                         Retenção {metricasBI.taxaRetencao}%
                       </span>
                     </div>
@@ -1004,14 +1004,14 @@ export default function AdminPage() {
                   <div className={styles.pocketCardPlanos}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>📦 Distribuição de Planos</strong>
-                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#A39A8A' }}>
                         {metricasBI.vendasPorPlano.reduce((acc, p) => acc + p.quantidade, 0)} assinaturas
                       </span>
                     </div>
 
                     <div className={styles.pocketPlanosLista}>
                       {metricasBI.vendasPorPlano.length === 0 ? (
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Nenhuma venda no período selecionado.</span>
+                        <span style={{ fontSize: '0.75rem', color: '#7A7264' }}>Nenhuma venda no período selecionado.</span>
                       ) : (
                         metricasBI.vendasPorPlano.map((p) => {
                           const maxValor = Math.max(...metricasBI.vendasPorPlano.map((x) => x.totalValor), 1)
@@ -1041,7 +1041,7 @@ export default function AdminPage() {
                       <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
                         {imoveis.length}
                       </div>
-                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#A39A8A' }}>
                         {imoveis.filter(i => i.destaque).length} com destaque ⭐
                       </span>
                     </div>
@@ -1051,7 +1051,7 @@ export default function AdminPage() {
                       <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
                         {clientes.filter(c => !c.is_corretor_vinculado).length}
                       </div>
-                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#A39A8A' }}>
                         {clientes.filter(c => c.tipo_anunciante === 'imobiliaria').length} imobiliárias
                       </span>
                     </div>
@@ -1060,8 +1060,8 @@ export default function AdminPage() {
                   {/* ALERTAS OPERACIONAIS */}
                   {contestacoes.length > 0 || cancelamentos.length > 0 ? (
                     <div style={{
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      background: 'rgba(212, 64, 31, 0.1)',
+                      border: '1px solid rgba(212, 64, 31, 0.3)',
                       borderRadius: '10px',
                       padding: '12px',
                       display: 'flex',
@@ -1069,18 +1069,18 @@ export default function AdminPage() {
                       gap: '10px',
                     }}>
                       <span style={{ fontSize: '1.3rem' }}>⚠️</span>
-                      <div style={{ fontSize: '0.8rem', color: '#fca5a5' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#EBA592' }}>
                         <strong>Atenção Operacional:</strong> Há {contestacoes.length} contestação(ões) e {cancelamentos.length} cancelamento(s) no gateway.
                       </div>
                     </div>
                   ) : (
                     <div style={{
-                      background: 'rgba(16, 185, 129, 0.08)',
-                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      background: 'rgba(46, 107, 78, 0.08)',
+                      border: '1px solid rgba(46, 107, 78, 0.25)',
                       borderRadius: '10px',
                       padding: '10px 14px',
                       fontSize: '0.78rem',
-                      color: '#34d399',
+                      color: '#7DBB98',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
@@ -1097,7 +1097,7 @@ export default function AdminPage() {
                       <button
                         type="button"
                         onClick={() => setAbaMobilePocket('faturas')}
-                        style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+                        style={{ background: 'none', border: 'none', color: '#F0A58F', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
                       >
                         Ver todas →
                       </button>
@@ -1114,9 +1114,9 @@ export default function AdminPage() {
                               {f.status}
                             </span>
                           </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: '#94a3b8' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: '#A39A8A' }}>
                             <span>{f.plano_nome || 'Assinatura'} • {f.metodo_pagamento?.toUpperCase() || 'PIX'}</span>
-                            <strong style={{ color: '#34d399', fontSize: '0.9rem' }}>{formatarMoeda(f.valor)}</strong>
+                            <strong style={{ color: '#7DBB98', fontSize: '0.9rem' }}>{formatarMoeda(f.valor)}</strong>
                           </div>
                         </div>
                       ))}
@@ -1130,7 +1130,7 @@ export default function AdminPage() {
                 <div className={styles.pocketListaCards}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>💳 Histórico de Cobranças</strong>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{faturas.length} faturas</span>
+                    <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{faturas.length} faturas</span>
                   </div>
 
                   {faturas.map((f) => (
@@ -1138,7 +1138,7 @@ export default function AdminPage() {
                       <div className={styles.pocketItemTopo}>
                         <div>
                           <strong className={styles.pocketItemNome}>{f.usuario_nome || 'Cliente'}</strong>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{f.usuario_email}</div>
+                          <div style={{ fontSize: '0.72rem', color: '#7A7264' }}>{f.usuario_email}</div>
                         </div>
                         <span className={`${styles.pocketBadgeStatus} ${
                           f.status === 'pago' ? styles.pocketBadgePago : f.status === 'pendente' ? styles.pocketBadgePendente : styles.pocketBadgeAtrasado
@@ -1147,11 +1147,11 @@ export default function AdminPage() {
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', borderTop: '1px solid #334155', paddingTop: '6px' }}>
-                        <span style={{ color: '#94a3b8' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', borderTop: '1px solid #3F3B34', paddingTop: '6px' }}>
+                        <span style={{ color: '#A39A8A' }}>
                           {f.metodo_pagamento?.toUpperCase()} • {new Date(f.created_at).toLocaleDateString('pt-BR')}
                         </span>
-                        <strong style={{ color: f.status === 'pago' ? '#34d399' : '#fbbf24', fontSize: '0.95rem' }}>
+                        <strong style={{ color: f.status === 'pago' ? '#7DBB98' : '#E8B84A', fontSize: '0.95rem' }}>
                           {formatarMoeda(f.valor)}
                         </strong>
                       </div>
@@ -1165,7 +1165,7 @@ export default function AdminPage() {
                 <div className={styles.pocketListaCards}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>🏢 Anúncios Publicados</strong>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{imoveis.length} imóveis</span>
+                    <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{imoveis.length} imóveis</span>
                   </div>
 
                   {imoveis.map((im) => (
@@ -1181,13 +1181,13 @@ export default function AdminPage() {
                         )}
                       </div>
 
-                      <div style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'flex', justifyContent: 'space-between' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#A39A8A', display: 'flex', justifyContent: 'space-between' }}>
                         <span>📍 {im.bairro ? `${im.bairro}, ` : ''}{im.cidade || 'MG'}</span>
-                        <strong style={{ color: '#38bdf8' }}>{formatarMoeda(im.preco)}</strong>
+                        <strong style={{ color: '#F0A58F' }}>{formatarMoeda(im.preco)}</strong>
                       </div>
 
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #334155', paddingTop: '6px' }}>
-                        <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #3F3B34', paddingTop: '6px' }}>
+                        <span style={{ fontSize: '0.72rem', color: '#7A7264' }}>
                           {im.imobiliaria_nome || im.usuario_nome || 'Anunciante'}
                         </span>
                         <Link
@@ -1195,7 +1195,7 @@ export default function AdminPage() {
                           target="_blank"
                           style={{
                             fontSize: '0.75rem',
-                            color: '#38bdf8',
+                            color: '#F0A58F',
                             textDecoration: 'none',
                             fontWeight: 600,
                           }}
@@ -1213,7 +1213,7 @@ export default function AdminPage() {
                 <div className={styles.pocketListaCards}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>👥 Diretório de Clientes</strong>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{clientes.filter(c => !c.is_corretor_vinculado).length} contas</span>
+                    <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{clientes.filter(c => !c.is_corretor_vinculado).length} contas</span>
                   </div>
 
                   {clientes.filter(c => !c.is_corretor_vinculado).map((cli) => (
@@ -1221,11 +1221,11 @@ export default function AdminPage() {
                       <div className={styles.pocketItemTopo}>
                         <div>
                           <strong className={styles.pocketItemNome}>{cli.nome}</strong>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{cli.email}</div>
+                          <div style={{ fontSize: '0.72rem', color: '#7A7264' }}>{cli.email}</div>
                         </div>
                         <span style={{
-                          background: cli.status_conta === 'ativo' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                          color: cli.status_conta === 'ativo' ? '#34d399' : '#f87171',
+                          background: cli.status_conta === 'ativo' ? 'rgba(46, 107, 78, 0.15)' : 'rgba(212, 64, 31, 0.15)',
+                          color: cli.status_conta === 'ativo' ? '#7DBB98' : '#E8836B',
                           fontSize: '0.65rem',
                           fontWeight: 700,
                           padding: '2px 6px',
@@ -1235,9 +1235,9 @@ export default function AdminPage() {
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', borderTop: '1px solid #334155', paddingTop: '6px' }}>
-                        <span style={{ color: '#38bdf8', fontWeight: 600 }}>Plano: {cli.plano_nome || 'Grátis'}</span>
-                        <span style={{ color: '#cbd5e1' }}>{cli.imoveis_ativos || 0} imóveis ativos</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', borderTop: '1px solid #3F3B34', paddingTop: '6px' }}>
+                        <span style={{ color: '#F0A58F', fontWeight: 600 }}>Plano: {cli.plano_nome || 'Grátis'}</span>
+                        <span style={{ color: '#CFC6B6' }}>{cli.imoveis_ativos || 0} imóveis ativos</span>
                       </div>
                     </div>
                   ))}
@@ -1364,9 +1364,9 @@ export default function AdminPage() {
         {/* TOPBAR */}
         <header className={styles.topbar}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.88rem' }}>
-            <span style={{ color: '#64748b', fontWeight: 500 }}>Painel Master</span>
-            <span style={{ color: '#334155' }}>/</span>
-            <strong style={{ color: '#e2e8f0', fontWeight: 600 }}>
+            <span style={{ color: '#7A7264', fontWeight: 500 }}>Painel Master</span>
+            <span style={{ color: '#3F3B34' }}>/</span>
+            <strong style={{ color: '#E0D8CA', fontWeight: 600 }}>
               {abaAtiva === 'analytics' && 'Analytics & BI'}
               {abaAtiva === 'clientes' && 'Clientes & Anunciantes'}
               {abaAtiva === 'faturas' && 'Faturas & Receitas'}
@@ -1496,7 +1496,7 @@ export default function AdminPage() {
                             <td>
                               <div>
                                 <strong>{cli.nome}</strong>
-                                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{cli.email}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{cli.email}</div>
                               </div>
                             </td>
                             <td>{cli.telefone || cli.whatsapp || '—'}</td>
@@ -1507,7 +1507,7 @@ export default function AdminPage() {
                                   <span className={`${styles.badge} ${styles.badgeImobiliaria}`}>
                                     🏢 Imobiliária (Cliente Gestora)
                                   </span>
-                                  <div style={{ fontSize: '0.72rem', color: '#38bdf8', marginTop: '2px' }}>
+                                  <div style={{ fontSize: '0.72rem', color: '#F0A58F', marginTop: '2px' }}>
                                     {cli.corretores_equipe?.length || 0} corretor(es) na equipe
                                   </div>
                                 </div>
@@ -1516,7 +1516,7 @@ export default function AdminPage() {
                                   <span className={`${styles.badge} ${styles.badgeCorretor}`}>
                                     👔 Corretor de Equipe
                                   </span>
-                                  <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '2px' }}>
+                                  <div style={{ fontSize: '0.72rem', color: '#A39A8A', marginTop: '2px' }}>
                                     🏢 Equipe: {cli.imobiliaria_nome}
                                   </div>
                                 </div>
@@ -1535,7 +1535,7 @@ export default function AdminPage() {
                                 <span className={styles.badgePlano}>
                                   {cli.plano_nome}
                                 </span>
-                                <div style={{ fontSize: '0.72rem', color: cli.is_corretor_vinculado ? '#38bdf8' : '#34d399', marginTop: '2px' }}>
+                                <div style={{ fontSize: '0.72rem', color: cli.is_corretor_vinculado ? '#F0A58F' : '#7DBB98', marginTop: '2px' }}>
                                   {cli.is_corretor_vinculado ? '🏢 Cota da Imobiliária' : `${formatarMoeda(cli.plano_preco)}/mês`}
                                 </div>
                               </div>
@@ -1544,7 +1544,7 @@ export default function AdminPage() {
                               <div>
                                 <strong>{cli.total_imoveis}</strong> ({cli.imoveis_ativos} ativos)
                                 {cli.tipo_anunciante === 'imobiliaria' && cli.imoveis_equipe > 0 && (
-                                  <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '2px' }}>
+                                  <div style={{ fontSize: '0.72rem', color: '#A39A8A', marginTop: '2px' }}>
                                     {cli.imoveis_diretos} diretos + {cli.imoveis_equipe} equipe
                                   </div>
                                 )}
@@ -1552,7 +1552,7 @@ export default function AdminPage() {
                             </td>
                             <td>
                               {cli.is_corretor_vinculado ? (
-                                <span style={{ color: '#64748b', fontSize: '0.8rem' }}>— (Via Imobiliária)</span>
+                                <span style={{ color: '#7A7264', fontSize: '0.8rem' }}>— (Via Imobiliária)</span>
                               ) : (
                                 <strong>{formatarMoeda(cli.valor_total_gasto)}</strong>
                               )}
@@ -1643,7 +1643,7 @@ export default function AdminPage() {
                             <td>
                               <div>
                                 <strong>{fat.usuario_nome}</strong>
-                                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{fat.usuario_email}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{fat.usuario_email}</div>
                               </div>
                             </td>
                             <td>{fat.plano_nome}</td>
@@ -1657,7 +1657,7 @@ export default function AdminPage() {
                               <div>
                                 <div>Venc: {fat.data_vencimento ? new Date(fat.data_vencimento).toLocaleDateString('pt-BR') : '—'}</div>
                                 {fat.data_pagamento && (
-                                  <div style={{ fontSize: '0.75rem', color: '#34d399' }}>
+                                  <div style={{ fontSize: '0.75rem', color: '#7DBB98' }}>
                                     Pago: {new Date(fat.data_pagamento).toLocaleDateString('pt-BR')}
                                   </div>
                                 )}
@@ -1688,7 +1688,7 @@ export default function AdminPage() {
                                   Ver Fatura Asaas ↗
                                 </a>
                               ) : (
-                                <span style={{ color: '#64748b', fontSize: '0.75rem' }}>Manual / Interno</span>
+                                <span style={{ color: '#7A7264', fontSize: '0.75rem' }}>Manual / Interno</span>
                               )}
                             </td>
                             <td>
@@ -1771,7 +1771,7 @@ export default function AdminPage() {
                               <tr key={c.id}>
                                 <td>
                                   <strong>{c.usuario_nome}</strong>
-                                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{c.usuario_email}</div>
+                                  <div style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{c.usuario_email}</div>
                                 </td>
                                 <td>{c.plano_nome}</td>
                                 <td>{formatarMoeda(c.valor_plano)}/mês</td>
@@ -1807,7 +1807,7 @@ export default function AdminPage() {
                               <tr key={d.id}>
                                 <td>
                                   <strong>{d.usuario_nome}</strong>
-                                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{d.usuario_email}</div>
+                                  <div style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{d.usuario_email}</div>
                                 </td>
                                 <td><strong className={styles.valorDestaqueVermelho}>{formatarMoeda(d.valor)}</strong></td>
                                 <td>{d.motivo}</td>
@@ -1832,7 +1832,7 @@ export default function AdminPage() {
                           <span>🛡️</span>
                           <div>
                             <strong>Nenhuma contestação ou chargeback em aberto!</strong>
-                            <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+                            <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#A39A8A' }}>
                               A sua operação na Fixum está 100% regularizada e sem disputas de bandeiras de cartão.
                             </p>
                           </div>
@@ -1854,12 +1854,12 @@ export default function AdminPage() {
                                 <tr key={ct.id}>
                                   <td>
                                     <strong>{ct.usuario_nome}</strong>
-                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{ct.usuario_email}</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{ct.usuario_email}</div>
                                   </td>
                                   <td><strong className={styles.valorDestaqueVermelho}>{formatarMoeda(ct.valor)}</strong></td>
                                   <td>{ct.motivo_bandeira}</td>
                                   <td>
-                                    <span style={{ color: '#f87171', fontWeight: 700 }}>
+                                    <span style={{ color: '#E8836B', fontWeight: 700 }}>
                                       {ct.data_limite_defesa ? new Date(ct.data_limite_defesa).toLocaleDateString('pt-BR') : 'Urgente'}
                                     </span>
                                   </td>
@@ -1912,7 +1912,7 @@ export default function AdminPage() {
                             <td>
                               <div>
                                 <strong>{im.titulo}</strong>
-                                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                                <div style={{ fontSize: '0.75rem', color: '#A39A8A' }}>
                                   Tipo: {im.tipo} • {im.negociacao}
                                 </div>
                               </div>
@@ -1923,7 +1923,7 @@ export default function AdminPage() {
                               <div>
                                 <strong>{im.anunciante_nome}</strong>
                                 {im.cadastrado_por_nome && (
-                                  <div style={{ fontSize: '0.72rem', color: '#38bdf8', marginTop: '2px' }}>
+                                  <div style={{ fontSize: '0.72rem', color: '#F0A58F', marginTop: '2px' }}>
                                     👤 Operador: {im.cadastrado_por_nome}
                                   </div>
                                 )}
@@ -1933,7 +1933,7 @@ export default function AdminPage() {
                               <button
                                 type="button"
                                 className={styles.btnAcao}
-                                style={{ color: im.destaque ? '#f59e0b' : '#64748b' }}
+                                style={{ color: im.destaque ? '#E3A72F' : '#7A7264' }}
                                 onClick={() => handleToggleDestaque(im.id, im.destaque)}
                               >
                                 {im.destaque ? '⭐ Destaque' : '☆ Normal'}
@@ -2035,7 +2035,7 @@ export default function AdminPage() {
                           <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.05rem', fontWeight: 700 }}>
                             Gateway Oficial de Pagamentos (Asaas)
                           </h3>
-                          <p style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '0.8rem' }}>
+                          <p style={{ margin: '2px 0 0 0', color: '#A39A8A', fontSize: '0.8rem' }}>
                             O dinheiro das assinaturas PIX e Cartão cai diretamente na sua conta cadastrada no Asaas.
                           </p>
                         </div>
@@ -2057,7 +2057,7 @@ export default function AdminPage() {
                           <strong style={{ color: '#facc15', fontSize: '0.85rem' }}>
                             Atenção de Segurança: Proteção do Fluxo de Recebimento
                           </strong>
-                          <p style={{ margin: '4px 0 0', color: '#cbd5e1', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                          <p style={{ margin: '4px 0 0', color: '#CFC6B6', fontSize: '0.8rem', lineHeight: '1.4' }}>
                             A <strong>Chave de API</strong> e o <strong>Token do Webhook</strong> são a espinha dorsal de cobranças da plataforma. Alterações incorretas impedem que novos anunciantes paguem ou que pagamentos confirmados no banco liberem cotas de anúncios. Sempre clique em <strong>&quot;⚡ Testar Conexão com o Asaas Agora&quot;</strong> antes de salvar.
                           </p>
                         </div>
@@ -2066,7 +2066,7 @@ export default function AdminPage() {
                       <div className={styles.grupoInput} style={{ marginTop: '14px' }}>
                         <label className={styles.labelForm}>
                           <span>Ambiente do Asaas:</span>
-                          <span style={{ color: asaasModo === 'producao' ? '#34d399' : '#f59e0b', fontSize: '0.75rem', fontWeight: 700 }}>
+                          <span style={{ color: asaasModo === 'producao' ? '#7DBB98' : '#E3A72F', fontSize: '0.75rem', fontWeight: 700 }}>
                             {asaasModo === 'producao' ? '● MODO PRODUÇÃO ATIVO (DINHEIRO REAL)' : '○ MODO SANDBOX (TESTES)'}
                           </span>
                         </label>
@@ -2086,7 +2086,7 @@ export default function AdminPage() {
                           <button
                             type="button"
                             onClick={() => setMostrarApiKey(!mostrarApiKey)}
-                            style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                            style={{ background: 'none', border: 'none', color: '#F0A58F', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
                           >
                             {mostrarApiKey ? '🙈 Ocultar Chave' : '👁️ Mostrar Chave'}
                           </button>
@@ -2107,7 +2107,7 @@ export default function AdminPage() {
                           <button
                             type="button"
                             onClick={() => setMostrarWebhookToken(!mostrarWebhookToken)}
-                            style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                            style={{ background: 'none', border: 'none', color: '#F0A58F', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
                           >
                             {mostrarWebhookToken ? '🙈 Ocultar Token' : '👁️ Mostrar Token'}
                           </button>
@@ -2136,13 +2136,13 @@ export default function AdminPage() {
                       {/* CARD DO WEBHOOK */}
                       <div style={{
                         marginTop: '16px',
-                        background: '#0f172a',
-                        border: '1px dashed #334155',
+                        background: '#16201C',
+                        border: '1px dashed #3F3B34',
                         borderRadius: '10px',
                         padding: '14px 16px',
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-                          <strong style={{ color: '#38bdf8', fontSize: '0.85rem' }}>
+                          <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>
                             🔗 URL do Webhook para colar no painel do Asaas:
                           </strong>
                           <button
@@ -2160,8 +2160,8 @@ export default function AdminPage() {
                               })
                             }}
                             style={{
-                              background: '#1e293b',
-                              border: '1px solid #334155',
+                              background: '#22302A',
+                              border: '1px solid #3F3B34',
                               color: '#ffffff',
                               padding: '4px 10px',
                               borderRadius: '6px',
@@ -2176,8 +2176,8 @@ export default function AdminPage() {
                           display: 'block',
                           margin: '8px 0 0 0',
                           padding: '8px 12px',
-                          background: '#020617',
-                          color: '#34d399',
+                          background: '#0F1714',
+                          color: '#7DBB98',
                           borderRadius: '6px',
                           fontSize: '0.8rem',
                           fontFamily: 'monospace',
@@ -2185,7 +2185,7 @@ export default function AdminPage() {
                         }}>
                           {typeof window !== 'undefined' ? `${window.location.origin}/api/pagamentos/webhook` : 'https://www.fixum.com.br/api/pagamentos/webhook'}
                         </code>
-                        <p style={{ margin: '8px 0 0 0', color: '#64748b', fontSize: '0.75rem', lineHeight: '1.4' }}>
+                        <p style={{ margin: '8px 0 0 0', color: '#7A7264', fontSize: '0.75rem', lineHeight: '1.4' }}>
                           ℹ️ No painel do Asaas (<em>Configurações &gt; Integrações &gt; Webhooks</em>), crie um webhook com esta URL e marque os eventos: <strong>Pagamento Recebido, Confirmado, Vencido, Estornado e Chargeback</strong>.
                         </p>
                       </div>
@@ -2199,7 +2199,7 @@ export default function AdminPage() {
                           <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.05rem', fontWeight: 700 }}>
                             Canais Oficiais de Atendimento & Suporte Fixum
                           </h3>
-                          <p style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '0.8rem' }}>
+                          <p style={{ margin: '2px 0 0 0', color: '#A39A8A', fontSize: '0.8rem' }}>
                             Esses números e e-mails são exibidos nos botões de contato e rodapé do portal.
                           </p>
                         </div>
@@ -2273,9 +2273,9 @@ export default function AdminPage() {
                             type="button"
                             onClick={handleRestaurarConfigsOriginais}
                             style={{
-                              background: 'rgba(239, 68, 68, 0.12)',
-                              border: '1px solid rgba(239, 68, 68, 0.35)',
-                              color: '#f87171',
+                              background: 'rgba(212, 64, 31, 0.12)',
+                              border: '1px solid rgba(212, 64, 31, 0.35)',
+                              color: '#E8836B',
                               padding: '10px 18px',
                               borderRadius: '8px',
                               fontSize: '0.85rem',
@@ -2292,7 +2292,7 @@ export default function AdminPage() {
                         )}
                       </div>
 
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '0.75rem', color: '#A39A8A', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         🛡️ <em>Blindagem ativa: alterações de credenciais financeiras exigem confirmação explícita e são gravadas na Trilha de Auditoria.</em>
                       </span>
                     </div>
@@ -2351,8 +2351,8 @@ export default function AdminPage() {
                             <tr key={plano.id}>
                               <td style={{ textAlign: 'center' }}>
                                 <span style={{
-                                  background: '#1e293b',
-                                  color: '#38bdf8',
+                                  background: '#22302A',
+                                  color: '#F0A58F',
                                   padding: '4px 8px',
                                   borderRadius: '6px',
                                   fontSize: '0.8rem',
@@ -2369,8 +2369,8 @@ export default function AdminPage() {
                                       value={plano.nome || ''}
                                       onChange={(e) => handleAlterarCampoPlano(plano.id, 'nome', e.target.value)}
                                       style={{
-                                        background: '#0f172a',
-                                        border: '1px solid #334155',
+                                        background: '#16201C',
+                                        border: '1px solid #3F3B34',
                                         borderRadius: '6px',
                                         color: '#ffffff',
                                         padding: '4px 8px',
@@ -2379,7 +2379,7 @@ export default function AdminPage() {
                                         width: '160px',
                                       }}
                                     />
-                                    <code style={{ fontSize: '0.75rem', color: '#64748b' }}>({plano.id})</code>
+                                    <code style={{ fontSize: '0.75rem', color: '#7A7264' }}>({plano.id})</code>
                                   </div>
 
                                   <input
@@ -2388,10 +2388,10 @@ export default function AdminPage() {
                                     onChange={(e) => handleAlterarCampoPlano(plano.id, 'descricao', e.target.value)}
                                     placeholder="Descrição comercial para o anunciante..."
                                     style={{
-                                      background: '#0f172a',
-                                      border: '1px solid #334155',
+                                      background: '#16201C',
+                                      border: '1px solid #3F3B34',
                                       borderRadius: '6px',
-                                      color: '#94a3b8',
+                                      color: '#A39A8A',
                                       padding: '4px 8px',
                                       fontSize: '0.8rem',
                                       width: '100%',
@@ -2408,8 +2408,8 @@ export default function AdminPage() {
                                     value={plano.limite_imoveis_min || 1}
                                     onChange={(e) => handleAlterarCampoPlano(plano.id, 'limite_imoveis_min', e.target.value)}
                                     style={{
-                                      background: '#0f172a',
-                                      border: '1px solid #334155',
+                                      background: '#16201C',
+                                      border: '1px solid #3F3B34',
                                       borderRadius: '6px',
                                       color: '#ffffff',
                                       padding: '4px 8px',
@@ -2418,15 +2418,15 @@ export default function AdminPage() {
                                       textAlign: 'center',
                                     }}
                                   />
-                                  <span style={{ color: '#64748b' }}>a</span>
+                                  <span style={{ color: '#7A7264' }}>a</span>
                                   <input
                                     type="number"
                                     min="1"
                                     value={plano.limite_imoveis_max >= 99999 ? 99999 : plano.limite_imoveis_max}
                                     onChange={(e) => handleAlterarCampoPlano(plano.id, 'limite_imoveis_max', e.target.value)}
                                     style={{
-                                      background: '#0f172a',
-                                      border: '1px solid #334155',
+                                      background: '#16201C',
+                                      border: '1px solid #3F3B34',
                                       borderRadius: '6px',
                                       color: '#ffffff',
                                       padding: '4px 8px',
@@ -2436,12 +2436,12 @@ export default function AdminPage() {
                                     }}
                                   />
                                 </div>
-                                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>imóveis ativos</span>
+                                <span style={{ fontSize: '0.7rem', color: '#7A7264' }}>imóveis ativos</span>
                               </td>
 
                               <td>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                  <span style={{ color: '#38bdf8', fontWeight: 600, fontSize: '0.85rem' }}>R$</span>
+                                  <span style={{ color: '#F0A58F', fontWeight: 600, fontSize: '0.85rem' }}>R$</span>
                                   <input
                                     type="number"
                                     step="0.10"
@@ -2449,24 +2449,24 @@ export default function AdminPage() {
                                     value={plano.preco_mensal !== undefined ? plano.preco_mensal : 0}
                                     onChange={(e) => handleAlterarCampoPlano(plano.id, 'preco_mensal', e.target.value)}
                                     style={{
-                                      background: '#0f172a',
-                                      border: '1px solid #334155',
+                                      background: '#16201C',
+                                      border: '1px solid #3F3B34',
                                       borderRadius: '6px',
-                                      color: '#34d399',
+                                      color: '#7DBB98',
                                       padding: '4px 8px',
                                       fontSize: '0.95rem',
                                       fontWeight: 700,
                                       width: '90px',
                                     }}
                                   />
-                                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>/mês</span>
+                                  <span style={{ fontSize: '0.75rem', color: '#7A7264' }}>/mês</span>
                                 </div>
                               </td>
 
                               <td>
                                 <span style={{
-                                  background: 'rgba(56, 189, 248, 0.1)',
-                                  color: '#38bdf8',
+                                  background: 'rgba(240, 165, 143, 0.1)',
+                                  color: '#F0A58F',
                                   padding: '3px 8px',
                                   borderRadius: '6px',
                                   fontSize: '0.8rem',
@@ -2482,7 +2482,7 @@ export default function AdminPage() {
                                     type="checkbox"
                                     checked={!!plano.destaque_incluso}
                                     onChange={(e) => handleAlterarCampoPlano(plano.id, 'destaque_incluso', e.target.checked)}
-                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#38bdf8' }}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#F0A58F' }}
                                   />
                                 </label>
                               </td>
@@ -2493,7 +2493,7 @@ export default function AdminPage() {
                                     type="checkbox"
                                     checked={plano.ativo !== false}
                                     onChange={(e) => handleAlterarCampoPlano(plano.id, 'ativo', e.target.checked)}
-                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#22c55e' }}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#3F8A66' }}
                                   />
                                 </label>
                               </td>
@@ -2512,17 +2512,17 @@ export default function AdminPage() {
                         <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.05rem', fontWeight: 700 }}>
                           Descontos Promocionais por Ciclo Contratual (Multi-Meses)
                         </h3>
-                        <p style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '0.8rem' }}>
+                        <p style={{ margin: '2px 0 0 0', color: '#A39A8A', fontSize: '0.8rem' }}>
                           Defina o percentual de desconto concedido automaticamente ao cliente ao optar por ciclos de pagamento mais longos.
                         </p>
                       </div>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginTop: '16px' }}>
-                      <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px 16px' }}>
+                      <div style={{ background: '#16201C', border: '1px solid #22302A', borderRadius: '10px', padding: '14px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <strong style={{ color: '#38bdf8', fontSize: '0.85rem' }}>🥉 Trimestral (3 Meses)</strong>
-                          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Renovação a cada 90 dias</span>
+                          <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>🥉 Trimestral (3 Meses)</strong>
+                          <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>Renovação a cada 90 dias</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
                           <input
@@ -2532,10 +2532,10 @@ export default function AdminPage() {
                             value={descontoTrimestral}
                             onChange={(e) => setDescontoTrimestral(Number(e.target.value))}
                             style={{
-                              background: '#020617',
-                              border: '1px solid #334155',
+                              background: '#0F1714',
+                              border: '1px solid #3F3B34',
                               borderRadius: '6px',
-                              color: '#34d399',
+                              color: '#7DBB98',
                               padding: '6px 10px',
                               fontSize: '1rem',
                               fontWeight: 700,
@@ -2547,10 +2547,10 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px 16px' }}>
+                      <div style={{ background: '#16201C', border: '1px solid #22302A', borderRadius: '10px', padding: '14px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <strong style={{ color: '#38bdf8', fontSize: '0.85rem' }}>🥈 Semestral (6 Meses)</strong>
-                          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Renovação a cada 180 dias</span>
+                          <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>🥈 Semestral (6 Meses)</strong>
+                          <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>Renovação a cada 180 dias</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
                           <input
@@ -2560,10 +2560,10 @@ export default function AdminPage() {
                             value={descontoSemestral}
                             onChange={(e) => setDescontoSemestral(Number(e.target.value))}
                             style={{
-                              background: '#020617',
-                              border: '1px solid #334155',
+                              background: '#0F1714',
+                              border: '1px solid #3F3B34',
                               borderRadius: '6px',
-                              color: '#34d399',
+                              color: '#7DBB98',
                               padding: '6px 10px',
                               fontSize: '1rem',
                               fontWeight: 700,
@@ -2575,10 +2575,10 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px 16px' }}>
+                      <div style={{ background: '#16201C', border: '1px solid #22302A', borderRadius: '10px', padding: '14px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <strong style={{ color: '#eab308', fontSize: '0.85rem' }}>🥇 Anual (12 Meses) 🔥</strong>
-                          <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Renovação a cada 365 dias</span>
+                          <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>Renovação a cada 365 dias</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
                           <input
@@ -2588,10 +2588,10 @@ export default function AdminPage() {
                             value={descontoAnual}
                             onChange={(e) => setDescontoAnual(Number(e.target.value))}
                             style={{
-                              background: '#020617',
-                              border: '1px solid #334155',
+                              background: '#0F1714',
+                              border: '1px solid #3F3B34',
                               borderRadius: '6px',
-                              color: '#34d399',
+                              color: '#7DBB98',
                               padding: '6px 10px',
                               fontSize: '1rem',
                               fontWeight: 700,
@@ -2608,7 +2608,7 @@ export default function AdminPage() {
                   {/* ── CARD: BLINDAGEM CONTRATUAL E IMUTABILIDADE DE PREÇO ── */}
                   <div style={{
                     marginTop: '20px',
-                    background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
+                    background: 'linear-gradient(135deg, #16201C 0%, #1e1b4b 100%)',
                     border: '1px solid rgba(99, 102, 241, 0.3)',
                     borderRadius: '12px',
                     padding: '18px 22px',
@@ -2621,7 +2621,7 @@ export default function AdminPage() {
                       <strong style={{ color: '#a5b4fc', fontSize: '0.95rem' }}>
                         🛡️ Blindagem Contratual de Preço Ativo (Garantia de Não Reajuste Durante a Vigência)
                       </strong>
-                      <p style={{ margin: '6px 0 0 0', color: '#cbd5e1', fontSize: '0.82rem', lineHeight: '1.5' }}>
+                      <p style={{ margin: '6px 0 0 0', color: '#CFC6B6', fontSize: '0.82rem', lineHeight: '1.5' }}>
                         A Fixum assegura total segurança jurídica aos clientes: <strong>qualquer reajuste realizado nesta tabela NÃO altera as cobranças de clientes que já possuem assinatura ativa</strong> durante o ciclo contratado (seja mensal, trimestral, semestral ou anual). Os novos valores valem exclusivamente para <strong>novas adesões</strong> ou em caso de <strong>alteração voluntária (upgrade/downgrade)</strong> solicitada pelo próprio anunciante.
                       </p>
                     </div>
@@ -2630,8 +2630,8 @@ export default function AdminPage() {
                   {/* CARD DE INSTRUÇÕES E AUDITORIA */}
                   <div style={{
                     marginTop: '16px',
-                    background: '#0f172a',
-                    border: '1px solid #1e293b',
+                    background: '#16201C',
+                    border: '1px solid #22302A',
                     borderRadius: '12px',
                     padding: '16px 20px',
                     display: 'flex',
@@ -2641,7 +2641,7 @@ export default function AdminPage() {
                     <span style={{ fontSize: '1.8rem' }}>📜</span>
                     <div>
                       <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>Sincronização & Trilha de Auditoria Automática</strong>
-                      <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                      <p style={{ margin: '4px 0 0 0', color: '#A39A8A', fontSize: '0.8rem', lineHeight: '1.4' }}>
                         Qualquer alteração de preços, faixas ou descontos é gravada com carimbo de data/hora e e-mail do administrador na <strong>Trilha de Auditoria</strong>.
                       </p>
                     </div>

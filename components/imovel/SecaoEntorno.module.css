@@ -15,7 +15,7 @@
 .tituloSecao {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -24,7 +24,7 @@
 
 .subtituloSecao {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 0.25rem 0 0 0;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .scrollCategorias::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--pedra-300);
   border-radius: 4px;
 }
 
@@ -54,9 +54,9 @@
   gap: 0.4rem;
   padding: 0.5rem 0.85rem;
   border-radius: 20px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
+  color: var(--pedra-600);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -67,16 +67,16 @@
 }
 
 .btnCategoria:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: var(--papel);
+  border-color: var(--pedra-300);
+  color: var(--tinta);
 }
 
 .btnCategoriaAtiva {
-  background: #2563eb !important;
-  border-color: #1d4ed8 !important;
+  background: var(--tinta) !important;
+  border-color: var(--tinta-2) !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.25);
 }
 
 .iconeCat {
@@ -110,7 +110,7 @@
   gap: 0.75rem;
   padding: 0.75rem 0.9rem;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -118,16 +118,16 @@
 }
 
 .cardPoi:hover {
-  border-color: #93c5fd;
-  background: #f8fafc;
+  border-color: var(--pedra-400);
+  background: var(--papel-claro);
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.06);
+  box-shadow: 0 4px 10px rgba(22, 32, 28, 0.06);
 }
 
 .cardPoiSelecionado {
-  border-color: #2563eb !important;
-  background: #eff6ff !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
+  box-shadow: 0 0 0 2px rgba(22, 32, 28, 0.2) !important;
 }
 
 .poiInfoPrincipal {
@@ -142,7 +142,7 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: #f1f5f9;
+  background: var(--papel);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,7 +151,7 @@
 }
 
 .cardPoiSelecionado .poiIconeWrapper {
-  background: #dbeafe;
+  background: var(--pedra-200);
 }
 
 .poiTextos {
@@ -163,7 +163,7 @@
 .poiNome {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -175,14 +175,14 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-top: 0.2rem;
 }
 
 .poiDistanciaBadge {
   font-weight: 800;
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--tinta);
+  background: var(--pedra-100);
   padding: 1px 5px;
   border-radius: 4px;
 }
@@ -195,13 +195,13 @@
 
 .poiSetaVer {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   flex-shrink: 0;
   transition: transform 0.15s ease;
 }
 
 .cardPoi:hover .poiSetaVer {
-  color: #2563eb;
+  color: var(--tinta);
   transform: translateX(2px);
 }
 
@@ -215,7 +215,7 @@
 .skeletonCard {
   height: 58px;
   border-radius: 10px;
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(90deg, var(--papel) 25%, var(--pedra-200) 50%, var(--papel) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -229,10 +229,10 @@
 .vazioPois {
   padding: 1.5rem;
   text-align: center;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
+  background: var(--papel-claro);
+  border: 1px dashed var(--pedra-300);
   border-radius: 10px;
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.88rem;
 }
 

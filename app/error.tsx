@@ -27,14 +27,14 @@ export default function Error({
           justifyContent: 'center',
           padding: '2rem 1.5rem',
           textAlign: 'center',
-          background: '#f8fafc',
+          background: '#FAF7F1',
         }}
       >
         <div
           style={{
             maxWidth: '500px',
             background: '#ffffff',
-            border: '1px solid #fee2e2',
+            border: '1px solid #FBE6DF',
             borderRadius: '1.5rem',
             padding: '3rem 2rem',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
@@ -49,7 +49,7 @@ export default function Error({
             style={{
               fontSize: '1.5rem',
               fontWeight: 800,
-              color: '#0f172a',
+              color: '#16201C',
               letterSpacing: '-0.02em',
               marginTop: '0.5rem',
             }}
@@ -59,7 +59,7 @@ export default function Error({
           <p
             style={{
               fontSize: '0.95rem',
-              color: '#64748b',
+              color: '#7A7264',
               lineHeight: 1.6,
               marginBottom: '1rem',
             }}

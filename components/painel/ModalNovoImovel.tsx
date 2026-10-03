@@ -804,7 +804,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                     placeholder="0 = Sob Consulta"
                   />
                   {extrairNumero(dados.preco) === 0 && dados.preco.trim() !== '' && (
-                    <span style={{ display: 'block', fontSize: '0.725rem', color: '#0284c7', marginTop: '3px' }}>
+                    <span style={{ display: 'block', fontSize: '0.725rem', color: '#2C5F8A', marginTop: '3px' }}>
                       ℹ️ R$ 0: o anúncio será exibido automaticamente como <strong>Sob Consulta</strong>.
                     </span>
                   )}
@@ -838,7 +838,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                   </div>
                 </div>
               ) : modoExibicaoPrecoConta === 'sob_consulta' ? (
-                <div className={styles.avisoPoliticaPreco} style={{ background: '#f0f9ff', borderColor: '#bae6fd', color: '#0369a1' }}>
+                <div className={styles.avisoPoliticaPreco} style={{ background: '#FAF7F1', borderColor: '#CFC6B6', color: '#2C5F8A' }}>
                   <span>💬 <strong>Preço Sob Consulta:</strong> Este anúncio será exibido como sob consulta conforme a política da conta.</span>
                 </div>
               ) : (
@@ -851,7 +851,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
               <div className={styles.grupo} style={{ marginBottom: '10px' }}>
                 <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>Código do Anúncio / Referência {modoCodigo === 'proprio' ? '*' : '(Ref)'}</span>
-                  <span style={{ fontSize: '0.725rem', color: modoCodigo === 'proprio' ? '#c2410c' : '#64748b', fontWeight: 'normal' }}>
+                  <span style={{ fontSize: '0.725rem', color: modoCodigo === 'proprio' ? '#B23318' : '#7A7264', fontWeight: 'normal' }}>
                     {modoCodigo === 'proprio'
                       ? (dados.codigo ? '✓ Código Próprio/CRM' : '⚠️ Obrigatório (Modo Próprio/CRM)')
                       : (dados.codigo ? 'Personalizado' : `Automático (${prefixoImovel || 'FIX'}-XXXX)`)}
@@ -887,9 +887,9 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       autoComplete="one-time-code"
                       data-lpignore="true"
                       data-form-type="other"
-                      style={erroCep ? { borderColor: '#f59e0b' } : undefined}
+                      style={erroCep ? { borderColor: '#E3A72F' } : undefined}
                     />
-                    {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.75rem", color: "#64748b" }}>...</span>}
+                    {buscandoCep && <span style={{ alignSelf: "center", fontSize: "0.75rem", color: "#7A7264" }}>...</span>}
                   </div>
                 </div>
 
@@ -924,9 +924,9 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
               {/* Feedback de CEP não encontrado */}
               {erroCep && (
                 <div style={{
-                  background: '#fffbeb',
-                  border: '1px solid #fde68a',
-                  color: '#b45309',
+                  background: '#FDF7E8',
+                  border: '1px solid #F2D48E',
+                  color: '#8A5F12',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   padding: '6px 10px',
@@ -1047,7 +1047,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
               </div>
 
               <div style={{ display: 'flex', gap: '1.5rem', marginTop: '6px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#3F3B34', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={dados.aceita_pets}
@@ -1055,7 +1055,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                   />
                   🐾 Aceita Pets
                 </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#3F3B34', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={dados.mobiliado}
@@ -1072,7 +1072,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
             <div className={styles.etapaConteudo}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <h2 className={styles.etapaTitulo}>Galeria de Fotos</h2>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1d4ed8', background: '#eff6ff', padding: '3px 8px', borderRadius: '16px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#22302A', background: '#EAE4D8', padding: '3px 8px', borderRadius: '16px' }}>
                   {fotos.length} {fotos.length === 1 ? 'foto' : 'fotos'}
                 </span>
               </div>
@@ -1100,14 +1100,14 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                 }}
               >
                 <div className={styles.dropzoneCirculo}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16201C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                     <circle cx="8.5" cy="8.5" r="1.5"/>
                     <polyline points="21 15 16 10 5 21"/>
                   </svg>
                 </div>
                 <h3 className={styles.dropzoneTitulo}>
-                  Arraste suas fotos aqui ou <span style={{ color: '#2563eb', textDecoration: 'underline' }}>escolha do dispositivo</span>
+                  Arraste suas fotos aqui ou <span style={{ color: '#16201C', textDecoration: 'underline' }}>escolha do dispositivo</span>
                 </h3>
                 <p className={styles.dropzoneSub}>PNG, JPG ou WEBP • Até 20 fotos</p>
                 <button
@@ -1200,12 +1200,12 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
               {isCorretor && (
                 <div style={{
-                  background: '#eff6ff',
-                  border: '1.5px solid #bfdbfe',
+                  background: '#EAE4D8',
+                  border: '1.5px solid #CFC6B6',
                   borderRadius: '0.75rem',
                   padding: '0.85rem 1rem',
                   fontSize: '0.825rem',
-                  color: '#1e40af',
+                  color: '#22302A',
                   lineHeight: '1.4',
                   display: 'flex',
                   alignItems: 'center',
@@ -1220,12 +1220,12 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
               {usoPlano.atingiuLimite && (
                 <div style={{
-                  background: '#fef2f2',
-                  border: '1.5px solid #fecaca',
+                  background: '#FDF1EC',
+                  border: '1.5px solid #F3C3B5',
                   borderRadius: '0.75rem',
                   padding: '0.85rem 1rem',
                   fontSize: '0.825rem',
-                  color: '#991b1b',
+                  color: '#8F2812',
                   lineHeight: '1.4',
                   display: 'flex',
                   alignItems: 'center',
@@ -1281,7 +1281,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       className={`${styles.btnPublicar} ${salvando ? styles.btnCarregando : ""}`}
                       onClick={() => salvar('rascunho')}
                       disabled={salvando}
-                      style={{ background: '#d97706' }}
+                      style={{ background: '#C08A1E' }}
                     >
                       {salvando ? "Enviando..." : "📤 Enviar para Revisão do Gestor"}
                     </button>
@@ -1326,7 +1326,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       className={styles.btnVoltar2}
                       onClick={() => salvar('rascunho')}
                       disabled={salvando}
-                      style={{ borderColor: '#f59e0b', color: '#b45309', background: '#fffbeb', fontWeight: 700 }}
+                      style={{ borderColor: '#E3A72F', color: '#8A5F12', background: '#FDF7E8', fontWeight: 700 }}
                       title="Salvar e colocar na fila de revisão interna"
                     >
                       ⏳ Enviar p/ Revisão Interna

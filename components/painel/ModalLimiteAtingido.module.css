@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(22, 32, 28, 0.7);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -33,7 +33,7 @@
   background: transparent;
   border: none;
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   cursor: pointer;
   width: 36px;
   height: 36px;
@@ -45,16 +45,16 @@
 }
 
 .btnFechar:hover {
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--papel);
+  color: var(--pedra-700);
 }
 
 .iconeAlerta {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #eff6ff;
-  border: 2px solid #dbeafe;
+  background: var(--pedra-100);
+  border: 2px solid var(--pedra-200);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,14 +65,14 @@
 .titulo {
   font-size: 1.35rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.5rem;
   line-height: 1.3;
 }
 
 .descricao {
   font-size: 0.95rem;
-  color: #64748b;
+  color: var(--pedra-500);
   line-height: 1.5;
   margin-bottom: 1.5rem;
 }
@@ -82,8 +82,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 1rem;
   padding: 1rem;
   width: 100%;
@@ -102,19 +102,19 @@
 
 .infoPlanoAtual {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 .infoProximoPlano {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #C3DACB;
 }
 
 .tagAtual {
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 0.25rem;
 }
 
@@ -122,8 +122,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #15803d;
-  background: #dcfce7;
+  color: var(--cerrado);
+  background: var(--cerrado-claro);
   padding: 2px 8px;
   border-radius: 999px;
   margin-bottom: 0.25rem;
@@ -133,39 +133,39 @@
 .infoProximoPlano h4 {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0.2rem 0;
 }
 
 .infoPlanoAtual p,
 .infoProximoPlano p {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-bottom: 0.4rem;
 }
 
 .precoAtual {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .precoProximo {
   font-size: 1rem;
   font-weight: 700;
-  color: #16a34a;
+  color: var(--cerrado);
 }
 
 .custoUnitario {
   font-size: 0.75rem;
-  color: #15803d;
+  color: var(--cerrado);
   font-weight: 500;
   margin-top: 0.2rem;
 }
 
 .setaUpgrade {
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 700;
 }
 
@@ -179,7 +179,7 @@
 .btnUpgrade {
   width: 100%;
   min-height: 48px;
-  background: #0f4c81;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   border-radius: 0.75rem;
@@ -201,8 +201,8 @@
   width: 100%;
   min-height: 44px;
   background: transparent;
-  color: #64748b;
-  border: 1px solid #cbd5e1;
+  color: var(--pedra-500);
+  border: 1px solid var(--pedra-300);
   border-radius: 0.75rem;
   font-size: 0.9rem;
   font-weight: 500;
@@ -211,8 +211,8 @@
 }
 
 .btnSecundario:hover {
-  background: #f8fafc;
-  color: #334155;
+  background: var(--papel-claro);
+  color: var(--pedra-700);
 }
 
 @keyframes fadeIn {

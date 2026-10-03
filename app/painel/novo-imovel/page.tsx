@@ -16,7 +16,7 @@ export default function NovoImovelRedirect() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#0f172a',
+      background: '#16201C',
       color: '#ffffff',
       fontSize: '0.9rem',
       fontWeight: 600

@@ -25,7 +25,7 @@
 .tituloSecao {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   letter-spacing: -0.02em;
   margin: 0;
   line-height: 1.2;
@@ -33,7 +33,7 @@
 
 .subtituloSecao {
   font-size: 0.775rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-top: 0.15rem;
 }
 
@@ -53,7 +53,7 @@
 
 .cardMetrica {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 0.65rem;
   padding: 0.5rem 0.75rem;
   display: flex;
@@ -87,20 +87,20 @@
 .valorMetrica {
   font-size: 1.125rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   line-height: 1.15;
 }
 
 .labelMetrica {
   font-size: 0.675rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
 }
 
 /* BARRA DE FILTROS E PESQUISA */
 .barraFerramentas {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   display: flex;
@@ -128,18 +128,18 @@
   position: absolute;
   left: 10px;
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   pointer-events: none;
 }
 
 .inputBusca {
   width: 100%;
   padding: 0.45rem 2rem 0.45rem 2.2rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 0.45rem;
   font-size: 0.8rem;
-  color: #0f172a;
-  background: #f8fafc;
+  color: var(--tinta);
+  background: var(--papel-claro);
   transition: all 0.15s;
 }
 
@@ -148,7 +148,7 @@
   right: 8px;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.85rem;
   cursor: pointer;
   padding: 2px 6px;
@@ -160,15 +160,15 @@
 }
 
 .btnLimparBusca:hover {
-  color: #ef4444;
-  background: #fee2e2;
+  color: var(--marco);
+  background: var(--marco-claro);
 }
 
 .inputBusca:focus {
   outline: none;
   background: #ffffff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.12);
 }
 
 .linhaFiltros {
@@ -195,29 +195,29 @@
 .selectFiltro {
   padding: 0.4rem 0.65rem;
   border-radius: 0.45rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   background-color: #ffffff;
   font-size: 0.775rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--pedra-700);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .selectFiltroComX {
   padding-right: 1.85rem !important;
-  border-color: #93c5fd !important;
-  background-color: #eff6ff !important;
-  color: #1e40af !important;
+  border-color: var(--pedra-400) !important;
+  background-color: var(--pedra-100) !important;
+  color: var(--tinta-2) !important;
   font-weight: 700 !important;
 }
 
 .btnXSelect {
   position: absolute;
   right: 6px;
-  background: #dbeafe;
+  background: var(--pedra-200);
   border: none;
-  color: #1e40af;
+  color: var(--tinta-2);
   width: 17px;
   height: 17px;
   border-radius: 50%;
@@ -232,14 +232,14 @@
 }
 
 .btnXSelect:hover {
-  background: #fee2e2;
-  color: #ef4444;
+  background: var(--marco-claro);
+  color: var(--marco);
   transform: scale(1.15);
 }
 
 .selectFiltro:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--tinta);
 }
 
 .btnLimparFiltrosInline {
@@ -247,9 +247,9 @@
   align-items: center;
   gap: 4px;
   padding: 0.35rem 0.6rem;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+  background: var(--cor-erro-claro);
+  border: 1px solid #F3C3B5;
+  color: var(--marco-escuro);
   border-radius: 0.45rem;
   font-size: 0.725rem;
   font-weight: 700;
@@ -258,17 +258,17 @@
 }
 
 .btnLimparFiltrosInline:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
+  background: var(--marco-claro);
+  border-color: #EBA592;
 }
 
 .grupoVisualizacao {
   display: flex;
   align-items: center;
-  background: #f1f5f9;
+  background: var(--papel);
   padding: 2px;
   border-radius: 0.45rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 .btnViewMode {
@@ -278,7 +278,7 @@
   border-radius: 0.35rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -288,7 +288,7 @@
 
 .btnViewModeAtivo {
   background: #ffffff;
-  color: #0f172a;
+  color: var(--tinta);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
@@ -297,7 +297,7 @@
   position: sticky;
   top: 70px;
   z-index: 50;
-  background: #0f172a;
+  background: var(--tinta);
   color: #ffffff;
   padding: 0.6rem 1rem;
   border-radius: 0.65rem;
@@ -324,7 +324,7 @@
 }
 
 .badgeQtdLote {
-  background: #2563eb;
+  background: var(--tinta);
   color: #ffffff;
   padding: 2px 7px;
   border-radius: 999px;
@@ -359,12 +359,12 @@
 }
 
 .btnLotePerigo {
-  background: #dc2626;
-  border-color: #ef4444;
+  background: var(--marco-escuro);
+  border-color: var(--marco);
 }
 
 .btnLotePerigo:hover {
-  background: #b91c1c;
+  background: #8F2812;
 }
 
 /* CABEÇALHO DA LISTA / SELEÇÃO */
@@ -374,7 +374,7 @@
   justify-content: space-between;
   padding: 0.2rem 0.4rem;
   font-size: 0.775rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
 }
 
@@ -409,7 +409,7 @@
 
 .cardImovel {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 0.75rem;
   overflow: hidden;
   display: flex;
@@ -420,14 +420,14 @@
 }
 
 .cardImovel:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 6px 16px -3px rgba(37, 99, 235, 0.1);
+  border-color: var(--pedra-400);
+  box-shadow: 0 6px 16px -3px rgba(22, 32, 28, 0.1);
   transform: translateY(-2px);
 }
 
 .cardImovelSelecionado {
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 2px #2563eb !important;
+  border-color: var(--tinta) !important;
+  box-shadow: 0 0 0 2px var(--tinta) !important;
   background: #f8faff;
 }
 
@@ -435,7 +435,7 @@
 .cardFotoContainer {
   height: 140px;
   position: relative;
-  background-color: #f1f5f9;
+  background-color: var(--papel);
   background-size: cover;
   background-position: center;
   display: flex;
@@ -457,7 +457,7 @@
   width: 15px;
   height: 15px;
   cursor: pointer;
-  accent-color: #2563eb;
+  accent-color: var(--tinta);
 }
 
 .badgeNegociacao {
@@ -465,7 +465,7 @@
   top: 7px;
   left: 28px;
   z-index: 10;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(22, 32, 28, 0.85);
   color: #ffffff;
   font-size: 0.625rem;
   font-weight: 800;
@@ -512,7 +512,7 @@
   bottom: 7px;
   right: 9px;
   z-index: 10;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(22, 32, 28, 0.75);
   color: #ffffff;
   font-size: 0.625rem;
   font-weight: 700;
@@ -543,9 +543,9 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  color: #0369a1;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-300);
+  color: var(--hidro);
   font-size: 0.685rem;
   font-weight: 600;
   padding: 3px 7px;
@@ -557,16 +557,16 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #0284c7;
+  background: var(--hidro);
 }
 
 .badgeTabelaSobConsulta {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #e0f2fe;
-  border: 1px solid #7dd3fc;
-  color: #0369a1;
+  background: var(--pedra-100);
+  border: 1px solid #F5C2B1;
+  color: var(--hidro);
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 6px;
@@ -593,14 +593,14 @@
   font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #2563eb;
+  color: var(--tinta);
   letter-spacing: 0.02em;
 }
 
 .cardTitulo {
   font-size: 0.825rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   line-height: 1.3;
   margin: 0;
   display: -webkit-box;
@@ -614,7 +614,7 @@
   align-items: center;
   gap: 3px;
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 500;
 }
 
@@ -623,8 +623,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border: 1px solid var(--papel);
   border-radius: 5px;
   padding: 3px 2px;
   text-align: center;
@@ -644,7 +644,7 @@
 .gradeItemValor {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   white-space: nowrap;
 }
 
@@ -662,9 +662,9 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #dbeafe;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
+  border: 1px solid var(--pedra-200);
   padding: 2px 4px;
   border-radius: 3px;
   font-weight: 600;
@@ -679,9 +679,9 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
+  background: var(--cor-sucesso-claro);
+  color: #24563E;
+  border: 1px solid #C3DACB;
   padding: 2px 4px;
   border-radius: 3px;
   font-weight: 700;
@@ -692,8 +692,8 @@
 /* RODAPÉ DE AÇÕES PROFISSIONAIS */
 .cardAcoes {
   padding: 0.5rem 0.65rem;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border-top: 1px solid var(--papel);
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -716,9 +716,9 @@
   width: 26px;
   height: 26px;
   border-radius: 4px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   background: #ffffff;
-  color: #475569;
+  color: var(--pedra-600);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -729,9 +729,9 @@
 }
 
 .btnAcaoIcone:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-  border-color: #cbd5e1;
+  background: var(--papel);
+  color: var(--tinta);
+  border-color: var(--pedra-300);
 }
 
 .btnAcaoPrincipal {
@@ -746,41 +746,41 @@
   justify-content: center;
   gap: 3px;
   transition: all 0.15s;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   background: #ffffff;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 .btnAcaoPrincipal:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  background: var(--papel);
+  border-color: var(--pedra-400);
 }
 
 .btnAcaoAprovar {
-  background: #b45309 !important;
+  background: var(--ouro-escuro) !important;
   color: #ffffff !important;
   border: none !important;
 }
 
 .btnAcaoAprovar:hover {
-  background: #92400e !important;
+  background: var(--ouro-escuro) !important;
 }
 
 .btnChatComAlerta {
   position: relative;
-  background: #f0fdf4 !important;
-  border-color: #86efac !important;
-  color: #15803d !important;
+  background: var(--cor-sucesso-claro) !important;
+  border-color: #A9CDB6 !important;
+  color: var(--cerrado) !important;
   font-weight: 700 !important;
 }
 
 .btnChatComAlerta:hover {
-  background: #dcfce7 !important;
-  border-color: #4ade80 !important;
+  background: var(--cerrado-claro) !important;
+  border-color: #7DBB98 !important;
 }
 
 .badgeChatNaoLido {
-  background: #ef4444;
+  background: var(--marco);
   color: #ffffff;
   font-size: 0.625rem;
   font-weight: 800;
@@ -792,7 +792,7 @@
   align-items: center;
   justify-content: center;
   line-height: 1;
-  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 1px 3px rgba(212, 64, 31, 0.4);
   animation: pulseBadge 1.8s infinite ease-in-out;
 }
 
@@ -804,7 +804,7 @@
 /* MODO TABELA (COMPACTO) */
 .tabelaWrapper {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 0.75rem;
   overflow-x: auto;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
@@ -818,26 +818,26 @@
 }
 
 .tabela th {
-  background: #f8fafc;
-  color: #475569;
+  background: var(--papel-claro);
+  color: var(--pedra-600);
   font-weight: 700;
   padding: 0.75rem 0.85rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--pedra-200);
   white-space: nowrap;
 }
 
 .tabela td {
   padding: 0.75rem 0.85rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   vertical-align: middle;
 }
 
 .tabela tr:hover td {
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 .linhaSelecionada td {
-  background: #eff6ff !important;
+  background: var(--pedra-100) !important;
 }
 
 .colunaFotoMini {
@@ -846,13 +846,13 @@
   border-radius: 5px;
   background-size: cover;
   background-position: center;
-  background-color: #e2e8f0;
+  background-color: var(--pedra-200);
 }
 
 /* VAZIO */
 .estadoVazio {
   background: #ffffff;
-  border: 2px dashed #e2e8f0;
+  border: 2px dashed var(--pedra-200);
   border-radius: 1rem;
   padding: 3rem 1.25rem;
   text-align: center;
@@ -869,13 +869,13 @@
 .tituloVazio {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
 }
 
 .textoVazio {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--pedra-500);
   max-width: 400px;
   margin: 0;
 }
@@ -986,24 +986,24 @@
   gap: 6px;
   padding: 0.4rem 0.65rem;
   border-radius: 0.45rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   background-color: #ffffff;
   font-size: 0.775rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--pedra-700);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .btnGatilhoMultiSelect:hover {
-  border-color: #94a3b8;
-  background-color: #f8fafc;
+  border-color: var(--pedra-400);
+  background-color: var(--papel-claro);
 }
 
 .btnGatilhoAtivo {
-  border-color: #93c5fd !important;
-  background-color: #eff6ff !important;
-  color: #1e40af !important;
+  border-color: var(--pedra-400) !important;
+  background-color: var(--pedra-100) !important;
+  color: var(--tinta-2) !important;
   font-weight: 700 !important;
 }
 
@@ -1013,7 +1013,7 @@
   left: 0;
   z-index: 200;
   background: #ffffff;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 10px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   min-width: 260px;
@@ -1033,20 +1033,20 @@
   padding: 6px 8px;
   border-radius: 6px;
   font-size: 0.775rem;
-  color: #1e293b;
+  color: var(--tinta-2);
   cursor: pointer;
   transition: all 0.12s ease;
   user-select: none;
 }
 
 .popoverItem:hover {
-  background-color: #f1f5f9;
+  background-color: var(--papel);
 }
 
 .popoverItemSelecionado {
-  background-color: #eff6ff;
+  background-color: var(--pedra-100);
   font-weight: 700;
-  color: #1d4ed8;
+  color: var(--tinta-2);
 }
 
 .popoverItemLeft {
@@ -1058,19 +1058,19 @@
 .popoverContador {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #64748b;
-  background: #f1f5f9;
+  color: var(--pedra-500);
+  background: var(--papel);
   padding: 1px 6px;
   border-radius: 10px;
 }
 
 .popoverItemSelecionado .popoverContador {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--pedra-200);
+  color: var(--tinta-2);
 }
 
 .popoverRodape {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
   padding: 6px 4px 2px 4px;
   margin-top: 4px;
   display: flex;
@@ -1080,8 +1080,8 @@
 
 /* ALERTA DE COTA ATINGIDA */
 .alertaCotaAtingida {
-  background: #fef2f2;
-  border: 1.5px solid #fecaca;
+  background: var(--cor-erro-claro);
+  border: 1.5px solid #F3C3B5;
   border-radius: 0.875rem;
   padding: 1rem 1.25rem;
   display: flex;
@@ -1103,7 +1103,7 @@
 
 .alertaCotaTexto {
   font-size: 0.875rem;
-  color: #991b1b;
+  color: #8F2812;
   font-weight: 600;
   line-height: 1.4;
 }

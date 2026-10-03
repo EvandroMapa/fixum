@@ -281,7 +281,7 @@ export default function ModalConfigSeguranca({
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: timerReenvio > 0 ? '#94a3b8' : 'var(--cor-primaria)',
+                    color: timerReenvio > 0 ? '#A39A8A' : 'var(--cor-primaria)',
                     fontSize: '0.8rem',
                     fontWeight: 600,
                     cursor: timerReenvio > 0 ? 'not-allowed' : 'pointer',

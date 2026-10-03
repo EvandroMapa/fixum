@@ -49,7 +49,7 @@
 .titulo {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   flex: 1;
   margin: 0;
 }
@@ -59,8 +59,8 @@
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--papel);
+  color: var(--pedra-500);
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
@@ -71,8 +71,8 @@
 }
 
 .btnFechar:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--pedra-200);
+  color: var(--tinta);
 }
 
 /* Campo autocomplete */
@@ -85,7 +85,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.8125rem;
 }
 
@@ -94,7 +94,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
 }
 
 /* Botão geolocalização */
@@ -105,10 +105,10 @@
   gap: 10px;
   width: 100%;
   padding: 13px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   border-radius: 12px;
-  background: #f8fafc;
-  color: #334155;
+  background: var(--papel-claro);
+  color: var(--pedra-700);
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
@@ -116,9 +116,9 @@
 }
 
 .btnGeo:hover:not(:disabled) {
-  border-color: #3b82f6;
-  background: #eff6ff;
-  color: #1d4ed8;
+  border-color: var(--hidro);
+  background: var(--pedra-100);
+  color: var(--tinta-2);
 }
 
 .btnGeo:disabled {
@@ -130,8 +130,8 @@
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid #cbd5e1;
-  border-top-color: #3b82f6;
+  border: 2px solid var(--pedra-300);
+  border-top-color: var(--hidro);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -144,7 +144,7 @@
 /* Erro */
 .erro {
   font-size: 0.8125rem;
-  color: #ef4444;
+  color: var(--marco);
   text-align: center;
   margin: -8px 0 0;
 }
@@ -152,7 +152,7 @@
 /* Dica final */
 .dica {
   font-size: 0.8125rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   text-align: center;
   margin: 0;
 }
@@ -160,7 +160,7 @@
 .linkExplorar {
   background: none;
   border: none;
-  color: #3b82f6;
+  color: var(--hidro);
   font-size: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -169,7 +169,7 @@
 }
 
 .linkExplorar:hover {
-  color: #1d4ed8;
+  color: var(--tinta-2);
 }
 
 /* Mobile */

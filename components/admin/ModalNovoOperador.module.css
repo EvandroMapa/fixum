@@ -18,7 +18,7 @@
 
 .modal {
   background: #0b1329;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--tinta-2);
   border-radius: 18px;
   width: 100%;
   max-width: 540px;
@@ -31,17 +31,17 @@
 
 .cabecalho {
   padding: 22px 24px;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--tinta-2);
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #0f172a;
+  background: var(--tinta);
 }
 
 .iconeTopo {
   font-size: 1.6rem;
-  background: rgba(37, 99, 235, 0.18);
-  border: 1px solid rgba(37, 99, 235, 0.35);
+  background: rgba(22, 32, 28, 0.18);
+  border: 1px solid rgba(22, 32, 28, 0.35);
   width: 46px;
   height: 46px;
   border-radius: 12px;
@@ -60,7 +60,7 @@
 }
 
 .subtitulo {
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.8rem;
   margin: 4px 0 0 0;
   line-height: 1.4;
@@ -76,9 +76,9 @@
 
 .alertaErro {
   padding: 12px 16px;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
+  background: rgba(212, 64, 31, 0.12);
+  border: 1px solid rgba(212, 64, 31, 0.3);
+  color: #EBA592;
   border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
@@ -96,14 +96,14 @@
 .label {
   font-size: 0.825rem;
   font-weight: 700;
-  color: #cbd5e1;
+  color: var(--pedra-300);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .obrigatorio {
-  color: #f87171;
+  color: #E8836B;
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -111,8 +111,8 @@
 .input {
   width: 100%;
   padding: 12px 14px;
-  background: #0f172a;
-  border: 1.5px solid #334155;
+  background: var(--tinta);
+  border: 1.5px solid var(--pedra-700);
   border-radius: 10px;
   color: #ffffff;
   font-size: 0.9rem;
@@ -122,13 +122,13 @@
 }
 
 .input::placeholder {
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .input:focus {
-  border-color: #3b82f6;
+  border-color: var(--hidro);
   background: #131d38;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px rgba(44, 95, 138, 0.2);
 }
 
 .cardCargo {
@@ -142,24 +142,24 @@
 }
 
 .cardCargo:hover {
-  border-color: #475569;
+  border-color: var(--pedra-600);
 }
 
 .cardCargoAtivo {
-  background: rgba(37, 99, 235, 0.12) !important;
-  border: 1.5px solid #3b82f6 !important;
-  box-shadow: 0 0 0 1px #3b82f6;
+  background: rgba(22, 32, 28, 0.12) !important;
+  border: 1.5px solid var(--hidro) !important;
+  box-shadow: 0 0 0 1px var(--hidro);
 }
 
 .cardCargoInativo {
-  background: #0f172a;
-  border: 1.5px solid #1e293b;
+  background: var(--tinta);
+  border: 1.5px solid var(--tinta-2);
 }
 
 .rodape {
   padding: 18px 24px;
-  background: #0f172a;
-  border-top: 1px solid #1e293b;
+  background: var(--tinta);
+  border-top: 1px solid var(--tinta-2);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -168,10 +168,10 @@
 
 .btnCancelar {
   padding: 11px 18px;
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--tinta-2);
+  border: 1px solid var(--pedra-700);
   border-radius: 10px;
-  color: #cbd5e1;
+  color: var(--pedra-300);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -179,13 +179,13 @@
 }
 
 .btnCancelar:hover {
-  background: #334155;
+  background: var(--pedra-700);
   color: #ffffff;
 }
 
 .btnConfirmar {
   padding: 11px 22px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-2));
   border: none;
   border-radius: 10px;
   color: #ffffff;
@@ -193,16 +193,16 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 14px rgba(22, 32, 28, 0.35);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .btnConfirmar:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  background: linear-gradient(135deg, var(--tinta-2), var(--tinta-2));
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 6px 18px rgba(22, 32, 28, 0.45);
 }
 
 .btnConfirmar:disabled,

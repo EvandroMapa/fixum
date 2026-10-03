@@ -68,14 +68,14 @@
 }
 
 .badgeCompra {
-  background: #dbeafe;
-  color: #1d4ed8;
-  border: 1.5px solid #93c5fd;
+  background: var(--pedra-200);
+  color: var(--tinta-2);
+  border: 1.5px solid var(--pedra-400);
 }
 
 .badgeAluguel {
   background: #ffedd5;
-  color: #c2410c;
+  color: var(--marco-escuro);
   border: 1.5px solid #fdba74;
 }
 
@@ -98,7 +98,7 @@
 
 .btnFiltrosMobile:active {
   transform: scale(0.95);
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .btnFiltrosMobileAtivo {
@@ -264,8 +264,8 @@
   text-transform: uppercase;
   padding: 3px 10px;
   border-radius: 99px;
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
 }
 
 .btnToggleTodos {
@@ -274,50 +274,50 @@
   padding: 2px 7px;
   border-radius: 6px;
   border: 1px solid var(--cor-borda);
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--papel-claro);
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .btnToggleTodos:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-  border-color: #cbd5e1;
+  background: var(--papel);
+  color: var(--tinta);
+  border-color: var(--pedra-300);
 }
 
 .grupoResidencial .labelGrupo {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  color: var(--tinta-2);
 }
 
 .grupoResidencial .todosAtivos {
-  background: #dbeafe;
-  color: #1d4ed8;
-  border-color: #93c5fd;
+  background: var(--pedra-200);
+  color: var(--tinta-2);
+  border-color: var(--pedra-400);
 }
 
 .grupoComercial .labelGrupo {
-  background: #fff7ed;
-  color: #c2410c;
+  background: var(--marco-claro);
+  color: var(--marco-escuro);
 }
 
 .grupoComercial .todosAtivos {
   background: #ffedd5;
-  color: #c2410c;
+  color: var(--marco-escuro);
   border-color: #fdba74;
 }
 
 .grupoRural .labelGrupo {
-  background: #f0fdf4;
-  color: #15803d;
+  background: var(--cor-sucesso-claro);
+  color: var(--cerrado);
 }
 
 .grupoRural .todosAtivos {
-  background: #dcfce7;
-  color: #15803d;
-  border-color: #86efac;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
+  border-color: #A9CDB6;
 }
 
 .chipTipo {
@@ -477,7 +477,7 @@
 .drawerOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(22, 32, 28, 0.65);
   backdrop-filter: blur(4px);
   z-index: 10001;
   display: flex;
@@ -501,7 +501,7 @@
 .drawerHandle {
   width: 40px;
   height: 4px;
-  background: #cbd5e1;
+  background: var(--pedra-300);
   border-radius: 2px;
   margin: 10px auto 4px;
   flex-shrink: 0;
@@ -512,14 +512,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   flex-shrink: 0;
 }
 
 .drawerTitulo {
   font-size: 16px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
 }
 
@@ -527,14 +527,14 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #f1f5f9;
+  background: var(--papel);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--pedra-500);
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -561,7 +561,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .drawerToggleNegociacao {
@@ -573,11 +573,11 @@
 .btnToggleNeg {
   padding: 12px;
   border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: #f8fafc;
+  border: 1.5px solid var(--pedra-200);
+  background: var(--papel-claro);
   font-size: 14px;
   font-weight: 700;
-  color: #475569;
+  color: var(--pedra-600);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -587,10 +587,10 @@
 }
 
 .btnToggleNegAtivo {
-  background: #1565c0;
+  background: var(--tinta);
   color: white;
-  border-color: #1565c0;
-  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
+  border-color: var(--tinta);
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.25);
 }
 
 .drawerFooter {
@@ -598,7 +598,7 @@
   align-items: center;
   gap: 10px;
   padding: 12px 18px calc(14px + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
   background: white;
   flex-shrink: 0;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
@@ -607,9 +607,9 @@
 .drawerBtnLimpar {
   padding: 12px 16px;
   border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--pedra-200);
   background: white;
-  color: #ef4444;
+  color: var(--marco);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -623,12 +623,12 @@
   padding: 13px;
   border-radius: 12px;
   border: none;
-  background: #1565c0;
+  background: var(--tinta);
   color: white;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+  box-shadow: 0 4px 12px rgba(22, 32, 28, 0.3);
   transition: all 0.15s;
   min-height: 46px;
   display: flex;
@@ -665,12 +665,12 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--pedra-200);
     background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #475569;
+    color: var(--pedra-600);
     flex-shrink: 0;
   }
 
@@ -689,9 +689,9 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--pedra-200);
     background: #ffffff;
-    color: #334155;
+    color: var(--pedra-700);
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
@@ -699,21 +699,21 @@
   }
 
   .btnFiltrosMobile:active {
-    background: #f1f5f9;
+    background: var(--papel);
     transform: scale(0.96);
   }
 
   .btnFiltrosMobileAtivo {
-    background: #eff6ff !important;
-    border-color: #93c5fd !important;
-    color: #1d4ed8 !important;
+    background: var(--pedra-100) !important;
+    border-color: var(--pedra-400) !important;
+    color: var(--tinta-2) !important;
   }
 
   .badgeQtdFiltros {
     position: absolute;
     top: -4px;
     right: -4px;
-    background: #1d4ed8;
+    background: var(--tinta-2);
     color: #ffffff;
     font-size: 10px;
     font-weight: 800;
@@ -724,7 +724,7 @@
     align-items: center;
     justify-content: center;
     border: 2px solid #ffffff;
-    box-shadow: 0 2px 4px rgba(29, 78, 216, 0.35);
+    box-shadow: 0 2px 4px rgba(22, 32, 28, 0.35);
   }
 
   .linhaChipsMobile {
@@ -749,9 +749,9 @@
     border-radius: 100px;
     font-size: 13px;
     font-weight: 600;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--pedra-200);
     background: white;
-    color: #334155;
+    color: var(--pedra-700);
     white-space: nowrap;
     flex-shrink: 0;
     height: 35px;
@@ -765,15 +765,15 @@
   }
 
   .chipCompra {
-    background: #eff6ff;
-    color: #1d4ed8;
-    border-color: #bfdbfe;
+    background: var(--pedra-100);
+    color: var(--tinta-2);
+    border-color: var(--pedra-300);
     font-weight: 700;
   }
 
   .chipAluguel {
-    background: #fff7ed;
-    color: #c2410c;
+    background: var(--marco-claro);
+    color: var(--marco-escuro);
     border-color: #fed7aa;
     font-weight: 700;
   }
@@ -784,10 +784,10 @@
   }
 
   .chipMobileAtivo {
-    background: #1565c0 !important;
+    background: var(--tinta) !important;
     color: white !important;
-    border-color: #1565c0 !important;
-    box-shadow: 0 2px 6px rgba(21, 101, 192, 0.3) !important;
+    border-color: var(--tinta) !important;
+    box-shadow: 0 2px 6px rgba(22, 32, 28, 0.3) !important;
   }
 
   .chipLimparMobile {
@@ -795,9 +795,9 @@
     border-radius: 100px;
     font-size: 11.5px;
     font-weight: 700;
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
+    background: var(--cor-erro-claro);
+    color: var(--marco-escuro);
+    border: 1px solid #F3C3B5;
     cursor: pointer;
     flex-shrink: 0;
     white-space: nowrap;

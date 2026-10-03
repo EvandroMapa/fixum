@@ -661,7 +661,7 @@ export default function ModalConfiguracoes({
                           <p className={styles.cardModoTexto}>
                             Oculta o valor em todos os anúncios para gerar contato direto.
                           </p>
-                          <div className={styles.cardModoExemplo} style={{ color: '#0284c7', background: 'rgba(2, 132, 199, 0.08)' }}>
+                          <div className={styles.cardModoExemplo} style={{ color: '#2C5F8A', background: 'rgba(44, 95, 138, 0.08)' }}>
                             Preço sob consulta
                           </div>
                         </div>
@@ -673,7 +673,7 @@ export default function ModalConfiguracoes({
                         >
                           <div className={styles.cardModoTopo}>
                             <span className={styles.cardModoTitulo}>🎛️ Por Anúncio</span>
-                            <span className={styles.badgeRecomendado} style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a' }}>Flexível</span>
+                            <span className={styles.badgeRecomendado} style={{ background: '#FBEFD3', color: '#8A5F12', border: '1px solid #F2D48E' }}>Flexível</span>
                           </div>
                           <p className={styles.cardModoTexto}>
                             Escolha individualmente em cada imóvel no cadastro/edição.

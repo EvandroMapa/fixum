@@ -22,11 +22,11 @@ type ModoVisualizacao = 'kanban' | 'lista'
 type FiltroStatusPipeline = 'abertos' | 'fechados' | 'perdidos' | 'arquivados'
 
 const ETAPAS_KANBAN_ATIVAS = [
-  { id: 'novo', titulo: 'Novos', icone: '📥', cor: '#3b82f6' },
-  { id: 'em_contato', titulo: 'Em Contato', icone: '💬', cor: '#0284c7' },
+  { id: 'novo', titulo: 'Novos', icone: '📥', cor: '#2C5F8A' },
+  { id: 'em_contato', titulo: 'Em Contato', icone: '💬', cor: '#2C5F8A' },
   { id: 'visita_agendada', titulo: 'Visita Agendada', icone: '📅', cor: '#8b5cf6' },
-  { id: 'proposta', titulo: 'Proposta', icone: '💰', cor: '#f59e0b' },
-  { id: 'negociacao', titulo: 'Em Negociação', icone: '🤝', cor: '#ea580c' },
+  { id: 'proposta', titulo: 'Proposta', icone: '💰', cor: '#E3A72F' },
+  { id: 'negociacao', titulo: 'Em Negociação', icone: '🤝', cor: '#B23318' },
 ]
 
 function extrairIniciais(nome: string) {
@@ -37,10 +37,10 @@ function extrairIniciais(nome: string) {
 }
 
 const CORES_AVATAR = [
-  { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' },
-  { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0' },
+  { bg: '#EAE4D8', text: '#22302A', border: '#CFC6B6' },
+  { bg: '#EEF5F0', text: '#2E6B4E', border: '#C3DACB' },
   { bg: '#faf5ff', text: '#7e22ce', border: '#e9d5ff' },
-  { bg: '#fff7ed', text: '#c2410c', border: '#fed7aa' },
+  { bg: '#FBE6DF', text: '#B23318', border: '#fed7aa' },
   { bg: '#fdf2f8', text: '#be185d', border: '#fbcfe8' },
   { bg: '#f0fdfa', text: '#0f766e', border: '#99f6e4' },
 ]

@@ -18,17 +18,17 @@
 .tituloPrincipal {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.25rem;
 }
 
 .subtituloPrincipal {
   font-size: 0.95rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .btnUpgradePrincipal {
-  background: #0f4c81;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -41,7 +41,7 @@
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px -1px rgba(15, 76, 129, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(22, 32, 28, 0.2);
 }
 
 .btnUpgradePrincipal:hover {
@@ -51,12 +51,12 @@
 
 /* ── CARD HERO EXECUTIVO DO PLANO ATUAL ── */
 .heroPlano {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f4c81 100%);
+  background: linear-gradient(135deg, var(--tinta) 0%, var(--tinta-2) 60%, var(--tinta) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 1.5rem;
   padding: 2rem;
   color: #ffffff;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3), 0 8px 10px -6px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 10px 25px -5px rgba(22, 32, 28, 0.3), 0 8px 10px -6px rgba(22, 32, 28, 0.2);
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
@@ -71,7 +71,7 @@
   right: -50px;
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0) 70%);
+  background: radial-gradient(circle, rgba(44, 95, 138, 0.15) 0%, rgba(44, 95, 138, 0) 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -97,9 +97,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid rgba(34, 197, 94, 0.4);
-  color: #4ade80;
+  background: rgba(46, 107, 78, 0.15);
+  border: 1px solid rgba(46, 107, 78, 0.4);
+  color: #7DBB98;
   padding: 0.35rem 0.85rem;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -111,9 +111,9 @@
 .pontoVerde {
   width: 8px;
   height: 8px;
-  background-color: #22c55e;
+  background-color: #3F8A66;
   border-radius: 50%;
-  box-shadow: 0 0 8px #22c55e;
+  box-shadow: 0 0 8px #3F8A66;
   animation: pulso 2s infinite;
 }
 
@@ -126,7 +126,7 @@
 .badgeStatusAssinatura {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #cbd5e1;
+  color: var(--pedra-300);
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -138,11 +138,11 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .heroDataCiclo strong {
-  color: #f8fafc;
+  color: var(--papel-claro);
   font-weight: 600;
 }
 
@@ -169,7 +169,7 @@
 
 .heroDescricaoPlano {
   font-size: 0.95rem;
-  color: #cbd5e1;
+  color: var(--pedra-300);
   max-width: 500px;
   line-height: 1.45;
 }
@@ -195,11 +195,11 @@
 
 .heroPrecoPeriodo {
   font-size: 0.95rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .btnHeroUpgrade {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--hidro) 0%, var(--tinta-2) 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 0.85rem 1.75rem;
@@ -211,14 +211,14 @@
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+  box-shadow: 0 4px 14px 0 rgba(44, 95, 138, 0.39);
   min-height: 48px;
 }
 
 .btnHeroUpgrade:hover {
-  background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #8FB3D1 0%, var(--tinta) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.5);
+  box-shadow: 0 6px 20px 0 rgba(44, 95, 138, 0.5);
 }
 
 /* ── GRID DE MÉTRICAS DA COTA ── */
@@ -249,7 +249,7 @@
 .metricaLabel {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--pedra-400);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -262,7 +262,7 @@
 
 .metricaValorDestaque small {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 500;
 }
 
@@ -279,7 +279,7 @@
 
 .metricaRodape {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 /* Trilho de Progresso */
@@ -299,8 +299,8 @@
 
 /* Alerta de Limite Hero */
 .alertaLimiteHero {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(212, 64, 31, 0.15);
+  border: 1px solid rgba(212, 64, 31, 0.4);
   border-radius: 1rem;
   padding: 1.25rem;
   display: flex;
@@ -319,19 +319,19 @@
 }
 
 .alertaTexto strong {
-  color: #fca5a5;
+  color: #EBA592;
   font-size: 0.95rem;
   display: block;
 }
 
 .alertaTexto p {
-  color: #fecaca;
+  color: #F3C3B5;
   font-size: 0.85rem;
   margin-top: 0.2rem;
 }
 
 .btnAlertaUpgradeHero {
-  background: #ef4444;
+  background: var(--marco);
   color: #ffffff;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -344,26 +344,26 @@
 }
 
 .btnAlertaUpgradeHero:hover {
-  background: #dc2626;
+  background: var(--marco-escuro);
 }
 
 .progressoInfo {
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--pedra-700);
   margin-bottom: 0.6rem;
 }
 
 .porcentagemTexto {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .trilhaProgresso {
   width: 100%;
   height: 10px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
   border-radius: 999px;
   overflow: hidden;
   margin-bottom: 0.85rem;
@@ -384,26 +384,26 @@
 .tagMiniStat {
   font-size: 0.8rem;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   padding: 4px 10px;
   border-radius: 0.5rem;
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .avisoLimite {
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
+  background: var(--cor-erro-claro);
+  border: 1px solid var(--marco-claro);
   border-radius: 0.75rem;
   padding: 0.85rem 1rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 0.85rem;
-  color: #991b1b;
+  color: #8F2812;
 }
 
 .cardProximoPlano {
-  background: linear-gradient(135deg, #0f4c81 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, var(--tinta) 0%, var(--tinta-profunda) 100%);
   color: #ffffff;
   border-radius: 1.25rem;
   padding: 1.75rem;
@@ -411,7 +411,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  box-shadow: 0 10px 15px -3px rgba(15, 76, 129, 0.2);
+  box-shadow: 0 10px 15px -3px rgba(22, 32, 28, 0.2);
 }
 
 .badgeProximo {
@@ -433,7 +433,7 @@
 
 .descricaoProximo {
   font-size: 0.9rem;
-  color: #cbd5e1;
+  color: var(--pedra-300);
   line-height: 1.4;
   margin-bottom: 1rem;
 }
@@ -449,7 +449,7 @@
 
 .precoProximoPeriodo {
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: var(--pedra-300);
 }
 
 .custoEfetivoTag {
@@ -459,14 +459,14 @@
   border-radius: 6px;
   display: inline-block;
   margin-bottom: 1.25rem;
-  color: #e2e8f0;
+  color: var(--pedra-200);
 }
 
 .btnContratarProximo {
   width: 100%;
   min-height: 44px;
   background: #ffffff;
-  color: #0f4c81;
+  color: var(--tinta);
   border: none;
   border-radius: 0.75rem;
   font-size: 0.95rem;
@@ -476,14 +476,14 @@
 }
 
 .btnContratarProximo:hover {
-  background: #f8fafc;
+  background: var(--papel-claro);
   transform: translateY(-1px);
 }
 
 /* ── TABELA GERAL DE PLANOS ── */
 .secaoTodosPlanos {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 1.25rem;
   padding: 2rem;
 }
@@ -495,13 +495,13 @@
 .cabecalhoSecao h2 {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.25rem;
 }
 
 .cabecalhoSecao p {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .gridTodosPlanos {
@@ -511,8 +511,8 @@
 }
 
 .cardTabelaPlano {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 1rem;
   padding: 1.25rem 1rem;
   display: flex;
@@ -523,19 +523,19 @@
 }
 
 .cardTabelaPlano:hover {
-  border-color: #cbd5e1;
+  border-color: var(--pedra-300);
   background: #ffffff;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .cardTabelaPlanoAtual {
-  border-color: #10b981 !important;
-  background: #f0fdf4 !important;
+  border-color: #3F8A66 !important;
+  background: var(--cor-sucesso-claro) !important;
 }
 
 .cardTabelaPlanoProximo {
-  border-color: #0f4c81 !important;
-  background: #eff6ff !important;
+  border-color: var(--tinta) !important;
+  background: var(--pedra-100) !important;
 }
 
 .badgeCardAtual {
@@ -543,7 +543,7 @@
   top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  background: #10b981;
+  background: #3F8A66;
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -557,7 +557,7 @@
   top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  background: #0f4c81;
+  background: var(--tinta);
   color: #ffffff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -569,13 +569,13 @@
 .cardPlanoNome {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.25rem;
 }
 
 .cardPlanoCapacidade {
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--pedra-600);
   margin-bottom: 0.75rem;
 }
 
@@ -590,31 +590,31 @@
 .cifrao {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #0f4c81;
+  color: var(--tinta);
 }
 
 .valorGrande {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #0f4c81;
+  color: var(--tinta);
 }
 
 .mes {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .valorConsulta {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f4c81;
+  color: var(--tinta);
 }
 
 .custoUnitarioItem {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #15803d;
-  background: #dcfce7;
+  color: var(--cerrado);
+  background: var(--cerrado-claro);
   padding: 2px 6px;
   border-radius: 4px;
   display: inline-block;
@@ -623,7 +623,7 @@
 
 .cardPlanoDesc {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--pedra-500);
   line-height: 1.35;
   margin-bottom: 1.25rem;
   flex: 1;
@@ -636,9 +636,9 @@
 .btnPlanoAtual {
   width: 100%;
   min-height: 38px;
-  background: #dcfce7;
-  color: #15803d;
-  border: 1px solid #86efac;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
+  border: 1px solid #A9CDB6;
   border-radius: 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
@@ -648,7 +648,7 @@
 .btnEscolherDestaque {
   width: 100%;
   min-height: 38px;
-  background: #0f4c81;
+  background: var(--tinta);
   color: #ffffff;
   border: none;
   border-radius: 0.5rem;
@@ -666,8 +666,8 @@
   width: 100%;
   min-height: 38px;
   background: #ffffff;
-  color: #334155;
-  border: 1px solid #cbd5e1;
+  color: var(--pedra-700);
+  border: 1px solid var(--pedra-300);
   border-radius: 0.5rem;
   font-size: 0.85rem;
   font-weight: 500;
@@ -676,14 +676,14 @@
 }
 
 .btnEscolherNormal:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  background: var(--papel);
+  border-color: var(--pedra-400);
 }
 
 /* ── FATURAS ── */
 .secaoFaturas {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 1.25rem;
   padding: 2rem;
 }
@@ -691,7 +691,7 @@
 .vazioFaturas {
   text-align: center;
   padding: 2rem 1rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .vazioFaturas span {
@@ -713,21 +713,21 @@
 
 .tabelaFaturas th {
   padding: 0.75rem 1rem;
-  background: #f8fafc;
-  color: #475569;
+  background: var(--papel-claro);
+  color: var(--pedra-600);
   font-weight: 600;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--pedra-200);
 }
 
 .tabelaFaturas td {
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid #f1f5f9;
-  color: #334155;
+  border-bottom: 1px solid var(--papel);
+  color: var(--pedra-700);
 }
 
 .formaPag {
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   font-size: 0.8rem;
 }
 
@@ -740,19 +740,19 @@
 }
 
 .status_pago {
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
 }
 
 .status_pendente {
-  background: #fef3c7;
-  color: #b45309;
+  background: var(--ouro-claro);
+  color: var(--ouro-escuro);
 }
 
 /* ── FAQ ── */
 .secaoFaq {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 1.25rem;
   padding: 2rem;
 }
@@ -760,7 +760,7 @@
 .secaoFaq h2 {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 1.5rem;
 }
 
@@ -773,13 +773,13 @@
 .faqItem h4 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   margin-bottom: 0.4rem;
 }
 
 .faqItem p {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   line-height: 1.5;
 }
 

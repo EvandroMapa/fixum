@@ -54,21 +54,21 @@ export default function PlanosPage() {
               margin: '2rem auto 0',
               padding: '1rem 1.5rem',
               background: '#ffffff',
-              border: '2px solid #bfdbfe',
+              border: '2px solid #CFC6B6',
               borderRadius: '1rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '1rem',
-              boxShadow: '0 4px 6px -1px rgba(15, 76, 129, 0.08)',
+              boxShadow: '0 4px 6px -1px rgba(22, 32, 28, 0.08)',
               flexWrap: 'wrap',
               textAlign: 'left'
             }}>
               <div>
-                <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ fontWeight: 700, color: '#16201C', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span>🏢</span> Representa uma Imobiliária ou Rede?
                 </div>
-                <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.85rem', color: '#7A7264', marginTop: '2px' }}>
                   Condições especiais para +50 imóveis, múltiplos corretores e menor custo.
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default function PlanosPage() {
               alignItems: 'center',
               gap: '6px',
               margin: '1.5rem auto 2.5rem',
-              background: '#f1f5f9',
+              background: '#F3EEE4',
               padding: '6px',
               borderRadius: '12px',
               maxWidth: '520px',
@@ -197,8 +197,8 @@ export default function PlanosPage() {
                     type="button"
                     onClick={() => setPeriodicidade(c.id as any)}
                     style={{
-                      background: isAtivo ? '#0f4c81' : 'transparent',
-                      color: isAtivo ? '#ffffff' : '#475569',
+                      background: isAtivo ? '#16201C' : 'transparent',
+                      color: isAtivo ? '#ffffff' : '#5A5449',
                       border: 'none',
                       borderRadius: '8px',
                       padding: '8px 14px',
@@ -216,8 +216,8 @@ export default function PlanosPage() {
                       <span style={{
                         fontSize: '0.65rem',
                         fontWeight: 800,
-                        background: isAtivo ? 'rgba(255,255,255,0.25)' : '#ecfdf5',
-                        color: isAtivo ? '#ffffff' : '#059669',
+                        background: isAtivo ? 'rgba(255,255,255,0.25)' : '#EEF5F0',
+                        color: isAtivo ? '#ffffff' : '#2E6B4E',
                         padding: '1px 6px',
                         borderRadius: '10px',
                       }}>
@@ -274,7 +274,7 @@ export default function PlanosPage() {
                     </div>
 
                     {detalhes.descontoPct > 0 && p.preco_mensal > 0 && (
-                      <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, marginBottom: '8px' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#2E6B4E', fontWeight: 600, marginBottom: '8px' }}>
                         🎉 {detalhes.descontoPct}% OFF (Total: {formatarMoeda(detalhes.valorTotalComDesconto)})
                       </div>
                     )}
@@ -283,7 +283,7 @@ export default function PlanosPage() {
                       const custoUnitario = calcularCustoUnitario(p.preco_mensal, p.limite_imoveis_max, periodicidade)
                       return (
                         <div className={styles.cardPlanoCustoUnitario}>
-                          Custo efetivo: <strong style={{ color: detalhes.descontoPct > 0 ? '#059669' : 'inherit' }}>{formatarMoeda(custoUnitario)}</strong> / imóvel / mês
+                          Custo efetivo: <strong style={{ color: detalhes.descontoPct > 0 ? '#2E6B4E' : 'inherit' }}>{formatarMoeda(custoUnitario)}</strong> / imóvel / mês
                         </div>
                       )
                     })()}

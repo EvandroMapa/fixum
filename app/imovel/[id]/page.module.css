@@ -17,22 +17,22 @@
   display: none;
   align-items: center;
   gap: 5px;
-  color: #1e40af;
+  color: var(--tinta-2);
   font-size: 0.825rem;
   font-weight: 700;
   text-decoration: none;
   padding: 6px 12px;
   border-radius: 8px;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
+  background: var(--papel);
+  border: 1px solid var(--pedra-300);
   transition: all 0.15s ease;
   flex-shrink: 0;
   cursor: pointer;
 }
 
 .btnVoltar:hover {
-  background: #e2e8f0;
-  border-color: #94a3b8;
+  background: var(--pedra-200);
+  border-color: var(--pedra-400);
 }
 
 .breadcrumbDesktop {
@@ -40,13 +40,13 @@
   align-items: center;
   gap: 6px;
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   flex: 1;
   min-width: 0;
 }
 
 .breadcrumbDesktop a {
-  color: #2563eb;
+  color: var(--tinta);
   text-decoration: none;
   font-weight: 600;
 }
@@ -60,7 +60,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #1e293b;
+  color: var(--tinta-2);
   font-weight: 600;
 }
 
@@ -76,26 +76,26 @@
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   border-radius: 8px;
   font-size: 0.775rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--pedra-600);
   cursor: pointer;
   transition: all 0.15s ease;
   background: #ffffff;
 }
 
 .btnAcaoTopo:hover {
-  border-color: #2563eb;
-  color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--tinta);
+  color: var(--tinta);
+  background: var(--pedra-100);
 }
 
 .favoritado {
-  background: #fef2f2 !important;
-  border-color: #ef4444 !important;
-  color: #dc2626 !important;
+  background: var(--cor-erro-claro) !important;
+  border-color: var(--marco) !important;
+  color: var(--marco-escuro) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -156,7 +156,7 @@
   right: 14px;
   z-index: 10;
   background: #ffffff;
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 8px 14px;
@@ -169,7 +169,7 @@
 
 .btnVerTodasFotosFlutuante:hover {
   transform: scale(1.03);
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 /* Galeria Simples (1 ou 2 fotos) */
@@ -194,14 +194,14 @@
   justify-content: center;
   height: 100%;
   font-size: 4rem;
-  background: #f1f5f9;
+  background: var(--papel);
 }
 
 .badgeQtdFotos {
   position: absolute;
   bottom: 12px;
   right: 12px;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(22, 32, 28, 0.75);
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 700;
@@ -219,7 +219,7 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 1.5rem;
   display: flex;
   align-items: center;
@@ -249,7 +249,7 @@
 
 .btnVerFotos {
   background: #ffffff;
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 0.8rem;
   font-weight: 700;
   padding: 6px 12px;
@@ -298,10 +298,10 @@
   letter-spacing: 0.02em;
 }
 
-.tagVenda { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-.tagAluguel { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-.tagTipo { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
-.tagPet { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.tagVenda { background: var(--pedra-100); color: var(--tinta-2); border: 1px solid var(--pedra-300); }
+.tagAluguel { background: var(--marco-claro); color: var(--marco-escuro); border: 1px solid #fed7aa; }
+.tagTipo { background: var(--papel); color: var(--pedra-700); border: 1px solid var(--pedra-300); }
+.tagPet { background: var(--cor-sucesso-claro); color: var(--cerrado); border: 1px solid #C3DACB; }
 .tagMobiliado { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
 .tagDestaque { background: #fefce8; color: #a16207; border: 1px solid #fef08a; }
 
@@ -309,9 +309,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  color: #334155;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-300);
+  color: var(--pedra-700);
   font-size: 0.725rem;
   font-weight: 700;
   padding: 2px 6px 2px 8px;
@@ -320,15 +320,15 @@
 }
 
 .badgeCodigoImovel strong {
-  color: #0f172a;
+  color: var(--tinta);
   font-weight: 800;
   font-family: monospace;
 }
 
 .btnCopiarCodigo {
   background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #475569;
+  border: 1px solid var(--pedra-300);
+  color: var(--pedra-600);
   font-size: 0.65rem;
   font-weight: 700;
   padding: 1px 6px;
@@ -338,15 +338,15 @@
 }
 
 .btnCopiarCodigo:hover {
-  background: #eff6ff;
-  border-color: #93c5fd;
-  color: #1d4ed8;
+  background: var(--pedra-100);
+  border-color: var(--pedra-400);
+  color: var(--tinta-2);
 }
 
 .titulo {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   line-height: 1.25;
   letter-spacing: -0.02em;
   margin: 0;
@@ -357,14 +357,14 @@
   align-items: center;
   gap: 4px;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 500;
 }
 
 /* BLOCO DE PREÇO & CUSTOS */
 .blocoPrecoCard {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 0.75rem;
   padding: 0.85rem 1.15rem;
   display: flex;
@@ -382,13 +382,13 @@
 .precoValorDestaque {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   letter-spacing: -0.02em;
 }
 
 .precoSufixo {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
 }
 
@@ -397,7 +397,7 @@
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--pedra-200);
   padding-top: 0.5rem;
   font-size: 0.8rem;
 }
@@ -406,34 +406,34 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .itemCustoValor {
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 .itemCustoTotal {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #ecfdf5;
-  color: #065f46;
+  background: var(--cor-sucesso-claro);
+  color: #24563E;
   padding: 3px 8px;
   border-radius: 4px;
-  border: 1px solid #a7f3d0;
+  border: 1px solid #C3DACB;
   font-weight: 700;
 }
 
 .itemCustoValorTotal {
-  color: #047857;
+  color: #24563E;
   font-size: 0.85rem;
 }
 
 .historicoPreco {
-  background: #f0fdf4;
-  border: 1px solid #86efac;
-  color: #166534;
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #A9CDB6;
+  color: #24563E;
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.775rem;
@@ -449,7 +449,7 @@
 
 .especificacaoCard {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 0.65rem;
   padding: 0.75rem 0.65rem;
   display: flex;
@@ -471,13 +471,13 @@
 .especificacaoInfo strong {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   line-height: 1.2;
 }
 
 .especificacaoInfo span {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
 }
 
@@ -487,20 +487,20 @@
   flex-direction: column;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
 }
 
 .secaoSubtitulo {
   font-size: 1.1rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   letter-spacing: -0.01em;
   margin: 0;
 }
 
 .descricaoTexto {
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--pedra-700);
   line-height: 1.6;
   white-space: pre-line;
 }
@@ -516,8 +516,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border: 1px solid var(--papel);
   padding: 6px 10px;
   border-radius: 6px;
 }
@@ -529,14 +529,14 @@
 .caracteristicaNome {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--pedra-700);
   text-transform: capitalize;
 }
 
 /* LOCALIZAÇÃO E MAPA */
 .enderecoCompleto {
   font-size: 0.825rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 0;
 }
 
@@ -544,7 +544,7 @@
   height: 280px;
   border-radius: 0.75rem;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 /* PONTOS DE INTERESSE */
@@ -559,7 +559,7 @@
   align-items: center;
   gap: 6px;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   padding: 6px 8px;
   border-radius: 6px;
 }
@@ -571,7 +571,7 @@
 .pontoLabel {
   font-size: 0.725rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -584,7 +584,7 @@
 
 .cardContatoSticky {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 1rem;
   padding: 1.25rem;
   box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.08);
@@ -603,7 +603,7 @@
   margin: -1.25rem -1.25rem 0 -1.25rem;
   border-radius: 1rem 1rem 0 0;
   background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fe 40%, #f8faff 100%);
-  border-bottom: 1px solid #dbeafe;
+  border-bottom: 1px solid var(--pedra-200);
   position: relative;
   overflow: hidden;
 }
@@ -615,7 +615,7 @@
   right: -40px;
   width: 120px;
   height: 120px;
-  background: radial-gradient(circle, rgba(26, 86, 219, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(22, 32, 28, 0.06) 0%, transparent 70%);
   border-radius: 50%;
 }
 
@@ -624,19 +624,19 @@
   height: 72px;
   border-radius: 16px;
   background: #ffffff;
-  border: 2px solid #dbeafe;
+  border: 2px solid var(--pedra-200);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 6px;
-  box-shadow: 0 4px 16px rgba(26, 86, 219, 0.12), 0 0 0 4px rgba(26, 86, 219, 0.04);
+  box-shadow: 0 4px 16px rgba(22, 32, 28, 0.12), 0 0 0 4px rgba(22, 32, 28, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bannerImobiliaria:hover .bannerImobLogoWrapper {
   transform: scale(1.04);
-  box-shadow: 0 6px 24px rgba(26, 86, 219, 0.18), 0 0 0 6px rgba(26, 86, 219, 0.06);
+  box-shadow: 0 6px 24px rgba(22, 32, 28, 0.18), 0 0 0 6px rgba(22, 32, 28, 0.06);
 }
 
 .bannerImobLogoImg {
@@ -656,7 +656,7 @@
 .bannerImobNome {
   font-size: 1.05rem;
   font-weight: 900;
-  color: #0f172a;
+  color: var(--tinta);
   text-align: center;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -664,7 +664,7 @@
 
 .bannerImobSubtitulo {
   font-size: 0.75rem;
-  color: #475569;
+  color: var(--pedra-600);
   font-weight: 600;
 }
 
@@ -674,9 +674,9 @@
   gap: 4px;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #166534;
-  background: #dcfce7;
-  border: 1px solid #bbf7d0;
+  color: #24563E;
+  background: var(--cerrado-claro);
+  border: 1px solid #C3DACB;
   padding: 2.5px 10px;
   border-radius: 999px;
   margin-top: 2px;
@@ -689,7 +689,7 @@
 
 .bannerImobCreci {
   font-size: 0.65rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 500;
   letter-spacing: 0.02em;
 }
@@ -706,7 +706,7 @@
   height: 48px;
   border-radius: 50%;
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -726,7 +726,7 @@
 .anuncianteAvatarPlaceholder {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #1d4ed8;
+  color: var(--tinta-2);
 }
 
 .anuncianteTextos {
@@ -739,7 +739,7 @@
 .anuncianteNome {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -750,8 +750,8 @@
   align-items: center;
   gap: 4px;
   font-size: 0.725rem;
-  color: #1e40af;
-  background: #eff6ff;
+  color: var(--tinta-2);
+  background: var(--pedra-100);
   padding: 2px 6px;
   border-radius: 4px;
   width: fit-content;
@@ -759,7 +759,7 @@
 
 .anuncianteCreci {
   font-size: 0.675rem;
-  color: #64748b;
+  color: var(--pedra-500);
   font-weight: 600;
 }
 
@@ -777,8 +777,8 @@
   justify-content: center;
   gap: 8px;
   background: #f0f7ff;
-  border: 1.5px solid #bfdbfe;
-  color: #1d4ed8;
+  border: 1.5px solid var(--pedra-300);
+  color: var(--tinta-2);
   font-size: 0.825rem;
   font-weight: 700;
   padding: 10px 12px;
@@ -790,15 +790,15 @@
 }
 
 .btnVerTodosImoveisImob:hover {
-  background: #dbeafe;
-  border-color: #93c5fd;
-  color: #1e40af;
+  background: var(--pedra-200);
+  border-color: var(--pedra-400);
+  color: var(--tinta-2);
   transform: translateY(-1px);
 }
 
 .linkPerfilImob {
   font-size: 0.775rem;
-  color: #64748b;
+  color: var(--pedra-500);
   text-align: center;
   text-decoration: underline;
   cursor: pointer;
@@ -806,7 +806,7 @@
 }
 
 .linkPerfilImob:hover {
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 /* SEÇÃO DE OUTROS IMÓVEIS DA IMOBILIÁRIA (RODAPÉ) */
@@ -821,7 +821,7 @@
 
 .subtituloOutros {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin-top: 2px;
 }
 
@@ -831,18 +831,18 @@
   gap: 6px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #1d4ed8;
+  color: var(--tinta-2);
   text-decoration: none;
   padding: 6px 12px;
   border-radius: 8px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: var(--pedra-100);
+  border: 1px solid var(--pedra-300);
   transition: all 0.15s ease;
 }
 
 .btnVerTodosMapaDesktop:hover {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--pedra-200);
+  color: var(--tinta-2);
 }
 
 .gridOutrosImoveis {
@@ -865,7 +865,7 @@
 
 .btnWhatsAppDestaque {
   width: 100%;
-  background: #22c55e;
+  background: #3F8A66;
   color: #ffffff;
   border: none;
   padding: 0.65rem 1rem;
@@ -878,19 +878,19 @@
   justify-content: center;
   gap: 6px;
   transition: all 0.15s ease;
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25);
+  box-shadow: 0 2px 8px rgba(46, 107, 78, 0.25);
 }
 
 .btnWhatsAppDestaque:hover {
-  background: #16a34a;
+  background: var(--cerrado);
   transform: translateY(-1px);
 }
 
 .btnLigarDestaque {
   width: 100%;
   background: #ffffff;
-  color: #334155;
-  border: 1.5px solid #cbd5e1;
+  color: var(--pedra-700);
+  border: 1.5px solid var(--pedra-300);
   padding: 0.55rem 1rem;
   border-radius: 0.6rem;
   font-size: 0.8rem;
@@ -905,13 +905,13 @@
 }
 
 .btnLigarDestaque:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
+  background: var(--papel-claro);
+  border-color: var(--pedra-400);
 }
 
 .divisorContato {
   height: 1px;
-  background: #e2e8f0;
+  background: var(--pedra-200);
 }
 
 /* Formulário de Lead */
@@ -924,7 +924,7 @@
 .formLeadTitulo {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--pedra-700);
   margin: 0;
 }
 
@@ -935,29 +935,29 @@
 .inputLead {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 0.5rem;
   font-size: 0.8rem;
-  color: #0f172a;
-  background: #f8fafc;
+  color: var(--tinta);
+  background: var(--papel-claro);
   transition: all 0.15s;
 }
 
 .inputLead:focus {
   outline: none;
   background: #ffffff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.12);
 }
 
 .textareaLead {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--pedra-300);
   border-radius: 0.5rem;
   font-size: 0.775rem;
-  color: #0f172a;
-  background: #f8fafc;
+  color: var(--tinta);
+  background: var(--papel-claro);
   resize: vertical;
   font-family: inherit;
   transition: all 0.15s;
@@ -966,13 +966,13 @@
 .textareaLead:focus {
   outline: none;
   background: #ffffff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: var(--tinta);
+  box-shadow: 0 0 0 3px rgba(22, 32, 28, 0.12);
 }
 
 .btnEnviarLead {
   width: 100%;
-  background: #1e3a8a;
+  background: var(--tinta-profunda);
   color: #ffffff;
   border: none;
   padding: 0.6rem 1rem;
@@ -984,16 +984,16 @@
 }
 
 .btnEnviarLead:hover {
-  background: #1d4ed8;
+  background: var(--tinta-2);
 }
 
 .sucessoLeadCard {
-  background: #f0fdf4;
-  border: 1px solid #86efac;
+  background: var(--cor-sucesso-claro);
+  border: 1px solid #A9CDB6;
   border-radius: 0.6rem;
   padding: 1rem;
   text-align: center;
-  color: #15803d;
+  color: var(--cerrado);
 }
 
 .sucessoLeadCard strong {
@@ -1005,7 +1005,7 @@
 .sucessoLeadCard p {
   font-size: 0.75rem;
   margin: 0;
-  color: #166534;
+  color: #24563E;
 }
 
 .rodapeSegurancaCard {
@@ -1013,17 +1013,17 @@
   flex-direction: column;
   gap: 4px;
   padding-top: 0.5rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--papel);
 }
 
 .codigoImovelPill {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .avisoSeguro {
   font-size: 0.675rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   line-height: 1.3;
   margin: 0;
 }
@@ -1039,7 +1039,7 @@
   right: 0;
   z-index: 90;
   background: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--pedra-200);
   padding: 0.75rem 1rem;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
   align-items: center;
@@ -1055,13 +1055,13 @@
 .precoMobileValor {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   line-height: 1.1;
 }
 
 .condominioMobile {
   font-size: 0.675rem;
-  color: #64748b;
+  color: var(--pedra-500);
 }
 
 .botoesMobileAcao {
@@ -1071,7 +1071,7 @@
 }
 
 .btnWhatsAppMobile {
-  background: #22c55e;
+  background: #3F8A66;
   color: #ffffff;
   border: none;
   padding: 0.55rem 1rem;
@@ -1119,7 +1119,7 @@
 .lightboxContador {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--pedra-400);
 }
 
 .lightboxBtnFechar {
@@ -1205,7 +1205,7 @@
 }
 
 .lightboxThumbAtiva {
-  border-color: #3b82f6;
+  border-color: var(--hidro);
   opacity: 1;
   transform: scale(1.05);
 }
@@ -1288,16 +1288,16 @@
 .blocoOutrosImoveis {
   margin-top: 2.5rem;
   padding-top: 2rem;
-  border-top: 2px solid #e2e8f0;
+  border-top: 2px solid var(--pedra-200);
 }
 
 .tarjaDestaqueImobiliaria {
   position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, var(--tinta) 0%, var(--tinta-2) 100%);
   border-radius: 18px;
   padding: 22px 26px;
   margin-bottom: 22px;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px rgba(22, 32, 28, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   overflow: hidden;
 }
@@ -1308,7 +1308,7 @@
   right: -40px;
   width: 220px;
   height: 220px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(22, 32, 28, 0.35) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -1344,7 +1344,7 @@
   width: 58px;
   height: 58px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--tinta), var(--tinta-2));
   color: #ffffff;
   font-size: 1.3rem;
   font-weight: 800;
@@ -1366,9 +1366,9 @@
 .tarjaBadge {
   display: inline-flex;
   align-items: center;
-  background: rgba(37, 99, 235, 0.35);
+  background: rgba(22, 32, 28, 0.35);
   border: 1px solid rgba(147, 197, 253, 0.4);
-  color: #93c5fd;
+  color: var(--pedra-400);
   font-size: 0.72rem;
   font-weight: 800;
   padding: 2px 10px;
@@ -1390,14 +1390,14 @@
 
 .tarjaSubtitulo {
   font-size: 0.84rem;
-  color: #cbd5e1;
+  color: var(--pedra-300);
   margin: 2px 0 0;
   line-height: 1.4;
 }
 
 .tarjaBtnMapa {
   background: #ffffff;
-  color: #0f172a;
+  color: var(--tinta);
   font-weight: 800;
   font-size: 0.88rem;
   padding: 12px 20px;
@@ -1414,10 +1414,10 @@
 }
 
 .tarjaBtnMapa:hover {
-  background: #f8fafc;
+  background: var(--papel-claro);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  color: #1d4ed8;
+  color: var(--tinta-2);
 }
 
 .tarjaBtnIcone {
@@ -1446,8 +1446,8 @@
 
 .btnVerTodosCatalogo {
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  color: #1e40af;
+  border: 1.5px solid var(--pedra-300);
+  color: var(--tinta-2);
   font-size: 0.9rem;
   font-weight: 700;
   padding: 14px 20px;
@@ -1461,10 +1461,10 @@
 }
 
 .btnVerTodosCatalogo:hover {
-  background: #eff6ff;
-  border-color: #93c5fd;
-  color: #1d4ed8;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+  background: var(--pedra-100);
+  border-color: var(--pedra-400);
+  color: var(--tinta-2);
+  box-shadow: 0 6px 16px rgba(22, 32, 28, 0.12);
   transform: translateY(-1px);
 }
 

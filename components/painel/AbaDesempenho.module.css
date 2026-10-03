@@ -12,7 +12,7 @@
 /* ── 1. PAINEL INTEGRADO: CABEÇALHO, FILTROS & KPIS ── */
 .painelMasterMetricas {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 14px;
   padding: 1.25rem;
   display: flex;
@@ -27,7 +27,7 @@
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   padding-bottom: 1rem;
 }
 
@@ -40,14 +40,14 @@
 .topoTitulo {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
   letter-spacing: -0.3px;
 }
 
 .topoSubtitulo {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 0;
 }
 
@@ -60,11 +60,11 @@
 
 .grupoPeriodos {
   display: flex;
-  background: #f1f5f9;
+  background: var(--papel);
   border-radius: 8px;
   padding: 2px;
   gap: 2px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 .btnPeriodo {
@@ -72,7 +72,7 @@
   border-radius: 6px;
   border: none;
   background: transparent;
-  color: #475569;
+  color: var(--pedra-600);
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -80,22 +80,22 @@
 }
 
 .btnPeriodo:hover {
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .btnPeriodoAtivo {
-  background: #0f172a;
+  background: var(--tinta);
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 1px 3px rgba(22, 32, 28, 0.15);
 }
 
 .selectCorretorFiltro {
   padding: 6px 12px;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   background: #ffffff;
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -106,9 +106,9 @@
 .btnAtualizar {
   padding: 6px 12px;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--pedra-300);
   background: #ffffff;
-  color: #475569;
+  color: var(--pedra-600);
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -119,9 +119,9 @@
 }
 
 .btnAtualizar:hover:not(:disabled) {
-  background: #f8fafc;
-  color: #0f172a;
-  border-color: #94a3b8;
+  background: var(--papel-claro);
+  color: var(--tinta);
+  border-color: var(--pedra-400);
 }
 
 /* ── 2. SCORECARD DE KPIS EXECUTIVOS ── */
@@ -132,8 +132,8 @@
 }
 
 .cardKpi {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--papel-claro);
+  border: 1px solid var(--pedra-200);
   border-radius: 10px;
   padding: 1rem 1.1rem;
   display: flex;
@@ -144,13 +144,13 @@
 
 .cardKpi:hover {
   background: #ffffff;
-  border-color: #cbd5e1;
+  border-color: var(--pedra-300);
 }
 
 .kpiRotulo {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--pedra-500);
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -158,18 +158,18 @@
 .kpiValor {
   font-size: 1.45rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   line-height: 1.15;
   letter-spacing: -0.5px;
 }
 
 .kpiValorDestaque {
-  color: #047857;
+  color: #24563E;
 }
 
 .kpiSub {
   font-size: 0.72rem;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-weight: 500;
   margin-top: 2px;
 }
@@ -177,7 +177,7 @@
 /* ── 3. SUB-BLOCOS ANALÍTICOS (FUNIL, PERDAS E TABELA) ── */
 .subBlocoAnalitico {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 12px;
   padding: 1.15rem;
   display: flex;
@@ -187,7 +187,7 @@
 
 .subBlocoTabela {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
   border-radius: 12px;
   padding: 1.15rem;
   display: flex;
@@ -201,20 +201,20 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--papel);
   padding-bottom: 0.75rem;
 }
 
 .subBlocoTitulo {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--tinta);
   margin: 0;
 }
 
 .subBlocoSubtitulo {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--pedra-500);
   margin: 2px 0 0 0;
 }
 
@@ -223,9 +223,9 @@
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 6px;
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: var(--papel);
+  color: var(--pedra-600);
+  border: 1px solid var(--pedra-200);
   flex-shrink: 0;
 }
 
@@ -242,26 +242,26 @@
 }
 
 .tabela th {
-  background: #f8fafc;
-  color: #475569;
+  background: var(--papel-claro);
+  color: var(--pedra-600);
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
   padding: 9px 12px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--pedra-200);
   white-space: nowrap;
 }
 
 .tabela td {
   padding: 11px 12px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #334155;
+  border-bottom: 1px solid var(--papel);
+  color: var(--pedra-700);
   white-space: nowrap;
 }
 
 .tabela tbody tr:hover td {
-  background: #f8fafc;
+  background: var(--papel-claro);
 }
 
 .corretorCell {
@@ -276,7 +276,7 @@
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--pedra-200);
 }
 
 .corretorAvatarFallback {
@@ -294,15 +294,15 @@
 
 .corretorNome {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
 }
 
 .badgeSlaBom {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--cerrado-claro);
+  color: var(--cerrado);
   font-weight: 700;
   font-size: 0.72rem;
 }
@@ -311,8 +311,8 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #fef3c7;
-  color: #b45309;
+  background: var(--ouro-claro);
+  color: var(--ouro-escuro);
   font-weight: 700;
   font-size: 0.72rem;
 }
@@ -321,8 +321,8 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--marco-claro);
+  color: #8F2812;
   font-weight: 700;
   font-size: 0.72rem;
 }
@@ -334,9 +334,9 @@
   font-weight: 700;
   padding: 1px 5px;
   border-radius: 4px;
-  background: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
+  background: #FDF7E8;
+  color: var(--ouro-escuro);
+  border: 1px solid #F2D48E;
 }
 
 /* ── 4. ANALYTICS: GRID DUPLO ── */
@@ -368,18 +368,18 @@
 
 .itemFunilEtapa {
   font-weight: 600;
-  color: #334155;
+  color: var(--pedra-700);
 }
 
 .itemFunilQtd {
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 0.8rem;
 }
 
 .funilBarraTrilha {
   width: 100%;
   height: 8px;
-  background: #f1f5f9;
+  background: var(--papel);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -412,37 +412,37 @@
 
 .itemPerdaMotivo {
   font-weight: 600;
-  color: #475569;
+  color: var(--pedra-600);
 }
 
 .itemPerdaPorcentagem {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--tinta);
   font-size: 0.76rem;
 }
 
 .perdaBarraTrilha {
   width: 100%;
   height: 6px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--papel-claro);
+  border: 1px solid var(--papel);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .perdaBarraPreenchida {
   height: 100%;
-  background: #94a3b8;
+  background: var(--pedra-400);
   border-radius: 999px;
 }
 
 .vazioBox {
   padding: 1.5rem 1rem;
   text-align: center;
-  color: #94a3b8;
+  color: var(--pedra-400);
   font-size: 0.8rem;
-  background: #f8fafc;
+  background: var(--papel-claro);
   border-radius: 8px;
-  border: 1px dashed #e2e8f0;
+  border: 1px dashed var(--pedra-200);
 }
 
