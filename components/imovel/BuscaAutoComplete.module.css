@@ -152,7 +152,7 @@
 
 .itemAtivo .itemIcone,
 .item:hover .itemIcone {
-  background: #e8f0fe;
+  background: #EAE4D8;
   color: var(--tinta);
 }
 

@@ -4,6 +4,25 @@ import { useEffect, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { type PontoInteresse } from '@/lib/types'
+import { aplicarEstiloFixum, ESTILO_BASE } from '@/lib/estilo-mapa'
+import { iconeSvg, ehNomeIcone } from '@/components/ui/Icone'
+
+function escaparHtml(texto: string): string {
+  return String(texto ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+// Marcador do local exato: ponto Vermelho Marco com miolo Papel (o "é aqui" da marca)
+function criarMarcadorLocal(): HTMLElement {
+  const el = document.createElement('div')
+  el.className = 'fx-marco-local'
+  el.innerHTML = '<span></span>'
+  return el
+}
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
 
@@ -51,7 +70,7 @@ export default function MapaImovel({
 
     const mapa = new mapboxgl.Map({
       container: containerRef.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: ESTILO_BASE,
       center: [finalLng, finalLat],
       zoom: 14.5,
       interactive: true,
@@ -62,13 +81,15 @@ export default function MapaImovel({
 
     mapa.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right')
 
+    mapa.on('style.load', () => aplicarEstiloFixum(mapa))
+
     mapa.on('load', () => {
       mapa.resize()
 
       if (coordenadasValidas) {
         if (publico === true) {
           // Marcador preciso do Imóvel
-          new mapboxgl.Marker({ color: '#16201C' })
+          new mapboxgl.Marker({ element: criarMarcadorLocal() })
             .setLngLat([finalLng, finalLat])
             .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(titulo))
             .addTo(mapa)
@@ -171,45 +192,16 @@ export default function MapaImovel({
 
       // Inner element para aplicar o estilo visual e hover sem conflitar com o transform do Mapbox
       const inner = document.createElement('div')
-      inner.style.cssText = `
-        background: #ffffff;
-        border: 2px solid #16201C;
-        border-radius: 20px;
-        padding: 4px 9px;
-        font-size: 12px;
-        font-weight: 800;
-        color: #22302A;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
-        white-space: nowrap;
-      `
-      inner.innerHTML = `<span>${poi.icone}</span> <span>${poi.distanciaFormatada}</span>`
+      inner.className = 'fx-poi'
+      inner.innerHTML = `${ehNomeIcone(poi.icone) ? iconeSvg(poi.icone, 14, 2) : ''}<span>${escaparHtml(poi.distanciaFormatada)}</span>`
 
       wrapper.appendChild(inner)
 
-      wrapper.addEventListener('mouseenter', () => {
-        inner.style.transform = 'scale(1.12)'
-        inner.style.borderColor = '#22302A'
-        inner.style.background = '#FAF7F1'
-      })
-      wrapper.addEventListener('mouseleave', () => {
-        inner.style.transform = 'scale(1)'
-        inner.style.borderColor = '#16201C'
-        inner.style.background = '#ffffff'
-      })
 
-      const popup = new mapboxgl.Popup({ offset: 20, closeButton: false }).setHTML(`
-        <div style="font-family: system-ui, sans-serif; padding: 4px; max-width: 220px;">
-          <div style="font-size: 13px; font-weight: 800; color: #16201C; line-height: 1.2;">
-            ${poi.icone} ${poi.nome}
-          </div>
-          <div style="font-size: 11px; color: #5A5449; margin-top: 4px; font-weight: 600;">
-            📍 ${poi.distanciaFormatada} · 🚶 ${poi.tempoPe}
-          </div>
-        </div>
+
+      const popup = new mapboxgl.Popup({ offset: 18, closeButton: false, className: 'fx-poi-popup' }).setHTML(`
+        <strong>${escaparHtml(poi.nome)}</strong>
+        <span>${escaparHtml(poi.distanciaFormatada)} · ${escaparHtml(poi.tempoPe)}</span>
       `)
 
       wrapper.addEventListener('click', (e) => {

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
+  <title>Fixum — Marco</title>
+  <defs>
+    <clipPath id="c"><rect x="0" y="14" width="100" height="72"/></clipPath>
+    <mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><circle cx="50" cy="50" r="16" fill="#000"/></mask>
+  </defs>
+  <g clip-path="url(#c)" mask="url(#m)" fill="none" stroke="#16201C" stroke-width="19"><path d="M18 0L82 100M82 0L18 100"/></g>
+  <circle cx="50" cy="50" r="9" fill="#D4401F"/>
+</svg>

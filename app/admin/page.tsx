@@ -35,6 +35,8 @@ import ModalEstornoFatura from '@/components/admin/ModalEstornoFatura'
 import ModalBloqueioInatividade from '@/components/admin/ModalBloqueioInatividade'
 
 import styles from './page.module.css'
+import Icone from '@/components/ui/Icone'
+import { Logotipo } from '@/components/ui/Logo'
 
 type AbaAdmin = 'analytics' | 'clientes' | 'faturas' | 'operacoes' | 'imoveis' | 'auditoria' | 'equipe' | 'configuracoes' | 'planos'
 type SubAbaOperacoes = 'cancelamentos' | 'devolucoes' | 'contestacoes'
@@ -226,9 +228,9 @@ export default function AdminPage() {
   // Salvar toda a precificação no banco Supabase com auditoria
   async function handleSalvarPlanos() {
     const confirmou = await confirmar({
-      titulo: 'Salvar Alterações de Precificação?',
+      titulo: 'Salvar alterações de precificação?',
       mensagem: 'Os novos preços, faixas e descontos promocionais passarão a valer imediatamente para novos clientes e novos ciclos contratados.',
-      icone: '🏷️',
+      icone: 'etiqueta',
       tipo: 'primario',
     })
     if (!confirmou) return
@@ -256,11 +258,11 @@ export default function AdminPage() {
         throw new Error(data.error || 'Erro ao salvar planos.')
       }
 
-      setMsgPlanos({ tipo: 'sucesso', texto: data.mensagem || 'Planos atualizados com sucesso!' })
+      setMsgPlanos({ tipo: 'sucesso', texto: data.mensagem || 'Planos atualizados' })
       await alertar({
-        titulo: 'Precificação Atualizada!',
+        titulo: 'Precificação atualizada',
         mensagem: 'Todos os preços e limites foram gravados com sucesso na plataforma.',
-        icone: '🎉',
+        icone: 'check',
         tipo: 'sucesso',
       })
       carregarDadosAdmin()
@@ -330,9 +332,9 @@ export default function AdminPage() {
       }
 
       await alertar({
-        titulo: 'Plano Atualizado com Sucesso!',
+        titulo: 'Plano atualizado',
         mensagem: `O plano da conta gestora foi alterado para "${PLANOS_OFICIAIS.find((p) => p.id === novoPlanoId)?.nome}" e o log de auditoria foi gravado.`,
-        icone: '👑',
+        icone: 'coroa',
         tipo: 'sucesso',
       })
 
@@ -340,9 +342,9 @@ export default function AdminPage() {
       carregarDadosAdmin()
     } catch (err: any) {
       await alertar({
-        titulo: 'Erro ao Atualizar Plano',
+        titulo: 'Erro ao atualizar plano',
         mensagem: err?.message || 'Não foi possível alterar o plano.',
-        icone: '⚠️',
+        icone: 'alerta',
         tipo: 'aviso',
       })
     }
@@ -370,7 +372,7 @@ export default function AdminPage() {
       await alertar({
         titulo: novoStatus === 'suspenso' ? 'Conta Suspensa' : 'Conta Reativada',
         mensagem: `Status da conta atualizado para "${novoStatus}". Operação registrada com sucesso.`,
-        icone: novoStatus === 'suspenso' ? '🚫' : '✅',
+        icone: novoStatus === 'suspenso' ? '' : '',
         tipo: novoStatus === 'suspenso' ? 'aviso' : 'sucesso',
       })
 
@@ -378,9 +380,9 @@ export default function AdminPage() {
       carregarDadosAdmin()
     } catch (err: any) {
       await alertar({
-        titulo: 'Erro na Operação',
+        titulo: 'Erro na operação',
         mensagem: err?.message || 'Falha ao processar.',
-        icone: '⚠️',
+        icone: 'alerta',
         tipo: 'aviso',
       })
     }
@@ -427,7 +429,7 @@ export default function AdminPage() {
     }
 
     await alertar({
-      titulo: 'Devolução / Estorno Concluído!',
+      titulo: 'Devolução / estorno concluído',
       mensagem: `O reembolso de ${formatarMoeda(dados.valor)} foi registrado com sucesso na fatura e na trilha de auditoria.`,
       icone: '↩️',
       tipo: 'sucesso',
@@ -440,9 +442,9 @@ export default function AdminPage() {
   // Ação de Marcar Pagamento Manual
   async function handleMarcarPagoManual(fatura: FaturaAdmin) {
     const confirmou = await confirmar({
-      titulo: 'Marcar Fatura como Paga Manualmente?',
+      titulo: 'Marcar fatura como paga manualmente?',
       mensagem: `Confirma que recebeu o pagamento de ${formatarMoeda(fatura.valor)} referente a ${fatura.usuario_nome}? Esta operação ativará o plano do cliente e será registrada nos logs de auditoria.`,
-      icone: '💰',
+      icone: 'moeda',
       textoBotaoConfirmar: 'Sim, Marcar como Paga',
       tipo: 'primario',
     })
@@ -471,9 +473,9 @@ export default function AdminPage() {
     }
 
     await alertar({
-      titulo: 'Fatura Quitada!',
+      titulo: 'Fatura quitada',
       mensagem: 'A fatura foi confirmada como paga e o plano do anunciante foi ativado.',
-      icone: '✅',
+      icone: 'check',
       tipo: 'sucesso',
     })
 
@@ -507,9 +509,9 @@ export default function AdminPage() {
   // Moderação de Imóveis: Excluir Anúncio
   async function handleExcluirImovel(id: string, titulo: string) {
     const confirmou = await confirmar({
-      titulo: 'Remover Anúncio da Plataforma?',
+      titulo: 'Remover anúncio da plataforma?',
       mensagem: `Tem certeza que deseja remover o anúncio "${titulo}" como Administrador?`,
-      icone: '🗑️',
+      icone: 'lixeira',
       textoBotaoConfirmar: 'Sim, Remover',
       tipo: 'perigo',
       destrutivo: true,
@@ -526,9 +528,9 @@ export default function AdminPage() {
     if (!asaasApiKey.trim()) {
       setStatusAsaas({ ok: false, msg: 'Informe a Chave de API do Asaas para testar.' })
       await alertar({
-        titulo: 'Chave Não Informada',
+        titulo: 'Chave não informada',
         mensagem: 'Por favor, preencha o campo da Chave de API do Asaas antes de realizar o teste.',
-        icone: '⚠️',
+        icone: 'alerta',
         tipo: 'aviso',
       })
       return
@@ -553,18 +555,18 @@ export default function AdminPage() {
         const msgErro = data.error || 'Falha ao autenticar no Asaas. Verifique a chave e o ambiente selecionado.'
         setStatusAsaas({ ok: false, msg: msgErro })
         await alertar({
-          titulo: 'Falha na Conexão',
+          titulo: 'Falha na conexão',
           mensagem: msgErro,
-          icone: '❌',
+          icone: 'fechar',
           tipo: 'perigo',
         })
       } else {
         const msgSucesso = data.mensagem || 'Conexão com o Asaas validada com sucesso! A chave está ativa.'
         setStatusAsaas({ ok: true, msg: msgSucesso })
         await alertar({
-          titulo: 'Conexão Validada com Sucesso!',
+          titulo: 'Conexão validada',
           mensagem: msgSucesso,
-          icone: '⚡',
+          icone: 'raio',
           tipo: 'sucesso',
         })
       }
@@ -572,9 +574,9 @@ export default function AdminPage() {
       const erroStr = err?.message || 'Erro ao conectar ao Asaas.'
       setStatusAsaas({ ok: false, msg: erroStr })
       await alertar({
-        titulo: 'Erro no Teste',
+        titulo: 'Erro no teste',
         mensagem: erroStr,
-        icone: '❌',
+        icone: 'fechar',
         tipo: 'perigo',
       })
     } finally {
@@ -599,9 +601,9 @@ export default function AdminPage() {
     // 1. Se NÃO houve nenhuma alteração
     if (!alterouCredenciais && !alterouContatos) {
       await alertar({
-        titulo: 'Nenhuma Alteração Detectada',
+        titulo: 'Nenhuma alteração detectada',
         mensagem: 'As configurações atuais não foram modificadas e já correspondem às salvas no sistema.',
-        icone: 'ℹ️',
+        icone: 'info',
         tipo: 'sucesso',
       })
       return
@@ -610,10 +612,10 @@ export default function AdminPage() {
     // 2. Se alterou Chave de API, Token ou Modo (Risco Crítico de Recebimento)
     if (alterouCredenciais) {
       const confirmou = await confirmar({
-        titulo: '⚠️ Confirmar Alteração de Credenciais?',
+        titulo: 'Confirmar alteração de credenciais?',
         mensagem:
           'Você modificou a Chave de API, Token do Webhook ou Ambiente do Asaas.\n\nSe alguma dessas credenciais estiver incorreta, novas cobranças não serão geradas e confirmações de pagamento não serão recebidas. Deseja realmente aplicar essa alteração?',
-        icone: '⚠️',
+        icone: 'alerta',
         tipo: 'aviso',
         textoBotaoConfirmar: 'Sim, Salvar Credenciais',
         textoBotaoCancelar: 'Cancelar e Revisar',
@@ -622,9 +624,9 @@ export default function AdminPage() {
     } else if (alterouContatos) {
       // 3. Se alterou apenas contatos
       const confirmou = await confirmar({
-        titulo: 'Salvar Novos Contatos?',
+        titulo: 'Salvar novos contatos?',
         mensagem: 'Deseja atualizar os números de WhatsApp e e-mail de atendimento da Fixum?',
-        icone: '📞',
+        icone: 'telefone',
         tipo: 'primario',
         textoBotaoConfirmar: 'Salvar Contatos',
         textoBotaoCancelar: 'Cancelar',
@@ -642,7 +644,7 @@ export default function AdminPage() {
         { chave: 'whatsapp_suporte', valor: whatsSuporte, descricao: 'WhatsApp suporte Fixum' },
         { chave: 'email_contato', valor: emailContato, descricao: 'E-mail de contato Fixum' },
         { chave: 'asaas_api_key', valor: asaasApiKey.trim(), descricao: 'Chave de API do Asaas' },
-        { chave: 'asaas_webhook_token', valor: asaasWebhookToken.trim(), descricao: 'Token de autenticação do Webhook Asaas' },
+        { chave: 'asaas_webhook_token', valor: asaasWebhookToken.trim(), descricao: 'Token de autenticação do webhook Asaas' },
         { chave: 'asaas_modo', valor: asaasModo, descricao: 'Ambiente do Asaas (producao/sandbox)' },
       ], { onConflict: 'chave' })
 
@@ -678,19 +680,19 @@ export default function AdminPage() {
         },
       })
 
-      setMsgConfig('✅ Configurações salvas e auditadas com sucesso!')
+      setMsgConfig('Configurações salvas e auditadas')
       await alertar({
-        titulo: 'Configurações Salvas!',
+        titulo: 'Configurações salvas',
         mensagem: 'As configurações foram salvas com sucesso no banco de dados e já estão ativas na plataforma.',
-        icone: '🛡️',
+        icone: 'escudo',
         tipo: 'sucesso',
       })
     } catch (err: any) {
-      setMsgConfig(`❌ Erro ao salvar: ${err?.message || 'Falha na gravação.'}`)
+      setMsgConfig(`Erro ao salvar: ${err?.message || 'Falha na gravação.'}`)
       await alertar({
-        titulo: 'Erro ao Salvar',
+        titulo: 'Erro ao salvar',
         mensagem: err?.message || 'Ocorreu um erro ao salvar as configurações.',
-        icone: '❌',
+        icone: 'fechar',
         tipo: 'perigo',
       })
     } finally {
@@ -708,7 +710,7 @@ export default function AdminPage() {
     setAsaasModo(configsSalvas.asaasModo)
     setMsgConfig(null)
     alertar({
-      titulo: 'Valores Originais Restaurados',
+      titulo: 'Valores originais restaurados',
       mensagem: 'Todos os campos voltaram aos valores atualmente ativos e salvos no sistema.',
       icone: '↺',
       tipo: 'sucesso',
@@ -848,8 +850,7 @@ export default function AdminPage() {
         {/* TOPBAR POCKET */}
         <header className={styles.pocketTopbar}>
           <Link href="/" className={styles.pocketLogoBox}>
-            <span style={{ fontSize: '1.25rem' }}>📍</span>
-            <strong className={styles.pocketLogoTexto}>FIXUM</strong>
+            <Logotipo largura={72} />
             <span className={styles.pocketBadge}>Admin</span>
           </Link>
 
@@ -863,7 +864,7 @@ export default function AdminPage() {
               className={styles.pocketBtnIcone}
               title="Bloquear painel com PIN Master"
             >
-              🔒
+              <Icone nome="cadeado" tamanho={16} />
             </button>
             <button
               type="button"
@@ -882,29 +883,29 @@ export default function AdminPage() {
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'resumo' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('resumo')}
           >
-            📊 Geral
-          </button>
+ Geral
+ </button>
           <button
             type="button"
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'faturas' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('faturas')}
           >
-            💳 Faturas
-          </button>
+ Faturas
+ </button>
           <button
             type="button"
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'imoveis' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('imoveis')}
           >
-            🏢 Imóveis
-          </button>
+ Imóveis
+ </button>
           <button
             type="button"
             className={`${styles.pocketNavPill} ${abaMobilePocket === 'clientes' ? styles.pocketNavPillAtivo : ''}`}
             onClick={() => setAbaMobilePocket('clientes')}
           >
-            👥 Clientes
-          </button>
+ Clientes
+ </button>
         </div>
 
         {/* CONTEÚDO POCKET */}
@@ -946,28 +947,28 @@ export default function AdminPage() {
                   <div className={styles.pocketGridKpis}>
                     {/* MRR */}
                     <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #3F8A66' }}>
-                      <span className={styles.pocketKpiMiniLabel}>💰 MRR (Recorrente)</span>
+                      <span className={styles.pocketKpiMiniLabel}>MRR (recorrente)</span>
                       <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.mrr)}</div>
                       <span className={styles.pocketKpiMiniSub}>Mensalidade ativa</span>
                     </div>
 
                     {/* FATURAMENTO NO PERÍODO */}
-                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #8b5cf6' }}>
-                      <span className={styles.pocketKpiMiniLabel}>💳 Faturamento</span>
+                    <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #45566B' }}>
+                      <span className={styles.pocketKpiMiniLabel}>Faturamento</span>
                       <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.faturamentoPeriodo)}</div>
                       <span className={styles.pocketKpiMiniSub}>{metricasBI.totalVendasPeriodo} fatura(s) paga(s)</span>
                     </div>
 
                     {/* ARR PROJETADO */}
                     <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #2C5F8A' }}>
-                      <span className={styles.pocketKpiMiniLabel}>📈 ARR Projetado</span>
+                      <span className={styles.pocketKpiMiniLabel}>ARR projetado</span>
                       <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.arr)}</div>
                       <span className={styles.pocketKpiMiniSub}>MRR × 12 meses</span>
                     </div>
 
                     {/* TICKET MÉDIO */}
                     <div className={styles.pocketCardKpiMini} style={{ borderLeft: '3px solid #E3A72F' }}>
-                      <span className={styles.pocketKpiMiniLabel}>🏷️ Ticket Médio</span>
+                      <span className={styles.pocketKpiMiniLabel}>Ticket médio</span>
                       <div className={styles.pocketKpiMiniValor}>{formatarMoeda(metricasBI.ticketMedio)}</div>
                       <span className={styles.pocketKpiMiniSub}>Média por venda</span>
                     </div>
@@ -976,7 +977,7 @@ export default function AdminPage() {
                   {/* CARD DE CRESCIMENTO & RETENÇÃO (NET GROWTH) */}
                   <div className={styles.pocketCardGrowth}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>🚀 Contratações & Net Growth</strong>
+                      <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>Contratações & net growth</strong>
                       <span style={{ fontSize: '0.72rem', color: '#F0A58F', fontWeight: 600 }}>
                         Retenção {metricasBI.taxaRetencao}%
                       </span>
@@ -984,7 +985,7 @@ export default function AdminPage() {
 
                     <div className={styles.pocketGrowthGrid}>
                       <div className={styles.pocketGrowthItem}>
-                        <span className={styles.pocketGrowthLabel}>Novas Vendas</span>
+                        <span className={styles.pocketGrowthLabel}>Novas vendas</span>
                         <strong className={styles.pocketGrowthNumPositivo}>+{metricasBI.contratacoesPeriodo}</strong>
                       </div>
                       <div className={styles.pocketGrowthItem}>
@@ -992,7 +993,7 @@ export default function AdminPage() {
                         <strong className={styles.pocketGrowthNumNegativo}>-{metricasBI.cancelamentosPeriodo}</strong>
                       </div>
                       <div className={styles.pocketGrowthItem}>
-                        <span className={styles.pocketGrowthLabel}>Net Growth</span>
+                        <span className={styles.pocketGrowthLabel}>Net growth</span>
                         <strong className={metricasBI.netGrowth >= 0 ? styles.pocketGrowthNumPositivo : styles.pocketGrowthNumNegativo}>
                           {metricasBI.netGrowth >= 0 ? `+${metricasBI.netGrowth}` : metricasBI.netGrowth}
                         </strong>
@@ -1003,7 +1004,7 @@ export default function AdminPage() {
                   {/* RESUMO DE PLANOS (DISTRIBUIÇÃO DE VENDAS) */}
                   <div className={styles.pocketCardPlanos}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>📦 Distribuição de Planos</strong>
+                      <strong style={{ fontSize: '0.85rem', color: '#ffffff' }}>Distribuição de planos</strong>
                       <span style={{ fontSize: '0.72rem', color: '#A39A8A' }}>
                         {metricasBI.vendasPorPlano.reduce((acc, p) => acc + p.quantidade, 0)} assinaturas
                       </span>
@@ -1037,17 +1038,17 @@ export default function AdminPage() {
                   {/* CARDS DE ACERVO E BASE (GRID 2 COLUNAS) */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <div className={styles.pocketCardKpi} style={{ padding: '12px' }}>
-                      <span className={styles.pocketKpiLabel}>🏢 Imóveis no Ar</span>
+                      <span className={styles.pocketKpiLabel}>Imóveis no ar</span>
                       <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
                         {imoveis.length}
                       </div>
                       <span style={{ fontSize: '0.72rem', color: '#A39A8A' }}>
-                        {imoveis.filter(i => i.destaque).length} com destaque ⭐
-                      </span>
+                        {imoveis.filter(i => i.destaque).length} com destaque 
+ </span>
                     </div>
 
                     <div className={styles.pocketCardKpi} style={{ padding: '12px' }}>
-                      <span className={styles.pocketKpiLabel}>👥 Anunciantes</span>
+                      <span className={styles.pocketKpiLabel}>Anunciantes</span>
                       <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
                         {clientes.filter(c => !c.is_corretor_vinculado).length}
                       </div>
@@ -1068,9 +1069,9 @@ export default function AdminPage() {
                       alignItems: 'center',
                       gap: '10px',
                     }}>
-                      <span style={{ fontSize: '1.3rem' }}>⚠️</span>
+                      <span style={{ fontSize: '1.3rem' }}><Icone nome="alerta" tamanho={18} /></span>
                       <div style={{ fontSize: '0.8rem', color: '#EBA592' }}>
-                        <strong>Atenção Operacional:</strong> Há {contestacoes.length} contestação(ões) e {cancelamentos.length} cancelamento(s) no gateway.
+                        <strong>Atenção operacional:</strong> Há {contestacoes.length} contestação(ões) e {cancelamentos.length} cancelamento(s) no gateway.
                       </div>
                     </div>
                   ) : (
@@ -1085,7 +1086,7 @@ export default function AdminPage() {
                       alignItems: 'center',
                       gap: '8px',
                     }}>
-                      <span>✅</span>
+                      <span><Icone nome="check" tamanho={16} /></span>
                       <span>Nenhuma contestação ou estorno pendente.</span>
                     </div>
                   )}
@@ -1093,7 +1094,7 @@ export default function AdminPage() {
                   {/* FEED DE ÚLTIMAS FATURAS */}
                   <div style={{ marginTop: '4px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <strong style={{ fontSize: '0.88rem', color: '#ffffff' }}>Últimas Cobranças</strong>
+                      <strong style={{ fontSize: '0.88rem', color: '#ffffff' }}>Últimas cobranças</strong>
                       <button
                         type="button"
                         onClick={() => setAbaMobilePocket('faturas')}
@@ -1129,7 +1130,7 @@ export default function AdminPage() {
               {abaMobilePocket === 'faturas' && (
                 <div className={styles.pocketListaCards}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>💳 Histórico de Cobranças</strong>
+                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>Histórico de cobranças</strong>
                     <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{faturas.length} faturas</span>
                   </div>
 
@@ -1164,7 +1165,7 @@ export default function AdminPage() {
               {abaMobilePocket === 'imoveis' && (
                 <div className={styles.pocketListaCards}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>🏢 Anúncios Publicados</strong>
+                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>Anúncios publicados</strong>
                     <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{imoveis.length} imóveis</span>
                   </div>
 
@@ -1175,14 +1176,14 @@ export default function AdminPage() {
                           {im.titulo}
                         </strong>
                         {im.destaque && (
-                          <span style={{ background: '#fef08a', color: '#854d0e', fontSize: '0.65rem', fontWeight: 800, padding: '1px 5px', borderRadius: '4px' }}>
-                            ⭐ Destaque
-                          </span>
+                          <span style={{ background: '#F2D48E', color: '#8A5F12', fontSize: '0.65rem', fontWeight: 800, padding: '1px 5px', borderRadius: '4px' }}>
+ Destaque
+ </span>
                         )}
                       </div>
 
                       <div style={{ fontSize: '0.75rem', color: '#A39A8A', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>📍 {im.bairro ? `${im.bairro}, ` : ''}{im.cidade || 'MG'}</span>
+                        <span><Icone nome="local" tamanho={16} /> {im.bairro ? `${im.bairro}, ` : ''}{im.cidade || 'MG'}</span>
                         <strong style={{ color: '#F0A58F' }}>{formatarMoeda(im.preco)}</strong>
                       </div>
 
@@ -1200,7 +1201,7 @@ export default function AdminPage() {
                             fontWeight: 600,
                           }}
                         >
-                          Ver Anúncio ↗
+                          Ver anúncio ↗
                         </Link>
                       </div>
                     </div>
@@ -1212,7 +1213,7 @@ export default function AdminPage() {
               {abaMobilePocket === 'clientes' && (
                 <div className={styles.pocketListaCards}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>👥 Diretório de Clientes</strong>
+                    <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>Diretório de clientes</strong>
                     <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>{clientes.filter(c => !c.is_corretor_vinculado).length} contas</span>
                   </div>
 
@@ -1246,7 +1247,7 @@ export default function AdminPage() {
 
               {/* AVISO DESKTOP NO RODAPÉ */}
               <div className={styles.pocketAvisoDesktop}>
-                💻 <strong>Acesso Master Desktop</strong><br />
+                <Icone nome="painel" tamanho={16} /> <strong>Acesso Master desktop</strong><br />
                 Para editar planos, alterar credenciais de API/Webhook e realizar estornos com PIN master, utilize o computador.
               </div>
             </>
@@ -1258,8 +1259,7 @@ export default function AdminPage() {
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <Link href="/" className={styles.logoAdmin}>
-            <span style={{ fontSize: '1.4rem' }}>📍</span>
-            <strong style={{ fontSize: '1.25rem', color: '#ffffff', letterSpacing: '-0.02em' }}>FIXUM</strong>
+            <Logotipo largura={84} />
           </Link>
           <span className={styles.badgeAdmin}>Super Admin</span>
         </div>
@@ -1270,8 +1270,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'analytics' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('analytics'); setBusca('') }}
           >
-            <span className={styles.navIcone}>📊</span>
-            <span>Analytics & BI Regional</span>
+            <span className={styles.navIcone}><Icone nome="grafico" tamanho={16} /></span>
+            <span>Analytics & BI regional</span>
           </button>
 
           <button
@@ -1279,8 +1279,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'clientes' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('clientes'); setBusca('') }}
           >
-            <span className={styles.navIcone}>👥</span>
-            <span>Clientes & Anunciantes ({clientes.filter(c => !c.is_corretor_vinculado).length})</span>
+            <span className={styles.navIcone}><Icone nome="pessoas" tamanho={16} /></span>
+            <span>Clientes & anunciantes ({clientes.filter(c => !c.is_corretor_vinculado).length})</span>
           </button>
 
           <button
@@ -1288,8 +1288,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'faturas' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('faturas'); setBusca('') }}
           >
-            <span className={styles.navIcone}>💳</span>
-            <span>Faturas & Cobranças ({faturas.length})</span>
+            <span className={styles.navIcone}><Icone nome="cartao" tamanho={16} /></span>
+            <span>Faturas & cobranças ({faturas.length})</span>
           </button>
 
           <button
@@ -1297,8 +1297,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'operacoes' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('operacoes'); setBusca('') }}
           >
-            <span className={styles.navIcone}>🔄</span>
-            <span>Cancelamentos & Disputas</span>
+            <span className={styles.navIcone}><Icone nome="atualizar" tamanho={16} /></span>
+            <span>Cancelamentos & disputas</span>
             {contestacoes.length > 0 && <span className={styles.badgeAlertaNav}>{contestacoes.length}</span>}
           </button>
 
@@ -1307,8 +1307,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'imoveis' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('imoveis'); setBusca('') }}
           >
-            <span className={styles.navIcone}>🏢</span>
-            <span>Moderação de Imóveis ({imoveis.length})</span>
+            <span className={styles.navIcone}><Icone nome="predio" tamanho={16} /></span>
+            <span>Moderação de imóveis ({imoveis.length})</span>
           </button>
 
           <button
@@ -1316,8 +1316,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'equipe' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('equipe'); setBusca('') }}
           >
-            <span className={styles.navIcone}>👥</span>
-            <span>Equipe & Administradores</span>
+            <span className={styles.navIcone}><Icone nome="pessoas" tamanho={16} /></span>
+            <span>Equipe & administradores</span>
           </button>
 
           <button
@@ -1325,8 +1325,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'auditoria' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('auditoria'); setBusca('') }}
           >
-            <span className={styles.navIcone}>📜</span>
-            <span>Trilha de Auditoria</span>
+            <span className={styles.navIcone}><Icone nome="documento" tamanho={16} /></span>
+            <span>Trilha de auditoria</span>
           </button>
 
           <button
@@ -1334,8 +1334,8 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'planos' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('planos'); setBusca('') }}
           >
-            <span className={styles.navIcone}>🏷️</span>
-            <span>Planos & Precificação</span>
+            <span className={styles.navIcone}><Icone nome="etiqueta" tamanho={16} /></span>
+            <span>Planos & precificação</span>
           </button>
 
           <button
@@ -1343,17 +1343,17 @@ export default function AdminPage() {
             className={`${styles.navItem} ${abaAtiva === 'configuracoes' ? styles.navItemAtivo : ''}`}
             onClick={() => { setAbaAtiva('configuracoes'); setBusca('') }}
           >
-            <span className={styles.navIcone}>⚙️</span>
-            <span>Configurações Globais</span>
+            <span className={styles.navIcone}><Icone nome="config" tamanho={16} /></span>
+            <span>Configurações globais</span>
           </button>
         </nav>
 
         <div className={styles.sidebarFooter}>
           <div className={styles.userPerfil}>
-            <div className={styles.avatarMini}>🛡️</div>
+            <div className={styles.avatarMini}><Icone nome="escudo" tamanho={16} /></div>
             <div className={styles.userDados}>
               <span className={styles.userNome}>{usuarioAtual?.email || 'Administrador Master'}</span>
-              <span className={styles.userRole}>Sessão Autenticada</span>
+              <span className={styles.userRole}>Sessão autenticada</span>
             </div>
           </div>
         </div>
@@ -1389,19 +1389,19 @@ export default function AdminPage() {
               className={styles.btnBloquearTela}
               title="Bloquear a tela com PIN Master"
             >
-              🔒 Bloquear Tela
-            </button>
+ Bloquear tela
+ </button>
 
             <Link href="/" className={styles.btnVoltarSite} target="_blank">
-              🌐 Ver Portal
-            </Link>
+ Ver portal
+ </Link>
 
             <button
               type="button"
               onClick={handleLogoutAdmin}
               className={styles.btnSairAdmin}
             >
-              Encerrar Sessão
+              Encerrar sessão
             </button>
           </div>
         </header>
@@ -1432,7 +1432,7 @@ export default function AdminPage() {
                   <div className={styles.painelHeader}>
                     <div className={styles.painelHeaderTitulos}>
                       <h2 className={styles.painelTitulo}>
-                        👥 Base de Clientes ({clientesFiltrados.length})
+ Base de clientes ({clientesFiltrados.length})
                       </h2>
                       <span className={styles.painelSub}>
                         {filtroTipoCliente === 'comerciais'
@@ -1455,12 +1455,12 @@ export default function AdminPage() {
                         onChange={(e) => setFiltroTipoCliente(e.target.value)}
                         className={styles.selectFiltro}
                       >
-                        <option value="comerciais">💼 Clientes Comerciais (Pagadores)</option>
-                        <option value="imobiliarias">🏢 Apenas Imobiliárias (Gestoras)</option>
-                        <option value="autonomos">👔 Apenas Corretores Autônomos</option>
-                        <option value="proprietarios">👤 Apenas Proprietários</option>
-                        <option value="equipe_interna">👥 Membros de Equipe (Corretores Vinculados)</option>
-                        <option value="todos">🌐 Todos os Usuários Cadastrados</option>
+                        <option value="comerciais">Clientes comerciais (pagadores)</option>
+                        <option value="imobiliarias">Apenas imobiliárias (gestoras)</option>
+                        <option value="autonomos">Apenas corretores autônomos</option>
+                        <option value="proprietarios">Apenas proprietários</option>
+                        <option value="equipe_interna">Membros de equipe (corretores vinculados)</option>
+                        <option value="todos">Todos os usuários cadastrados</option>
                       </select>
 
                       <select
@@ -1468,9 +1468,9 @@ export default function AdminPage() {
                         onChange={(e) => setFiltroStatusCliente(e.target.value)}
                         className={styles.selectFiltro}
                       >
-                        <option value="todos">Todos os Status</option>
-                        <option value="ativo">Contas Ativas</option>
-                        <option value="suspenso">Contas Suspensas</option>
+                        <option value="todos">Todos os status</option>
+                        <option value="ativo">Contas ativas</option>
+                        <option value="suspenso">Contas suspensas</option>
                       </select>
                     </div>
                   </div>
@@ -1479,13 +1479,13 @@ export default function AdminPage() {
                     <table className={styles.tabela}>
                       <thead>
                         <tr>
-                          <th>Cliente / Razão Social</th>
+                          <th>Cliente / razão social</th>
                           <th>Contato</th>
                           <th>Região</th>
-                          <th>Perfil / Relação Comercial</th>
-                          <th>Plano Contratado</th>
-                          <th>Total de Imóveis (Consolidado)</th>
-                          <th>Total Pago</th>
+                          <th>Perfil / relação comercial</th>
+                          <th>Plano contratado</th>
+                          <th>Total de imóveis (consolidado)</th>
+                          <th>Total pago</th>
                           <th>Status</th>
                           <th>Ações</th>
                         </tr>
@@ -1505,8 +1505,8 @@ export default function AdminPage() {
                               {cli.tipo_anunciante === 'imobiliaria' ? (
                                 <div>
                                   <span className={`${styles.badge} ${styles.badgeImobiliaria}`}>
-                                    🏢 Imobiliária (Cliente Gestora)
-                                  </span>
+ Imobiliária (cliente gestora)
+ </span>
                                   <div style={{ fontSize: '0.72rem', color: '#F0A58F', marginTop: '2px' }}>
                                     {cli.corretores_equipe?.length || 0} corretor(es) na equipe
                                   </div>
@@ -1514,20 +1514,20 @@ export default function AdminPage() {
                               ) : cli.is_corretor_vinculado ? (
                                 <div>
                                   <span className={`${styles.badge} ${styles.badgeCorretor}`}>
-                                    👔 Corretor de Equipe
-                                  </span>
+ Corretor de equipe
+ </span>
                                   <div style={{ fontSize: '0.72rem', color: '#A39A8A', marginTop: '2px' }}>
-                                    🏢 Equipe: {cli.imobiliaria_nome}
+ Equipe: {cli.imobiliaria_nome}
                                   </div>
                                 </div>
                               ) : cli.tipo_anunciante === 'corretor' ? (
                                 <span className={`${styles.badge} ${styles.badgeCorretor}`}>
-                                  👔 Corretor Autônomo (Cliente Direto)
-                                </span>
+ Corretor autônomo (cliente direto)
+ </span>
                               ) : (
                                 <span className={`${styles.badge} ${styles.badgeProprietario}`}>
-                                  👤 Proprietário
-                                </span>
+ Proprietário
+ </span>
                               )}
                             </td>
                             <td>
@@ -1536,7 +1536,7 @@ export default function AdminPage() {
                                   {cli.plano_nome}
                                 </span>
                                 <div style={{ fontSize: '0.72rem', color: cli.is_corretor_vinculado ? '#F0A58F' : '#7DBB98', marginTop: '2px' }}>
-                                  {cli.is_corretor_vinculado ? '🏢 Cota da Imobiliária' : `${formatarMoeda(cli.plano_preco)}/mês`}
+                                  {cli.is_corretor_vinculado ? 'Cota da imobiliária' : `${formatarMoeda(cli.plano_preco)}/mês`}
                                 </div>
                               </div>
                             </td>
@@ -1552,7 +1552,7 @@ export default function AdminPage() {
                             </td>
                             <td>
                               {cli.is_corretor_vinculado ? (
-                                <span style={{ color: '#7A7264', fontSize: '0.8rem' }}>— (Via Imobiliária)</span>
+                                <span style={{ color: '#7A7264', fontSize: '0.8rem' }}>— (Via imobiliária)</span>
                               ) : (
                                 <strong>{formatarMoeda(cli.valor_total_gasto)}</strong>
                               )}
@@ -1587,7 +1587,7 @@ export default function AdminPage() {
                 <div className={styles.painelBox}>
                   <div className={styles.painelHeader}>
                     <div className={styles.painelHeaderTitulos}>
-                      <h2 className={styles.painelTitulo}>💳 Faturas & Cobranças ({faturasFiltradas.length})</h2>
+                      <h2 className={styles.painelTitulo}>Faturas & cobranças ({faturasFiltradas.length})</h2>
                       <span className={styles.painelSub}>Acompanhamento de faturas PIX e Cartão de Crédito emitidas para os Clientes Comerciais</span>
                     </div>
 
@@ -1605,12 +1605,12 @@ export default function AdminPage() {
                         onChange={(e) => setFiltroStatusFatura(e.target.value)}
                         className={styles.selectFiltro}
                       >
-                        <option value="todos">Todos os Status</option>
+                        <option value="todos">Todos os status</option>
                         <option value="pago">Pagas</option>
                         <option value="pendente">Pendentes</option>
                         <option value="atrasado">Atrasadas</option>
-                        <option value="reembolsado">Reembolsadas / Estornadas</option>
-                        <option value="em_disputa">Em Disputa (Chargeback)</option>
+                        <option value="reembolsado">Reembolsadas / estornadas</option>
+                        <option value="em_disputa">Em disputa (chargeback)</option>
                       </select>
 
                       <button
@@ -1618,8 +1618,8 @@ export default function AdminPage() {
                         className={styles.btnExportarCSV}
                         onClick={handleExportarFaturasCSV}
                       >
-                        📥 Exportar CSV
-                      </button>
+ Exportar CSV
+ </button>
                     </div>
                   </div>
 
@@ -1627,11 +1627,11 @@ export default function AdminPage() {
                     <table className={styles.tabela}>
                       <thead>
                         <tr>
-                          <th>Cliente Responsável</th>
+                          <th>Cliente responsável</th>
                           <th>Plano</th>
                           <th>Valor</th>
                           <th>Método</th>
-                          <th>Vencimento / Pagamento</th>
+                          <th>Vencimento / pagamento</th>
                           <th>Status</th>
                           <th>Gateway Asaas</th>
                           <th>Ações</th>
@@ -1650,7 +1650,7 @@ export default function AdminPage() {
                             <td><strong className={styles.valorDestaqueVerde}>{formatarMoeda(fat.valor)}</strong></td>
                             <td>
                               <span className={fat.metodo_pagamento === 'pix' ? styles.tagPix : styles.tagCartao}>
-                                {fat.metodo_pagamento === 'pix' ? '⚡ PIX' : '💳 Cartão'}
+                                {fat.metodo_pagamento === 'pix' ? 'PIX' : 'Cartão'}
                               </span>
                             </td>
                             <td>
@@ -1674,7 +1674,7 @@ export default function AdminPage() {
                                 {fat.status === 'pendente' && 'Aguardando'}
                                 {fat.status === 'atrasado' && 'Atrasada'}
                                 {fat.status === 'reembolsado' && '↩️ Reembolsado'}
-                                {fat.status === 'em_disputa' && '⚠️ Disputa'}
+                                {fat.status === 'em_disputa' && 'Disputa'}
                               </span>
                             </td>
                             <td>
@@ -1685,10 +1685,10 @@ export default function AdminPage() {
                                   rel="noopener noreferrer"
                                   className={styles.linkAsaas}
                                 >
-                                  Ver Fatura Asaas ↗
+                                  Ver fatura Asaas ↗
                                 </a>
                               ) : (
-                                <span style={{ color: '#7A7264', fontSize: '0.75rem' }}>Manual / Interno</span>
+                                <span style={{ color: '#7A7264', fontSize: '0.75rem' }}>Manual / interno</span>
                               )}
                             </td>
                             <td>
@@ -1699,7 +1699,7 @@ export default function AdminPage() {
                                     className={styles.btnAcaoTabelaVerde}
                                     onClick={() => handleMarcarPagoManual(fat)}
                                   >
-                                    Confirmar Pgto
+                                    Confirmar pgto
                                   </button>
                                 )}
                                 {fat.status === 'pago' && (
@@ -1731,21 +1731,21 @@ export default function AdminPage() {
                       className={`${styles.subAbaBtn} ${subAbaOperacoes === 'cancelamentos' ? styles.subAbaAtiva : ''}`}
                       onClick={() => setSubAbaOperacoes('cancelamentos')}
                     >
-                      🚪 Cancelamentos de Assinatura ({cancelamentos.length})
+ Cancelamentos de assinatura ({cancelamentos.length})
                     </button>
                     <button
                       type="button"
                       className={`${styles.subAbaBtn} ${subAbaOperacoes === 'devolucoes' ? styles.subAbaAtiva : ''}`}
                       onClick={() => setSubAbaOperacoes('devolucoes')}
                     >
-                      ↩️ Devoluções & Estornos ({devolucoes.length})
+                      ↩️ Devoluções & estornos ({devolucoes.length})
                     </button>
                     <button
                       type="button"
                       className={`${styles.subAbaBtn} ${subAbaOperacoes === 'contestacoes' ? styles.subAbaAtiva : ''}`}
                       onClick={() => setSubAbaOperacoes('contestacoes')}
                     >
-                      ⚠️ Contestações & Chargebacks ({contestacoes.length})
+ Contestações & chargebacks ({contestacoes.length})
                     </button>
                   </div>
 
@@ -1753,17 +1753,17 @@ export default function AdminPage() {
                   {subAbaOperacoes === 'cancelamentos' && (
                     <div>
                       <div className={styles.painelHeader}>
-                        <h3 className={styles.painelTitulo}>Histórico de Assinaturas Rescindidas</h3>
+                        <h3 className={styles.painelTitulo}>Histórico de assinaturas rescindidas</h3>
                       </div>
                       <div className={styles.tabelaWrapper}>
                         <table className={styles.tabela}>
                           <thead>
                             <tr>
-                              <th>Cliente Responsável</th>
-                              <th>Plano Rescindido</th>
-                              <th>Valor Mensal</th>
-                              <th>Motivo Declarado</th>
-                              <th>Data do Cancelamento</th>
+                              <th>Cliente responsável</th>
+                              <th>Plano rescindido</th>
+                              <th>Valor mensal</th>
+                              <th>Motivo declarado</th>
+                              <th>Data do cancelamento</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1789,17 +1789,17 @@ export default function AdminPage() {
                   {subAbaOperacoes === 'devolucoes' && (
                     <div>
                       <div className={styles.painelHeader}>
-                        <h3 className={styles.painelTitulo}>Histórico de Reembolsos e Estornos Concluídos</h3>
+                        <h3 className={styles.painelTitulo}>Histórico de reembolsos e estornos concluídos</h3>
                       </div>
                       <div className={styles.tabelaWrapper}>
                         <table className={styles.tabela}>
                           <thead>
                             <tr>
                               <th>Cliente</th>
-                              <th>Valor Devolvido</th>
+                              <th>Valor devolvido</th>
                               <th>Motivo</th>
                               <th>Canal</th>
-                              <th>Data da Devolução</th>
+                              <th>Data da devolução</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1825,11 +1825,11 @@ export default function AdminPage() {
                   {subAbaOperacoes === 'contestacoes' && (
                     <div>
                       <div className={styles.painelHeader}>
-                        <h3 className={styles.painelTitulo}>🚨 Painel de Disputas & Chargebacks Bancários</h3>
+                        <h3 className={styles.painelTitulo}>Painel de disputas & chargebacks bancários</h3>
                       </div>
                       {contestacoes.length === 0 ? (
                         <div className={styles.boxSucessoZeroDisputas}>
-                          <span>🛡️</span>
+                          <span><Icone nome="escudo" tamanho={16} /></span>
                           <div>
                             <strong>Nenhuma contestação ou chargeback em aberto!</strong>
                             <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#A39A8A' }}>
@@ -1843,9 +1843,9 @@ export default function AdminPage() {
                             <thead>
                               <tr>
                                 <th>Cliente</th>
-                                <th>Valor em Disputa</th>
-                                <th>Motivo da Bandeira</th>
-                                <th>Prazo de Defesa</th>
+                                <th>Valor em disputa</th>
+                                <th>Motivo da bandeira</th>
+                                <th>Prazo de defesa</th>
                                 <th>Status</th>
                               </tr>
                             </thead>
@@ -1883,7 +1883,7 @@ export default function AdminPage() {
               {abaAtiva === 'imoveis' && (
                 <div className={styles.painelBox}>
                   <div className={styles.painelHeader}>
-                    <h2 className={styles.painelTitulo}>🏢 Moderação de Imóveis ({imoveisFiltrados.length})</h2>
+                    <h2 className={styles.painelTitulo}>Moderação de imóveis ({imoveisFiltrados.length})</h2>
                     <input
                       type="text"
                       placeholder="Buscar por título, cidade, bairro, anunciante..."
@@ -1900,7 +1900,7 @@ export default function AdminPage() {
                           <th>Imóvel</th>
                           <th>Localização</th>
                           <th>Valor</th>
-                          <th>Titular Comercial / Anunciante</th>
+                          <th>Titular comercial / anunciante</th>
                           <th>Destaque</th>
                           <th>Status</th>
                           <th>Ações</th>
@@ -1924,7 +1924,7 @@ export default function AdminPage() {
                                 <strong>{im.anunciante_nome}</strong>
                                 {im.cadastrado_por_nome && (
                                   <div style={{ fontSize: '0.72rem', color: '#F0A58F', marginTop: '2px' }}>
-                                    👤 Operador: {im.cadastrado_por_nome}
+ Operador: {im.cadastrado_por_nome}
                                   </div>
                                 )}
                               </div>
@@ -1936,7 +1936,7 @@ export default function AdminPage() {
                                 style={{ color: im.destaque ? '#E3A72F' : '#7A7264' }}
                                 onClick={() => handleToggleDestaque(im.id, im.destaque)}
                               >
-                                {im.destaque ? '⭐ Destaque' : '☆ Normal'}
+                                {im.destaque ? 'Destaque' : 'Normal'}
                               </button>
                             </td>
                             <td>
@@ -1980,7 +1980,7 @@ export default function AdminPage() {
                 <div className={styles.painelBox}>
                   <div className={styles.painelHeader}>
                     <div className={styles.painelHeaderTitulos}>
-                      <h2 className={styles.painelTitulo}>📜 Trilha de Auditoria Imutável (Logs de Segurança)</h2>
+                      <h2 className={styles.painelTitulo}>Trilha de auditoria imutável (logs de segurança)</h2>
                       <span className={styles.painelSub}>Registro histórico de todas as alterações sensíveis e financeiras</span>
                     </div>
                   </div>
@@ -1989,11 +1989,11 @@ export default function AdminPage() {
                     <table className={styles.tabela}>
                       <thead>
                         <tr>
-                          <th>Data / Hora</th>
+                          <th>Data / hora</th>
                           <th>Administrador</th>
-                          <th>Ação Executada</th>
+                          <th>Ação executada</th>
                           <th>Entidade</th>
-                          <th>Justificativa Obrigatória</th>
+                          <th>Justificativa obrigatória</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -2021,7 +2021,7 @@ export default function AdminPage() {
                 <div className={styles.painelBox}>
                   <div className={styles.painelHeader}>
                     <div className={styles.painelHeaderTitulos}>
-                      <h2 className={styles.painelTitulo}>⚙️ Configurações Globais & Gateway de Pagamento</h2>
+                      <h2 className={styles.painelTitulo}>Configurações globais & gateway de pagamento</h2>
                       <span className={styles.painelSub}>Gerencie as credenciais do Asaas, Webhook de pagamentos e contatos da Fixum</span>
                     </div>
                   </div>
@@ -2030,10 +2030,10 @@ export default function AdminPage() {
                     {/* SEÇÃO 1: GATEWAY ASAAS */}
                     <div className={styles.secaoConfigCard}>
                       <div className={styles.secaoConfigHeader}>
-                        <span style={{ fontSize: '1.4rem' }}>💳</span>
+                        <span style={{ fontSize: '1.4rem' }}><Icone nome="cartao" tamanho={19} /></span>
                         <div>
                           <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.05rem', fontWeight: 700 }}>
-                            Gateway Oficial de Pagamentos (Asaas)
+                            Gateway oficial de pagamentos (Asaas)
                           </h3>
                           <p style={{ margin: '2px 0 0 0', color: '#A39A8A', fontSize: '0.8rem' }}>
                             O dinheiro das assinaturas PIX e Cartão cai diretamente na sua conta cadastrada no Asaas.
@@ -2044,21 +2044,21 @@ export default function AdminPage() {
                       {/* BANNER DE ALERTA DE SEGURANÇA CRÍTICA */}
                       <div style={{
                         marginTop: '14px',
-                        background: 'rgba(234, 179, 8, 0.08)',
-                        border: '1px solid rgba(234, 179, 8, 0.3)',
+                        background: 'rgba(227, 167, 47, 0.08)',
+                        border: '1px solid rgba(227, 167, 47, 0.3)',
                         borderRadius: '10px',
                         padding: '12px 16px',
                         display: 'flex',
                         alignItems: 'flex-start',
                         gap: '12px',
                       }}>
-                        <span style={{ fontSize: '1.5rem', lineHeight: '1' }}>⚠️</span>
+                        <span style={{ fontSize: '1.5rem', lineHeight: '1' }}><Icone nome="alerta" tamanho={20} /></span>
                         <div>
-                          <strong style={{ color: '#facc15', fontSize: '0.85rem' }}>
-                            Atenção de Segurança: Proteção do Fluxo de Recebimento
+                          <strong style={{ color: '#E8B84A', fontSize: '0.85rem' }}>
+                            Atenção de segurança: proteção do fluxo de recebimento
                           </strong>
                           <p style={{ margin: '4px 0 0', color: '#CFC6B6', fontSize: '0.8rem', lineHeight: '1.4' }}>
-                            A <strong>Chave de API</strong> e o <strong>Token do Webhook</strong> são a espinha dorsal de cobranças da plataforma. Alterações incorretas impedem que novos anunciantes paguem ou que pagamentos confirmados no banco liberem cotas de anúncios. Sempre clique em <strong>&quot;⚡ Testar Conexão com o Asaas Agora&quot;</strong> antes de salvar.
+                            A <strong>Chave de API</strong> e o <strong>Token do webhook</strong> são a espinha dorsal de cobranças da plataforma. Alterações incorretas impedem que novos anunciantes paguem ou que pagamentos confirmados no banco liberem cotas de anúncios. Sempre clique em <strong>&quot;Testar conexão com o Asaas Agora&quot;</strong> antes de salvar.
                           </p>
                         </div>
                       </div>
@@ -2075,20 +2075,20 @@ export default function AdminPage() {
                           onChange={(e) => setAsaasModo(e.target.value as 'producao' | 'sandbox')}
                           className={styles.selectForm}
                         >
-                          <option value="producao">🚀 Produção (Cobranças Reais no Cartão e PIX com QR Code do Banco Central)</option>
-                          <option value="sandbox">🧪 Sandbox (Ambiente de Testes / Simulação)</option>
+                          <option value="producao">Produção (Cobranças Reais no Cartão e PIX com QR Code do Banco Central)</option>
+                          <option value="sandbox">Sandbox (ambiente de testes / simulação)</option>
                         </select>
                       </div>
 
                       <div className={styles.grupoInput}>
                         <label className={styles.labelForm}>
-                          <span>Chave de API do Asaas (API Key):</span>
+                          <span>Chave de API do Asaas (API key):</span>
                           <button
                             type="button"
                             onClick={() => setMostrarApiKey(!mostrarApiKey)}
                             style={{ background: 'none', border: 'none', color: '#F0A58F', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
                           >
-                            {mostrarApiKey ? '🙈 Ocultar Chave' : '👁️ Mostrar Chave'}
+                            {mostrarApiKey ? 'Ocultar chave' : 'Mostrar chave'}
                           </button>
                         </label>
                         <input
@@ -2103,13 +2103,13 @@ export default function AdminPage() {
 
                       <div className={styles.grupoInput}>
                         <label className={styles.labelForm}>
-                          <span>Token de Segurança do Webhook (Webhook Token):</span>
+                          <span>Token de segurança do webhook (webhook token):</span>
                           <button
                             type="button"
                             onClick={() => setMostrarWebhookToken(!mostrarWebhookToken)}
                             style={{ background: 'none', border: 'none', color: '#F0A58F', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
                           >
-                            {mostrarWebhookToken ? '🙈 Ocultar Token' : '👁️ Mostrar Token'}
+                            {mostrarWebhookToken ? 'Ocultar token' : 'Mostrar token'}
                           </button>
                         </label>
                         <input
@@ -2129,7 +2129,7 @@ export default function AdminPage() {
                           className={styles.btnAcaoTabelaVerde}
                           style={{ padding: '8px 16px', fontSize: '0.85rem' }}
                         >
-                          {testandoAsaas ? '⏳ Testando Conexão...' : '⚡ Testar Conexão com o Asaas Agora'}
+                          {testandoAsaas ? 'Testando conexão...' : 'Testar conexão com o Asaas agora'}
                         </button>
                       </div>
 
@@ -2143,8 +2143,8 @@ export default function AdminPage() {
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                           <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>
-                            🔗 URL do Webhook para colar no painel do Asaas:
-                          </strong>
+ URL do webhook para colar no painel do Asaas:
+ </strong>
                           <button
                             type="button"
                             onClick={() => {
@@ -2153,9 +2153,9 @@ export default function AdminPage() {
                                 : 'https://www.fixum.com.br/api/pagamentos/webhook'
                               navigator.clipboard.writeText(url)
                               alertar({
-                                titulo: 'URL Copiada!',
+                                titulo: 'URL copiada',
                                 mensagem: `A URL "${url}" foi copiada para a área de transferência. Cole-a no painel do Asaas em Configurações > Integrações > Webhooks.`,
-                                icone: '📋',
+                                icone: 'lista',
                                 tipo: 'sucesso',
                               })
                             }}
@@ -2169,8 +2169,8 @@ export default function AdminPage() {
                               cursor: 'pointer',
                             }}
                           >
-                            📋 Copiar URL do Webhook
-                          </button>
+ Copiar URL do webhook
+ </button>
                         </div>
                         <code style={{
                           display: 'block',
@@ -2186,7 +2186,7 @@ export default function AdminPage() {
                           {typeof window !== 'undefined' ? `${window.location.origin}/api/pagamentos/webhook` : 'https://www.fixum.com.br/api/pagamentos/webhook'}
                         </code>
                         <p style={{ margin: '8px 0 0 0', color: '#7A7264', fontSize: '0.75rem', lineHeight: '1.4' }}>
-                          ℹ️ No painel do Asaas (<em>Configurações &gt; Integrações &gt; Webhooks</em>), crie um webhook com esta URL e marque os eventos: <strong>Pagamento Recebido, Confirmado, Vencido, Estornado e Chargeback</strong>.
+ No painel do Asaas (<em>Configurações &gt; integrações &gt; webhooks</em>), crie um webhook com esta URL e marque os eventos: <strong>Pagamento recebido, confirmado, vencido, estornado e chargeback</strong>.
                         </p>
                       </div>
                     </div>
@@ -2194,10 +2194,10 @@ export default function AdminPage() {
                     {/* SEÇÃO 2: CONTATOS DA PLATAFORMA */}
                     <div className={styles.secaoConfigCard} style={{ marginTop: '16px' }}>
                       <div className={styles.secaoConfigHeader}>
-                        <span style={{ fontSize: '1.4rem' }}>📞</span>
+                        <span style={{ fontSize: '1.4rem' }}><Icone nome="telefone" tamanho={19} /></span>
                         <div>
                           <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.05rem', fontWeight: 700 }}>
-                            Canais Oficiais de Atendimento & Suporte Fixum
+                            Canais oficiais de atendimento & suporte Fixum
                           </h3>
                           <p style={{ margin: '2px 0 0 0', color: '#A39A8A', fontSize: '0.8rem' }}>
                             Esses números e e-mails são exibidos nos botões de contato e rodapé do portal.
@@ -2207,7 +2207,7 @@ export default function AdminPage() {
 
                       <div className={styles.grupoInput} style={{ marginTop: '14px' }}>
                         <label className={styles.labelForm}>
-                          WhatsApp Comercial (Consultor de Vendas / Atendimento Fixum)
+                          WhatsApp comercial (consultor de vendas / atendimento Fixum)
                         </label>
                         <input
                           type="text"
@@ -2221,7 +2221,7 @@ export default function AdminPage() {
 
                       <div className={styles.grupoInput}>
                         <label className={styles.labelForm}>
-                          WhatsApp de Suporte Técnico
+                          WhatsApp de suporte técnico
                         </label>
                         <input
                           type="text"
@@ -2234,7 +2234,7 @@ export default function AdminPage() {
 
                       <div className={styles.grupoInput}>
                         <label className={styles.labelForm}>
-                          E-mail Oficial de Contato
+                          E-mail oficial de contato
                         </label>
                         <input
                           type="email"
@@ -2247,7 +2247,7 @@ export default function AdminPage() {
                     </div>
 
                     {msgConfig && (
-                      <div className={msgConfig.includes('⚠️') || msgConfig.includes('❌') ? styles.alertaAmarelo : styles.alertaVerde} style={{ marginTop: '16px' }}>
+                      <div className={msgConfig.includes('') || msgConfig.includes('') ? styles.alertaAmarelo : styles.alertaVerde} style={{ marginTop: '16px' }}>
                         {msgConfig}
                       </div>
                     )}
@@ -2260,7 +2260,7 @@ export default function AdminPage() {
                           className={styles.btnSalvarConfig}
                           style={{ flex: '1', minWidth: '240px' }}
                         >
-                          {salvandoConfig ? 'Gravando e Validando...' : '💾 Salvar Todas as Configurações & Credenciais'}
+                          {salvandoConfig ? 'Gravando e validando...' : 'Salvar todas as configurações & credenciais'}
                         </button>
 
                         {(asaasApiKey.trim() !== configsSalvas.asaasApiKey.trim() ||
@@ -2287,13 +2287,12 @@ export default function AdminPage() {
                               transition: 'all 0.15s ease',
                             }}
                           >
-                            ↺ Descartar Alterações
+                            ↺ Descartar alterações
                           </button>
                         )}
                       </div>
 
-                      <span style={{ fontSize: '0.75rem', color: '#A39A8A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        🛡️ <em>Blindagem ativa: alterações de credenciais financeiras exigem confirmação explícita e são gravadas na Trilha de Auditoria.</em>
+                      <span style={{ fontSize: '0.75rem', color: '#A39A8A', display: 'flex', alignItems: 'center', gap: '6px' }}><Icone nome="escudo" tamanho={16} /> <em>Blindagem ativa: alterações de credenciais financeiras exigem confirmação explícita e são gravadas na Trilha de Auditoria.</em>
                       </span>
                     </div>
                   </form>
@@ -2305,7 +2304,7 @@ export default function AdminPage() {
                 <div className={styles.painelBox}>
                   <div className={styles.painelHeader}>
                     <div className={styles.painelHeaderTitulos}>
-                      <h2 className={styles.painelTitulo}>🏷️ Gestão de Planos & Precificação Oficial</h2>
+                      <h2 className={styles.painelTitulo}>Gestão de planos & precificação oficial</h2>
                       <span className={styles.painelSub}>
                         Calibre as faixas de imóveis, preços mensais, destaques inclusos e ative/pause planos com sincronização instantânea em todo o portal Fixum.
                       </span>
@@ -2318,13 +2317,13 @@ export default function AdminPage() {
                       className={styles.btnSalvarConfig}
                       style={{ padding: '10px 24px', fontSize: '0.95rem' }}
                     >
-                      {salvandoPlanos ? 'Gravando Preços...' : '💾 Salvar Alterações de Precificação'}
+                      {salvandoPlanos ? 'Gravando preços...' : 'Salvar alterações de precificação'}
                     </button>
                   </div>
 
                   {msgPlanos && (
                     <div className={msgPlanos.tipo === 'erro' ? styles.alertaAmarelo : styles.alertaVerde} style={{ marginTop: '16px', marginBottom: '16px' }}>
-                      {msgPlanos.tipo === 'sucesso' ? '✅ ' : '❌ '} {msgPlanos.texto}
+                      {msgPlanos.tipo === 'sucesso' ? '' : ''} {msgPlanos.texto}
                     </div>
                   )}
 
@@ -2333,11 +2332,11 @@ export default function AdminPage() {
                       <thead>
                         <tr>
                           <th style={{ width: '60px' }}>Ordem</th>
-                          <th>Plano & Descrição Comercial</th>
-                          <th style={{ width: '160px' }}>Faixa de Imóveis</th>
+                          <th>Plano & descrição comercial</th>
+                          <th style={{ width: '160px' }}>Faixa de imóveis</th>
                           <th style={{ width: '160px' }}>Mensalidade (R$)</th>
-                          <th style={{ width: '150px' }}>Custo / Imóvel</th>
-                          <th style={{ width: '130px', textAlign: 'center' }}>Destaque Mapa</th>
+                          <th style={{ width: '150px' }}>Custo / imóvel</th>
+                          <th style={{ width: '130px', textAlign: 'center' }}>Destaque mapa</th>
                           <th style={{ width: '110px', textAlign: 'center' }}>Disponível</th>
                         </tr>
                       </thead>
@@ -2507,10 +2506,10 @@ export default function AdminPage() {
                   {/* ── CARD: DESCONTOS PROMOCIONAIS POR CICLO ── */}
                   <div className={styles.secaoConfigCard} style={{ marginTop: '24px' }}>
                     <div className={styles.secaoConfigHeader}>
-                      <span style={{ fontSize: '1.4rem' }}>🎁</span>
+                      <span style={{ fontSize: '1.4rem' }}><Icone nome="estrela" tamanho={19} /></span>
                       <div>
                         <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.05rem', fontWeight: 700 }}>
-                          Descontos Promocionais por Ciclo Contratual (Multi-Meses)
+                          Descontos promocionais por ciclo contratual (Multi-Meses)
                         </h3>
                         <p style={{ margin: '2px 0 0 0', color: '#A39A8A', fontSize: '0.8rem' }}>
                           Defina o percentual de desconto concedido automaticamente ao cliente ao optar por ciclos de pagamento mais longos.
@@ -2521,7 +2520,7 @@ export default function AdminPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginTop: '16px' }}>
                       <div style={{ background: '#16201C', border: '1px solid #22302A', borderRadius: '10px', padding: '14px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>🥉 Trimestral (3 Meses)</strong>
+                          <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>Trimestral (3 meses)</strong>
                           <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>Renovação a cada 90 dias</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
@@ -2549,7 +2548,7 @@ export default function AdminPage() {
 
                       <div style={{ background: '#16201C', border: '1px solid #22302A', borderRadius: '10px', padding: '14px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>🥈 Semestral (6 Meses)</strong>
+                          <strong style={{ color: '#F0A58F', fontSize: '0.85rem' }}>Semestral (6 meses)</strong>
                           <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>Renovação a cada 180 dias</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
@@ -2577,7 +2576,7 @@ export default function AdminPage() {
 
                       <div style={{ background: '#16201C', border: '1px solid #22302A', borderRadius: '10px', padding: '14px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <strong style={{ color: '#eab308', fontSize: '0.85rem' }}>🥇 Anual (12 Meses) 🔥</strong>
+                          <strong style={{ color: '#E3A72F', fontSize: '0.85rem' }}>Anual (12 meses) </strong>
                           <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>Renovação a cada 365 dias</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
@@ -2608,19 +2607,19 @@ export default function AdminPage() {
                   {/* ── CARD: BLINDAGEM CONTRATUAL E IMUTABILIDADE DE PREÇO ── */}
                   <div style={{
                     marginTop: '20px',
-                    background: 'linear-gradient(135deg, #16201C 0%, #1e1b4b 100%)',
-                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    background: 'linear-gradient(135deg, #16201C 0%, #1F2A36 100%)',
+                    border: '1px solid rgba(69, 86, 107, 0.3)',
                     borderRadius: '12px',
                     padding: '18px 22px',
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '16px',
                   }}>
-                    <span style={{ fontSize: '2rem' }}>⚖️</span>
+                    <span style={{ fontSize: '2rem' }}><Icone nome="documento" tamanho={27} /></span>
                     <div>
-                      <strong style={{ color: '#a5b4fc', fontSize: '0.95rem' }}>
-                        🛡️ Blindagem Contratual de Preço Ativo (Garantia de Não Reajuste Durante a Vigência)
-                      </strong>
+                      <strong style={{ color: '#9AAABD', fontSize: '0.95rem' }}>
+ Blindagem Contratual de Preço Ativo (Garantia de Não Reajuste Durante a Vigência)
+ </strong>
                       <p style={{ margin: '6px 0 0 0', color: '#CFC6B6', fontSize: '0.82rem', lineHeight: '1.5' }}>
                         A Fixum assegura total segurança jurídica aos clientes: <strong>qualquer reajuste realizado nesta tabela NÃO altera as cobranças de clientes que já possuem assinatura ativa</strong> durante o ciclo contratado (seja mensal, trimestral, semestral ou anual). Os novos valores valem exclusivamente para <strong>novas adesões</strong> ou em caso de <strong>alteração voluntária (upgrade/downgrade)</strong> solicitada pelo próprio anunciante.
                       </p>
@@ -2638,11 +2637,11 @@ export default function AdminPage() {
                     alignItems: 'center',
                     gap: '16px',
                   }}>
-                    <span style={{ fontSize: '1.8rem' }}>📜</span>
+                    <span style={{ fontSize: '1.8rem' }}><Icone nome="documento" tamanho={24} /></span>
                     <div>
-                      <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>Sincronização & Trilha de Auditoria Automática</strong>
+                      <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>Sincronização & trilha de auditoria automática</strong>
                       <p style={{ margin: '4px 0 0 0', color: '#A39A8A', fontSize: '0.8rem', lineHeight: '1.4' }}>
-                        Qualquer alteração de preços, faixas ou descontos é gravada com carimbo de data/hora e e-mail do administrador na <strong>Trilha de Auditoria</strong>.
+                        Qualquer alteração de preços, faixas ou descontos é gravada com carimbo de data/hora e e-mail do administrador na <strong>Trilha de auditoria</strong>.
                       </p>
                     </div>
                   </div>

@@ -880,9 +880,9 @@
 .cardDestaqueVisita {
   font-size: 0.68rem;
   font-weight: 700;
-  color: #6d28d9;
-  background: #f5f3ff;
-  border: 1px solid #ddd6fe;
+  color: #3A4A5E;
+  background: #EEF1F4;
+  border: 1px solid #D5DCE4;
   padding: 2px 5px;
   border-radius: 4px;
 }
@@ -919,8 +919,8 @@
 
 /* ── HOMOLOGAÇÃO DE VENDA NO CARD ── */
 .cardFaixaHomologacao {
-  background: #fefce8;
-  border: 1px solid #fef08a;
+  background: #FDF7E8;
+  border: 1px solid #F2D48E;
   border-radius: 6px;
   padding: 3px 6px;
   display: flex;
@@ -931,7 +931,7 @@
 
 .textoHomologacaoPendente {
   font-size: 0.68rem;
-  color: #854d0e;
+  color: #8A5F12;
   font-weight: 700;
 }
 
@@ -1230,7 +1230,7 @@
    FILA DE TRIAGEM & ATRIBUIÇÃO RÁPIDA (GESTOR)
    ═══════════════════════════════════════════════════════════════ */
 .bannerTriagem {
-  background: linear-gradient(135deg, #fffdf5 0%, var(--ouro-claro) 100%);
+  background: linear-gradient(135deg, #FAF7F1 0%, var(--ouro-claro) 100%);
   border: 1px solid #F2D48E;
   border-radius: 8px;
   padding: 0.35rem 0.85rem;
@@ -1318,7 +1318,7 @@
 /* CARDS NÃO ATRIBUÍDOS */
 .cardNaoAtribuido {
   border-left: 4px solid var(--ouro) !important;
-  background: linear-gradient(to bottom, #fffdfa, #ffffff) !important;
+  background: linear-gradient(to bottom, #FAF7F1, #ffffff) !important;
 }
 
 .badgeAguardandoCorretor {

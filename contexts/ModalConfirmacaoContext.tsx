@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react'
 import styles from './ModalConfirmacaoContext.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 export type TipoModal = 'primario' | 'perigo' | 'aviso' | 'sucesso' | 'info'
 
@@ -125,11 +126,11 @@ function ModalVisual({
   // Definir ícone padrão caso não informado
   const iconePadrao = (() => {
     if (opcoes.icone) return opcoes.icone
-    if (tipo === 'perigo') return '🗑️'
-    if (tipo === 'aviso') return '⚠️'
-    if (tipo === 'sucesso') return '🎉'
-    if (tipo === 'info') return 'ℹ️'
-    return '✨'
+    if (tipo === 'perigo') return 'alerta'
+    if (tipo === 'aviso') return 'alerta'
+    if (tipo === 'sucesso') return 'check'
+    if (tipo === 'info') return 'info'
+    return ''
   })()
 
   const classeIcone = {
@@ -153,7 +154,7 @@ function ModalVisual({
       <div className={styles.container} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         {/* Cabeçalho com Ícone Temático */}
         <div className={`${styles.circuloIcone} ${classeIcone}`}>
-          <span>{iconePadrao}</span>
+          {ehNomeIcone(iconePadrao) ? <Icone nome={iconePadrao} tamanho={26} /> : <Icone nome="info" tamanho={26} />}
         </div>
 
         {/* Título e Mensagem */}

@@ -4,9 +4,10 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
-import LogoGota from "@/components/ui/LogoGota"
+import { Logotipo } from "@/components/ui/Logo"
 import InputSenha from "@/components/ui/InputSenha"
 import styles from "../login/page.module.css"
+import Icone from '@/components/ui/Icone'
 
 export default function RedefinirSenhaPage() {
   const router = useRouter()
@@ -27,7 +28,7 @@ export default function RedefinirSenhaPage() {
 
     if (pontos <= 1) return { nivel: 1, texto: "Fraca", cor: "#D4401F" }
     if (pontos === 2 || pontos === 3) return { nivel: 2, texto: "Média", cor: "#E3A72F" }
-    return { nivel: 3, texto: "Forte e Segura", cor: "#3F8A66" }
+    return { nivel: 3, texto: "Forte e segura", cor: "#3F8A66" }
   }
 
   const forca = calcularForcaSenha(novaSenha)
@@ -72,8 +73,7 @@ export default function RedefinirSenhaPage() {
       <div className={styles.lado}>
         <div className={styles.ladoConteudo}>
           <Link href="/" className={styles.logo}>
-            <LogoGota size={30} />
-            <span>FIXUM</span>
+            <Logotipo largura={92} />
           </Link>
 
           <h1>Criar nova senha</h1>
@@ -88,7 +88,7 @@ export default function RedefinirSenhaPage() {
               textAlign: 'center',
               marginTop: '1.5rem'
             }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✅</div>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}><Icone nome="check" tamanho={34} /></div>
               <h3 style={{ color: '#2E6B4E', fontSize: '1.2rem', marginBottom: '0.5rem' }}>Senha alterada com sucesso!</h3>
               <p style={{ color: '#5A5449', fontSize: '0.9rem', marginBottom: '1rem' }}>
                 Redirecionando para seu painel de controle...
@@ -97,7 +97,7 @@ export default function RedefinirSenhaPage() {
           ) : (
             <form onSubmit={handleRedefinir} className={styles.form} style={{ marginTop: '1.5rem' }}>
               <div className={styles.campo}>
-                <label>Nova Senha</label>
+                <label>Nova senha</label>
                 <InputSenha
                   placeholder="Mínimo 8 caracteres"
                   value={novaSenha}
@@ -123,7 +123,7 @@ export default function RedefinirSenhaPage() {
               )}
 
               <div className={styles.campo}>
-                <label>Confirmar Nova Senha</label>
+                <label>Confirmar nova senha</label>
                 <InputSenha
                   placeholder="Repita a nova senha"
                   value={confirmarSenha}
@@ -143,7 +143,7 @@ export default function RedefinirSenhaPage() {
               </button>
 
               <div className={styles.rodape}>
-                <Link href="/login">Voltar ao Login</Link>
+                <Link href="/login">Voltar ao login</Link>
               </div>
             </form>
           )}

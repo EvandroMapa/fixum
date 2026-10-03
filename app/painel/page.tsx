@@ -9,7 +9,7 @@ import { formatarPreco, labelTipoImovel, fotoPrincipal, obterIniciaisUsuario, ob
 import { calcularUsoPlano, obterPlanoPorId, obterProximoPlano } from '@/lib/planos'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import Header from '@/components/layout/Header'
-import LogoGota from '@/components/ui/LogoGota'
+import { Logotipo } from '@/components/ui/Logo'
 import AbaMeuPlano from '@/components/painel/AbaMeuPlano'
 import AbaCorretores from '@/components/painel/AbaCorretores'
 import AbaImoveis from '@/components/painel/AbaImoveis'
@@ -23,6 +23,7 @@ import ModalConfiguracoes from '@/components/painel/ModalConfiguracoes'
 import MenuNotificacoes from '@/components/painel/MenuNotificacoes'
 import MenuUsuarioTopbar from '@/components/painel/MenuUsuarioTopbar'
 import styles from './page.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 type Aba = 'dashboard' | 'imoveis' | 'leads' | 'corretores' | 'desempenho' | 'plano'
 
@@ -316,9 +317,9 @@ function PainelConteudo() {
     if ((novoStatus === 'publicado' || novoStatus === 'ativo') && usoPlano.atingiuLimite) {
       if (isCorretor) {
         await alertar({
-          titulo: 'Cota Corporativa Atingida',
+          titulo: 'Cota corporativa atingida',
           mensagem: `A cota de anúncios ativos da imobiliária ${imobiliariaDona?.nome ? `"${imobiliariaDona.nome}"` : 'vinculada'} atingiu o limite (${usoPlano.limiteMaximo} anúncios). Entre em contato com o administrador da sua imobiliária para solicitar novas vagas.`,
-          icone: '🏢',
+          icone: 'predio',
           tipo: 'aviso',
         })
         return
@@ -336,18 +337,18 @@ function PainelConteudo() {
   async function excluirImovel(id: string, titulo: string) {
     if (!podeExcluir) {
       await alertar({
-        titulo: 'Ação Não Permitida',
+        titulo: 'Ação não permitida',
         mensagem: 'Apenas gestores da imobiliária têm permissão para excluir anúncios. Se você não deseja mais divulgar este imóvel, solicite ao seu gestor ou pause o anúncio.',
-        icone: '🔒',
+        icone: 'cadeado',
         tipo: 'aviso',
       })
       return
     }
 
     const confirmou = await confirmar({
-      titulo: 'Excluir Anúncio?',
+      titulo: 'Excluir anúncio?',
       mensagem: `Tem certeza que deseja excluir permanentemente o anúncio "${titulo}"? Esta ação não pode ser desfeita.`,
-      icone: '🗑️',
+      icone: 'lixeira',
       textoBotaoConfirmar: 'Sim, Excluir Anúncio',
       tipo: 'perigo',
       destrutivo: true,
@@ -370,15 +371,15 @@ function PainelConteudo() {
 
       setImoveis((prev) => prev.filter((i) => i.id !== id))
       await alertar({
-        titulo: 'Imóvel Excluído',
+        titulo: 'Imóvel excluído',
         mensagem: 'O anúncio foi removido com sucesso.',
-        icone: '🗑️',
+        icone: 'lixeira',
         tipo: 'info',
       })
     } catch (err: any) {
       console.error('Erro ao excluir imóvel:', err)
       await alertar({
-        titulo: 'Erro ao Excluir',
+        titulo: 'Erro ao excluir',
         mensagem: err.message || 'Não foi possível excluir o anúncio. Tente novamente mais tarde.',
         tipo: 'perigo',
       })
@@ -457,9 +458,9 @@ function PainelConteudo() {
 
   async function handleSair() {
     const confirmou = await confirmar({
-      titulo: 'Encerrar Sessão?',
+      titulo: 'Encerrar sessão?',
       mensagem: 'Deseja realmente sair da sua conta na Fixum?',
-      icone: '🚪',
+      icone: 'sair',
       textoBotaoConfirmar: 'Sim, Sair',
       tipo: 'aviso',
     })
@@ -481,8 +482,8 @@ function PainelConteudo() {
         color: '#ffffff',
         gap: '16px',
       }}>
-        <div style={{ fontSize: '2.5rem' }}>🛡️</div>
-        <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>Redirecionando para o Painel Executivo Fixum...</div>
+        <div style={{ fontSize: '2.5rem' }}><Icone nome="escudo" tamanho={34} /></div>
+        <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>Redirecionando para o painel executivo Fixum...</div>
         <div style={{ fontSize: '0.875rem', color: '#A39A8A' }}>Contas Master não utilizam o painel de anunciante</div>
       </div>
     )
@@ -491,7 +492,7 @@ function PainelConteudo() {
   if (carregando) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#16201C', color: '#ffffff' }}>
-        <div>Carregando Workspace...</div>
+        <div>Carregando workspace...</div>
       </div>
     )
   }
@@ -504,11 +505,10 @@ function PainelConteudo() {
           <Link
             href="/explorar"
             className={styles.logoPainel}
-            title="Voltar ao Mapa"
+            title="Voltar ao mapa"
           >
-            <LogoGota size={30} />
-            <span className={styles.logoTexto}>FIXUM</span>
-            <span className={styles.badgePro}>WORKSPACE</span>
+            <Logotipo largura={76} />
+            <span className={styles.badgePro}>Painel</span>
           </Link>
 
           <div className={styles.divisorVertical} />
@@ -527,12 +527,12 @@ function PainelConteudo() {
               <span className={styles.empresaNome}>{usuarioNome || 'Usuário'}</span>
               <span className={styles.empresaTipo}>
                 {isImobiliaria
-                  ? '🏢 Gestão Imobiliária'
+                  ? 'Gestão imobiliária'
                   : isCorretorEquipe && imobiliariaDona
-                    ? `👔 Corretor Oficial — ${imobiliariaDona.nome}`
+                    ? `Corretor Oficial — ${imobiliariaDona.nome}`
                     : isCorretorAutonomo
-                      ? `👔 Corretor Autônomo${usuarioCreci ? ` • CRECI ${usuarioCreci}` : ''}`
-                      : '👤 Proprietário Direto'}
+                      ? `Corretor Autônomo${usuarioCreci ? ` • CRECI ${usuarioCreci}` : ''}`
+                      : 'Proprietário Direto'}
               </span>
             </div>
           </div>
@@ -546,17 +546,17 @@ function PainelConteudo() {
               style={{ cursor: 'default', background: '#FAF7F1', borderColor: '#E0D8CA', color: '#5A5449' }}
               title={`Vinculado à equipe de ${imobiliariaDona.nome}`}
             >
-              <span>🏢 Equipe <strong>{imobiliariaDona.nome}</strong></span>
+              <span>Equipe <strong>{imobiliariaDona.nome}</strong></span>
             </div>
           ) : isCorretorAutonomo ? (
             <button
               type="button"
               className={styles.badgePlanoTopbar}
               onClick={() => trocarAba('plano')}
-              title="Gerenciar Cota de Imóveis do Corretor"
+              title="Gerenciar cota de imóveis do corretor"
               style={{ background: '#EEF5F0', borderColor: '#C3DACB', color: '#24563E' }}
             >
-              <span className={styles.iconePlano}>👔</span>
+              <span className={styles.iconePlano}><Icone nome="maleta" tamanho={16} /></span>
               <span>Cota: <strong>{usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo}</strong></span>
               <span className={styles.vagasPill} style={{ background: '#2E6B4E' }}>
                 {usoPlano.plano.nome}
@@ -567,9 +567,9 @@ function PainelConteudo() {
               type="button"
               className={styles.badgePlanoTopbar}
               onClick={() => trocarAba('plano')}
-              title="Gerenciar Plano & Faturas da Imobiliária"
+              title="Gerenciar plano & faturas da imobiliária"
             >
-              <span className={styles.iconePlano}>🏢</span>
+              <span className={styles.iconePlano}><Icone nome="predio" tamanho={16} /></span>
               <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
               <span className={styles.vagasPill}>
                 {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} vagas
@@ -579,9 +579,9 @@ function PainelConteudo() {
             <div
               className={styles.badgePlanoTopbar}
               style={{ cursor: 'default', background: '#EEF5F0', borderColor: '#C3DACB', color: '#24563E' }}
-              title="Proprietário Direto com 1 anúncio gratuito ativo no mapa Fixum"
+              title="Proprietário direto com 1 anúncio gratuito ativo no mapa Fixum"
             >
-              <span>🏷️ <strong>1 Anúncio Grátis</strong></span>
+              <span><Icone nome="etiqueta" tamanho={16} /> <strong>1 Anúncio Grátis</strong></span>
             </div>
           )}
 
@@ -601,10 +601,10 @@ function PainelConteudo() {
             type="button"
             onClick={() => setModalNovoImovelAberto(true)}
             className={styles.btnNovoImovelTopbar}
-            title="Cadastrar Novo Imóvel"
+            title="Cadastrar novo imóvel"
           >
             <span>+</span>
-            <span className={styles.textoNovoDesktop}>Novo Imóvel</span>
+            <span className={styles.textoNovoDesktop}>Novo imóvel</span>
             <span className={styles.textoNovoMobile}>Imóvel</span>
           </button>
 
@@ -630,12 +630,12 @@ function PainelConteudo() {
         <aside className={`${styles.sidebar} ${!sidebarFixa ? styles.sidebarRecolhida : ''}`}>
           <nav className={styles.sidebarNav}>
             {[
-              { id: 'dashboard', icone: '📊', label: 'Dashboard', labelMobile: 'Início', badge: 0 },
-              { id: 'imoveis', icone: '🏢', label: 'Meus Imóveis', labelMobile: 'Imóveis', badge: 0 },
-              { id: 'leads', icone: '👥', label: 'Leads & CRM', labelMobile: 'Leads', badge: stats.leadsNovos },
-              ...(isImobiliaria ? [{ id: 'corretores', icone: '👔', label: 'Equipe de Corretores', labelMobile: 'Equipe', badge: 0 }] : []),
-              ...(!isProprietario ? [{ id: 'desempenho', icone: '📈', label: 'Desempenho & Ranking', labelMobile: 'Ranking', badge: 0 }] : []),
-              ...(!isCorretorEquipe ? [{ id: 'plano', icone: '💳', label: isProprietario ? 'Meu Anúncio' : 'Meu Plano', labelMobile: isProprietario ? 'Anúncio' : 'Plano', badge: 0 }] : []),
+              { id: 'dashboard', icone: 'grafico', label: 'Dashboard', labelMobile: 'Início', badge: 0 },
+              { id: 'imoveis', icone: 'predio', label: 'Meus imóveis', labelMobile: 'Imóveis', badge: 0 },
+              { id: 'leads', icone: 'pessoas', label: 'Leads & CRM', labelMobile: 'Leads', badge: stats.leadsNovos },
+              ...(isImobiliaria ? [{ id: 'corretores', icone: 'maleta', label: 'Equipe de corretores', labelMobile: 'Equipe', badge: 0 }] : []),
+              ...(!isProprietario ? [{ id: 'desempenho', icone: 'tendencia', label: 'Desempenho & ranking', labelMobile: 'Ranking', badge: 0 }] : []),
+              ...(!isCorretorEquipe ? [{ id: 'plano', icone: 'cartao', label: isProprietario ? 'Meu Anúncio' : 'Meu Plano', labelMobile: isProprietario ? 'Anúncio' : 'Plano', badge: 0 }] : []),
             ].map((item) => (
               <button
                 key={item.id}
@@ -644,7 +644,7 @@ function PainelConteudo() {
                 title={item.label}
               >
                 <div className={styles.sidebarIconeWrapper}>
-                  <span className={styles.sidebarIcone}>{item.icone}</span>
+                  <span className={styles.sidebarIcone}>{ehNomeIcone(item.icone) && <Icone nome={item.icone} tamanho={18} />}</span>
                   {item.badge > 0 && (
                     <span className={styles.badgeMicroFlutuante} title={`${item.badge} lead(s) novos aguardando ação`}>
                       {item.badge > 99 ? '99+' : item.badge}
@@ -671,7 +671,7 @@ function PainelConteudo() {
               title={sidebarFixa ? 'Recolher menu lateral (mais espaço para o CRM)' : 'Fixar menu lateral expandido'}
             >
               <span className={styles.iconeFixar}>{sidebarFixa ? '◀' : '▶'}</span>
-              <span className={styles.textoFixar}>{sidebarFixa ? 'Recolher Menu' : 'Fixar'}</span>
+              <span className={styles.textoFixar}>{sidebarFixa ? 'Recolher menu' : 'Fixar'}</span>
             </button>
           </div>
         </aside>
@@ -682,7 +682,7 @@ function PainelConteudo() {
           {/* ── DASHBOARD ── */}
           {abaAtiva === 'dashboard' && (
             <div className={styles.secao}>
-              <h1>Olá, {usuarioNome}! 👋</h1>
+              <h1>Olá, {usuarioNome}! </h1>
               <p className={styles.subtitulo}>
                 {isProprietario
                   ? 'Acompanhe o desempenho do seu anúncio particular'
@@ -694,9 +694,9 @@ function PainelConteudo() {
                 <div className={styles.cardProprietarioBoasVindas}>
                   <div className={styles.proprietarioInfo}>
                     <div className={styles.proprietarioTag}>
-                      <span>🏷️ Anúncio Particular</span>
+                      <span>Anúncio particular</span>
                       <span className={styles.proprietarioStatusBadge}>
-                        {stats.publicados > 0 ? '🟢 1 Imóvel Ativo no Mapa' : '⚪ Nenhum imóvel publicado'}
+                        {stats.publicados > 0 ? '1 Imóvel ativo no mapa' : 'Nenhum imóvel publicado'}
                       </span>
                     </div>
                     <p className={styles.proprietarioDescricao}>
@@ -711,15 +711,15 @@ function PainelConteudo() {
                         className={`btn btn-primario btn-sm ${styles.btnPlanoAcao}`}
                         onClick={() => setModalNovoImovelAberto(true)}
                       >
-                        ➕ Publicar Imóvel Grátis
-                      </button>
+ Publicar imóvel Grátis
+ </button>
                     ) : (
                       <button
                         className={`btn btn-primario btn-sm ${styles.btnPlanoAcao}`}
                         onClick={() => trocarAba('imoveis')}
                       >
-                        🏢 Gerenciar Meu Anúncio
-                      </button>
+ Gerenciar meu anúncio
+ </button>
                     )}
                     {proximoPlano && stats.total > 0 && (
                       <button
@@ -727,8 +727,8 @@ function PainelConteudo() {
                         onClick={() => dispararUpgrade(proximoPlano)}
                         title="Deseja anunciar outro imóvel ou aumentar seu limite?"
                       >
-                        ⭐ Anunciar outro imóvel
-                      </button>
+ Anunciar outro imóvel
+ </button>
                     )}
                   </div>
                 </div>
@@ -760,14 +760,14 @@ function PainelConteudo() {
                         className={`btn btn-primario btn-sm ${styles.btnPlanoAcao}`}
                         onClick={() => dispararUpgrade(proximoPlano)}
                       >
-                        ⚡ Fazer Upgrade
-                      </button>
+ Fazer upgrade
+ </button>
                     )}
                     <button
                       className={`btn btn-outline btn-sm ${styles.btnPlanoAcao}`}
                       onClick={() => trocarAba('plano')}
                     >
-                      Ver Detalhes do Plano
+                      Ver detalhes do plano
                     </button>
                   </div>
                 </div>
@@ -775,13 +775,13 @@ function PainelConteudo() {
 
               <div className={styles.gridStats}>
                 {[
-                  { label: 'Total de imóveis', valor: stats.total, icone: '🏢', cor: '#16201C' },
-                  { label: 'Publicados', valor: stats.publicados, icone: '✅', cor: '#3F8A66' },
-                  { label: 'Pausados', valor: stats.pausados, icone: '⏸️', cor: '#E3A72F' },
-                  { label: 'Leads novos', valor: stats.leadsNovos, icone: '👥', cor: '#D4401F' },
+                  { label: 'Total de imóveis', valor: stats.total, icone: 'predio', cor: '#16201C' },
+                  { label: 'Publicados', valor: stats.publicados, icone: 'check', cor: '#3F8A66' },
+                  { label: 'Pausados', valor: stats.pausados, icone: 'pausa', cor: '#E3A72F' },
+                  { label: 'Leads novos', valor: stats.leadsNovos, icone: 'pessoas', cor: '#D4401F' },
                 ].map((s) => (
                   <div key={s.label} className={styles.statCard} style={{ borderTopColor: s.cor }}>
-                    <span className={styles.statIcone}>{s.icone}</span>
+                    <span className={styles.statIcone}>{ehNomeIcone(s.icone) && <Icone nome={s.icone} tamanho={20} />}</span>
                     <strong className={styles.statValor}>{s.valor}</strong>
                     <span className={styles.statLabel}>{s.label}</span>
                   </div>
@@ -790,7 +790,7 @@ function PainelConteudo() {
 
               {imoveis.length === 0 && (
                 <div className={styles.vazio}>
-                  <span>🏡</span>
+                  <span><Icone nome="casa" tamanho={16} /></span>
                   <h3>Você ainda não tem imóveis cadastrados</h3>
                   <p>Comece anunciando seu primeiro imóvel. É rápido e gratuito!</p>
                   <button
@@ -852,7 +852,7 @@ function PainelConteudo() {
             />
           )}
 
-          {/* ── DESEMPENHO & RANKING (BI FIXUM) ── */}
+          {/* ── DESEMPENHO & RANKING (BI Fixum) ── */}
           {abaAtiva === 'desempenho' && (
             <AbaDesempenho
               leads={leads}
@@ -883,7 +883,7 @@ function PainelConteudo() {
                 margin: '2rem auto',
                 boxShadow: '0 4px 20px rgba(22, 32, 28, 0.08)',
               }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👔</div>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}><Icone nome="maleta" tamanho={41} /></div>
                 <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#16201C', marginBottom: '0.5rem' }}>
                   Plano Corporativo — {imobiliariaDona.nome}
                 </h2>
@@ -903,10 +903,10 @@ function PainelConteudo() {
                   fontWeight: 700,
                   fontSize: '0.95rem',
                 }}>
-                  ⚡ Cota da Imobiliária: {usoPlano.imoveisAtivos} / {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
+ Cota da imobiliária: {usoPlano.imoveisAtivos} / {usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} anúncios ativos
                 </div>
                 <p style={{ fontSize: '0.8rem', color: '#A39A8A', marginTop: '1.75rem' }}>
-                  ℹ️ Para solicitar ampliação de vagas ou alterações contratuais, consulte a administração da {imobiliariaDona.nome}.
+ Para solicitar ampliação de vagas ou alterações contratuais, consulte a administração da {imobiliariaDona.nome}.
                 </p>
               </div>
             ) : (

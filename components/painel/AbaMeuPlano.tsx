@@ -5,6 +5,7 @@ import styles from './AbaMeuPlano.module.css'
 import { Plano, Fatura, UsoPlano, MetodoPagamento } from '@/lib/types'
 import { PLANOS_OFICIAIS, formatarMoeda, obterProximoPlano } from '@/lib/planos'
 import ModalUpgradePlano from './ModalUpgradePlano'
+import Icone from '@/components/ui/Icone'
 
 interface AbaMeuPlanoProps {
   usoPlano: UsoPlano
@@ -47,14 +48,14 @@ export default function AbaMeuPlano({
     <div className={styles.container}>
       <div className={styles.cabecalhoAba}>
         <div>
-          <h1 className={styles.tituloPrincipal}>Meu Plano & Assinatura</h1>
+          <h1 className={styles.tituloPrincipal}>Meu plano & assinatura</h1>
           <p className={styles.subtituloPrincipal}>
             Gerencie a capacidade de anúncios ativos e acompanhe sua utilização na Fixum
           </p>
         </div>
         <button className={styles.btnUpgradePrincipal} onClick={() => abrirModalUpgrade()}>
-          ⚡ Fazer Upgrade
-        </button>
+ Fazer upgrade
+ </button>
       </div>
 
       {/* ── CARD HERO EXECUTIVO DO PLANO ATUAL ── */}
@@ -62,15 +63,15 @@ export default function AbaMeuPlano({
         <div className={styles.heroHeader}>
           <div className={styles.heroBadges}>
             <span className={styles.badgePlanoAtivo}>
-              <span className={styles.pontoVerde}></span> Plano Ativo: {plano.nome}
+              <span className={styles.pontoVerde}></span> Plano ativo: {plano.nome}
             </span>
             <span className={styles.badgeStatusAssinatura}>
-              {usoPlano.assinatura?.metodo_pagamento === 'cartao' ? '💳 Recorrência Cartão' : '⚡ Pagamento PIX'}
+              {usoPlano.assinatura?.metodo_pagamento === 'cartao' ? 'Recorrência cartão' : 'Pagamento PIX'}
             </span>
           </div>
 
           <div className={styles.heroDataCiclo}>
-            <span>📅 Próxima Renovação:</span>
+            <span>Próxima renovação:</span>
             <strong>
               {usoPlano.assinatura?.data_fim_ciclo
                 ? new Date(usoPlano.assinatura.data_fim_ciclo).toLocaleDateString('pt-BR')
@@ -103,8 +104,8 @@ export default function AbaMeuPlano({
             </div>
 
             <button className={styles.btnHeroUpgrade} onClick={() => abrirModalUpgrade()}>
-              ⚡ Fazer Upgrade
-            </button>
+ Fazer upgrade
+ </button>
           </div>
         </div>
 
@@ -112,7 +113,7 @@ export default function AbaMeuPlano({
         <div className={styles.heroMetricasGrid}>
           <div className={styles.metricaCard}>
             <div className={styles.metricaTopo}>
-              <span className={styles.metricaLabel}>Anúncios Ativos no Mapa</span>
+              <span className={styles.metricaLabel}>Anúncios ativos no mapa</span>
               <span className={styles.metricaValorDestaque}>
                 {imoveisAtivos} <small>/ {limiteMaximo >= 99999 ? '∞' : limiteMaximo}</small>
               </span>
@@ -129,27 +130,27 @@ export default function AbaMeuPlano({
             </div>
 
             <div className={styles.metricaRodape}>
-              <span>{limiteMaximo >= 99999 ? 'Uso Livre e Ilimitado' : `${porcentagemUso}% da cota utilizada`}</span>
+              <span>{limiteMaximo >= 99999 ? 'Uso livre e ilimitado' : `${porcentagemUso}% da cota utilizada`}</span>
             </div>
           </div>
 
           <div className={styles.metricaCard}>
             <div className={styles.metricaTopo}>
-              <span className={styles.metricaLabel}>Vagas Disponíveis</span>
-              <span className={styles.iconeMetrica}>📦</span>
+              <span className={styles.metricaLabel}>Vagas disponíveis</span>
+              <span className={styles.iconeMetrica}><Icone nome="pasta" tamanho={16} /></span>
             </div>
             <div className={styles.metricaNumeroGrande}>
               {vagasRestantes >= 99999 ? 'Ilimitadas' : vagasRestantes}
             </div>
             <div className={styles.metricaRodape}>
-              <span>{vagasRestantes === 0 ? '⚠️ Limite atingido' : 'Prontas para novos anúncios'}</span>
+              <span>{vagasRestantes === 0 ? 'Limite atingido' : 'Prontas para novos anúncios'}</span>
             </div>
           </div>
 
           <div className={styles.metricaCard}>
             <div className={styles.metricaTopo}>
-              <span className={styles.metricaLabel}>Imóveis Pausados</span>
-              <span className={styles.iconeMetrica}>⏸️</span>
+              <span className={styles.metricaLabel}>Imóveis pausados</span>
+              <span className={styles.iconeMetrica}><Icone nome="pausa" tamanho={16} /></span>
             </div>
             <div className={styles.metricaNumeroGrande}>
               {imoveisPausados}
@@ -163,14 +164,14 @@ export default function AbaMeuPlano({
         {/* Alerta se atingiu limite */}
         {atingiuLimite && (
           <div className={styles.alertaLimiteHero}>
-            <span className={styles.alertaIcone}>⚠️</span>
+            <span className={styles.alertaIcone}><Icone nome="alerta" tamanho={16} /></span>
             <div className={styles.alertaTexto}>
-              <strong>Limite de Anúncios Ativos Atingido</strong>
+              <strong>Limite de anúncios ativos atingido</strong>
               <p>Você utilizou todas as {limiteMaximo} vagas do plano {plano.nome}. Para publicar novos imóveis, faça upgrade para o plano superior.</p>
             </div>
             <button className={styles.btnAlertaUpgradeHero} onClick={() => abrirModalUpgrade(proximoPlano || undefined)}>
-              Liberar Mais Vagas ➔
-            </button>
+ Liberar mais vagas 
+ </button>
           </div>
         )}
       </div>
@@ -178,7 +179,7 @@ export default function AbaMeuPlano({
       {/* ── TODOS OS PLANOS DA TABELA OFICIAL ── */}
       <div className={styles.secaoTodosPlanos}>
         <div className={styles.secaoTitulo}>
-          <h2>Tabela de Planos e Capacidade</h2>
+          <h2>Tabela de planos e capacidade</h2>
           <p>Escolha o plano que melhor atende ao tamanho da sua carteira de imóveis</p>
         </div>
 
@@ -196,7 +197,7 @@ export default function AbaMeuPlano({
                   ${isProximo ? styles.cardTabelaPlanoProximo : ''}
                 `}
               >
-                {isAtual && <span className={styles.badgeCardAtual}>Seu Plano Atual</span>}
+                {isAtual && <span className={styles.badgeCardAtual}>Seu plano atual</span>}
                 {isProximo && <span className={styles.badgeCardRecomendado}>Recomendado</span>}
 
                 <h3 className={styles.cardPlanoNome}>{p.nome}</h3>
@@ -231,14 +232,14 @@ export default function AbaMeuPlano({
                 <div className={styles.cardPlanoAcao}>
                   {isAtual ? (
                     <button className={styles.btnPlanoAtual} disabled>
-                      Plano Atual
+                      Plano atual
                     </button>
                   ) : (
                     <button
                       className={isProximo ? styles.btnEscolherDestaque : styles.btnEscolherNormal}
                       onClick={() => abrirModalUpgrade(p)}
                     >
-                      {p.ordem > plano.ordem ? 'Fazer Upgrade' : 'Selecionar'}
+                      {p.ordem > plano.ordem ? 'Fazer upgrade' : 'Selecionar'}
                     </button>
                   )}
                 </div>
@@ -251,13 +252,13 @@ export default function AbaMeuPlano({
       {/* ── HISTÓRICO DE FATURAS ── */}
       <div className={styles.secaoFaturas}>
         <div className={styles.secaoTitulo}>
-          <h2>Histórico de Faturas e Pagamentos</h2>
+          <h2>Histórico de faturas e pagamentos</h2>
           <p>Acompanhe todos os lançamentos e comprovantes da sua conta</p>
         </div>
 
         {faturas.length === 0 ? (
           <div className={styles.faturasVazio}>
-            <span>📄</span>
+            <span><Icone nome="documento" tamanho={16} /></span>
             <p>Nenhuma fatura emitida até o momento.</p>
           </div>
         ) : (
@@ -267,7 +268,7 @@ export default function AbaMeuPlano({
                 <tr>
                   <th>Data</th>
                   <th>Valor</th>
-                  <th>Forma de Pagamento</th>
+                  <th>Forma de pagamento</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -278,7 +279,7 @@ export default function AbaMeuPlano({
                     <td><strong>{formatarMoeda(f.valor)}</strong></td>
                     <td>
                       <span className={styles.metodoTag}>
-                        {f.metodo_pagamento === 'pix' ? '⚡ PIX' : f.metodo_pagamento === 'cartao' ? '💳 Cartão' : 'Grátis'}
+                        {f.metodo_pagamento === 'pix' ? 'PIX' : f.metodo_pagamento === 'cartao' ? 'Cartão' : 'Grátis'}
                       </span>
                     </td>
                     <td>
@@ -290,7 +291,7 @@ export default function AbaMeuPlano({
                           ${f.status === 'atrasado' ? styles.statusAtrasado : ''}
                         `}
                       >
-                        {f.status === 'pago' ? '✓ Pago' : f.status === 'pendente' ? '⏳ Pendente' : '⚠️ Atrasado'}
+                        {f.status === 'pago' ? 'Pago' : f.status === 'pendente' ? 'Pendente' : 'Atrasado'}
                       </span>
                     </td>
                   </tr>
@@ -304,7 +305,7 @@ export default function AbaMeuPlano({
       {/* ── FAQ SOBRE OS PLANOS ── */}
       <div className={styles.secaoFaq}>
         <div className={styles.secaoTitulo}>
-          <h2>Perguntas Frequentes</h2>
+          <h2>Perguntas frequentes</h2>
           <p>Tire suas dúvidas sobre o funcionamento dos planos e cotas</p>
         </div>
 

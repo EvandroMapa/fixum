@@ -42,23 +42,20 @@ export async function enviarCodigoOtpEmail({ email, codigo, motivo, nome }: Envi
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${tituloMotivo}</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0b1329; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f8fafc;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0b1329; padding: 30px 15px;">
+<body style="margin: 0; padding: 0; background-color: #0F1714; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FAF7F1;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0F1714; padding: 30px 15px;">
     <tr>
       <td align="center">
-        <table width="100%" max-width="560" border="0" cellspacing="0" cellpadding="0" style="max-width: 560px; background-color: #0f172a; border-radius: 16px; border: 1px solid #1e293b; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);">
+        <table width="100%" max-width="560" border="0" cellspacing="0" cellpadding="0" style="max-width: 560px; background-color: #16201C; border-radius: 16px; border: 1px solid #22302A; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);">
           
           <!-- Topo Branded -->
           <tr>
-            <td style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 28px 32px; border-bottom: 1px solid #1e293b; text-align: center;">
-              <div style="display: inline-block; background: #2563eb; color: #ffffff; width: 44px; height: 44px; line-height: 44px; border-radius: 12px; font-size: 22px; font-weight: bold; margin-bottom: 10px;">
-                F
-              </div>
-              <h1 style="margin: 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.02em;">
-                FIXUM
+            <td style="background: linear-gradient(135deg, #22302A, #16201C); padding: 28px 32px; border-bottom: 1px solid #22302A; text-align: center;">
+              <h1 style="margin: 0; color: #F3EEE4; font-size: 28px; font-weight: 800; letter-spacing: -0.03em; font-family: Arial, Helvetica, sans-serif;">
+                fi<span style="color: #D4401F;">x</span>um
               </h1>
-              <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 13px;">
-                Plataforma Imobiliária Geolocalizada
+              <p style="margin: 6px 0 0 0; color: #A39A8A; font-size: 13px;">
+                Explore onde você quer viver.
               </p>
             </td>
           </tr>
@@ -66,37 +63,37 @@ export async function enviarCodigoOtpEmail({ email, codigo, motivo, nome }: Envi
           <!-- Corpo da Mensagem -->
           <tr>
             <td style="padding: 32px 32px 24px 32px;">
-              <h2 style="margin: 0 0 12px 0; color: #38bdf8; font-size: 18px; font-weight: 700;">
+              <h2 style="margin: 0 0 12px 0; color: #F0A58F; font-size: 18px; font-weight: 700;">
                 ${tituloMotivo}
               </h2>
               
-              <p style="margin: 0 0 16px 0; color: #cbd5e1; font-size: 14px; line-height: 1.6;">
+              <p style="margin: 0 0 16px 0; color: #CFC6B6; font-size: 14px; line-height: 1.6;">
                 Olá${nome ? ` <strong>${nome}</strong>` : ''},
               </p>
               
-              <p style="margin: 0 0 24px 0; color: #94a3b8; font-size: 14px; line-height: 1.6;">
+              <p style="margin: 0 0 24px 0; color: #A39A8A; font-size: 14px; line-height: 1.6;">
                 ${explicacao}
               </p>
 
               <!-- Caixa do Código OTP -->
-              <div style="background-color: #1e293b; border: 2px dashed #3b82f6; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
-                <span style="display: block; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 600;">
+              <div style="background-color: #22302A; border: 2px dashed #2C5F8A; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
+                <span style="display: block; color: #A39A8A; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 600;">
                   Seu Código de Confirmação
                 </span>
-                <span style="display: inline-block; color: #38bdf8; font-size: 36px; font-weight: 900; letter-spacing: 10px; font-family: monospace;">
+                <span style="display: inline-block; color: #F0A58F; font-size: 36px; font-weight: 900; letter-spacing: 10px; font-family: monospace;">
                   ${codigo}
                 </span>
               </div>
 
               <!-- Aviso de Validade e Segurança -->
-              <div style="background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin-bottom: 24px;">
-                <p style="margin: 0; color: #fcd34d; font-size: 12.5px; line-height: 1.5;">
-                  ⏱️ <strong>Validade:</strong> Este código expira em <strong>10 minutos</strong>.<br>
-                  🔒 <strong>Segurança:</strong> Nunca compartilhe este código com ninguém. A equipe Fixum nunca solicitará seus códigos por telefone ou mensagem.
+              <div style="background: rgba(227, 167, 47, 0.1); border-left: 3px solid #E3A72F; padding: 12px 16px; border-radius: 6px; margin-bottom: 24px;">
+                <p style="margin: 0; color: #E8B84A; font-size: 12.5px; line-height: 1.5;">
+                  <strong>Validade:</strong> Este código expira em <strong>10 minutos</strong>.<br>
+                  <strong>Segurança:</strong> Nunca compartilhe este código com ninguém. A equipe Fixum nunca solicitará seus códigos por telefone ou mensagem.
                 </p>
               </div>
 
-              <p style="margin: 0; color: #64748b; font-size: 12.5px; line-height: 1.5;">
+              <p style="margin: 0; color: #7A7264; font-size: 12.5px; line-height: 1.5;">
                 Se você não solicitou este código, nenhuma ação é necessária. Sua conta permanece segura.
               </p>
             </td>
@@ -104,11 +101,11 @@ export async function enviarCodigoOtpEmail({ email, codigo, motivo, nome }: Envi
 
           <!-- Rodapé -->
           <tr>
-            <td style="background-color: #0b1329; padding: 20px 32px; border-top: 1px solid #1e293b; text-align: center;">
-              <p style="margin: 0 0 6px 0; color: #64748b; font-size: 12px;">
+            <td style="background-color: #0F1714; padding: 20px 32px; border-top: 1px solid #22302A; text-align: center;">
+              <p style="margin: 0 0 6px 0; color: #7A7264; font-size: 12px;">
                 © ${new Date().getFullYear()} Fixum Tecnologia Imobiliária Ltda. Todos os direitos reservados.
               </p>
-              <p style="margin: 0; color: #475569; font-size: 11px;">
+              <p style="margin: 0; color: #5A5449; font-size: 11px;">
                 Enviado com segurança via Fixum Cloud Security
               </p>
             </td>
@@ -168,36 +165,36 @@ export async function enviarAlertaLeadEmail({
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head><meta charset="UTF-8"></head>
-<body style="margin: 0; padding: 0; background-color: #0b1329; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #f8fafc;">
+<body style="margin: 0; padding: 0; background-color: #0F1714; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #FAF7F1;">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding: 30px 15px;">
     <tr>
       <td align="center">
-        <table width="100%" max-width="560" border="0" cellspacing="0" cellpadding="0" style="max-width: 560px; background-color: #0f172a; border-radius: 16px; border: 1px solid #1e293b; overflow: hidden;">
+        <table width="100%" max-width="560" border="0" cellspacing="0" cellpadding="0" style="max-width: 560px; background-color: #16201C; border-radius: 16px; border: 1px solid #22302A; overflow: hidden;">
           <tr>
-            <td style="background: linear-gradient(135deg, #1e3a8a, #0f172a); padding: 24px; text-align: center;">
-              <h1 style="margin: 0; color: #38bdf8; font-size: 20px; font-weight: 800;">⚡ Novo Lead Recebido no Mapa Fixum</h1>
+            <td style="background: linear-gradient(135deg, #0F1714, #16201C); padding: 24px; text-align: center;">
+              <h1 style="margin: 0; color: #F0A58F; font-size: 20px; font-weight: 800;">Novo contato recebido na Fixum</h1>
             </td>
           </tr>
           <tr>
             <td style="padding: 24px;">
-              <p style="margin: 0 0 12px; color: #cbd5e1; font-size: 14px;">Olá <strong>${nomeCorretor || 'Corretor'}</strong>,</p>
-              <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Um interessado entrou em contato referente ao seu imóvel anunciado:</p>
+              <p style="margin: 0 0 12px; color: #CFC6B6; font-size: 14px;">Olá <strong>${nomeCorretor || 'Corretor'}</strong>,</p>
+              <p style="color: #A39A8A; font-size: 14px; margin-bottom: 20px;">Um interessado entrou em contato referente ao seu imóvel anunciado:</p>
               
-              <div style="background: #1e293b; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+              <div style="background: #22302A; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
                 <strong style="color: #ffffff; font-size: 15px;">${tituloImovel}</strong>
-                ${codigoImovel ? `<div style="color: #38bdf8; font-size: 12px; margin-top: 4px;">Código: ${codigoImovel}</div>` : ''}
+                ${codigoImovel ? `<div style="color: #F0A58F; font-size: 12px; margin-top: 4px;">Código: ${codigoImovel}</div>` : ''}
               </div>
 
-              <div style="background: #131d38; border: 1px solid #334155; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
-                <p style="margin: 0 0 6px 0; color: #cbd5e1; font-size: 13.5px;">👤 <strong>Nome:</strong> ${nomeLead}</p>
-                ${telefoneLead ? `<p style="margin: 0 0 6px 0; color: #cbd5e1; font-size: 13.5px;">📱 <strong>WhatsApp:</strong> <a href="https://wa.me/55${telefoneLead.replace(/\D/g, '')}" style="color: #38bdf8;">${telefoneLead}</a></p>` : ''}
-                ${emailLead ? `<p style="margin: 0 0 6px 0; color: #cbd5e1; font-size: 13.5px;">✉️ <strong>E-mail:</strong> ${emailLead}</p>` : ''}
-                ${mensagem ? `<p style="margin: 10px 0 0 0; color: #94a3b8; font-size: 13px; font-style: italic;">"${mensagem}"</p>` : ''}
+              <div style="background: #16201C; border: 1px solid #3F3B34; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
+                <p style="margin: 0 0 6px 0; color: #CFC6B6; font-size: 13.5px;"><strong>Nome:</strong> ${nomeLead}</p>
+                ${telefoneLead ? `<p style="margin: 0 0 6px 0; color: #CFC6B6; font-size: 13.5px;"><strong>WhatsApp:</strong> <a href="https://wa.me/55${telefoneLead.replace(/\D/g, '')}" style="color: #F0A58F;">${telefoneLead}</a></p>` : ''}
+                ${emailLead ? `<p style="margin: 0 0 6px 0; color: #CFC6B6; font-size: 13.5px;"><strong>E-mail:</strong> ${emailLead}</p>` : ''}
+                ${mensagem ? `<p style="margin: 10px 0 0 0; color: #A39A8A; font-size: 13px; font-style: italic;">"${mensagem}"</p>` : ''}
               </div>
 
               <div style="text-align: center;">
-                <a href="https://fixum.com.br/painel" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
-                  Acessar Painel de Leads ➔
+                <a href="https://fixum.com.br/painel" style="display: inline-block; background: #16201C; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
+                  Abrir painel de contatos →
                 </a>
               </div>
             </td>

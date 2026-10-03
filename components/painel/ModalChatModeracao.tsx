@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { type Imovel } from '@/lib/types'
 import { fotoPrincipal, formatarPreco, labelTipoImovel, obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import styles from './ModalChatModeracao.module.css'
+import Icone from '@/components/ui/Icone'
 
 export interface EventoHistorico {
   id: string
@@ -220,14 +221,14 @@ export default function ModalChatModeracao({
                   }}
                 >
                   {imovel.status === 'em_analise' || imovel.status === 'rascunho'
-                    ? '⏳ Em Revisão'
+                    ? 'Em revisão'
                     : imovel.status === 'ativo' || imovel.status === 'publicado'
-                      ? '🟢 Ativo'
-                      : '⏸️ Pausado'}
+                      ? 'Ativo'
+                      : 'Pausado'}
                 </span>
               </div>
               <div style={{ fontSize: '0.675rem', color: '#7A7264', marginTop: '1px' }}>
-                👤 Corretor: <strong>{nomeCorretor}</strong>
+ Corretor: <strong>{nomeCorretor}</strong>
               </div>
             </div>
           </div>
@@ -238,7 +239,7 @@ export default function ModalChatModeracao({
             onClick={onClose}
             title="Fechar chat"
           >
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
         </div>
 
@@ -246,8 +247,8 @@ export default function ModalChatModeracao({
         <div ref={feedContainerRef} className={styles.feedMensagens}>
           {/* Pílula Inicial de Boas-Vindas */}
           <div className={styles.pilulaCentral}>
-            🔒 Chat seguro de moderação e auditoria do anúncio
-          </div>
+ Chat seguro de moderação e auditoria do anúncio
+ </div>
 
           {carregando ? (
             <div style={{ textAlign: 'center', color: '#7A7264', fontSize: '0.775rem', padding: '1rem' }}>
@@ -255,8 +256,8 @@ export default function ModalChatModeracao({
             </div>
           ) : mensagens.length === 0 ? (
             <div style={{ textAlign: 'center', color: '#7A7264', fontSize: '0.8rem', padding: '2rem 1rem' }}>
-              Nenhuma mensagem trocada ainda. Inicie a conversa abaixo para alinhar os ajustes deste anúncio! 💬
-            </div>
+ Nenhuma mensagem trocada ainda. Inicie a conversa abaixo para alinhar os ajustes deste anúncio! 
+ </div>
           ) : (
             mensagens.map((msg) => {
               const isMinhaMensagem = msg.autor_id === usuarioId
@@ -267,7 +268,7 @@ export default function ModalChatModeracao({
                 return (
                   <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <div className={`${styles.pilulaCentral} ${styles.pilulaAjuste}`}>
-                      <span>⚠️</span>
+                      <span><Icone nome="alerta" tamanho={16} /></span>
                       <span>
                         <strong>{msg.autor_nome}</strong> solicitou ajustes no anúncio • {formatarHora(msg.created_at)}
                       </span>
@@ -278,13 +279,13 @@ export default function ModalChatModeracao({
                           {!isMinhaMensagem && (
                             <div className={styles.autorInfoBalao}>
                               <span className={styles.autorNomeGestor}>{msg.autor_nome}</span>
-                              <span className={`${styles.badgePapelBalao} ${styles.badgeGestorBalao}`}>🛡️ Gestor</span>
+                              <span className={`${styles.badgePapelBalao} ${styles.badgeGestorBalao}`}>Gestor</span>
                             </div>
                           )}
                           <p className={styles.textoMensagem}>{msg.mensagem}</p>
                           <div className={styles.metaMensagem}>
                             <span>{formatarHora(msg.created_at)}</span>
-                            {isMinhaMensagem && <span>✓✓</span>}
+                            {isMinhaMensagem && <span></span>}
                           </div>
                         </div>
                       </div>
@@ -297,7 +298,7 @@ export default function ModalChatModeracao({
                 return (
                   <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <div className={`${styles.pilulaCentral} ${styles.pilulaReenvio}`}>
-                      <span>📤</span>
+                      <span><Icone nome="enviar" tamanho={16} /></span>
                       <span>
                         <strong>{msg.autor_nome}</strong> aplicou os ajustes e reenviou para revisão • {formatarHora(msg.created_at)}
                       </span>
@@ -308,13 +309,13 @@ export default function ModalChatModeracao({
                           {!isMinhaMensagem && (
                             <div className={styles.autorInfoBalao}>
                               <span className={styles.autorNomeCorretor}>{msg.autor_nome}</span>
-                              <span className={`${styles.badgePapelBalao} ${styles.badgeCorretorBalao}`}>👔 Corretor</span>
+                              <span className={`${styles.badgePapelBalao} ${styles.badgeCorretorBalao}`}>Corretor</span>
                             </div>
                           )}
                           <p className={styles.textoMensagem}>{msg.mensagem}</p>
                           <div className={styles.metaMensagem}>
                             <span>{formatarHora(msg.created_at)}</span>
-                            {isMinhaMensagem && <span>✓✓</span>}
+                            {isMinhaMensagem && <span></span>}
                           </div>
                         </div>
                       </div>
@@ -326,7 +327,7 @@ export default function ModalChatModeracao({
               if (msg.tipo_evento === 'aprovacao') {
                 return (
                   <div key={msg.id} className={`${styles.pilulaCentral} ${styles.pilulaAprovado}`}>
-                    <span>✅</span>
+                    <span><Icone nome="check" tamanho={16} /></span>
                     <span>
                       <strong>{msg.autor_nome}</strong> aprovou e publicou o anúncio no mapa • {formatarHora(msg.created_at)}
                     </span>
@@ -337,7 +338,7 @@ export default function ModalChatModeracao({
               if (msg.tipo_evento === 'submissao_inicial') {
                 return (
                   <div key={msg.id} className={styles.pilulaCentral}>
-                    <span>📝</span>
+                    <span><Icone nome="editar" tamanho={16} /></span>
                     <span>
                       Anúncio submetido para moderação por <strong>{msg.autor_nome}</strong> • {formatarHora(msg.created_at)}
                     </span>
@@ -360,7 +361,7 @@ export default function ModalChatModeracao({
                         <span
                           className={`${styles.badgePapelBalao} ${isGestor ? styles.badgeGestorBalao : styles.badgeCorretorBalao}`}
                         >
-                          {isGestor ? '🛡️ Gestor' : '👔 Corretor'}
+                          {isGestor ? 'Gestor' : 'Corretor'}
                         </span>
                       </div>
                     )}
@@ -369,7 +370,7 @@ export default function ModalChatModeracao({
 
                     <div className={styles.metaMensagem}>
                       <span>{formatarHora(msg.created_at)}</span>
-                      {isMinhaMensagem && <span>✓✓</span>}
+                      {isMinhaMensagem && <span></span>}
                     </div>
                   </div>
                 </div>
@@ -396,9 +397,9 @@ export default function ModalChatModeracao({
             type="submit"
             className={styles.btnEnviar}
             disabled={!textoMensagem.trim() || enviando}
-            title="Enviar mensagem (Enter)"
+            title="Enviar mensagem (enter)"
           >
-            {enviando ? '⏳' : '➤'}
+            {enviando ? '' : ''}
           </button>
         </form>
       </div>

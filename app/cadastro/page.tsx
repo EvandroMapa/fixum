@@ -4,16 +4,18 @@ import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
-import LogoGota from "@/components/ui/LogoGota"
+import { Logotipo } from "@/components/ui/Logo"
 import InputSenha from "@/components/ui/InputSenha"
 import { obterIniciaisUsuario, obterGradienteUsuario } from "@/lib/utils"
 import styles from "../login/page.module.css"
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
+import CurvasDeNivel from '@/components/ui/CurvasDeNivel'
 
 const TIPOS = [
-  { valor: "comprador", label: "Comprador / Inquilino", icone: "🏠", desc: "Procuro imóvel para comprar ou alugar" },
-  { valor: "proprietario", label: "Proprietário", icone: "🏡", desc: "Quero anunciar meu próprio imóvel" },
-  { valor: "corretor", label: "Corretor Autônomo", icone: "💼", desc: "Sou corretor de imóveis credenciado" },
-  { valor: "imobiliaria", label: "Imobiliária", icone: "🏢", desc: "Represento uma imobiliária" },
+  { valor: "comprador", label: "Comprador / inquilino", icone: "casa", desc: "Procuro imóvel para comprar ou alugar" },
+  { valor: "proprietario", label: "Proprietário", icone: "casa", desc: "Quero anunciar meu próprio imóvel" },
+  { valor: "corretor", label: "Corretor autônomo", icone: "maleta", desc: "Sou corretor de imóveis credenciado" },
+  { valor: "imobiliaria", label: "Imobiliária", icone: "predio", desc: "Represento uma imobiliária" },
 ]
 
 function traduzirErro(msg: string): string {
@@ -282,18 +284,17 @@ function CadastroConteudo() {
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
             <Link href="/" className={styles.logo}>
-              <LogoGota size={26} />
-              <span style={{ fontSize: '1.2rem' }}>FIXUM</span>
+              <Logotipo largura={84} />
             </Link>
             <Link href="/" className={styles.linkVoltarHome} style={{ padding: '4px 10px', fontSize: '0.78rem' }}>
-              ✕ Fechar
-            </Link>
+ Fechar
+ </Link>
           </div>
 
           <div style={{ marginBottom: '0.85rem' }}>
             <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#16201C', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
               {passo === 3
-                ? "Verificação de Segurança"
+                ? "Verificação de segurança"
                 : imobiliariaId
                 ? "Convite de Equipe"
                 : isImobiliaria
@@ -329,7 +330,7 @@ function CadastroConteudo() {
               fontWeight: 700,
               marginBottom: "0.85rem",
             }}>
-              🤝 Convite Oficial: {empresaNome}
+ Convite oficial: {empresaNome}
             </div>
           )}
 
@@ -347,7 +348,7 @@ function CadastroConteudo() {
               fontWeight: 700,
               marginBottom: "0.85rem",
             }}>
-              ✨ Plano Pré-Selecionado: {planoId.toUpperCase().replace('_', ' ')}
+ Plano Pré-Selecionado: {planoId.toUpperCase().replace('_', ' ')}
             </div>
           )}
 
@@ -397,7 +398,7 @@ function CadastroConteudo() {
                       cursor: "pointer", textAlign: "left", transition: "all 0.2s",
                     }}
                   >
-                    <span style={{ fontSize: "1.3rem" }}>{t.icone}</span>
+                    <span style={{ display: "grid", placeItems: "center" }}>{ehNomeIcone(t.icone) && <Icone nome={t.icone} tamanho={22} />}</span>
                     <div>
                       <div style={{ fontWeight: 700, color: "var(--cor-texto)", fontSize: "0.84rem" }}>{t.label}</div>
                       <div style={{ fontSize: "0.72rem", color: "var(--cor-texto-terciario)" }}>{t.desc}</div>
@@ -413,7 +414,7 @@ function CadastroConteudo() {
             <form onSubmit={handleAvancarParaOtp} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                 <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>
-                  {isImobiliaria ? "Nome da Imobiliária / Razão Social" : "Nome completo"}
+                  {isImobiliaria ? "Nome da imobiliária / razão social" : "Nome completo"}
                 </label>
                 <input
                   type="text"
@@ -445,7 +446,7 @@ function CadastroConteudo() {
               {(isImobiliaria || isCorretor) && (
                 <div style={{ display: 'grid', gridTemplateColumns: isCorretor ? '1.2fr 0.8fr' : '1fr', gap: '8px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>WhatsApp / Telefone</label>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>WhatsApp / telefone</label>
                     <input
                       type="tel"
                       className="campo"
@@ -458,7 +459,7 @@ function CadastroConteudo() {
 
                   {isCorretor && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>CRECI (Opcional)</label>
+                      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>CRECI (opcional)</label>
                       <input
                         type="text"
                         className="campo"
@@ -473,7 +474,7 @@ function CadastroConteudo() {
               )}
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>Criar Senha</label>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>Criar senha</label>
                 <InputSenha
                   placeholder="Mínimo 8 caracteres"
                   value={senha}
@@ -535,7 +536,7 @@ function CadastroConteudo() {
                     transition: 'all 0.2s',
                   }}
                 >
-                  {carregando ? "Enviando código..." : "Criar Conta ➔"}
+                  {carregando ? "Enviando código..." : "Criar conta "}
                 </button>
               </div>
             </form>
@@ -557,7 +558,7 @@ function CadastroConteudo() {
                   alignItems: "center",
                   gap: "6px",
                 }}>
-                  <span>✓</span>
+                  <span><Icone nome="check" tamanho={16} /></span>
                   <span>{sucesso}</span>
                 </div>
               )}
@@ -623,7 +624,7 @@ function CadastroConteudo() {
                     fontWeight: 600,
                   }}
                 >
-                  {timerReenvio > 0 ? `Reenviar em ${timerReenvio}s` : "🔄 Reenviar código"}
+                  {timerReenvio > 0 ? `Reenviar em ${timerReenvio}s` : "Reenviar código"}
                 </button>
               </div>
 
@@ -633,7 +634,7 @@ function CadastroConteudo() {
                 disabled={carregando || codigoOtp.length < 6}
                 style={{ width: "100%", padding: '10px', fontSize: '0.88rem', fontWeight: 700, marginTop: '4px' }}
               >
-                {carregando ? "Validando e Ativando..." : "✓ Confirmar e Ativar Conta"}
+                {carregando ? "Validando e ativando..." : "Confirmar e ativar conta"}
               </button>
             </form>
           )}
@@ -652,9 +653,7 @@ function CadastroConteudo() {
           LADO DIREITO: BANNER VISUAL (CUSTOMIZADO PARA CONVITE DE EQUIPE)
           ═══════════════════════════════════════════════════════════════ */}
       <div className={styles.ladoVisual}>
-        <div className={styles.glow1} />
-        <div className={styles.glow2} />
-        <div className={styles.gridBackground} />
+        <CurvasDeNivel className={styles.curvasLado} picos={[{ x: 0.7, y: 0.35, aneis: 18, passo: 34, semente: 11 }]} />
 
         <div className={styles.ladoVisualConteudo}>
           {imobiliariaId ? (
@@ -662,7 +661,7 @@ function CadastroConteudo() {
             <>
               <div className={styles.badgeDestaque} style={{ borderColor: 'rgba(240, 165, 143, 0.4)', color: '#F0A58F' }}>
                 <span className={styles.pontoVerde} />
-                <span>🤝 CONVITE OFICIAL DE EQUIPE</span>
+                <span>CONVITE OFICIAL DE EQUIPE</span>
               </div>
 
               <h2 style={{ fontSize: 'clamp(1.7rem, 2.8vw, 2.3rem)', marginBottom: '0.85rem' }}>
@@ -702,7 +701,7 @@ function CadastroConteudo() {
                       {empresaNome}
                     </h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontSize: '0.75rem', color: '#F0A58F' }}>
-                      <span>✓ Imobiliária Parceira Oficial</span>
+                      <span>Imobiliária parceira oficial</span>
                       {imobiliariaInfo?.cidade && <span>• {imobiliariaInfo.cidade}/{imobiliariaInfo.estado || 'MG'}</span>}
                     </div>
                   </div>
@@ -710,25 +709,25 @@ function CadastroConteudo() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                    <span style={{ fontSize: '1.1rem' }}>⚡</span>
+                    <span style={{ fontSize: '1.1rem' }}><Icone nome="raio" tamanho={16} /></span>
                     <div>
-                      <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Inventário Conectado</strong>
+                      <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Inventário conectado</strong>
                       <div style={{ color: '#A39A8A', fontSize: '0.75rem' }}>Publique e gerencie seus anúncios no portfólio da imobiliária.</div>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                    <span style={{ fontSize: '1.1rem' }}>📱</span>
+                    <span style={{ fontSize: '1.1rem' }}><Icone nome="telefone" tamanho={16} /></span>
                     <div>
-                      <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Leads Diretos no WhatsApp</strong>
+                      <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Leads diretos no WhatsApp</strong>
                       <div style={{ color: '#A39A8A', fontSize: '0.75rem' }}>Interessados entram em contato direto com você em 1 toque.</div>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                    <span style={{ fontSize: '1.1rem' }}>🗺️</span>
+                    <span style={{ fontSize: '1.1rem' }}><Icone nome="mapa" tamanho={16} /></span>
                     <div>
-                      <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Destaque Geolocalizado</strong>
+                      <strong style={{ color: '#ffffff', fontSize: '0.85rem' }}>Destaque geolocalizado</strong>
                       <div style={{ color: '#A39A8A', fontSize: '0.75rem' }}>Máxima visibilidade nas buscas de compradores por bairro e mapa.</div>
                     </div>
                   </div>
@@ -736,9 +735,9 @@ function CadastroConteudo() {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.78rem', color: '#A39A8A' }}>
-                <span>🔒 Acesso 100% gratuito para corretores</span>
+                <span>Acesso 100% gratuito para corretores</span>
                 <span>•</span>
-                <span>⚡ Ativação imediata</span>
+                <span>Ativação imediata</span>
               </div>
             </>
           ) : (
@@ -750,7 +749,7 @@ function CadastroConteudo() {
               </div>
 
               <h2>
-                Anuncie com precisão e <span style={{ color: '#F0A58F' }}>venda mais rápido</span>
+                Seu imóvel no lugar certo. <em>Literalmente.</em>
               </h2>
 
               <p>
@@ -759,7 +758,7 @@ function CadastroConteudo() {
 
               <div className={styles.cardPreviewGlass}>
                 <div className={styles.cardPreviewTopo}>
-                  <span className={styles.tagStatus}>✓ Lead em Tempo Real</span>
+                  <span className={styles.tagStatus}>Lead em tempo real</span>
                   <span className={styles.horarioLead}>Agora mesmo</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '6px' }}>

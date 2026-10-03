@@ -6,6 +6,7 @@ import Header from '@/components/layout/Header'
 import CardImovel from '@/components/imovel/CardImovel'
 import { type Imovel } from '@/lib/types'
 import styles from './page.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface Corretor {
   id: string
@@ -176,14 +177,14 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
 
             <div className={styles.textosImobiliaria}>
               <span className={styles.badgeVerificado}>
-                ✓ Imobiliária Verificada Fixum
-              </span>
+ Imobiliária verificada Fixum
+ </span>
               <h1 className={styles.nomeImobiliaria}>{imobiliaria.nome}</h1>
               <div className={styles.detalhesImobiliaria}>
                 {imobiliaria.creci && <span className={styles.creciBadge}>CRECI: {imobiliaria.creci}</span>}
-                {imobiliaria.email && <span>✉️ {imobiliaria.email}</span>}
-                {imobiliaria.telefone && <span>📞 {imobiliaria.telefone}</span>}
-                <span>📍 Atuação: {cidadesAtendidas}</span>
+                {imobiliaria.email && <span><Icone nome="email" tamanho={16} /> {imobiliaria.email}</span>}
+                {imobiliaria.telefone && <span><Icone nome="telefone" tamanho={16} /> {imobiliaria.telefone}</span>}
+                <span>Atuação: {cidadesAtendidas}</span>
               </div>
             </div>
           </div>
@@ -196,13 +197,13 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
                 rel="noopener noreferrer"
                 className={styles.btnWhatsAppHero}
               >
-                <span>💬</span> WhatsApp Oficial
+                <span><Icone nome="chat" tamanho={16} /></span> WhatsApp oficial
               </a>
             )}
 
             {imobiliaria.telefone && (
               <a href={`tel:${imobiliaria.telefone}`} className={styles.btnTelefoneHero}>
-                <span>📞</span> Ligar
+                <span><Icone nome="telefone" tamanho={16} /></span> Ligar
               </a>
             )}
 
@@ -212,7 +213,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
               onClick={handleCompartilhar}
               title="Copiar link ou compartilhar"
             >
-              <span>{linkCopiado ? '✓ Link Copiado!' : '🔗 Compartilhar Portfólio'}</span>
+              <span>{linkCopiado ? 'Link copiado' : 'Compartilhar portfólio'}</span>
             </button>
           </div>
         </div>
@@ -224,34 +225,34 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
             ═══════════════════════════════════════════════════════════════ */}
         <section className={styles.gridStats}>
           <div className={styles.cardStat}>
-            <div className={styles.statIcone}>🏢</div>
+            <div className={styles.statIcone}><Icone nome="predio" tamanho={16} /></div>
             <div className={styles.statTextos}>
               <strong className={styles.statValor}>{imoveis.length}</strong>
-              <span className={styles.statLabel}>Imóveis no Portfólio</span>
+              <span className={styles.statLabel}>Imóveis no portfólio</span>
             </div>
           </div>
 
           <div className={styles.cardStat}>
-            <div className={styles.statIcone}>🏷️</div>
+            <div className={styles.statIcone}><Icone nome="etiqueta" tamanho={16} /></div>
             <div className={styles.statTextos}>
               <strong className={styles.statValor}>{totalVenda}</strong>
-              <span className={styles.statLabel}>Oportunidades de Venda</span>
+              <span className={styles.statLabel}>Oportunidades de venda</span>
             </div>
           </div>
 
           <div className={styles.cardStat}>
-            <div className={styles.statIcone}>🔑</div>
+            <div className={styles.statIcone}><Icone nome="chave" tamanho={16} /></div>
             <div className={styles.statTextos}>
               <strong className={styles.statValor}>{totalAluguel}</strong>
-              <span className={styles.statLabel}>Opções para Aluguel</span>
+              <span className={styles.statLabel}>Opções para aluguel</span>
             </div>
           </div>
 
           <div className={styles.cardStat}>
-            <div className={styles.statIcone}>👥</div>
+            <div className={styles.statIcone}><Icone nome="pessoas" tamanho={16} /></div>
             <div className={styles.statTextos}>
               <strong className={styles.statValor}>{corretores.length > 0 ? corretores.length : 1}</strong>
-              <span className={styles.statLabel}>Especialistas na Equipe</span>
+              <span className={styles.statLabel}>Especialistas na equipe</span>
             </div>
           </div>
         </section>
@@ -262,7 +263,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
         {imoveis.length > 0 && (
           <section className={styles.bannerMapaAtalho}>
             <div className={styles.bannerMapaInfo}>
-              <div className={styles.bannerMapaIcone}>🗺️</div>
+              <div className={styles.bannerMapaIcone}><Icone nome="mapa" tamanho={16} /></div>
               <div>
                 <h3 className={styles.bannerMapaTitulo}>Explorar portfólio no mapa interativo</h3>
                 <p className={styles.bannerMapaSubtitulo}>
@@ -274,8 +275,8 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
               href={`/explorar?imobiliaria=${imobiliaria.id}&nome=${encodeURIComponent(imobiliaria.nome)}`}
               className={styles.btnAbrirMapaCompleto}
             >
-              Abrir no Mapa ➔
-            </Link>
+ Abrir no mapa 
+ </Link>
           </section>
         )}
 
@@ -285,7 +286,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
         <section className={styles.secaoImoveis}>
           <div className={styles.cabecalhoPortfolio}>
             <div>
-              <h2 className={styles.tituloPortfolio}>🏠 Portfólio de Imóveis</h2>
+              <h2 className={styles.tituloPortfolio}>Portfólio de imóveis</h2>
               <p className={styles.subtituloPortfolio}>
                 Exibindo <strong>{imoveisFiltrados.length}</strong> {imoveisFiltrados.length === 1 ? 'imóvel disponível' : 'imóveis disponíveis'}
               </p>
@@ -299,9 +300,9 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
                 value={ordenacao}
                 onChange={(e) => setOrdenacao(e.target.value as any)}
               >
-                <option value="recente">Mais Recentes</option>
-                <option value="preco_asc">Menor Preço</option>
-                <option value="preco_desc">Maior Preço</option>
+                <option value="recente">Mais recentes</option>
+                <option value="preco_asc">Menor preço</option>
+                <option value="preco_desc">Maior preço</option>
               </select>
             </div>
           </div>
@@ -340,7 +341,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
                   className={`${styles.chipTipo} ${filtroTipo === 'todos' ? styles.chipTipoAtivo : ''}`}
                   onClick={() => setFiltroTipo('todos')}
                 >
-                  Todos os Tipos ({imoveisPorModalidade.length})
+                  Todos os tipos ({imoveisPorModalidade.length})
                 </button>
                 {tiposDisponiveis.map((tipo) => {
                   const qtdTipo = imoveisPorModalidade.filter((i) => i.tipo === tipo).length
@@ -367,7 +368,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
             </div>
           ) : (
             <div className={styles.vazioPortfolio}>
-              <div className={styles.vazioIcone}>🔍</div>
+              <div className={styles.vazioIcone}><Icone nome="busca" tamanho={16} /></div>
               <h3>Nenhum imóvel encontrado com os filtros selecionados</h3>
               <p>Tente selecionar outros tipos ou modalidades para visualizar o portfólio completo.</p>
               <button
@@ -378,7 +379,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
                   setFiltroTipo('todos')
                 }}
               >
-                Limpar Filtros
+                Limpar filtros
               </button>
             </div>
           )}
@@ -391,7 +392,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
           <section className={styles.secaoEquipe}>
             <div className={styles.cabecalhoSecao}>
               <div>
-                <h2 className={styles.tituloSecao}>👥 Equipe de Especialistas</h2>
+                <h2 className={styles.tituloSecao}>Equipe de especialistas</h2>
                 <p className={styles.subtituloSecao}>Corretores credenciados prontos para atender você com agilidade</p>
               </div>
             </div>
@@ -426,7 +427,7 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
                         className={styles.btnWhatsCorretor}
                         title={`Conversar com ${c.nome}`}
                       >
-                        <span>💬</span> Falar com o Corretor
+                        <span><Icone nome="chat" tamanho={16} /></span> Falar com o corretor
                       </a>
                     )}
                   </div>
@@ -441,9 +442,9 @@ export default function PaginaImobiliariaCliente({ imobiliaria, corretores, imov
             ═══════════════════════════════════════════════════════════════ */}
         <section className={styles.secaoInstitucional}>
           <div className={styles.boxInstitucional}>
-            <div className={styles.boxInstIcone}>🛡️</div>
+            <div className={styles.boxInstIcone}><Icone nome="escudo" tamanho={16} /></div>
             <div>
-              <h3>Negociação Segura com {imobiliaria.nome}</h3>
+              <h3>Negociação segura com {imobiliaria.nome}</h3>
               <p>
                 Todos os imóveis anunciados são cadastrados e atualizados diretamente pela equipe de corretores credenciados. Suas mensagens e dados de contato são enviados diretamente aos responsáveis para um atendimento exclusivo e personalizado.
               </p>

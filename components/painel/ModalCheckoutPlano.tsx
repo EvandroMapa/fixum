@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Plano, PeriodicidadePlano } from '@/lib/types'
 import { formatarMoeda, calcularPrecoPeriodicidade } from '@/lib/planos'
 import styles from './ModalCheckoutPlano.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface Props {
   aberto: boolean
@@ -254,7 +255,7 @@ export default function ModalCheckoutPlano({
     <div className={styles.overlay} onClick={onFechar}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.btnFechar} onClick={onFechar} aria-label="Fechar modal">
-          ✕
+          <Icone nome="fechar" tamanho={16} />
         </button>
 
         {/* TOPO: RESUMO DO PLANO */}
@@ -272,7 +273,7 @@ export default function ModalCheckoutPlano({
           </div>
           {detalhesPreco.descontoPct > 0 && (
             <div style={{ marginTop: '6px', fontSize: '0.78rem', color: '#C3DACB', fontWeight: 600 }}>
-              🎉 {detalhesPreco.descontoPct}% de Desconto Incluso (Equiv. {formatarMoeda(detalhesPreco.valorMensalEquivalente)}/mês)
+              <Icone nome="check" tamanho={16} /> {detalhesPreco.descontoPct}% de desconto incluso (equiv. {formatarMoeda(detalhesPreco.valorMensalEquivalente)}/mês)
             </div>
           )}
         </div>
@@ -280,8 +281,8 @@ export default function ModalCheckoutPlano({
         {/* CONTEÚDO */}
         {sucesso ? (
           <div className={styles.telaSucesso}>
-            <div className={styles.iconeSucesso}>✓</div>
-            <h3>Pagamento Confirmado!</h3>
+            <div className={styles.iconeSucesso}><Icone nome="check" tamanho={16} /></div>
+            <h3>Pagamento confirmado!</h3>
             <p>Seu plano <strong>{plano.nome}</strong> está ativo e sua cota de anúncios foi ampliada.</p>
           </div>
         ) : (
@@ -298,7 +299,7 @@ export default function ModalCheckoutPlano({
                   setErro(null)
                 }}
               >
-                <span>⚡</span> PIX (Instantâneo)
+                <span><Icone nome="raio" tamanho={16} /></span> PIX (instantâneo)
               </button>
               <button
                 type="button"
@@ -310,7 +311,7 @@ export default function ModalCheckoutPlano({
                   if (pollingRef.current) clearInterval(pollingRef.current)
                 }}
               >
-                <span>💳</span> Cartão de Crédito
+                <span><Icone nome="cartao" tamanho={16} /></span> Cartão de crédito
               </button>
             </div>
 
@@ -322,12 +323,12 @@ export default function ModalCheckoutPlano({
                   {dadosPix.pixQrCode || dadosPix.pixCopiaCola ? (
                     <img
                       src={dadosPix.pixQrCode || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(dadosPix.pixCopiaCola || '')}`}
-                      alt="QR Code PIX Fixum"
+                      alt="QR code PIX Fixum"
                       className={styles.qrCodeImg}
                     />
                   ) : (
                     <div style={{ width: 180, height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '10px', fontSize: '0.8rem', color: '#A39A8A' }}>
-                      <span>⚠️ QR Code aguardando emissão</span>
+                      <span>QR code aguardando emissão</span>
                     </div>
                   )}
                 </div>
@@ -345,7 +346,7 @@ export default function ModalCheckoutPlano({
                       className={styles.btnCopiarPix}
                       onClick={handleCopiarPix}
                     >
-                      {copiado ? '✓ Código Copiado!' : '📋 Copiar Código PIX'}
+                      {copiado ? 'Código copiado' : 'Copiar código PIX'}
                     </button>
                   </div>
                 )}
@@ -366,8 +367,8 @@ export default function ModalCheckoutPlano({
                         textDecoration: 'underline',
                       }}
                     >
-                      🔗 Abrir Fatura Oficial no Asaas ↗
-                    </a>
+ Abrir fatura oficial no Asaas ↗
+ </a>
                   </div>
                 )}
 
@@ -399,7 +400,7 @@ export default function ModalCheckoutPlano({
                 {/* DADOS PESSOAIS / CADASTRAIS */}
                 <div className={styles.formGrid2}>
                   <div className={styles.campo}>
-                    <label>Nome / Razão Social</label>
+                    <label>Nome / razão social</label>
                     <input
                       type="text"
                       required
@@ -423,7 +424,7 @@ export default function ModalCheckoutPlano({
 
                 <div className={styles.formGrid2}>
                   <div className={styles.campo}>
-                    <label>E-mail para Faturas</label>
+                    <label>E-mail para faturas</label>
                     <input
                       type="email"
                       required
@@ -434,7 +435,7 @@ export default function ModalCheckoutPlano({
                   </div>
 
                   <div className={styles.campo}>
-                    <label>WhatsApp / Telefone</label>
+                    <label>WhatsApp / telefone</label>
                     <input
                       type="tel"
                       value={telefone}
@@ -448,7 +449,7 @@ export default function ModalCheckoutPlano({
                 {metodo === 'cartao' && (
                   <>
                     <div className={styles.campo}>
-                      <label>Nome impresso no Cartão</label>
+                      <label>Nome impresso no cartão</label>
                       <input
                         type="text"
                         required
@@ -459,7 +460,7 @@ export default function ModalCheckoutPlano({
                     </div>
 
                     <div className={styles.campo}>
-                      <label>Número do Cartão</label>
+                      <label>Número do cartão</label>
                       <input
                         type="text"
                         required
@@ -498,7 +499,7 @@ export default function ModalCheckoutPlano({
 
                     <div className={styles.formGrid2}>
                       <div className={styles.campo}>
-                        <label>CEP do Titular</label>
+                        <label>CEP do titular</label>
                         <input
                           type="text"
                           required
@@ -510,7 +511,7 @@ export default function ModalCheckoutPlano({
                       </div>
 
                       <div className={styles.campo}>
-                        <label>Nº do Endereço</label>
+                        <label>Nº do endereço</label>
                         <input
                           type="text"
                           required
@@ -531,9 +532,9 @@ export default function ModalCheckoutPlano({
                   {carregando ? (
                     'Processando...'
                   ) : metodo === 'pix' ? (
-                    '⚡ Gerar QR Code PIX'
+                    'Gerar QR Code PIX'
                   ) : (
-                    `💳 Assinar por ${formatarMoeda(plano.preco_mensal)}/mês`
+                    `Assinar por ${formatarMoeda(plano.preco_mensal)}/mês`
                   )}
                 </button>
               </form>

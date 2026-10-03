@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixum Brandbook</title>
+<meta name="description" content="Fixum — Manual de marca. Proposta v0.1 para avaliação.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#16201C; --tinta-2:#22302A; --tinta-3:#33433C;
+  --papel:#F3EEE4; --papel-claro:#FAF7F1; --branco:#FFFFFF;
+  --marco:#D4401F; --marco-escuro:#B23318; --marco-claro:#FBE6DF;
+  --cerrado:#2E6B4E; --cerrado-claro:#DCE9DF;
+  --hidro:#2C5F8A; --hidro-claro:#D9E5EF;
+  --ouro:#E3A72F; --ouro-claro:#FBEFD3;
+  --pedra-100:#EAE4D8; --pedra-200:#DAD2C3; --pedra-300:#BDB3A2; --pedra-500:#8A8172; --pedra-700:#5A5449;
+  --f-display:'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+  --f-texto:'Inter', system-ui, -apple-system, sans-serif;
+  --f-serif:'Instrument Serif', Georgia, serif;
+  --f-mono:'JetBrains Mono', ui-monospace, monospace;
+  --raio:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--papel);color:var(--tinta);font-family:var(--f-texto);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+svg:has(> use[href^="#i-"]){aspect-ratio:1/1;height:auto;flex:none}
+a{color:inherit}
+.wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 20px}
+@media(min-width:768px){.wrap{padding:0 40px}}
+
+/* ---------- Navegação ---------- */
+.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--papel) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--pedra-200)}
+.nav .wrap{display:flex;align-items:center;gap:24px;height:56px}
+.nav-logo{width:72px;flex:none;color:var(--tinta)}
+.nav ul{list-style:none;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;font:500 13px/1 var(--f-texto);text-decoration:none;color:var(--pedra-700);white-space:nowrap;border-radius:8px}
+.nav a:hover{color:var(--tinta);background:var(--pedra-100)}
+
+/* ---------- Capa ---------- */
+.capa{position:relative;background:var(--tinta);color:var(--papel);min-height:min(92vh,860px);display:flex;flex-direction:column;overflow:hidden}
+.capa .topo{position:absolute;inset:0;width:100%;height:100%;color:var(--papel);opacity:.13}
+.capa .wrap{position:relative;flex:1;display:flex;flex-direction:column;justify-content:space-between;padding-top:28px;padding-bottom:28px}
+.capa-meta{display:flex;justify-content:space-between;gap:16px;font:400 12px/1.5 var(--f-mono);letter-spacing:.04em;color:color-mix(in srgb,var(--papel) 70%,transparent);flex-wrap:wrap}
+.capa-centro{padding:8vh 0}
+.capa-logo{width:min(560px,82vw);color:var(--papel)}
+.capa h1{font:italic 400 clamp(30px,5vw,58px)/1.08 var(--f-serif);margin-top:28px;max-width:16ch}
+.capa-sub{margin-top:18px;max-width:46ch;color:color-mix(in srgb,var(--papel) 75%,transparent)}
+.registro{position:absolute;width:18px;height:18px;color:var(--papel);opacity:.4}
+
+/* ---------- Seções ---------- */
+.secao{padding:clamp(72px,11vw,140px) 0;position:relative}
+.secao.escura{background:var(--tinta);color:var(--papel)}
+.secao.clara{background:var(--papel-claro)}
+.rotulo{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font:500 12px/1.4 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--marco)}
+.rotulo span+span{color:var(--pedra-500)}
+.escura .rotulo span+span{color:color-mix(in srgb,var(--papel) 50%,transparent)}
+h2{font:700 clamp(36px,6.4vw,76px)/1.0 var(--f-display);letter-spacing:-.03em;margin:18px 0 0;max-width:18ch;font-variation-settings:'opsz' 96}
+h3{font:650 clamp(22px,2.6vw,28px)/1.2 var(--f-display);letter-spacing:-.015em;margin-bottom:10px}
+h4{font:600 13px/1.4 var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--pedra-500);margin-bottom:12px}
+.escura h4{color:color-mix(in srgb,var(--papel) 55%,transparent)}
+.lead{font-size:clamp(18px,2vw,21px);line-height:1.55;max-width:60ch;margin-top:24px;color:var(--pedra-700)}
+.escura .lead{color:color-mix(in srgb,var(--papel) 78%,transparent)}
+p+p{margin-top:12px}
+.serif{font-family:var(--f-serif);font-style:italic;font-weight:400}
+.mono{font-family:var(--f-mono)}
+.bloco{margin-top:clamp(48px,7vw,88px)}
+.grade{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.grade-2{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.cartao{background:var(--branco);border:1px solid var(--pedra-200);border-radius:var(--raio);padding:28px}
+.escura .cartao{background:var(--tinta-2);border-color:var(--tinta-3)}
+.nota{font-size:14px;color:var(--pedra-500);margin-top:12px}
+.escura .nota{color:color-mix(in srgb,var(--papel) 55%,transparent)}
+.divisor{height:1px;background:var(--pedra-200);margin:clamp(48px,7vw,80px) 0}
+
+/* ---------- 01 Ideia ---------- */
+.verbete{display:grid;gap:40px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start}
+.verbete-palavra{font:700 clamp(64px,12vw,148px)/.9 var(--f-display);letter-spacing:-.045em}
+.verbete-palavra small{display:block;font:400 15px/1.5 var(--f-mono);letter-spacing:0;color:var(--pedra-500);margin-top:18px}
+.acepcoes{list-style:none;counter-reset:a}
+.acepcoes li{counter-increment:a;padding:20px 0;border-top:1px solid var(--pedra-200);display:grid;grid-template-columns:36px 1fr;gap:4px}
+.acepcoes li::before{content:counter(a);font:500 13px/1.9 var(--f-mono);color:var(--marco)}
+.acepcoes b{font:600 18px/1.4 var(--f-display);display:block;margin-bottom:2px}
+.manifesto{font:400 clamp(26px,3.6vw,44px)/1.25 var(--f-display);letter-spacing:-.02em;max-width:24ch}
+.manifesto em{font-family:var(--f-serif);font-weight:400;color:var(--marco)}
+
+/* ---------- 02 Plataforma ---------- */
+.pilar{display:flex;flex-direction:column;gap:6px}
+.pilar .num{font:500 12px var(--f-mono);color:var(--marco)}
+.slider{margin-top:22px}
+.slider-linha{display:flex;justify-content:space-between;font:500 13px var(--f-texto);color:var(--pedra-700)}
+.slider-trilho{position:relative;height:2px;background:var(--pedra-200);margin:12px 0 26px}
+.slider-trilho i{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--marco);transform:translate(-50%,-50%);box-shadow:0 0 0 5px var(--papel-claro)}
+.promessa{border-radius:var(--raio);padding:32px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+.promessa .serif{font-size:clamp(26px,3vw,34px);line-height:1.15}
+
+/* ---------- 03 Logo ---------- */
+.palco{border-radius:var(--raio);display:grid;place-items:center;padding:clamp(40px,8vw,96px) 24px;position:relative;overflow:hidden}
+.palco .legenda{position:absolute;left:16px;bottom:12px;font:400 11px var(--f-mono);letter-spacing:.04em;opacity:.6}
+.logo-grande{width:min(620px,100%)}
+.versoes{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.versoes .palco{padding:48px 24px;aspect-ratio:4/3}
+.versoes .palco svg{width:min(200px,70%)}
+.construcao svg{width:100%;height:auto;overflow:visible}
+.respiro{display:inline-block;padding:clamp(28px,5vw,50px);outline:1.5px dashed var(--marco);outline-offset:-1px;position:relative}
+.respiro::after{content:'x';position:absolute;top:6px;left:50%;transform:translateX(-50%);font:500 12px var(--f-mono);color:var(--marco)}
+.respiro svg{width:min(300px,62vw)}
+.erros{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.erro{background:var(--branco);border:1px solid var(--pedra-200);border-radius:var(--raio);overflow:hidden}
+.erro .area{height:140px;display:grid;place-items:center;position:relative;padding:20px}
+.erro .area svg{width:150px}
+.erro .area::after{content:'';position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1px),color-mix(in srgb,var(--marco) 70%,transparent) 50%,transparent calc(50% + 1px))}
+.erro p{font-size:13.5px;padding:12px 16px;border-top:1px solid var(--pedra-200);line-height:1.45}
+.erro p b{color:var(--marco)}
+.tamanhos{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap}
+.tamanhos figure{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.tamanhos figcaption{font:400 12px var(--f-mono);color:var(--pedra-500)}
+
+/* ---------- 04 Cores ---------- */
+.cores{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.cor{border-radius:var(--raio);overflow:hidden;border:1px solid var(--pedra-200);background:var(--branco)}
+.cor .amostra{height:150px;padding:16px;display:flex;align-items:flex-end;font:600 22px var(--f-display);letter-spacing:-.01em}
+.cor .dados{padding:14px 16px;font:400 12.5px/1.75 var(--f-mono);color:var(--pedra-700)}
+.cor .dados b{font:600 14px/1.4 var(--f-texto);color:var(--tinta);display:block;margin-bottom:4px}
+.cor .uso{font:400 13.5px/1.5 var(--f-texto);color:var(--pedra-700);margin-top:8px}
+.proporcao{display:flex;height:88px;border-radius:var(--raio);overflow:hidden;border:1px solid var(--pedra-200)}
+.proporcao div{display:flex;align-items:flex-end;padding:10px;font:500 12px var(--f-mono)}
+.neutros{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));border-radius:var(--raio);overflow:hidden;border:1px solid var(--pedra-200)}
+.neutros div{height:96px;padding:10px;display:flex;flex-direction:column;justify-content:flex-end;font:400 11px/1.4 var(--f-mono)}
+.contrastes{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+.contraste{border-radius:12px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font:600 17px var(--f-texto)}
+.contraste small{font:500 11.5px var(--f-mono);padding:4px 8px;border-radius:99px;background:color-mix(in srgb,currentColor 14%,transparent);white-space:nowrap}
+
+/* ---------- 05 Tipografia ---------- */
+.familia{display:grid;gap:24px;grid-template-columns:minmax(0,1fr);padding:36px 0;border-top:1px solid var(--pedra-200)}
+@media(min-width:860px){.familia{grid-template-columns:280px minmax(0,1fr)}}
+.familia .amostra-tipo{overflow-wrap:anywhere}
+.familia .papel{font:400 14px/1.6 var(--f-texto);color:var(--pedra-700)}
+.familia .papel b{display:block;font:600 20px var(--f-display);color:var(--tinta);margin-bottom:4px}
+.escala{width:100%;border-collapse:collapse}
+.escala td{padding:14px 12px 14px 0;border-top:1px solid var(--pedra-200);vertical-align:baseline}
+.escala td:first-child{font:400 12px var(--f-mono);color:var(--pedra-500);width:120px;white-space:nowrap}
+.escala td:last-child{font:400 12px var(--f-mono);color:var(--pedra-500);text-align:right;white-space:nowrap;padding-right:0}
+.escala-wrap{overflow-x:auto}
+.precos{display:flex;flex-wrap:wrap;gap:10px}
+.precos span{font:600 16px var(--f-texto);font-variant-numeric:tabular-nums;background:var(--branco);border:1px solid var(--pedra-200);border-radius:99px;padding:8px 14px}
+
+/* ---------- 06 Elementos ---------- */
+.el-palco{border-radius:var(--raio);overflow:hidden;position:relative;min-height:280px}
+.coordenada{font:500 12px/1.5 var(--f-mono);letter-spacing:.05em}
+.pins-demo{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-end;padding:36px 28px;background:#ECE5D7;border-radius:var(--raio)}
+.pins-demo figure{display:flex;flex-direction:column;align-items:center;gap:12px}
+.pins-demo figcaption{font:400 11.5px var(--f-mono);color:var(--pedra-700)}
+
+/* pin de preço (componente de mapa) */
+.pin{position:relative;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:99px;background:var(--branco);color:var(--tinta);font:700 13.5px/1 var(--f-texto);font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(22,32,28,.18),0 4px 14px rgba(22,32,28,.14);white-space:nowrap}
+.pin::after{content:'';position:absolute;left:50%;bottom:-5px;width:10px;height:10px;background:inherit;transform:translateX(-50%) rotate(45deg);border-radius:0 0 3px 0}
+.pin.ativo{background:var(--tinta);color:var(--papel);z-index:3}
+.pin.destaque::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--ouro)}
+.pin.visto{background:var(--pedra-100);color:var(--pedra-500);box-shadow:0 1px 2px rgba(22,32,28,.15)}
+.cluster{width:46px;height:46px;border-radius:50%;background:var(--tinta);color:var(--papel);display:grid;place-items:center;font:700 14px var(--f-texto);box-shadow:0 0 0 6px color-mix(in srgb,var(--tinta) 22%,transparent),0 0 0 12px color-mix(in srgb,var(--tinta) 10%,transparent)}
+.marco-pin{width:40px;height:40px;border-radius:50%;background:#D4401F;display:grid;place-items:center;box-shadow:0 0 0 6px rgba(212,64,31,.25),0 4px 14px rgba(22,32,28,.25);color:var(--papel);--marco:var(--papel)}
+.marco-pin svg{width:22px}
+
+/* ---------- 07 Ícones e foto ---------- */
+.icones{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
+.icone{background:var(--branco);border:1px solid var(--pedra-200);border-radius:12px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font:400 11.5px var(--f-mono);color:var(--pedra-700)}
+.icone svg{width:28px;height:28px;color:var(--tinta)}
+.foto{border-radius:var(--raio);aspect-ratio:4/3;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px}
+.foto span{font:500 12px var(--f-mono);background:rgba(255,255,255,.88);padding:5px 9px;border-radius:6px;color:var(--tinta)}
+
+/* ---------- 08 Voz ---------- */
+.tabela-voz{width:100%;border-collapse:collapse;font-size:15px}
+.tabela-voz th{text-align:left;font:500 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--pedra-500);padding:0 16px 12px 0}
+.tabela-voz td{padding:16px 16px 16px 0;border-top:1px solid var(--pedra-200);vertical-align:top;line-height:1.5}
+.tabela-voz td:first-child{font-weight:600;width:22%}
+.tabela-voz .evite{color:var(--pedra-500);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--marco) 60%,transparent)}
+@media(max-width:720px){
+  .tabela-voz thead{display:none}
+  .tabela-voz tr{display:block;border-top:1px solid var(--pedra-200);padding:14px 0}
+  .tabela-voz td{display:block;border:0;padding:3px 0;width:auto!important}
+  .tabela-voz td:nth-child(2)::before{content:'Evite: ';font:500 11px var(--f-mono);color:var(--pedra-500);text-decoration:none;display:inline-block}
+  .tabela-voz td:nth-child(3)::before{content:'Prefira: ';font:500 11px var(--f-mono);color:var(--cerrado)}
+}
+.vocab{display:flex;flex-wrap:wrap;gap:10px}
+.vocab span{font:500 15px var(--f-texto);border:1px solid var(--pedra-300);border-radius:99px;padding:8px 14px;background:var(--branco)}
+.vocab span b{color:var(--marco);font-weight:600}
+
+/* ---------- 09 Interface ---------- */
+.ui-linha{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:12px;font:600 15.5px/1 var(--f-texto);border:1.5px solid transparent;cursor:pointer;text-decoration:none;transition:transform .15s ease,background .15s ease}
+.btn:active{transform:scale(.98)}
+.btn svg{width:18px;height:18px}
+.btn-cta{background:var(--marco);color:#fff}
+.btn-cta:hover{background:var(--marco-escuro)}
+.btn-primario{background:var(--tinta);color:var(--papel)}
+.btn-primario:hover{background:var(--tinta-2)}
+.btn-contorno{background:transparent;color:var(--tinta);border-color:var(--pedra-300)}
+.btn-contorno:hover{border-color:var(--tinta)}
+.btn-fantasma{background:transparent;color:var(--tinta)}
+.btn-fantasma:hover{background:var(--pedra-100)}
+.campo{display:flex;flex-direction:column;gap:6px;flex:1;min-width:min(100%,260px)}
+.campo label{font:600 13px var(--f-texto)}
+.campo input{height:52px;border-radius:12px;border:1.5px solid var(--pedra-300);background:var(--branco);padding:0 16px;font:400 16px var(--f-texto);color:var(--tinta);outline:none}
+.campo input:focus{border-color:var(--tinta);box-shadow:0 0 0 4px color-mix(in srgb,var(--tinta) 12%,transparent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:40px;padding:0 16px;border-radius:99px;border:1.5px solid var(--pedra-300);display:inline-flex;align-items:center;font:500 14px var(--f-texto);background:var(--branco)}
+.chip.on{background:var(--tinta);color:var(--papel);border-color:var(--tinta)}
+.segmento{display:inline-flex;background:var(--pedra-100);padding:4px;border-radius:12px}
+.segmento span{min-height:40px;padding:0 20px;display:grid;place-items:center;border-radius:9px;font:600 14px var(--f-texto);color:var(--pedra-700)}
+.segmento span.on{background:var(--branco);color:var(--tinta);box-shadow:0 1px 3px rgba(22,32,28,.12)}
+
+.busca-hero{background:var(--branco);border-radius:18px;padding:10px;display:flex;flex-wrap:wrap;gap:10px;box-shadow:0 10px 40px rgba(22,32,28,.12);border:1px solid var(--pedra-200)}
+.busca-hero .entrada{flex:1;min-width:min(100%,240px);display:flex;align-items:center;gap:12px;padding:0 14px;min-height:52px}
+.busca-hero .entrada svg{width:22px;color:var(--marco);flex:none}
+.busca-hero .entrada div{font:400 16px var(--f-texto);color:var(--pedra-500)}
+.busca-hero .entrada b{display:block;font:600 12px var(--f-texto);color:var(--tinta)}
+
+.mapa{position:relative;border-radius:var(--raio);overflow:hidden;aspect-ratio:16/10;width:100%;min-width:0;
+  --m-chao:#ECE5D7;--m-quadra:#F6F2EA;--m-rua:#FFFFFF;--m-av:#FFFFFF;--m-rio:#B9CCDA;--m-parque:#D3E0CC;--m-topo:#CFC4B0}
+@media(max-width:600px){.mapa{aspect-ratio:4/5}}
+.mapa.noite{--m-chao:#0F1714;--m-quadra:#17221D;--m-rua:#22302A;--m-av:#2C3C35;--m-rio:#1B3447;--m-parque:#1A2E23;--m-topo:#24332C}
+.mapa svg.base{position:absolute;inset:0;width:100%;height:100%}
+.mapa .pin{position:absolute;transform:translate(-50%,-100%)}
+.mapa .cluster{position:absolute;transform:translate(-50%,-50%)}
+.mapa .area-btn{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:var(--tinta);color:var(--papel);font:600 13.5px var(--f-texto);padding:0 16px;min-height:40px;border-radius:99px;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.2);white-space:nowrap}
+.mapa .area-btn svg{width:16px}
+.mapa.noite .area-btn{background:var(--papel);color:var(--tinta)}
+.mapa.noite .pin{background:var(--tinta-2);color:var(--papel);box-shadow:0 0 0 1px var(--tinta-3),0 4px 14px rgba(0,0,0,.4)}
+.mapa.noite .pin.ativo{background:var(--marco);color:#fff}
+.mapa .escala-mapa{position:absolute;left:14px;bottom:12px;font:500 10.5px var(--f-mono);color:var(--pedra-700);display:flex;align-items:center;gap:8px}
+.mapa .escala-mapa i{display:block;width:60px;height:6px;border:1.5px solid currentColor;border-top:0}
+.mapa.noite .escala-mapa{color:var(--pedra-300)}
+
+.card-imovel{background:var(--branco);border-radius:18px;overflow:hidden;border:1px solid var(--pedra-200);box-shadow:0 2px 10px rgba(22,32,28,.06);max-width:380px;width:100%}
+.card-imovel .capa-foto{aspect-ratio:4/3;position:relative;background:linear-gradient(160deg,#F2D7B8 0%,#D9A77E 38%,#8E6F55 100%);overflow:hidden}
+.card-imovel .capa-foto .tag{position:absolute;top:12px;left:12px;background:var(--branco);font:600 12px var(--f-texto);padding:6px 10px;border-radius:8px}
+.card-imovel .capa-foto .fixar{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center}
+.card-imovel .capa-foto .fixar svg{width:22px;color:var(--marco)}
+.card-imovel .capa-foto .pontos{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.card-imovel .capa-foto .pontos i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55)}
+.card-imovel .capa-foto .pontos i:first-child{background:#fff}
+.card-imovel .corpo{padding:18px 20px 20px}
+.card-imovel .preco{font:700 24px var(--f-display);letter-spacing:-.02em}
+.card-imovel .preco small{font:500 13px var(--f-texto);color:var(--pedra-500);letter-spacing:0}
+.card-imovel .lugar{display:flex;gap:6px;align-items:center;font:500 14px var(--f-texto);color:var(--cerrado);margin-top:4px}
+.card-imovel .lugar svg{width:16px;flex:none}
+.card-imovel .end{font-size:14px;color:var(--pedra-700);margin-top:2px}
+.card-imovel .specs{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--pedra-100);font:500 13.5px var(--f-texto);color:var(--pedra-700)}
+.card-imovel .specs span{display:flex;align-items:center;gap:6px}
+.card-imovel .specs svg{width:18px;color:var(--tinta)}
+
+.modal-demo{background:color-mix(in srgb,var(--tinta) 55%,transparent);border-radius:var(--raio);padding:40px 16px;display:grid;place-items:center;position:relative;overflow:hidden}
+.modal-demo::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,#ECE5D7,#D3E0CC 60%,#B9CCDA);filter:blur(10px);z-index:-1}
+.modal{background:var(--branco);border-radius:20px;padding:28px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(22,32,28,.35);text-align:center}
+.modal .ico{width:56px;height:56px;border-radius:50%;background:var(--marco-claro);color:var(--marco);display:grid;place-items:center;margin:0 auto 16px}
+.modal .ico svg{width:26px}
+.modal h5{font:700 22px var(--f-display);letter-spacing:-.015em}
+.modal p{font-size:15px;color:var(--pedra-700);margin-top:8px}
+.modal .acoes{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.modal .acoes .btn{flex:1;min-width:130px}
+
+/* ---------- 10 Aplicações ---------- */
+.app-icones{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.app-ico{background:var(--tinta);display:grid;place-items:center;color:var(--papel);box-shadow:0 10px 30px rgba(22,32,28,.25)}
+.app-ico svg{width:58%}
+.placa{background:var(--tinta);color:var(--papel);border-radius:10px;aspect-ratio:2/1;padding:clamp(18px,4vw,36px);display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr auto;gap:8px 20px;position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(22,32,28,.25)}
+.placa .topo{position:absolute;inset:0;width:100%;height:100%;opacity:.1;color:var(--papel)}
+.placa > *{position:relative}
+.placa .tipo{font:800 clamp(30px,7vw,64px)/.95 var(--f-display);letter-spacing:-.03em;grid-column:1/-1}
+.placa .tipo em{font:italic 400 .62em var(--f-serif);color:var(--ouro);letter-spacing:0;display:block;margin-top:6px}
+.placa .qr{grid-row:2/4;grid-column:2;align-self:end;width:clamp(64px,14vw,112px);aspect-ratio:1;background:var(--papel);border-radius:8px;padding:8px}
+.placa .qr svg{width:100%;height:100%}
+.placa .rodape{align-self:end;display:flex;flex-direction:column;gap:6px}
+.placa .rodape svg{width:clamp(80px,16vw,130px)}
+.placa .rodape span{font:500 clamp(11px,1.6vw,14px) var(--f-mono);color:color-mix(in srgb,var(--papel) 75%,transparent)}
+.cartao-visita{aspect-ratio:85/55;border-radius:10px;padding:clamp(18px,3vw,26px);display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 14px 34px rgba(22,32,28,.18);position:relative;overflow:hidden}
+.post{aspect-ratio:1;border-radius:var(--raio);overflow:hidden;position:relative;background:#ECE5D7}
+.post .conteudo{position:absolute;inset:0;padding:clamp(18px,4vw,30px);display:flex;flex-direction:column;justify-content:space-between}
+.og{aspect-ratio:1200/630;border-radius:12px;overflow:hidden;position:relative;background:var(--tinta);color:var(--papel)}
+.aba-nav{background:#DCD6CB;border-radius:12px 12px 0 0;padding:10px 12px 0;display:flex;gap:8px}
+.aba{background:var(--papel-claro);border-radius:10px 10px 0 0;padding:10px 14px;display:flex;align-items:center;gap:10px;font:500 13px var(--f-texto);min-width:0}
+.aba svg{width:16px;flex:none}
+.aba span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- 11 Tokens ---------- */
+pre{background:var(--tinta);color:#E6E0D3;border-radius:var(--raio);padding:24px;overflow-x:auto;font:400 13px/1.7 var(--f-mono);tab-size:2}
+pre .c{color:#7E8C84}
+pre .k{color:#F0A58F}
+pre .v{color:#E3C27A}
+
+.passos{list-style:none;counter-reset:p}
+.passos li{counter-increment:p;display:grid;grid-template-columns:48px 1fr;gap:8px;padding:22px 0;border-top:1px solid var(--tinta-3)}
+.passos li::before{content:counter(p,decimal-leading-zero);font:500 13px/1.8 var(--f-mono);color:var(--marco)}
+.passos b{font:600 18px var(--f-display);display:block;margin-bottom:4px}
+.passos p{color:color-mix(in srgb,var(--papel) 72%,transparent);font-size:15px}
+
+footer{background:var(--tinta);color:color-mix(in srgb,var(--papel) 55%,transparent);border-top:1px solid var(--tinta-3);padding:32px 0;font:400 12px var(--f-mono)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+.topo path{fill:none;stroke:currentColor;stroke-width:1}
+@media (prefers-reduced-motion:no-preference){
+  .capa-logo{animation:sobe .9s cubic-bezier(.2,.7,.2,1) both}
+  .capa h1{animation:sobe .9s .12s cubic-bezier(.2,.7,.2,1) both}
+  .capa-sub{animation:sobe .9s .22s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes sobe{from{opacity:0;transform:translateY(18px)}}
+  .pulso{animation:pulso 2.4s ease-out infinite}
+  @keyframes pulso{0%{box-shadow:0 0 0 0 rgba(212,64,31,.45)}100%{box-shadow:0 0 0 22px transparent}}
+}
+
+/* ---------- Modo PDF (brandbook-fixum.html#pdf) ---------- */
+@page{size:1200px 1680px;margin:0}
+html.pdf{scroll-behavior:auto}
+html.pdf body{width:1200px;overflow:visible}
+html.pdf pre{font-size:12.5px;line-height:1.6}
+html.pdf .nav,html.pdf footer{display:none}
+html.pdf *{animation:none!important;transition:none!important}
+html.pdf .capa{min-height:1680px}
+html.pdf .capa-centro{padding:0}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SPRITE ================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="clip-x-wm"><rect x="60" y="50" width="80" height="50"/></clipPath>
+    <mask id="mask-x-wm" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="120"><rect width="300" height="120" fill="#fff"/><circle cx="101" cy="75" r="11.5" fill="#000"/></mask>
+    <clipPath id="clip-x-s"><rect x="0" y="14" width="100" height="72"/></clipPath>
+    <mask id="mask-x-s" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><circle cx="50" cy="50" r="16" fill="#000"/></mask>
+
+    <symbol id="logotipo" viewBox="2 12 266 92">
+      <g fill="none" stroke="currentColor" stroke-width="13">
+        <path d="M16 100V44A22 22 0 0 1 38 22H40M4 56.5H40"/>
+        <path d="M60 100V50"/>
+        <g clip-path="url(#clip-x-wm)" mask="url(#mask-x-wm)"><path d="M78.6 40L123.4 110M123.4 40L78.6 110"/></g>
+        <path d="M142 50V78A16 16 0 0 0 174 78V50M174 50V100"/>
+        <path d="M198 100V50M198 72A15.5 15.5 0 0 1 229 72V100M229 72A15.5 15.5 0 0 1 260 72V100"/>
+      </g>
+      <circle cx="60" cy="30" r="8" fill="currentColor"/>
+      <circle cx="101" cy="75" r="6.5" style="fill:var(--marco)"/>
+    </symbol>
+
+    <symbol id="simbolo" viewBox="0 0 100 100">
+      <g clip-path="url(#clip-x-s)" mask="url(#mask-x-s)" fill="none" stroke="currentColor" stroke-width="19"><path d="M18 0L82 100M82 0L18 100"/></g>
+      <circle cx="50" cy="50" r="9" style="fill:var(--marco)"/>
+    </symbol>
+
+    <!-- Ícones 24px · traço 1.75 -->
+    <symbol id="i-busca" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></g></symbol>
+    <symbol id="i-mapa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5L9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5M15 6.5V20"/></g></symbol>
+    <symbol id="i-fixar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><path d="M10 8l4 4M14 8l-4 4"/></g></symbol>
+    <symbol id="i-fixado" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" fill="currentColor"/><path d="M10 8l4 4M14 8l-4 4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/></symbol>
+    <symbol id="i-quarto" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19V6M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6"/><circle cx="7" cy="11.5" r="1.6"/></g></symbol>
+    <symbol id="i-banho" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18v1.5A5.5 5.5 0 0 1 15.5 19h-7A5.5 5.5 0 0 1 3 13.5z"/><path d="M6 12V6.5a2.5 2.5 0 0 1 4.6-1.3M7 19l-1 2M17 19l1 2"/></g></symbol>
+    <symbol id="i-vaga" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5h16v-4l-2-5H6l-2 5z"/><path d="M4 12.5h16M6 16.5V19M18 16.5V19"/><circle cx="7.5" cy="14.5" r=".6"/><circle cx="16.5" cy="14.5" r=".6"/></g></symbol>
+    <symbol id="i-area" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4H4v4M16 4h4v4M20 16v4h-4M4 16v4h4"/><rect x="8.5" y="8.5" width="7" height="7" rx="1"/></g></symbol>
+    <symbol id="i-compartilhar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7.5 7.5L12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></g></symbol>
+    <symbol id="i-filtros" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></g></symbol>
+    <symbol id="i-camadas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L3 8l9 5 9-5z"/><path d="M3 13l9 5 9-5"/></g></symbol>
+    <symbol id="i-alvo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></g></symbol>
+    <symbol id="i-caminhada" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4.5" r="1.5"/><path d="M10 21l2.5-6 2.5 2V21M9 12l2-4.5 3 1.5 2 3M11 7.5L8 9.5V12"/></g></symbol>
+    <symbol id="i-pausa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6v12M15 6v12"/></g></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7.5z"/><path d="M8.5 9h7M8.5 12.5h4"/></g></symbol>
+
+    <!-- Marca de registro -->
+    <symbol id="registro" viewBox="0 0 22 22"><g fill="none" stroke="currentColor" stroke-width="1"><path d="M11 0v22M0 11h22"/><circle cx="11" cy="11" r="5"/></g></symbol>
+  </defs>
+</svg>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" aria-label="Seções">
+  <div class="wrap">
+    <svg class="nav-logo" viewBox="0 0 266 92" style="--marco:#D4401F" role="img" aria-label="Fixum"><use href="#logotipo"/></svg>
+    <ul>
+      <li><a href="#ideia">Ideia</a></li>
+      <li><a href="#plataforma">Plataforma</a></li>
+      <li><a href="#logo">Logo</a></li>
+      <li><a href="#cores">Cores</a></li>
+      <li><a href="#tipografia">Tipografia</a></li>
+      <li><a href="#elementos">Elementos</a></li>
+      <li><a href="#icones">Ícones & foto</a></li>
+      <li><a href="#voz">Voz</a></li>
+      <li><a href="#interface">Interface</a></li>
+      <li><a href="#aplicacoes">Aplicações</a></li>
+      <li><a href="#tokens">Tokens</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================= CAPA ================= -->
+<header class="capa">
+  <svg class="topo" data-topo="0.72,0.42,22,34,7|0.12,0.95,12,30,3" aria-hidden="true"></svg>
+  <svg class="registro" style="top:8px;left:8px"><use href="#registro"/></svg>
+  <svg class="registro" style="top:8px;right:8px"><use href="#registro"/></svg>
+  <svg class="registro" style="bottom:8px;left:8px"><use href="#registro"/></svg>
+  <svg class="registro" style="bottom:8px;right:8px"><use href="#registro"/></svg>
+  <div class="wrap">
+    <div class="capa-meta"><span>MANUAL DE MARCA · PROPOSTA v0.1</span><span>OUTUBRO 2026</span></div>
+    <div class="capa-centro">
+      <svg class="capa-logo" viewBox="0 0 266 92" style="--marco:#D4401F" role="img" aria-label="Fixum"><use href="#logotipo"/></svg>
+      <h1>Explore onde você quer viver.</h1>
+      <p class="capa-sub">Um sistema de marca para a plataforma imobiliária que começa pelo mapa — e termina num lugar para chamar de seu.</p>
+    </div>
+    <div class="capa-meta"><span>21°08′11″S · 44°15′42″O</span><span>MARCO ZERO — SÃO JOÃO DEL-REI, MG</span></div>
+  </div>
+</header>
+
+<!-- ================= 01 IDEIA ================= -->
+<section class="secao" id="ideia">
+  <div class="wrap">
+    <div class="rotulo"><span>01 — A ideia</span><span>Por que “Fixum”</span></div>
+    <h2>Todo lar começa com um ponto no mapa.</h2>
+
+    <div class="verbete bloco">
+      <div class="verbete-palavra">fixum<small>/ˈfik.sum/ · latim · adj. neutro de <i>fixus</i></small></div>
+      <ol class="acepcoes">
+        <li><div><b>Fixo, firme, assentado.</b>Aquilo que finca raiz. É o que uma casa representa depois da mudança: o fim da procura.</div></li>
+        <li><div><b>Stellae fixae.</b>Os navegadores chamavam de “estrelas fixas” as que não se moviam no céu — e, por isso, serviam de guia. A Fixum quer ser esse ponto de referência na busca por um lugar.</div></li>
+        <li><div><b>Fixar no mapa.</b>Marcar uma coordenada. O gesto central do produto: explorar, aproximar, e fixar o ponto onde você quer viver.</div></li>
+      </ol>
+    </div>
+
+    <div class="divisor"></div>
+
+    <div class="grade-2" style="align-items:end">
+      <p class="manifesto">Portais mostram imóveis. A Fixum mostra <em>lugares</em>. A rua, o bairro, a padaria da esquina, o caminho até a escola. Porque ninguém mora em 82 m² — mora <em>em algum lugar</em>.</p>
+      <div>
+        <h4>O conceito em uma linha</h4>
+        <p style="font:600 22px/1.35 var(--f-display);letter-spacing:-.01em">X marca o lugar.</p>
+        <p class="nota" style="font-size:15px">O “x” de Fixum vira a assinatura visual da marca: o cruzamento de latitude e longitude, a marcação do mapa do tesouro, o ponto que você fixa. No centro dele, o <b style="color:var(--marco)">Marco</b> — um ponto vermelho que indica “é aqui”.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 PLATAFORMA ================= -->
+<section class="secao clara" id="plataforma">
+  <div class="wrap">
+    <div class="rotulo"><span>02 — Plataforma de marca</span><span>Quem somos, para quem, como</span></div>
+    <h2>Lugar antes de metragem.</h2>
+    <p class="lead">A Fixum conecta quem procura com quem anuncia, e faz isso pelo território. A marca precisa transmitir a precisão de um mapa com o calor de quem conhece a cidade pelo nome das ruas.</p>
+
+    <div class="grade bloco">
+      <div class="cartao pilar"><span class="num">PROPÓSITO</span><h3>Ajudar as pessoas a escolher onde viver — não só o que comprar.</h3></div>
+      <div class="cartao pilar"><span class="num">POSICIONAMENTO</span><h3>A plataforma imobiliária em que o mapa é o produto, não um acessório.</h3></div>
+      <div class="cartao pilar"><span class="num">ARQUÉTIPO</span><h3>O Explorador local.</h3><p class="nota" style="margin-top:0">Curioso como um viajante, confiável como um vizinho que conhece cada esquina.</p></div>
+    </div>
+
+    <div class="grade-2 bloco">
+      <div class="promessa" style="background:var(--tinta);color:var(--papel)">
+        <span class="mono" style="font-size:12px;letter-spacing:.06em;opacity:.65">PARA QUEM PROCURA</span>
+        <p class="serif">“Veja o bairro antes de ver o imóvel.”</p>
+        <span style="font-size:14.5px;opacity:.75">Compradores e inquilinos exploram regiões, comparam no mapa e fixam o que gostaram.</span>
+      </div>
+      <div class="promessa" style="background:var(--marco);color:#fff">
+        <span class="mono" style="font-size:12px;letter-spacing:.06em;opacity:.8">PARA QUEM ANUNCIA</span>
+        <p class="serif">“Seu imóvel no lugar certo. Literalmente.”</p>
+        <span style="font-size:14.5px;opacity:.88">Proprietários, corretores e imobiliárias aparecem para quem já está olhando aquela região.</span>
+      </div>
+    </div>
+
+    <div class="grade-2 bloco">
+      <div>
+        <h4>Valores</h4>
+        <ol class="acepcoes">
+          <li><div><b>Lugar em primeiro.</b>Contexto do entorno vale tanto quanto a planta.</div></li>
+          <li><div><b>Precisão honesta.</b>O pin está onde o imóvel está. O preço é o preço. Sem foto enganosa, sem pin “aproximado” sem avisar.</div></li>
+          <li><div><b>Clareza que acalma.</b>Comprar casa é tenso. A interface não pode ser.</div></li>
+          <li><div><b>Raiz local.</b>Nasce no interior de Minas; cresce cidade a cidade, conhecendo cada uma.</div></li>
+        </ol>
+      </div>
+      <div>
+        <h4>Personalidade</h4>
+        <div class="slider"><div class="slider-linha"><span>Formal</span><span>Descontraída</span></div><div class="slider-trilho"><i style="left:58%"></i></div></div>
+        <div class="slider"><div class="slider-linha"><span>Técnica</span><span>Humana</span></div><div class="slider-trilho"><i style="left:70%"></i></div></div>
+        <div class="slider"><div class="slider-linha"><span>Contida</span><span>Expansiva</span></div><div class="slider-trilho"><i style="left:35%"></i></div></div>
+        <div class="slider"><div class="slider-linha"><span>Tradicional</span><span>Inovadora</span></div><div class="slider-trilho"><i style="left:72%"></i></div></div>
+        <div class="slider"><div class="slider-linha"><span>Luxo</span><span>Acessível</span></div><div class="slider-trilho"><i style="left:66%"></i></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 LOGO ================= -->
+<section class="secao" id="logo">
+  <div class="wrap">
+    <div class="rotulo"><span>03 — Logotipo</span><span>Logotipo · Símbolo · Regras</span></div>
+    <h2>Um nome que já tem o mapa dentro.</h2>
+    <p class="lead">O logotipo é desenhado sob medida em traço monolinear geométrico, em caixa baixa: próximo, sem pose de banco. O <b>x</b> é o cruzamento de duas coordenadas, e o Marco vermelho no centro indica o ponto fixado.</p>
+
+    <div class="palco bloco" style="background:var(--papel-claro);border:1px solid var(--pedra-200)">
+      <svg class="logo-grande" viewBox="0 0 266 92" style="color:var(--tinta)" role="img" aria-label="Logotipo Fixum"><use href="#logotipo"/></svg>
+      <span class="legenda">LOGOTIPO PRINCIPAL · brand/logo/fixum-logotipo.svg</span>
+    </div>
+
+    <div class="grade-2" style="margin-top:20px">
+      <div class="palco" style="background:var(--tinta);color:var(--papel);aspect-ratio:1/1;max-height:440px">
+        <svg viewBox="0 0 100 100" style="width:min(220px,55%)" role="img" aria-label="Símbolo Marco"><use href="#simbolo"/></svg>
+        <span class="legenda">SÍMBOLO “MARCO” · brand/logo/fixum-simbolo.svg</span>
+      </div>
+      <div class="cartao" style="display:flex;flex-direction:column;justify-content:center">
+        <h3>Símbolo: o Marco</h3>
+        <p>O “x” isolado do logotipo funciona sozinho em espaços pequenos: favicon, ícone do app, avatar das redes, pin de localização do imóvel e marca d’água das fotos.</p>
+        <p style="margin-top:16px"><b>Regra de ouro:</b> nunca use o símbolo ao lado do logotipo. O x já está no nome, e repeti-lo enfraquece os dois. É um <i>ou</i> outro.</p>
+        <p class="nota">O x não gira. Rotacionado 45°, vira “+” e perde o sentido de marcação.</p>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h4>Construção</h4>
+      <div class="cartao construcao" style="padding:clamp(24px,5vw,56px)">
+        <svg viewBox="-78 0 370 118" role="img" aria-label="Grade de construção do logotipo">
+          <g stroke="#D4401F" stroke-width=".5" stroke-dasharray="2 2" opacity=".7">
+            <path d="M-78 100H290M-78 50H290M-78 15.5H290"/>
+          </g>
+          <g stroke="#2C5F8A" stroke-width=".4" opacity=".55" fill="none">
+            <circle cx="38" cy="44" r="22"/><circle cx="158" cy="78" r="16"/><circle cx="213.5" cy="72" r="15.5"/><circle cx="244.5" cy="72" r="15.5"/><circle cx="101" cy="75" r="11.5" stroke-dasharray="1.5 1.5"/>
+          </g>
+          <svg x="2" y="12" width="266" height="92" viewBox="0 0 266 92" style="color:rgba(22,32,28,.88);--marco:#D4401F"><use href="#logotipo"/></svg>
+          <g font-family="JetBrains Mono, monospace" font-size="5.2" fill="#8A8172">
+            <text x="-78" y="98">linha de base</text><text x="-78" y="48">altura-x · 50u</text><text x="-78" y="13.5">ascendente</text>
+            <text x="101" y="114" text-anchor="middle" fill="#D4401F">Marco · ⌀13u, respiro 5u</text>
+            <text x="268" y="62">traço</text><text x="268" y="69">13u</text>
+          </g>
+        </svg>
+      </div>
+      <p class="nota">Unidade u = 1/50 da altura-x. Traço constante de 13u, terminais retos, curvas por arcos de círculo. O x tem inclinação 32:50, igual à das diagonais de uma rosa-dos-ventos de 16 pontas.</p>
+    </div>
+
+    <div class="bloco">
+      <h4>Versões de cor</h4>
+      <div class="versoes">
+        <div class="palco" style="background:var(--papel-claro);border:1px solid var(--pedra-200);color:var(--tinta);--marco:#D4401F"><svg viewBox="0 0 266 92"><use href="#logotipo"/></svg><span class="legenda">PRINCIPAL</span></div>
+        <div class="palco" style="background:var(--tinta);color:var(--papel);--marco:#D4401F"><svg viewBox="0 0 266 92"><use href="#logotipo"/></svg><span class="legenda">NEGATIVO</span></div>
+        <div class="palco" style="background:#D4401F;color:#fff;--marco:var(--tinta)"><svg viewBox="0 0 266 92"><use href="#logotipo"/></svg><span class="legenda">SOBRE VERMELHO · ponto em tinta</span></div>
+        <div class="palco" style="background:var(--branco);border:1px solid var(--pedra-200);color:#000;--marco:#000"><svg viewBox="0 0 266 92"><use href="#logotipo"/></svg><span class="legenda">MONOCROMÁTICO · 1 cor</span></div>
+      </div>
+    </div>
+
+    <div class="grade-2 bloco">
+      <div>
+        <h4>Área de respiro</h4>
+        <div class="cartao" style="display:grid;place-items:center;padding:32px 16px">
+          <div class="respiro"><svg viewBox="0 0 266 92" style="--marco:#D4401F"><use href="#logotipo"/></svg></div>
+        </div>
+        <p class="nota">Mantenha ao redor do logotipo um espaço livre igual à altura do “x”. Nada de texto, borda ou foto dentro dessa área.</p>
+      </div>
+      <div>
+        <h4>Tamanho mínimo</h4>
+        <div class="cartao">
+          <div class="tamanhos">
+            <figure><svg viewBox="0 0 266 92" style="width:72px;--marco:#D4401F"><use href="#logotipo"/></svg><figcaption>72 px · tela</figcaption></figure>
+            <figure><svg viewBox="0 0 266 92" style="width:110px;--marco:#D4401F"><use href="#logotipo"/></svg><figcaption>20 mm · impresso</figcaption></figure>
+            <figure><svg viewBox="0 0 100 100" style="width:16px;--marco:#D4401F"><use href="#simbolo"/></svg><figcaption>16 px</figcaption></figure>
+            <figure><svg viewBox="0 0 100 100" style="width:24px;--marco:#D4401F"><use href="#simbolo"/></svg><figcaption>24 px</figcaption></figure>
+          </div>
+        </div>
+        <p class="nota">Abaixo de 72 px de largura, use o símbolo. Abaixo de 16 px, nada: nesse tamanho o Marco some.</p>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h4>Não faça</h4>
+      <div class="erros">
+        <div class="erro"><div class="area"><svg viewBox="0 0 266 92" style="--marco:#D4401F;transform:scaleX(1.45)"><use href="#logotipo"/></svg></div><p><b>Distorcer.</b> Nunca estique ou comprima.</p></div>
+        <div class="erro"><div class="area"><svg viewBox="0 0 266 92" style="color:#1a56db;--marco:#f97316"><use href="#logotipo"/></svg></div><p><b>Recolorir.</b> Só as versões de cor oficiais.</p></div>
+        <div class="erro"><div class="area" style="gap:6px;display:flex;justify-content:center;align-items:center"><svg viewBox="0 0 100 100" style="width:44px;--marco:#D4401F"><use href="#simbolo"/></svg><svg viewBox="0 0 266 92" style="width:110px;--marco:#D4401F"><use href="#logotipo"/></svg></div><p><b>Duplicar o x.</b> Símbolo + logotipo juntos, não.</p></div>
+        <div class="erro"><div class="area"><svg viewBox="0 0 100 100" style="width:70px;--marco:#D4401F;transform:rotate(45deg)"><use href="#simbolo"/></svg></div><p><b>Girar o Marco.</b> Vira “+”. Perde o sentido.</p></div>
+        <div class="erro"><div class="area" style="background:linear-gradient(135deg,#9a6b4a,#d7b48d,#5f7c8a)"><svg viewBox="0 0 266 92" style="--marco:#D4401F;color:#7a5a40"><use href="#logotipo"/></svg></div><p><b>Fundo sem contraste.</b> Sobre foto, use uma faixa sólida.</p></div>
+        <div class="erro"><div class="area"><svg viewBox="0 0 266 92" style="--marco:#D4401F;filter:drop-shadow(3px 4px 2px rgba(0,0,0,.45))"><use href="#logotipo"/></svg></div><p><b>Efeitos.</b> Sem sombra, brilho, contorno ou 3D.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 CORES ================= -->
+<section class="secao clara" id="cores">
+  <div class="wrap">
+    <div class="rotulo"><span>04 — Cores</span><span>Papel, tinta e um ponto vermelho</span></div>
+    <h2>A paleta de um mapa bem impresso.</h2>
+    <p class="lead">Saímos do azul-e-laranja genérico do setor. A base é a de uma carta topográfica: papel quente e tinta escura. O <b style="color:var(--marco)">Vermelho Marco</b> é raro de propósito, porque ele marca o lugar. O tom vem dos telhados coloniais de São João del-Rei.</p>
+
+    <div class="cores bloco">
+      <div class="cor"><div class="amostra" style="background:var(--tinta);color:var(--papel)">Tinta</div><div class="dados"><b>Tinta Topográfica</b>#16201C<br>RGB 22 32 28<br>CMYK 75 55 65 80<div class="uso">Texto, logotipo, superfícies escuras, botões primários, modo noite.</div></div></div>
+      <div class="cor"><div class="amostra" style="background:var(--papel);color:var(--tinta);border-bottom:1px solid var(--pedra-200)">Papel</div><div class="dados"><b>Papel Cartográfico</b>#F3EEE4<br>RGB 243 238 228<br>CMYK 3 4 9 0<div class="uso">Fundo principal da marca. Em telas de produto, alterna com o branco puro.</div></div></div>
+      <div class="cor"><div class="amostra" style="background:var(--marco);color:#fff">Marco</div><div class="dados"><b>Vermelho Marco</b>#D4401F<br>RGB 212 64 31<br>CMYK 5 85 100 0<div class="uso">CTA principal, pin selecionado, ponto do logo. Máximo de 1 por tela.</div></div></div>
+    </div>
+    <div class="cores" style="margin-top:16px">
+      <div class="cor"><div class="amostra" style="background:var(--cerrado);color:#fff;height:110px">Cerrado</div><div class="dados"><b>Verde Cerrado</b>#2E6B4E<div class="uso">Parques no mapa, “perto de”, sucesso, disponibilidade.</div></div></div>
+      <div class="cor"><div class="amostra" style="background:var(--hidro);color:#fff;height:110px">Hidro</div><div class="dados"><b>Azul Hidrografia</b>#2C5F8A<div class="uso">Água no mapa, links, informação, estados de foco secundários.</div></div></div>
+      <div class="cor"><div class="amostra" style="background:var(--ouro);color:var(--tinta);height:110px">Ouro</div><div class="dados"><b>Ouro de Minas</b>#E3A72F<div class="uso">Anúncio em destaque e planos pagos. Nunca como texto sobre papel.</div></div></div>
+    </div>
+
+    <div class="bloco">
+      <h4>Neutros “Pedra”</h4>
+      <div class="neutros">
+        <div style="background:#FAF7F1">050<br>#FAF7F1</div>
+        <div style="background:#EAE4D8">100<br>#EAE4D8</div>
+        <div style="background:#DAD2C3">200<br>#DAD2C3</div>
+        <div style="background:#BDB3A2">300<br>#BDB3A2</div>
+        <div style="background:#8A8172;color:#fff">500<br>#8A8172</div>
+        <div style="background:#5A5449;color:#fff">700<br>#5A5449</div>
+        <div style="background:#22302A;color:#fff">900<br>#22302A</div>
+      </div>
+      <p class="nota">Cinzas levemente quentes, puxados para o papel. Evite cinzas frios (#718096, #a0aec0…): eles “desbotam” a paleta.</p>
+    </div>
+
+    <div class="grade-2 bloco">
+      <div>
+        <h4>Proporção de uso</h4>
+        <div class="proporcao">
+          <div style="flex:58;background:var(--papel)">Papel 58%</div>
+          <div style="flex:26;background:var(--tinta);color:var(--papel)">Tinta 26%</div>
+          <div style="flex:10;background:var(--pedra-200)">10%</div>
+          <div style="flex:6;background:var(--marco);color:#fff;padding:10px 4px">6%</div>
+        </div>
+        <p class="nota">Se a tela parece “vermelha”, tem Marco demais. O vermelho funciona como alfinete, e um mapa cheio de alfinetes não aponta para lugar nenhum.</p>
+      </div>
+      <div>
+        <h4>Contraste (WCAG)</h4>
+        <div class="contrastes">
+          <div class="contraste" style="background:var(--papel);color:var(--tinta);border:1px solid var(--pedra-200)">Aa Tinta/Papel<small>14,5 · AAA</small></div>
+          <div class="contraste" style="background:var(--tinta);color:var(--papel)">Aa Papel/Tinta<small>14,5 · AAA</small></div>
+          <div class="contraste" style="background:var(--marco);color:#fff">Aa Branco/Marco<small>4,6 · AA</small></div>
+          <div class="contraste" style="background:var(--tinta);color:var(--ouro)">Aa Ouro/Tinta<small>7,8 · AAA</small></div>
+        </div>
+        <p class="nota">Vermelho Marco sobre Papel (4,0) só em títulos grandes e ícones. Ouro sobre Papel: nunca para texto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 TIPOGRAFIA ================= -->
+<section class="secao" id="tipografia">
+  <div class="wrap">
+    <div class="rotulo"><span>05 — Tipografia</span><span>Quatro vozes, papéis bem definidos</span></div>
+    <h2>Clara para ler, com sotaque para lembrar.</h2>
+    <p class="lead">Todas gratuitas no Google Fonts. Inter continua no produto (a migração fica barata); a personalidade vem do display e do itálico editorial.</p>
+
+    <div class="bloco">
+      <div class="familia">
+        <div class="papel"><b>Bricolage Grotesque</b>Display · títulos, preços em destaque, números grandes. Pesos 600–800. Tracking negativo em tamanhos grandes.</div>
+        <div class="amostra-tipo" style="font:700 clamp(40px,7vw,84px)/1 var(--f-display);letter-spacing:-.035em">Casa com quintal no Tijuco</div>
+      </div>
+      <div class="familia">
+        <div class="papel"><b>Inter</b>Texto e interface · corpo, formulários, botões, filtros, dados. Pesos 400–700. Numerais tabulares em preços.</div>
+        <div class="amostra-tipo" style="font:400 clamp(17px,2vw,20px)/1.6 var(--f-texto);max-width:58ch">Sobrado de 3 quartos com suíte, área gourmet e garagem coberta para dois carros. Rua sem saída, a 6 minutos a pé da Matriz do Pilar e perto do comércio do Centro.</div>
+      </div>
+      <div class="familia">
+        <div class="papel"><b>Instrument Serif <i>Itálico</i></b>Editorial · frases de marca, citações, momentos emocionais. Uma frase por tela, no máximo.</div>
+        <div class="amostra-tipo serif" style="font-size:clamp(40px,6.5vw,76px);line-height:1.05">Não procure só um imóvel. <span style="color:var(--marco)">Explore</span> onde você quer viver.</div>
+      </div>
+      <div class="familia">
+        <div class="papel"><b>JetBrains Mono</b>Cartográfica · coordenadas, distâncias, códigos de anúncio, rótulos de seção. Sempre pequena, sempre em caixa alta ou números.</div>
+        <div class="amostra-tipo mono" style="font-size:clamp(14px,1.8vw,18px);line-height:1.9;color:var(--pedra-700)">21°08′11″S 44°15′42″O<br>FX-SJ-2841 · 1,2 KM DO CENTRO · ATUALIZADO HÁ 2 DIAS</div>
+      </div>
+    </div>
+
+    <div class="grade-2 bloco">
+      <div>
+        <h4>Escala</h4>
+        <div class="escala-wrap">
+        <table class="escala">
+          <tr><td>display</td><td style="font:700 48px/1 var(--f-display);letter-spacing:-.03em">Aa</td><td>72/72 · 48 mob</td></tr>
+          <tr><td>h1</td><td style="font:700 36px/1.1 var(--f-display);letter-spacing:-.025em">Aa</td><td>48/52 · 32</td></tr>
+          <tr><td>h2</td><td style="font:650 26px/1.2 var(--f-display);letter-spacing:-.015em">Aa</td><td>32/38 · 24</td></tr>
+          <tr><td>h3</td><td style="font:600 20px/1.3 var(--f-display)">Aa</td><td>22/28 · 20</td></tr>
+          <tr><td>corpo</td><td style="font:400 16px var(--f-texto)">Aa</td><td>16/26</td></tr>
+          <tr><td>pequeno</td><td style="font:400 14px var(--f-texto)">Aa</td><td>14/20</td></tr>
+          <tr><td>rótulo</td><td style="font:500 12px var(--f-mono);letter-spacing:.06em">AA</td><td>12/16 mono</td></tr>
+        </table>
+        </div>
+        <p class="nota">Inputs nunca abaixo de 16px (evita o zoom automático do iOS).</p>
+      </div>
+      <div>
+        <h4>Como escrever preços</h4>
+        <div class="precos">
+          <span>R$ 450 mil</span><span>R$ 1,2 mi</span><span>R$ 1.800/mês</span><span>R$ 385.000</span><span style="color:var(--pedra-700)">Sob consulta</span>
+        </div>
+        <p class="nota" style="margin-top:16px">No mapa, use a forma abreviada (“R$ 450 mil”). Na página do imóvel, o valor completo (“R$ 450.000”). Aluguel sempre com “/mês”. Preço zero vira “Sob consulta”, nunca “R$ 0”.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 06 ELEMENTOS ================= -->
+<section class="secao escura" id="elementos">
+  <div class="wrap">
+    <div class="rotulo"><span>06 — Elementos gráficos</span><span>O vocabulário do cartógrafo</span></div>
+    <h2>Curvas de nível, coordenadas e alfinetes.</h2>
+    <p class="lead">Elementos emprestados da cartografia dão textura à marca sem precisar de foto nem ilustração. São sempre discretos e ficam no fundo, sem competir com o imóvel.</p>
+
+    <div class="grade-2 bloco">
+      <div>
+        <h4>Curvas de nível</h4>
+        <div class="el-palco" style="background:var(--tinta-2);color:var(--papel)">
+          <svg class="topo" data-topo="0.35,0.5,16,22,11|0.9,0.15,9,22,5" style="position:absolute;inset:0;width:100%;height:100%;opacity:.35"></svg>
+          <span class="coordenada" style="position:absolute;left:18px;bottom:16px;opacity:.7">PADRÃO TOPO · traço 1px · 8–35% opacidade</span>
+        </div>
+        <p class="nota">Gerado de forma procedural, nunca se repete. Use em capas, áreas vazias, cabeçalhos e materiais impressos.</p>
+      </div>
+      <div>
+        <h4>Coordenadas & registro</h4>
+        <div class="el-palco" style="background:var(--papel);color:var(--tinta);display:flex;flex-direction:column;justify-content:space-between;padding:22px">
+          <svg style="position:absolute;top:14px;right:14px;width:22px;height:22px;color:var(--marco)"><use href="#registro"/></svg>
+          <span class="coordenada" style="color:var(--marco)">03 — BAIRRO</span>
+          <div>
+            <div style="font:700 clamp(34px,5vw,52px)/1 var(--f-display);letter-spacing:-.03em">Tijuco</div>
+            <div class="coordenada" style="color:var(--pedra-500);margin-top:10px">21°07′52″S · 44°15′20″O<br>142 IMÓVEIS · 1,1 KM DO CENTRO</div>
+          </div>
+        </div>
+        <p class="nota">Coordenadas reais como “legenda” de títulos. A marca de registro (mira de gráfica) enquadra peças especiais.</p>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h4>Marcadores do mapa</h4>
+      <div class="pins-demo">
+        <figure><span class="pin">R$ 450 mil</span><figcaption>padrão</figcaption></figure>
+        <figure><span class="pin ativo">R$ 320 mil</span><figcaption>selecionado</figcaption></figure>
+        <figure><span class="pin destaque">R$ 1.800/mês</span><figcaption>destaque (plano)</figcaption></figure>
+        <figure><span class="pin visto">R$ 610 mil</span><figcaption>já visto</figcaption></figure>
+        <figure><span class="cluster">48</span><figcaption>agrupamento</figcaption></figure>
+        <figure><span class="marco-pin pulso"><svg viewBox="0 0 100 100"><use href="#simbolo"/></svg></span><figcaption>local exato</figcaption></figure>
+      </div>
+      <p class="nota">O pin de preço é o elemento mais visto da Fixum, e deve ser tratado como parte da identidade. Selecionado = Tinta; o vermelho fica reservado para o “local exato” na página do imóvel.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 07 ÍCONES & FOTO ================= -->
+<section class="secao" id="icones">
+  <div class="wrap">
+    <div class="rotulo"><span>07 — Iconografia & fotografia</span><span>Traço fino, luz natural</span></div>
+    <h2>Ícones de linha. Fotos com rua.</h2>
+
+    <div class="bloco">
+      <h4>Ícones</h4>
+      <div class="icones">
+        <div class="icone"><svg><use href="#i-busca"/></svg>explorar</div>
+        <div class="icone"><svg><use href="#i-mapa"/></svg>mapa</div>
+        <div class="icone"><svg style="color:var(--marco)"><use href="#i-fixar"/></svg>fixar</div>
+        <div class="icone"><svg style="color:var(--marco)"><use href="#i-fixado"/></svg>fixado</div>
+        <div class="icone"><svg><use href="#i-quarto"/></svg>quartos</div>
+        <div class="icone"><svg><use href="#i-banho"/></svg>banheiros</div>
+        <div class="icone"><svg><use href="#i-vaga"/></svg>vagas</div>
+        <div class="icone"><svg><use href="#i-area"/></svg>área</div>
+        <div class="icone"><svg><use href="#i-filtros"/></svg>filtros</div>
+        <div class="icone"><svg><use href="#i-camadas"/></svg>camadas</div>
+        <div class="icone"><svg><use href="#i-alvo"/></svg>nesta área</div>
+        <div class="icone"><svg><use href="#i-caminhada"/></svg>a pé</div>
+        <div class="icone"><svg><use href="#i-compartilhar"/></svg>compartilhar</div>
+        <div class="icone"><svg><use href="#i-chat"/></svg>contato</div>
+      </div>
+      <p class="nota">Grade de 24px, traço 1,75px, cantos arredondados. Base sugerida: <b>Lucide</b> (open source, mesmo estilo), mais ícones próprios como o “Fixar”. Emojis ficam fora da interface, inclusive nos modais.</p>
+    </div>
+
+    <div class="bloco">
+      <h4>Fotografia</h4>
+      <div class="grade">
+        <div class="foto" style="background:linear-gradient(170deg,#BFD6E6 0%,#E9DCC4 45%,#B78A62 46%,#8D6B50 100%)"><span>✓ Fachada com a rua e o céu</span></div>
+        <div class="foto" style="background:radial-gradient(circle at 70% 30%,#FFF4DE 0%,#F1D7AE 30%,#C79A6E 75%,#8F6A4B 100%)"><span>✓ Luz natural, janela aberta</span></div>
+        <div class="foto" style="background:linear-gradient(180deg,#CFE0EE 0%,#DCE9DF 50%,#7FA58B 51%,#5E8569 100%)"><span>✓ O entorno: praça, rua, vista</span></div>
+        <div class="foto" style="background:linear-gradient(135deg,#3a3a3a,#6b5d4f);filter:saturate(1.6) contrast(1.3)"><span>✕ Grande-angular, HDR, filtro</span></div>
+      </div>
+      <p class="nota">Esta orientação vai também para os anunciantes, num guia “Como fotografar seu imóvel”. Horizonte reto, luz do dia, ambientes arrumados e pelo menos uma foto da rua. Fotos do bairro valem tanto quanto as da sala.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 08 VOZ ================= -->
+<section class="secao clara" id="voz">
+  <div class="wrap">
+    <div class="rotulo"><span>08 — Voz & tom</span><span>Como a Fixum fala</span></div>
+    <h2>Fala de lugar, com calma de mineiro.</h2>
+
+    <div class="grade bloco">
+      <div class="cartao pilar"><span class="num">01</span><h3>Lugar, não metragem.</h3><p>Antes de “3 quartos”, “a 5 min da praça”. O entorno vem primeiro.</p></div>
+      <div class="cartao pilar"><span class="num">02</span><h3>Preciso como um mapa.</h3><p>Números claros, nada de exagero. Sem “IMPERDÍVEL!!!”, sem “oportunidade única”.</p></div>
+      <div class="cartao pilar"><span class="num">03</span><h3>Acolhedor sem pressa.</h3><p>Trata por “você”. Gentil, direto, sem gíria forçada e sem juridiquês.</p></div>
+      <div class="cartao pilar"><span class="num">04</span><h3>Sempre um próximo passo.</h3><p>Erro ou tela vazia sempre dizem o que fazer em seguida.</p></div>
+    </div>
+
+    <div class="bloco">
+      <h4>Vocabulário próprio</h4>
+      <div class="vocab">
+        <span><b>Fixar</b> → em vez de favoritar</span>
+        <span><b>Fixados</b> → lista de favoritos</span>
+        <span><b>Explorar</b> → em vez de buscar</span>
+        <span><b>Pesquisar nesta área</b></span>
+        <span><b>Lugar</b> → mais que “imóvel” no discurso</span>
+        <span><b>Anunciante</b> → proprietário, corretor ou imobiliária</span>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h4>Na prática</h4>
+      <table class="tabela-voz">
+        <thead><tr><th>Situação</th><th>Evite</th><th>Prefira</th></tr></thead>
+        <tbody>
+          <tr><td>Botão da home</td><td class="evite">Buscar imóveis</td><td>Explorar no mapa</td></tr>
+          <tr><td>Favoritar</td><td class="evite">Adicionar aos favoritos</td><td>Fixar</td></tr>
+          <tr><td>Busca sem resultado</td><td class="evite">Nenhum resultado encontrado.</td><td>Nada por aqui ainda. Afaste o mapa ou experimente um bairro vizinho.</td></tr>
+          <tr><td>Endereço não achado</td><td class="evite">Endereço inválido.</td><td>Não achamos esse endereço. Tente pelo nome do bairro ou da rua.</td></tr>
+          <tr><td>Título de anúncio</td><td class="evite">IMPERDÍVEL!!! Casa top, oportunidade única</td><td>Casa térrea com quintal, a 5 min a pé da Matriz do Pilar</td></tr>
+          <tr><td>Modal de pausa</td><td class="evite">Tem certeza que deseja pausar o anúncio?</td><td><b>Pausar este anúncio?</b> Ele sai do mapa agora e volta quando você quiser. Nada é apagado.</td></tr>
+          <tr><td>Sucesso ao publicar</td><td class="evite">Operação realizada com sucesso!</td><td><b>Seu imóvel está no mapa.</b> Quem explorar o Centro já pode encontrá-lo.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bloco">
+      <h4>Assinaturas</h4>
+      <div class="grade">
+        <div class="cartao"><span class="mono" style="font-size:11.5px;color:var(--marco)">PRINCIPAL</span><p class="serif" style="font-size:30px;line-height:1.15;margin-top:10px">Explore onde você quer viver.</p></div>
+        <div class="cartao"><span class="mono" style="font-size:11.5px;color:var(--marco)">CURTA · APP / REDES</span><p class="serif" style="font-size:30px;line-height:1.15;margin-top:10px">Fixe seu lugar.</p></div>
+        <div class="cartao"><span class="mono" style="font-size:11.5px;color:var(--marco)">CAMPANHA</span><p class="serif" style="font-size:30px;line-height:1.15;margin-top:10px">X marca o lar.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 09 INTERFACE ================= -->
+<section class="secao" id="interface">
+  <div class="wrap">
+    <div class="rotulo"><span>09 — Interface</span><span>A marca dentro do produto</span></div>
+    <h2>O mapa como protagonista.</h2>
+    <p class="lead">Uma prévia de como a identidade aparece na plataforma. Não é o layout final, e sim a direção para um possível redesenho da interface.</p>
+
+    <div class="bloco">
+      <h4>Busca da home</h4>
+      <div style="background:var(--papel-claro);border:1px solid var(--pedra-200);border-radius:var(--raio);padding:clamp(24px,5vw,56px);position:relative;overflow:hidden">
+        <svg class="topo" data-topo="0.85,0.2,14,26,21" style="position:absolute;inset:0;width:100%;height:100%;color:var(--pedra-300);opacity:.6"></svg>
+        <div style="position:relative">
+          <p class="serif" style="font-size:clamp(34px,5vw,56px);line-height:1.05;max-width:14ch">Onde você quer morar?</p>
+          <div class="segmento" style="margin:22px 0 14px"><span class="on">Comprar</span><span>Alugar</span></div>
+          <div class="busca-hero">
+            <div class="entrada"><svg><use href="#i-fixar"/></svg><div><b>Lugar</b>Cidade, bairro, rua ou “perto de…”</div></div>
+            <a class="btn btn-cta" href="#interface"><svg><use href="#i-mapa"/></svg>Explorar no mapa</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grade-2 bloco">
+      <div>
+        <h4>Mapa · modo dia</h4>
+        <div class="mapa" data-mapa>
+          <div class="area-btn"><svg><use href="#i-alvo"/></svg>Pesquisar nesta área</div>
+          <span class="pin" style="left:22%;top:38%">R$ 450 mil</span>
+          <span class="pin destaque" style="left:44%;top:57%">R$ 1.800/mês</span>
+          <span class="pin ativo" style="left:62%;top:36%">R$ 320 mil</span>
+          <span class="pin visto" style="left:34%;top:78%">R$ 610 mil</span>
+          <span class="cluster" style="left:82%;top:70%">48</span>
+          <div class="escala-mapa"><i></i>200 M</div>
+        </div>
+      </div>
+      <div>
+        <h4>Mapa · modo noite</h4>
+        <div class="mapa noite" data-mapa>
+          <div class="area-btn"><svg><use href="#i-alvo"/></svg>Pesquisar nesta área</div>
+          <span class="pin" style="left:22%;top:38%">R$ 450 mil</span>
+          <span class="pin destaque" style="left:44%;top:57%">R$ 1.800/mês</span>
+          <span class="pin ativo" style="left:62%;top:36%">R$ 320 mil</span>
+          <span class="pin" style="left:34%;top:78%">R$ 610 mil</span>
+          <span class="cluster" style="left:82%;top:70%;background:var(--papel);color:var(--tinta)">48</span>
+          <div class="escala-mapa"><i></i>200 M</div>
+        </div>
+      </div>
+    </div>
+    <p class="nota">Estilo de mapa sugerido para o Mapbox Studio: chão em Papel, quadras um tom mais claro, água em Hidro dessaturado, parques em Cerrado claro, rótulos de rua em Pedra 700. Sem POIs coloridos do padrão: só o que ajuda a escolher (escolas, mercados, praças, saúde).</p>
+
+    <div class="grade-2 bloco" style="align-items:start">
+      <div>
+        <h4>Card de imóvel</h4>
+        <article class="card-imovel">
+          <div class="capa-foto">
+            <svg class="topo" data-topo="0.7,0.3,10,18,4" style="position:absolute;inset:0;width:100%;height:100%;color:#fff;opacity:.18"></svg>
+            <span class="tag">Venda</span>
+            <span class="fixar"><svg><use href="#i-fixar"/></svg></span>
+            <span class="pontos"><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="corpo">
+            <div class="preco">R$ 450.000</div>
+            <div class="lugar"><svg><use href="#i-caminhada"/></svg>5 min a pé da Matriz do Pilar</div>
+            <div class="end">Casa · Rua Santo Antônio, Centro</div>
+            <div class="specs">
+              <span><svg><use href="#i-quarto"/></svg>3</span>
+              <span><svg><use href="#i-banho"/></svg>2</span>
+              <span><svg><use href="#i-vaga"/></svg>2</span>
+              <span><svg><use href="#i-area"/></svg>142 m²</span>
+            </div>
+          </div>
+        </article>
+      </div>
+      <div>
+        <h4>Modal de confirmação</h4>
+        <div class="modal-demo">
+          <div class="modal" role="dialog" aria-label="Exemplo de modal">
+            <div class="ico"><svg><use href="#i-pausa"/></svg></div>
+            <h5>Pausar este anúncio?</h5>
+            <p>Ele sai do mapa agora e volta quando você quiser. Nada é apagado.</p>
+            <div class="acoes"><span class="btn btn-contorno">Cancelar</span><span class="btn btn-primario">Sim, pausar</span></div>
+          </div>
+        </div>
+        <p class="nota">Mesmo padrão do <code>useConfirm()</code> atual: ícone, título, mensagem, dois botões. Muda o visual: ícone de linha num círculo da cor do tipo, em vez de emoji. Botão de perigo usa Vermelho Marco.</p>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h4>Botões, campos e filtros</h4>
+      <div class="cartao" style="display:flex;flex-direction:column;gap:24px">
+        <div class="ui-linha">
+          <span class="btn btn-cta">Explorar no mapa</span>
+          <span class="btn btn-primario">Entrar em contato</span>
+          <span class="btn btn-contorno"><svg><use href="#i-fixar"/></svg>Fixar</span>
+          <span class="btn btn-fantasma"><svg><use href="#i-compartilhar"/></svg>Compartilhar</span>
+        </div>
+        <div class="ui-linha">
+          <div class="campo"><label for="ex1">Bairro</label><input id="ex1" placeholder="Ex.: Tijuco, Centro, Fábricas"></div>
+          <div class="campo"><label for="ex2">Preço máximo</label><input id="ex2" placeholder="R$ 500 mil"></div>
+        </div>
+        <div class="chips">
+          <span class="chip on">Casa</span><span class="chip">Apartamento</span><span class="chip">Terreno</span><span class="chip on">3+ quartos</span><span class="chip">Quintal</span><span class="chip">Aceita financiamento</span>
+        </div>
+      </div>
+      <p class="nota">Altura mínima de 48px em botões e campos (toque confortável), raio de 12px, texto de input em 16px. Um único botão vermelho por tela; o restante em Tinta ou contorno.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10 APLICAÇÕES ================= -->
+<section class="secao clara" id="aplicacoes">
+  <div class="wrap">
+    <div class="rotulo"><span>10 — Aplicações</span><span>Da tela para a rua</span></div>
+    <h2>A marca onde as pessoas a encontram.</h2>
+
+    <div class="grade-2 bloco" style="align-items:end">
+      <div>
+        <h4>Ícone do app & favicon</h4>
+        <div class="app-icones">
+          <div class="app-ico" style="width:120px;height:120px;border-radius:27px;--marco:#D4401F"><svg viewBox="0 0 100 100"><use href="#simbolo"/></svg></div>
+          <div class="app-ico" style="width:76px;height:76px;border-radius:17px;--marco:#D4401F"><svg viewBox="0 0 100 100"><use href="#simbolo"/></svg></div>
+          <div class="app-ico" style="width:44px;height:44px;border-radius:10px;--marco:#D4401F"><svg viewBox="0 0 100 100"><use href="#simbolo"/></svg></div>
+        </div>
+      </div>
+      <div>
+        <h4>Aba do navegador</h4>
+        <div class="aba-nav"><div class="aba"><svg viewBox="0 0 100 100" style="--marco:#D4401F"><use href="#simbolo"/></svg><span>Fixum · Explore onde você quer viver</span></div></div>
+        <div style="background:var(--papel-claro);height:18px;border:1px solid var(--pedra-200);border-top:0;border-radius:0 0 12px 12px"></div>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h4>Placa de imóvel</h4>
+      <div class="placa">
+        <svg class="topo" data-topo="0.82,0.25,14,24,9" aria-hidden="true"></svg>
+        <div class="tipo">À VENDA<em>Explore o bairro pelo celular.</em></div>
+        <div class="qr" aria-label="QR code ilustrativo"><svg viewBox="0 0 21 21" data-qr></svg></div>
+        <div class="rodape">
+          <svg viewBox="0 0 266 92" style="color:var(--papel);--marco:#D4401F"><use href="#logotipo"/></svg>
+          <span>fixum.com.br/FX-SJ-2841 · CRECI 00000-J</span>
+        </div>
+      </div>
+      <p class="nota">A placa é a mídia mais barata e mais local que existe. O QR leva direto ao imóvel <i>no mapa</i>, já mostrando o entorno. Pode ser oferecida em kit para corretores e imobiliárias parceiras. (QR ilustrativo.)</p>
+    </div>
+
+    <div class="grade-2 bloco">
+      <div>
+        <h4>Cartão do corretor</h4>
+        <div class="grade" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))">
+          <div class="cartao-visita" style="background:var(--tinta);color:var(--papel);align-items:center;justify-content:center">
+            <svg class="topo" data-topo="0.5,0.5,12,12,2" style="position:absolute;inset:0;width:100%;height:100%;opacity:.12;color:var(--papel)"></svg>
+            <svg viewBox="0 0 100 100" style="width:30%;position:relative;--marco:#D4401F"><use href="#simbolo"/></svg>
+          </div>
+          <div class="cartao-visita" style="background:var(--branco)">
+            <div><div style="font:700 17px var(--f-display);letter-spacing:-.01em">Nome do Corretor</div><div class="mono" style="font-size:10px;color:var(--pedra-500);margin-top:2px">CORRETOR · CRECI 00000-F</div></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px">
+              <div class="mono" style="font-size:10px;line-height:1.6;color:var(--pedra-700)">(32) 9 0000-0000<br>fixum.com.br/corretor</div>
+              <svg viewBox="0 0 266 92" style="width:56px;--marco:#D4401F"><use href="#logotipo"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4>Post para redes</h4>
+        <div class="post" style="max-width:420px">
+          <svg class="topo" data-topo="0.3,0.7,18,16,13" style="position:absolute;inset:0;width:100%;height:100%;color:#BDB3A2;opacity:.8"></svg>
+          <div class="conteudo">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span class="mono" style="font-size:11px;color:var(--marco)">NOVO NO MAPA · CENTRO</span><svg viewBox="0 0 100 100" style="width:26px;--marco:#D4401F"><use href="#simbolo"/></svg></div>
+            <div style="align-self:center"><span class="pin ativo" style="font-size:clamp(16px,3vw,22px);padding:12px 20px">R$ 450 mil</span></div>
+            <div>
+              <div style="font:700 clamp(22px,3.6vw,30px)/1.1 var(--f-display);letter-spacing:-.02em">Casa térrea com quintal</div>
+              <div class="serif" style="font-size:clamp(18px,2.6vw,22px);color:var(--pedra-700)">a 5 minutos da Matriz do Pilar.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h4>Imagem de compartilhamento (Open Graph · 1200×630)</h4>
+      <div class="og">
+        <svg class="topo" data-topo="0.78,0.45,20,26,17" style="position:absolute;inset:0;width:100%;height:100%;opacity:.14;color:var(--papel)"></svg>
+        <div style="position:absolute;inset:0;padding:6% 6.5%;display:flex;flex-direction:column;justify-content:space-between">
+          <svg viewBox="0 0 266 92" style="width:28%;color:var(--papel);--marco:#D4401F"><use href="#logotipo"/></svg>
+          <div class="serif" style="font-size:clamp(22px,5vw,58px);line-height:1.05;max-width:14ch">Explore onde você quer viver.</div>
+          <span class="mono" style="font-size:clamp(9px,1.3vw,14px);opacity:.6">FIXUM.COM.BR · 21°08′S 44°15′O</span>
+        </div>
+        <span class="pin ativo" style="position:absolute;right:16%;top:44%;background:var(--marco);color:#fff;font-size:clamp(11px,1.8vw,20px)">R$ 450 mil</span>
+        <span class="pin" style="position:absolute;right:8%;top:24%;font-size:clamp(10px,1.5vw,16px)">R$ 1.800/mês</span>
+        <span class="pin" style="position:absolute;right:28%;top:70%;font-size:clamp(10px,1.5vw,16px)">R$ 320 mil</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 11 TOKENS ================= -->
+<section class="secao" id="tokens">
+  <div class="wrap">
+    <div class="rotulo"><span>11 — Tokens</span><span>Pronto para o globals.css</span></div>
+    <h2>Da marca para o código.</h2>
+    <p class="lead">Os nomes seguem os tokens que já existem em <code>app/globals.css</code>. Para testar a nova identidade, basta trocar os valores; a interface atual herda tudo sem mudar componentes.</p>
+<pre class="bloco"><span class="c">/* Fixum — Tokens de marca v0.1 */</span>
+<span class="k">@import</span> url(<span class="v">'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Inter:wght@400;500;600;700&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap'</span>);
+
+:root {
+  <span class="c">/* Marca */</span>
+  <span class="k">--cor-primaria</span>: <span class="v">#16201C</span>;        <span class="c">/* Tinta Topográfica (era #0f4c81) */</span>
+  <span class="k">--cor-primaria-hover</span>: <span class="v">#22302A</span>;
+  <span class="k">--cor-primaria-claro</span>: <span class="v">#EAE4D8</span>;
+  <span class="k">--cor-primaria-rgb</span>: <span class="v">22, 32, 28</span>;
+  <span class="k">--cor-acento</span>: <span class="v">#D4401F</span>;          <span class="c">/* Vermelho Marco (era #ff6b35) */</span>
+  <span class="k">--cor-acento-hover</span>: <span class="v">#B23318</span>;
+  <span class="k">--cor-acento-claro</span>: <span class="v">#FBE6DF</span>;
+  <span class="k">--cor-destaque</span>: <span class="v">#E3A72F</span>;        <span class="c">/* Ouro de Minas — anúncios em destaque */</span>
+
+  <span class="c">/* Superfícies */</span>
+  <span class="k">--cor-fundo</span>: <span class="v">#F3EEE4</span>;           <span class="c">/* Papel Cartográfico */</span>
+  <span class="k">--cor-fundo-alt</span>: <span class="v">#EAE4D8</span>;
+  <span class="k">--cor-superficie</span>: <span class="v">#FFFFFF</span>;
+  <span class="k">--cor-superficie-elevada</span>: <span class="v">#FAF7F1</span>;
+
+  <span class="c">/* Texto */</span>
+  <span class="k">--cor-texto</span>: <span class="v">#16201C</span>;
+  <span class="k">--cor-texto-secundario</span>: <span class="v">#5A5449</span>;
+  <span class="k">--cor-texto-terciario</span>: <span class="v">#8A8172</span>;
+  <span class="k">--cor-texto-placeholder</span>: <span class="v">#BDB3A2</span>;
+  <span class="k">--cor-texto-invertido</span>: <span class="v">#F3EEE4</span>;
+
+  <span class="c">/* Bordas */</span>
+  <span class="k">--cor-borda</span>: <span class="v">#DAD2C3</span>;
+  <span class="k">--cor-borda-hover</span>: <span class="v">#BDB3A2</span>;
+  <span class="k">--cor-borda-foco</span>: <span class="v">#16201C</span>;
+
+  <span class="c">/* Feedback */</span>
+  <span class="k">--cor-sucesso</span>: <span class="v">#2E6B4E</span>;  <span class="k">--cor-sucesso-claro</span>: <span class="v">#DCE9DF</span>;
+  <span class="k">--cor-erro</span>: <span class="v">#B23318</span>;     <span class="k">--cor-erro-claro</span>: <span class="v">#FBE6DF</span>;
+  <span class="k">--cor-aviso</span>: <span class="v">#E3A72F</span>;    <span class="k">--cor-aviso-claro</span>: <span class="v">#FBEFD3</span>;
+  <span class="k">--cor-info</span>: <span class="v">#2C5F8A</span>;
+
+  <span class="c">/* Sombras (tingidas de Tinta, não preto puro) */</span>
+  <span class="k">--sombra-card</span>: <span class="v">0 2px 10px rgba(22,32,28,.06), 0 0 0 1px rgba(22,32,28,.06)</span>;
+  <span class="k">--sombra-card-hover</span>: <span class="v">0 10px 32px rgba(22,32,28,.14), 0 0 0 1px rgba(22,32,28,.08)</span>;
+
+  <span class="c">/* Raios */</span>
+  <span class="k">--raio-sm</span>: <span class="v">8px</span>;  <span class="k">--raio-md</span>: <span class="v">12px</span>;  <span class="k">--raio-lg</span>: <span class="v">18px</span>;
+
+  <span class="c">/* Tipografia */</span>
+  <span class="k">--fonte-principal</span>: <span class="v">'Inter', -apple-system, sans-serif</span>;
+  <span class="k">--fonte-display</span>: <span class="v">'Bricolage Grotesque', 'Inter', sans-serif</span>;   <span class="c">/* era Outfit */</span>
+  <span class="k">--fonte-editorial</span>: <span class="v">'Instrument Serif', Georgia, serif</span>;
+  <span class="k">--fonte-mono</span>: <span class="v">'JetBrains Mono', ui-monospace, monospace</span>;
+}</pre>
+
+    <div class="grade bloco">
+      <div class="cartao"><h4>Arquivos de logo</h4><p class="mono" style="font-size:13px;line-height:1.9">brand/logo/<br>· fixum-logotipo.svg<br>· fixum-logotipo-negativo.svg<br>· fixum-logotipo-mono.svg<br>· fixum-simbolo.svg<br>· fixum-app-icon.svg</p></div>
+      <div class="cartao"><h4>Substituições sugeridas</h4><p style="font-size:15px"><code>app/icon.svg</code> → fixum-app-icon.svg<br><code>public/logo-fixum.jpg</code> → logotipo SVG<br><code>public/og-fixum.jpg</code> → nova OG (seção 10)<br>Header: texto “FIXUM” → SVG do logotipo</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 12 PRÓXIMOS PASSOS ================= -->
+<section class="secao escura" id="passos">
+  <div class="wrap">
+    <div class="rotulo"><span>12 — Próximos passos</span><span>Para decidir antes de aplicar</span></div>
+    <h2>O que precisa da sua decisão.</h2>
+    <ol class="passos bloco">
+      <li><div><b>Caixa baixa ou alta?</b><p>Hoje a marca aparece como “FIXUM”. A proposta é “fixum”, mais próxima e com o x legível como símbolo. Vale testar as duas no header real.</p></div></li>
+      <li><div><b>“Fixar” no lugar de “Favoritar”</b><p>O verbo próprio reforça a marca a cada clique. Exige trocar textos e ícone; o código (tabela de favoritos, evento <code>fixum:favoritoAtualizado</code>) pode continuar igual.</p></div></li>
+      <li><div><b>Escolher a assinatura</b><p>“Explore onde você quer viver.” (vem do documento de visão) ou “Fixe seu lugar.” Uma principal, a outra para app e redes.</p></div></li>
+      <li><div><b>Verificar registro no INPI</b><p>Antes de investir em materiais, consultar a disponibilidade de “Fixum” (nominativa e mista) nas classes 36 (negócios imobiliários) e 42 (plataforma/software).</p></div></li>
+      <li><div><b>Teste em produção, por etapas</b><p>1) trocar tokens e fontes no globals.css; 2) logo, favicon e OG; 3) estilo de mapa no Mapbox Studio; 4) pins e cards; 5) modais com ícones de linha.</p></div></li>
+      <li><div><b>Refinar com um designer</b><p>O logotipo foi desenhado geometricamente aqui. Antes do registro final, vale um ajuste óptico profissional de espaçamento e curvas.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>FIXUM · MANUAL DE MARCA · v0.1 PROPOSTA</span><span>21°08′11″S 44°15′42″O</span></div></footer>
+
+<script>
+/* Curvas de nível procedurais (determinísticas por semente) */
+(function(){
+  function rnd(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function picos(svg){
+    var W=1000,H=1000*(svg.clientHeight||600)/(svg.clientWidth||1000);
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('preserveAspectRatio','xMidYMid slice');
+    var out='';
+    svg.dataset.topo.split('|').forEach(function(def){
+      var p=def.split(',').map(Number),cx=p[0]*W,cy=p[1]*H,n=p[2],passo=p[3],r=rnd(p[4]);
+      var f=[r()*6.28,r()*6.28,r()*6.28,r()*6.28],a=[.14+r()*.08,.08+r()*.06,.05+r()*.04,.03];
+      var dx=(r()-.5)*1.6,dy=(r()-.5)*1.6;
+      for(var k=1;k<=n;k++){
+        var d='',base=k*passo,ox=cx+dx*k*k*.6,oy=cy+dy*k*k*.6;
+        for(var i=0;i<=120;i++){
+          var t=i/120*Math.PI*2,
+              m=1+a[0]*Math.sin(2*t+f[0]+k*.07)+a[1]*Math.sin(3*t+f[1]-k*.05)+a[2]*Math.sin(5*t+f[2]+k*.11)+a[3]*Math.sin(7*t+f[3]);
+          var x=ox+Math.cos(t)*base*m*1.15,y=oy+Math.sin(t)*base*m;
+          d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+        }
+        out+='<path d="'+d+'Z"'+(k%5===0?' style="stroke-width:2"':'')+'/>';
+      }
+    });
+    svg.innerHTML=out;
+  }
+  document.querySelectorAll('svg[data-topo]').forEach(function(s){s.classList.add('topo');picos(s)});
+
+  /* Base do mapa ilustrativo */
+  var mapa='<svg class="base" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+
+    '<rect width="800" height="500" style="fill:var(--m-chao)"/>'+
+    '<g style="fill:none;stroke:var(--m-topo);stroke-width:1">'+
+      '<path d="M-20 120C120 80 220 160 360 120S600 40 820 90"/><path d="M-20 150C130 110 230 190 370 150S610 70 820 120"/><path d="M-20 430C160 400 260 470 420 440S700 380 820 410"/>'+
+    '</g>'+
+    '<path d="M560 520C540 430 610 380 600 300S520 180 560 90 640 -10 660 -20" style="fill:none;stroke:var(--m-rio);stroke-width:30;stroke-linecap:round"/>'+
+    '<path d="M70 300c30-30 110-20 120 20s-40 70-90 60-60-50-30-80z" style="fill:var(--m-parque)"/>'+
+    '<path d="M640 380c40-20 120 0 130 40s-60 70-110 60-60-80-20-100z" style="fill:var(--m-parque)"/>'+
+    '<g style="fill:var(--m-quadra)">'+
+      (function(){var s='';for(var y=0;y<6;y++)for(var x=0;x<7;x++){var px=x*120-30+(y%2)*28,py=y*95-20;s+='<rect x="'+px+'" y="'+py+'" width="96" height="72" rx="6"/>';}return s})()+
+    '</g>'+
+    '<g style="fill:none;stroke:var(--m-rua);stroke-width:8;stroke-linecap:round">'+
+      '<path d="M-10 255L810 205"/><path d="M200 -10L330 510"/><path d="M-10 60L420 520"/>'+
+    '</g>'+
+    '<g style="fill:none;stroke:var(--m-av);stroke-width:14;stroke-linecap:round">'+
+      '<path d="M-10 370C200 330 420 360 820 300"/>'+
+    '</g>'+
+  '</svg>';
+  document.querySelectorAll('[data-mapa]').forEach(function(m){m.insertAdjacentHTML('afterbegin',mapa)});
+
+  /* QR ilustrativo */
+  document.querySelectorAll('[data-qr]').forEach(function(q){
+    var r=rnd(2841),s='';
+    function olho(x,y){s+='<path d="M'+x+' '+y+'h7v7h-7zM'+(x+1)+' '+(y+1)+'v5h5v-5z" fill-rule="evenodd"/><rect x="'+(x+2)+'" y="'+(y+2)+'" width="3" height="3"/>'}
+    olho(0,0);olho(14,0);olho(0,14);
+    for(var y=0;y<21;y++)for(var x=0;x<21;x++){if((x<8&&y<8)||(x>12&&y<8)||(x<8&&y>12))continue;if(r()>.52)s+='<rect x="'+x+'" y="'+y+'" width="1" height="1"/>'}
+    q.innerHTML='<g fill="#16201C">'+s+'</g>';
+  });
+
+  /* Paginação para PDF: cada seção começa em página nova e nenhum bloco é partido */
+  if(location.hash==='#pdf'){
+    document.documentElement.classList.add('pdf');
+    var P=1680,TOPO=110,FUNDO=90;
+    var paginar=function(){
+      document.querySelectorAll('.capa,.secao').forEach(function(sec){
+        var wrap=sec.querySelector('.wrap');
+        if(!sec.classList.contains('capa')){
+          Array.prototype.slice.call(wrap.children).forEach(function(el){
+            var base=sec.getBoundingClientRect().top,r=el.getBoundingClientRect();
+            var topo=r.top-base,fim=r.bottom-base,pg=Math.floor(topo/P);
+            if(fim>(pg+1)*P-FUNDO && fim-topo<P-TOPO-FUNDO){
+              var esp=document.createElement('div');
+              esp.style.height=((pg+1)*P+TOPO-topo)+'px';
+              wrap.insertBefore(esp,el);
+            }
+          });
+        }
+        if(sec.classList.contains('capa')){sec.style.height=P+'px';return;}
+        var fimConteudo=wrap.getBoundingClientRect().bottom-sec.getBoundingClientRect().top+48;
+        sec.style.minHeight='0';sec.style.overflow='hidden';
+        sec.style.height=Math.max(1,Math.ceil(fimConteudo/P))*P+'px';
+      });
+      document.documentElement.dataset.paginado=innerWidth+'x'+innerHeight;
+    };
+    (document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(paginar,50)});
+  }
+})();
+</script>
+</body>
+</html>

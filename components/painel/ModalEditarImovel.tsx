@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import LinhaTempoRevisao from '@/components/painel/LinhaTempoRevisao'
 import styles from './ModalNovoImovel.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 type Etapa = 1 | 2 | 3 | 4 | 5
 
@@ -53,28 +54,28 @@ const ETAPAS = [
 
 const TIPOS = [
   // Residencial
-  { valor: 'apartamento', icone: '🏢', label: 'Apartamento' },
-  { valor: 'casa', icone: '🏠', label: 'Casa' },
-  { valor: 'sobrado', icone: '🏡', label: 'Sobrado' },
-  { valor: 'casa_condominio', icone: '🏘️', label: 'Casa em Condomínio' },
-  { valor: 'cobertura', icone: '🌇', label: 'Cobertura' },
-  { valor: 'kitnet', icone: '🛏️', label: 'Kitnet / Studio' },
-  { valor: 'flat', icone: '🏨', label: 'Flat' },
-  { valor: 'lote', icone: '📐', label: 'Lote' },
+  { valor: 'apartamento', icone: 'predio', label: 'Apartamento' },
+  { valor: 'casa', icone: 'casa', label: 'Casa' },
+  { valor: 'sobrado', icone: 'casa', label: 'Sobrado' },
+  { valor: 'casa_condominio', icone: 'predio', label: 'Casa em condomínio' },
+  { valor: 'cobertura', icone: 'predio', label: 'Cobertura' },
+  { valor: 'kitnet', icone: 'quarto', label: 'Kitnet / studio' },
+  { valor: 'flat', icone: 'predio', label: 'Flat' },
+  { valor: 'lote', icone: 'area', label: 'Lote' },
   // Comercial
-  { valor: 'sala_comercial', icone: '🗂️', label: 'Sala Comercial' },
-  { valor: 'loja', icone: '🏪', label: 'Loja / Ponto Comercial' },
-  { valor: 'galpao', icone: '🏭', label: 'Galpão' },
-  { valor: 'predio', icone: '🏬', label: 'Prédio Comercial' },
-  { valor: 'garagem', icone: '🚗', label: 'Garagem' },
-  { valor: 'terreno_comercial', icone: '🏗️', label: 'Terreno / Lote' },
+  { valor: 'sala_comercial', icone: 'pasta', label: 'Sala comercial' },
+  { valor: 'loja', icone: 'predio', label: 'Loja / ponto comercial' },
+  { valor: 'galpao', icone: 'predio', label: 'Galpão' },
+  { valor: 'predio', icone: 'predio', label: 'Prédio comercial' },
+  { valor: 'garagem', icone: 'vaga', label: 'Garagem' },
+  { valor: 'terreno_comercial', icone: 'predio', label: 'Terreno / lote' },
   // Rural
-  { valor: 'sitio', icone: '🌿', label: 'Sítio' },
-  { valor: 'chacara', icone: '🌳', label: 'Chácara' },
-  { valor: 'fazenda', icone: '🌾', label: 'Fazenda' },
-  { valor: 'rancho', icone: '🐄', label: 'Rancho' },
+  { valor: 'sitio', icone: 'folha', label: 'Sítio' },
+  { valor: 'chacara', icone: 'folha', label: 'Chácara' },
+  { valor: 'fazenda', icone: 'folha', label: 'Fazenda' },
+  { valor: 'rancho', icone: 'folha', label: 'Rancho' },
   // Geral
-  { valor: 'outro', icone: '🏷️', label: 'Outro' },
+  { valor: 'outro', icone: 'etiqueta', label: 'Outro' },
 ]
 
 function normalizarTipoParaBanco(tipo: string): string {
@@ -314,7 +315,7 @@ export default function ModalEditarImovel({
       const confirmou = await confirmar({
         titulo: 'Descartar alterações?',
         mensagem: 'Você fez modificações neste imóvel que ainda não foram salvas. Tem certeza que deseja sair e perder as alterações?',
-        icone: '⚠️',
+        icone: 'alerta',
         tipo: 'perigo',
         textoBotaoConfirmar: 'Sim, Descartar',
         textoBotaoCancelar: 'Continuar Editando',
@@ -520,9 +521,9 @@ export default function ModalEditarImovel({
 
       if (!latNum || !lngNum || (latNum === 0 && lngNum === 0)) {
         await alertar({
-          titulo: 'Localização Obrigatória no Mapa',
+          titulo: 'Localização obrigatória no mapa',
           mensagem: 'Não foi possível identificar a localização deste imóvel no mapa. Por favor, verifique se o CEP ou o nome da Cidade e Estado estão preenchidos corretamente.',
-          icone: '📍',
+          icone: 'local',
           tipo: 'aviso',
         })
         setSalvando(false)
@@ -617,9 +618,9 @@ export default function ModalEditarImovel({
     const salvou = await salvarEdicao()
     if (salvou) {
       await alertar({
-        titulo: 'Alterações Salvas!',
+        titulo: 'Alterações salvas',
         mensagem: 'O anúncio foi atualizado com sucesso.',
-        icone: '💾',
+        icone: 'salvar',
         tipo: 'sucesso',
       })
       await onImovelSalvo()
@@ -658,9 +659,9 @@ export default function ModalEditarImovel({
       })
 
       await alertar({
-        titulo: 'Reenviado com Sucesso!',
+        titulo: 'Reenviado',
         mensagem: 'O anúncio com seus ajustes foi reenviado para a moderação do gestor.',
-        icone: '📤',
+        icone: 'enviar',
         tipo: 'sucesso',
       })
       await onImovelSalvo()
@@ -680,10 +681,10 @@ export default function ModalEditarImovel({
         {/* Header */}
         <div className={styles.modalHeader}>
           <div className={styles.modalHeaderTitulo}>
-            <span>✏️</span> Editar Imóvel
+            <span><Icone nome="editar" tamanho={16} /></span> Editar imóvel
           </div>
           <button type="button" className={styles.btnFechar} onClick={handleTentarFechar} title="Fechar">
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
         </div>
 
@@ -701,7 +702,7 @@ export default function ModalEditarImovel({
                   title={`Ir para etapa ${etp.numero}: ${etp.label}`}
                 >
                   <div className={styles.etapaBolha}>
-                    {concluida ? '✓' : etp.numero}
+                    {concluida ? '' : etp.numero}
                   </div>
                   <span className={styles.etapaLabel}>{etp.label}</span>
                 </div>
@@ -730,8 +731,8 @@ export default function ModalEditarImovel({
                 gap: '6px',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8A5F12', fontWeight: 800, fontSize: '0.85rem' }}>
-                  <span>⚠️</span>
-                  <span>Ajustes Solicitados pela Gestão</span>
+                  <span><Icone nome="alerta" tamanho={16} /></span>
+                  <span>Ajustes solicitados pela gestão</span>
                 </div>
                 <LinhaTempoRevisao
                   imovelId={imovelId}
@@ -754,14 +755,14 @@ export default function ModalEditarImovel({
                       className={`${styles.tipoCard} ${dados.tipo === t.valor ? styles.tipoSelecionado : ''}`}
                       onClick={() => atualizar('tipo', t.valor)}
                     >
-                      <span className={styles.tipoIcone}>{t.icone}</span>
+                      <span className={styles.tipoIcone}>{ehNomeIcone(t.icone) && <Icone nome={t.icone} tamanho={22} />}</span>
                       <span className={styles.tipoLabel}>{t.label}</span>
                     </button>
                   ))}
                 </div>
 
                 <div className={styles.grupo} style={{ marginTop: '0.4rem' }}>
-                  <label className={styles.label}>Modalidade de Negociação</label>
+                  <label className={styles.label}>Modalidade de negociação</label>
                   <div className={styles.btnGroup}>
                     {['venda', 'aluguel'].map((neg) => (
                       <button
@@ -786,7 +787,7 @@ export default function ModalEditarImovel({
                 autoComplete="off"
                 role="presentation"
               >
-                <h2 className={styles.etapaTitulo}>Dados do Imóvel</h2>
+                <h2 className={styles.etapaTitulo}>Dados do imóvel</h2>
                 <p className={styles.etapaSubtitulo}>Preço, título e localização</p>
 
                 <div className={styles.gridTituloPreco}>
@@ -806,11 +807,11 @@ export default function ModalEditarImovel({
                       className={styles.input}
                       value={formatarPreco(dados.preco)}
                       onChange={(e) => atualizar('preco', e.target.value)}
-                      placeholder="0 = Sob Consulta"
+                      placeholder="0 = Sob consulta"
                     />
                     {extrairNumero(dados.preco) === 0 && dados.preco.trim() !== '' && (
                       <span style={{ display: 'block', fontSize: '0.725rem', color: '#2C5F8A', marginTop: '3px' }}>
-                        ℹ️ R$ 0: o anúncio será exibido automaticamente como <strong>Sob Consulta</strong>.
+ R$ 0: o anúncio será exibido automaticamente como <strong>Sob consulta</strong>.
                       </span>
                     )}
                   </div>
@@ -820,8 +821,8 @@ export default function ModalEditarImovel({
                 {modoExibicaoPrecoConta === 'por_anuncio' ? (
                   <div className={styles.blocoModoPreco}>
                     <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <span>Exibição de Preço no Anúncio</span>
-                      <span className={styles.pillOpcional}>Opção por Anúncio</span>
+                      <span>Exibição de preço no anúncio</span>
+                      <span className={styles.pillOpcional}>Opção por anúncio</span>
                     </label>
                     <div className={styles.gridBotoesModoPreco}>
                       <button
@@ -829,7 +830,7 @@ export default function ModalEditarImovel({
                         className={`${styles.btnModoPreco} ${dados.modo_exibicao_preco !== 'sob_consulta' ? styles.btnModoPrecoAtivo : ''}`}
                         onClick={() => atualizar('modo_exibicao_preco', 'visivel')}
                       >
-                        <span>💰 Preço Visível</span>
+                        <span>Preço visível</span>
                         <small>Exibe o valor no portal e mapa</small>
                       </button>
                       <button
@@ -837,18 +838,18 @@ export default function ModalEditarImovel({
                         className={`${styles.btnModoPreco} ${dados.modo_exibicao_preco === 'sob_consulta' ? styles.btnModoPrecoAtivoSobConsulta : ''}`}
                         onClick={() => atualizar('modo_exibicao_preco', 'sob_consulta')}
                       >
-                        <span>💬 Sob Consulta</span>
+                        <span>Sob consulta</span>
                         <small>Oculta o valor no anúncio</small>
                       </button>
                     </div>
                   </div>
                 ) : modoExibicaoPrecoConta === 'sob_consulta' ? (
                   <div className={styles.avisoPoliticaPreco} style={{ background: '#FAF7F1', borderColor: '#CFC6B6', color: '#2C5F8A' }}>
-                    <span>💬 <strong>Preço Sob Consulta:</strong> Este anúncio será exibido como sob consulta conforme a política da conta.</span>
+                    <span><Icone nome="chat" tamanho={16} /> <strong>Preço sob consulta:</strong> Este anúncio será exibido como sob consulta conforme a política da conta.</span>
                   </div>
                 ) : (
                   <div className={styles.avisoPoliticaPreco}>
-                    <span>💰 <strong>Preço Sempre Visível:</strong> O valor numérico será exibido no anúncio conforme a política da conta.</span>
+                    <span><Icone nome="moeda" tamanho={16} /> <strong>Preço sempre visível:</strong> O valor numérico será exibido no anúncio conforme a política da conta.</span>
                   </div>
                 )}
 
@@ -856,7 +857,7 @@ export default function ModalEditarImovel({
                 {(isCorretor || !!dados.codigo) && (
                   <div className={styles.grupo} style={{ marginBottom: '10px' }}>
                     <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span>Código do Anúncio / Referência Interna</span>
+                      <span>Código do anúncio / referência interna</span>
                       <span style={{ fontSize: '0.725rem', color: '#7A7264', fontWeight: 'normal' }}>Opcional (CRM)</span>
                     </label>
                     <input
@@ -927,14 +928,14 @@ export default function ModalEditarImovel({
                     alignItems: 'center',
                     gap: '6px'
                   }}>
-                    <span>⚠️</span>
+                    <span><Icone nome="alerta" tamanho={16} /></span>
                     <span>{erroCep}</span>
                   </div>
                 )}
 
                 <div className={styles.gridEnderecoBairro}>
                   <div className={styles.grupo}>
-                    <label className={styles.label}>Endereço (Rua, Av)</label>
+                    <label className={styles.label}>Endereço (rua, av)</label>
                     <input
                       className={styles.input}
                       value={dados.endereco}
@@ -957,7 +958,7 @@ export default function ModalEditarImovel({
             {/* Etapa 3: Detalhes */}
             {etapa === 3 && (
               <div className={styles.etapaConteudo}>
-                <h2 className={styles.etapaTitulo}>Detalhes e Medidas</h2>
+                <h2 className={styles.etapaTitulo}>Detalhes e medidas</h2>
                 <p className={styles.etapaSubtitulo}>Informe dimensões, cômodos e adicionais</p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '8px' }}>
@@ -1035,16 +1036,16 @@ export default function ModalEditarImovel({
                       checked={dados.aceita_pets}
                       onChange={(e) => atualizar('aceita_pets', e.target.checked)}
                     />
-                    🐾 Aceita Pets
-                  </label>
+ Aceita pets
+ </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#3F3B34', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={dados.mobiliado}
                       onChange={(e) => atualizar('mobiliado', e.target.checked)}
                     />
-                    🛋️ Mobiliado
-                  </label>
+ Mobiliado
+ </label>
                 </div>
               </div>
             )}
@@ -1053,7 +1054,7 @@ export default function ModalEditarImovel({
             {etapa === 4 && (
               <div className={styles.etapaConteudo}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <h2 className={styles.etapaTitulo}>Galeria de Fotos</h2>
+                  <h2 className={styles.etapaTitulo}>Galeria de fotos</h2>
                   <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#22302A', background: '#EAE4D8', padding: '3px 8px', borderRadius: '16px' }}>
                     {fotos.length} {fotos.length === 1 ? 'foto' : 'fotos'}
                   </span>
@@ -1097,8 +1098,8 @@ export default function ModalEditarImovel({
                     className={styles.btnSelecionarFotos}
                     onClick={() => inputFotoRef.current?.click()}
                   >
-                    📁 Selecionar Fotos
-                  </button>
+ Selecionar fotos
+ </button>
                 </div>
 
                 {fotos.length > 0 && (
@@ -1112,7 +1113,7 @@ export default function ModalEditarImovel({
                         <img src={foto.preview} alt={`Foto ${idx + 1}`} className={styles.fotoImgPro} />
 
                         {foto.principal ? (
-                          <div className={styles.badgeCapa}>⭐ Capa</div>
+                          <div className={styles.badgeCapa}>Capa</div>
                         ) : (
                           <button
                             type="button"
@@ -1128,7 +1129,7 @@ export default function ModalEditarImovel({
                           className={styles.btnRemoverFoto}
                           onClick={() => removerFoto(idx)}
                         >
-                          ✕
+                          <Icone nome="fechar" tamanho={16} />
                         </button>
 
                         <div className={styles.numeroFotoPill}>#{idx + 1}</div>
@@ -1193,8 +1194,8 @@ export default function ModalEditarImovel({
                     marginTop: '8px'
                   }}>
                     <span style={{ fontSize: '0.825rem', fontWeight: 700, color: '#22302A' }}>
-                      💬 Mensagem para o Gestor (opcional ao reenviar):
-                    </span>
+ Mensagem para o gestor (opcional ao reenviar):
+ </span>
                     <textarea
                       className={styles.textarea}
                       placeholder="Ex: Fotos adicionadas e condomínio preenchido conforme solicitado..."
@@ -1238,7 +1239,7 @@ export default function ModalEditarImovel({
                     disabled={salvando || reenviando}
                     title="Salvar alterações sem reenviar para moderação"
                   >
-                    {salvando ? 'Salvando...' : '💾 Salvar Alterações'}
+                    {salvando ? 'Salvando...' : 'Salvar alterações'}
                   </button>
 
                   {isCorretor && (
@@ -1249,7 +1250,7 @@ export default function ModalEditarImovel({
                       onClick={handleSalvarEReenviar}
                       disabled={salvando || reenviando}
                     >
-                      {reenviando ? 'Reenviando...' : '📤 Salvar & Reenviar ao Gestor'}
+                      {reenviando ? 'Reenviando...' : 'Salvar & reenviar ao gestor'}
                     </button>
                   )}
                 </div>

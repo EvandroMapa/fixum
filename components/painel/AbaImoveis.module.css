@@ -428,7 +428,7 @@
 .cardImovelSelecionado {
   border-color: var(--tinta) !important;
   box-shadow: 0 0 0 2px var(--tinta) !important;
-  background: #f8faff;
+  background: #FAF7F1;
 }
 
 /* FOTO DO IMÓVEL */

@@ -5,6 +5,7 @@ import { FaturaAdmin } from '@/lib/admin-service'
 import { formatarMoeda } from '@/lib/planos'
 import InputSenha from '@/components/ui/InputSenha'
 import styles from './ModalEstornoFatura.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface ModalEstornoFaturaProps {
   fatura: FaturaAdmin | null
@@ -83,15 +84,15 @@ export default function ModalEstornoFatura({
         <div className={styles.cabecalho}>
           <div className={styles.iconeAlerta}>↩️</div>
           <div>
-            <h2 className={styles.titulo}>Processar Devolução / Estorno</h2>
+            <h2 className={styles.titulo}>Processar devolução / estorno</h2>
             <p className={styles.subtitulo}>Ação financeira sensível — Requer autorização Master</p>
           </div>
-          <button type="button" className={styles.btnFechar} onClick={onFechar}>✕</button>
+          <button type="button" className={styles.btnFechar} onClick={onFechar}><Icone nome="fechar" tamanho={16} /></button>
         </div>
 
         {erro && (
           <div className={styles.boxErro}>
-            <span>⚠️</span>
+            <span><Icone nome="alerta" tamanho={16} /></span>
             <span>{erro}</span>
           </div>
         )}
@@ -100,20 +101,20 @@ export default function ModalEstornoFatura({
           {/* Card Resumo da Fatura */}
           <div className={styles.cardFatura}>
             <div className={styles.faturaLinha}>
-              <span className={styles.faturaLabel}>Cliente Beneficiário:</span>
+              <span className={styles.faturaLabel}>Cliente beneficiário:</span>
               <strong className={styles.faturaValor}>{fatura.usuario_nome} ({fatura.usuario_email})</strong>
             </div>
             <div className={styles.faturaLinha}>
-              <span className={styles.faturaLabel}>Valor da Fatura:</span>
+              <span className={styles.faturaLabel}>Valor da fatura:</span>
               <span className={styles.valorDestaque}>{formatarMoeda(fatura.valor)}</span>
             </div>
             <div className={styles.faturaLinha}>
-              <span className={styles.faturaLabel}>Método Original:</span>
-              <span className={styles.faturaMetodo}>{fatura.metodo_pagamento === 'pix' ? 'PIX Instantâneo' : 'Cartão de Crédito'}</span>
+              <span className={styles.faturaLabel}>Método original:</span>
+              <span className={styles.faturaMetodo}>{fatura.metodo_pagamento === 'pix' ? 'PIX instantâneo' : 'Cartão de crédito'}</span>
             </div>
             {fatura.asaas_payment_id && (
               <div className={styles.faturaLinha}>
-                <span className={styles.faturaLabel}>Código Gateway Asaas:</span>
+                <span className={styles.faturaLabel}>Código gateway Asaas:</span>
                 <span className={styles.codigoAsaas}>{fatura.asaas_payment_id}</span>
               </div>
             )}
@@ -121,7 +122,7 @@ export default function ModalEstornoFatura({
 
           {/* Motivo do Estorno */}
           <div className={styles.campo}>
-            <label className={styles.label}>Motivo do Reembolso:</label>
+            <label className={styles.label}>Motivo do reembolso:</label>
             <select
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
@@ -135,23 +136,23 @@ export default function ModalEstornoFatura({
 
           {/* Canal de Reembolso */}
           <div className={styles.campo}>
-            <label className={styles.label}>Canal de Devolução:</label>
+            <label className={styles.label}>Canal de devolução:</label>
             <select
               value={tipoReembolso}
               onChange={(e) => setTipoReembolso(e.target.value)}
               className={styles.select}
             >
-              <option value="pix">PIX (Chave do Cliente)</option>
-              <option value="estorno_gateway">Estorno Automático no Asaas (Cartão/PIX)</option>
-              <option value="manual">Transferência Bancária Manual</option>
+              <option value="pix">PIX (chave do cliente)</option>
+              <option value="estorno_gateway">Estorno automático no Asaas (Cartão/PIX)</option>
+              <option value="manual">Transferência bancária manual</option>
             </select>
           </div>
 
           {/* Justificativa Obrigatória */}
           <div className={styles.campo}>
             <label className={styles.label}>
-              <span>Justificativa Obrigatória da Equipe:</span>
-              <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Trilha de Auditoria</span>
+              <span>Justificativa obrigatória da equipe:</span>
+              <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Trilha de auditoria</span>
             </label>
             <textarea
               rows={3}
@@ -166,8 +167,8 @@ export default function ModalEstornoFatura({
           {/* PIN Master de Segurança */}
           <div className={styles.campo}>
             <label className={styles.label}>
-              <span>PIN Master / Chave Secreta Master:</span>
-              <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Blindagem de Segurança</span>
+              <span>PIN Master / chave secreta Master:</span>
+              <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Blindagem de segurança</span>
             </label>
             <InputSenha
               value={adminPin}
@@ -180,7 +181,7 @@ export default function ModalEstornoFatura({
           </div>
 
           <div className={styles.avisoRegra}>
-            💡 <strong>Atenção:</strong> Ao confirmar o estorno, a fatura será marcada como <code>reembolsado</code>, o plano do usuário será rebaixado para <code>gratis</code> e um log imutável de auditoria será gerado no Supabase.
+            <Icone nome="info" tamanho={16} /> <strong>Atenção:</strong> Ao confirmar o estorno, a fatura será marcada como <code>reembolsado</code>, o plano do usuário será rebaixado para <code>gratis</code> e um log imutável de auditoria será gerado no Supabase.
           </div>
 
           <div className={styles.rodape}>

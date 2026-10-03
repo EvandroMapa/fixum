@@ -45,7 +45,7 @@
 }
 
 .btnUpgradePrincipal:hover {
-  background: #0c3d68;
+  background: #16201C;
   transform: translateY(-1px);
 }
 
@@ -659,7 +659,7 @@
 }
 
 .btnEscolherDestaque:hover {
-  background: #0c3d68;
+  background: #16201C;
 }
 
 .btnEscolherNormal {

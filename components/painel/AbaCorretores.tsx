@@ -6,6 +6,7 @@ import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import ModalEditarCorretor from './ModalEditarCorretor'
 import styles from './AbaCorretores.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface MembroEquipe {
   id: string
@@ -81,7 +82,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
     const texto =
       `*CONVITE DE EQUIPE — ${imobiliariaNome.toUpperCase()}*\n\n` +
       `Olá! Você foi convidado para integrar a equipe oficial da *${imobiliariaNome}* na Fixum e anunciar seus imóveis com nossa cota corporativa.\n\n` +
-      `👉 *Clique no link abaixo para criar sua conta de corretor parceiro:*\n` +
+      `*Clique no link abaixo para criar sua conta de corretor parceiro:*\n` +
       `${linkConvite}`
 
     const msg = encodeURIComponent(texto)
@@ -96,7 +97,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
       mensagem: isGestor
         ? `Deseja promover o membro "${nomeMembro}" a Gestor da equipe? Ele terá acesso total às configurações e gestão dos anúncios.`
         : `Deseja alterar o papel de "${nomeMembro}" para Corretor?`,
-      icone: isGestor ? '👑' : '👤',
+      icone: isGestor ? '' : '',
       textoBotaoConfirmar: isGestor ? 'Sim, Promover' : 'Confirmar Alteração',
       tipo: isGestor ? 'primario' : 'aviso',
     })
@@ -131,9 +132,9 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
   // Desvincular Membro
   async function handleDesvincular(corretorId: string, nomeCorretor: string) {
     const confirmou = await confirmar({
-      titulo: 'Desvincular da Equipe?',
+      titulo: 'Desvincular da equipe?',
       mensagem: `Deseja desvincular o membro "${nomeCorretor}" da sua imobiliária? Ele não poderá mais publicar usando a sua cota.`,
-      icone: '🚪',
+      icone: 'sair',
       textoBotaoConfirmar: 'Sim, Desvincular',
       tipo: 'perigo',
       destrutivo: true,
@@ -165,7 +166,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
     <div className={styles.container}>
       <div className={styles.cabecalhoAba}>
         <div>
-          <h1 className={styles.tituloPrincipal}>Gestão da Equipe & Corretores</h1>
+          <h1 className={styles.tituloPrincipal}>Gestão da equipe & corretores</h1>
           <p className={styles.subtituloPrincipal}>
             Gerencie os gestores e corretores parceiros da <strong>{imobiliariaNome}</strong>. Corretores cadastram anúncios para revisão e gestores aprovam a publicação no mapa.
           </p>
@@ -182,7 +183,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
           fontWeight: 600,
           fontSize: '0.875rem',
         }}>
-          {mensagemFeedback.tipo === 'sucesso' ? '✅ ' : '⚠️ '}
+          {mensagemFeedback.tipo === 'sucesso' ? '' : ''}
           {mensagemFeedback.texto}
         </div>
       )}
@@ -192,22 +193,22 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
         {/* Card 1: Gestores */}
         <div className={styles.cardMetricaEquipe}>
           <div className={styles.iconeMetricaEquipe} style={{ background: '#FBEFD3', color: '#8A5F12' }}>
-            👑
+            <Icone nome="coroa" tamanho={16} />
           </div>
           <div>
             <strong className={styles.valorMetricaEquipe}>{gestoresCount}</strong>
-            <span className={styles.labelMetricaEquipe}>Gestores (Poder de Aprovação)</span>
+            <span className={styles.labelMetricaEquipe}>Gestores (poder de aprovação)</span>
           </div>
         </div>
 
         {/* Card 2: Corretores */}
         <div className={styles.cardMetricaEquipe}>
           <div className={styles.iconeMetricaEquipe} style={{ background: '#EAE4D8', color: '#22302A' }}>
-            👔
+            <Icone nome="maleta" tamanho={16} />
           </div>
           <div>
             <strong className={styles.valorMetricaEquipe}>{corretoresCount}</strong>
-            <span className={styles.labelMetricaEquipe}>Corretores Parceiros</span>
+            <span className={styles.labelMetricaEquipe}>Corretores parceiros</span>
           </div>
         </div>
 
@@ -215,7 +216,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
         <div className={styles.cardConviteCompacto}>
           <div className={styles.conviteCompactoTopo}>
             <div className={styles.conviteCompactoTitulo}>
-              <span>🔗</span> Convidar Novo Corretor
+              <span><Icone nome="link" tamanho={16} /></span> Convidar novo corretor
             </div>
             <span className={styles.conviteCompactoSub}>Link exclusivo da {imobiliariaNome}</span>
           </div>
@@ -227,7 +228,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
               onClick={handleCopiarLink}
               title="Copiar link de cadastro da imobiliária"
             >
-              {linkCopiado ? '✅ Copiado!' : '📋 Copiar Link'}
+              {linkCopiado ? 'Copiado' : 'Copiar link'}
             </button>
             <button
               type="button"
@@ -235,8 +236,8 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
               onClick={handleCompartilharWhatsApp}
               title="Compartilhar link de convite via WhatsApp"
             >
-              💬 WhatsApp
-            </button>
+ WhatsApp
+ </button>
           </div>
         </div>
       </div>
@@ -245,7 +246,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
       <div className={styles.cardTabela}>
         <div className={styles.tabelaTopo}>
           <div className={styles.tabelaTitulo}>
-            Membros da Imobiliária & Cargos
+            Membros da imobiliária & cargos
           </div>
           <span className={styles.badgeContador}>
             {membros.length} {membros.length === 1 ? 'membro' : 'membros'}
@@ -258,7 +259,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
           </div>
         ) : membros.length === 0 ? (
           <div className={styles.estadoVazio}>
-            <div className={styles.iconeVazio}>👥</div>
+            <div className={styles.iconeVazio}><Icone nome="pessoas" tamanho={16} /></div>
             <h3>Nenhum corretor vinculado ainda</h3>
             <p>
               Envie o link de convite acima para seus corretores parceiros. Quando eles se cadastrarem, aparecerão automaticamente aqui!
@@ -269,12 +270,12 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
             <table className={styles.tabela}>
               <thead>
                 <tr>
-                  <th>Membro da Equipe</th>
-                  <th>Cargo / Papel</th>
+                  <th>Membro da equipe</th>
+                  <th>Cargo / papel</th>
                   <th>Contato</th>
                   <th>CRECI</th>
                   <th>Imóveis</th>
-                  <th style={{ textAlign: 'right' }}>Ações de Gestão</th>
+                  <th style={{ textAlign: 'right' }}>Ações de gestão</th>
                 </tr>
               </thead>
               <tbody>
@@ -299,12 +300,12 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                                 boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                               }}
                             >
-                              {isPrincipal ? '👑' : obterIniciaisUsuario(c.nome, c.email)}
+                              {isPrincipal ? '' : obterIniciaisUsuario(c.nome, c.email)}
                             </div>
                           )}
                           <div>
                             <div className={styles.corretorNome}>
-                              {c.nome} {isPrincipal ? '(Você / Titular)' : ''}
+                              {c.nome} {isPrincipal ? '(Você / titular)' : ''}
                             </div>
                             <div style={{ fontSize: '0.75rem', color: '#7A7264' }}>{c.email}</div>
                           </div>
@@ -323,7 +324,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                           color: isPrincipal ? '#8A5F12' : isGestor ? '#22302A' : '#5A5449',
                           border: `1px solid ${isPrincipal ? '#F2D48E' : isGestor ? '#CFC6B6' : '#E0D8CA'}`,
                         }}>
-                          {isPrincipal ? '👑 Gestor Titular' : isGestor ? '🛡️ Gestor' : '👔 Corretor'}
+                          {isPrincipal ? 'Gestor titular' : isGestor ? 'Gestor' : 'Corretor'}
                         </span>
                       </td>
                       <td>{c.telefone || '—'}</td>
@@ -342,8 +343,8 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                             onClick={() => setCorretorParaEditar(c)}
                             title="Editar dados cadastrais, telefone e CRECI"
                           >
-                            ✏️ Editar
-                          </button>
+ Editar
+ </button>
 
                           {!isPrincipal ? (
                             <>
@@ -353,20 +354,20 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
                                   className="btn btn-outline btn-sm"
                                   style={{ fontSize: '0.75rem', padding: '4px 8px' }}
                                   onClick={() => handleAlterarPapel(c.id, c.nome, 'corretor')}
-                                  title="Mudar cargo para Corretor"
+                                  title="Mudar cargo para corretor"
                                 >
-                                  👔 Tornar Corretor
-                                </button>
+ Tornar corretor
+ </button>
                               ) : (
                                 <button
                                   type="button"
                                   className="btn btn-outline btn-sm"
                                   style={{ fontSize: '0.75rem', padding: '4px 8px', borderColor: '#CFC6B6', color: '#22302A' }}
                                   onClick={() => handleAlterarPapel(c.id, c.nome, 'gestor')}
-                                  title="Promover membro a Gestor com poder de aprovar anúncios"
+                                  title="Promover membro a gestor com poder de aprovar anúncios"
                                 >
-                                  🛡️ Promover a Gestor
-                                </button>
+ Promover a gestor
+ </button>
                               )}
 
                               <button

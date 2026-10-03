@@ -204,7 +204,7 @@ export async function GET(req: Request) {
         tipo_anunciante: u.tipo_anunciante,
         status_conta: u.status_conta,
         plano_id: planoId,
-        plano_nome: isCorretorVinculado ? `🏢 Corporativo (${imobDonaNome})` : (planoObj?.nome || planoId),
+        plano_nome: isCorretorVinculado ? `Corporativo (${imobDonaNome})` : (planoObj?.nome || planoId),
         plano_preco: isCorretorVinculado ? 0 : (planoObj?.preco_mensal || 0),
         cidade: u.cidade || (listaImoveis.find((i: any) => i.anunciante_id === u.id)?.cidade) || '',
         uf: u.uf || (listaImoveis.find((i: any) => i.anunciante_id === u.id)?.estado) || '',

@@ -13,6 +13,7 @@ import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } f
 import { useFavorito } from '@/hooks/useFavorito'
 import { createClient } from '@/lib/supabase/client'
 import styles from './page.module.css'
+import Icone from '@/components/ui/Icone'
 
 const MapaImovel = dynamic(() => import('@/components/mapa/MapaImovel'), { ssr: false })
 
@@ -32,21 +33,21 @@ function IconeWhatsApp({ size = 15 }: { size?: number }) {
 }
 
 const CARACTERISTICAS_ICONES: Record<string, string> = {
-  suite: '🛏️',
-  piscina: '🏊',
-  churrasqueira: '🔥',
-  gourmet: '🍖',
-  quintal: '🌿',
-  varanda: '🌅',
-  elevador: '🛗',
-  condominio_fechado: '🔒',
-  mobiliado: '🛋️',
-  ar_condicionado: '❄️',
-  portao_eletronico: '🚗',
-  armarios_planejados: '🪟',
-  salao_festas: '🎉',
-  academia: '🏋️',
-  playground: '🎠',
+  suite: '',
+  piscina: '',
+  churrasqueira: '',
+  gourmet: '',
+  quintal: '',
+  varanda: '',
+  elevador: '',
+  condominio_fechado: '',
+  mobiliado: '',
+  ar_condicionado: '',
+  portao_eletronico: '',
+  armarios_planejados: '',
+  salao_festas: '',
+  academia: '',
+  playground: '',
 }
 
 interface Props {
@@ -184,8 +185,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
   function handleWhatsApp() {
     const cod = imovel.codigo || imovel.id.slice(0, 8).toUpperCase()
     const msgIntro = isSobConsulta
-      ? `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Gostaria de consultar o valor e obter mais informações. Vi no FIXUM.`
-      : `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Vi no FIXUM.`
+      ? `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Gostaria de consultar o valor e obter mais informações. Vi no Fixum.`
+      : `Olá! Tenho interesse no imóvel: ${imovel.titulo} (Cód: ${cod}) em ${imovel.cidade}. Vi no Fixum.`
     const msg = encodeURIComponent(msgIntro)
     const tel = anunciante?.whatsapp ?? anunciante?.telefone ?? '31988027152'
     window.open(`https://wa.me/55${tel.replace(/\D/g, '')}?text=${msg}`, '_blank')
@@ -197,7 +198,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
     const url = typeof window !== 'undefined' ? window.location.href : `https://fixum.com.br/imovel/${imovel.id}`
     const refTexto = imovel.codigo ? `\nRef: ${imovel.codigo}` : ''
     const texto = encodeURIComponent(
-      `*FIXUM Imóveis*\n\n*${imovel.titulo}*${refTexto}\n${localTxt}\n${precoTxt}\n\nConfira as fotos e detalhes no FIXUM:\n${url}`
+      `*Fixum Imóveis*\n\n*${imovel.titulo}*${refTexto}\n${localTxt}\n${precoTxt}\n\nConfira as fotos e detalhes no Fixum:\n${url}`
     )
     window.open(`https://wa.me/?text=${texto}`, '_blank')
   }
@@ -291,7 +292,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 18-6-6 6-6"/>
             </svg>
-            <span>{origemParam === 'mapa' ? 'Voltar ao Mapa' : 'Voltar aos Imóveis'}</span>
+            <span>{origemParam === 'mapa' ? 'Voltar ao mapa' : 'Voltar aos imóveis'}</span>
           </button>
 
           {/* Breadcrumb visível apenas no desktop */}
@@ -305,17 +306,18 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             <span className={styles.breadcrumbTitulo}>{imovel.titulo}</span>
           </div>
 
-          {/* Ações de topo rápidas (Favoritar / Compartilhar) */}
+          {/* Ações de topo rápidas (Fixar / Compartilhar) */}
           <div className={styles.acoesTopoRapidas}>
             <button
               type="button"
               className={`${styles.btnAcaoTopo} ${favoritado ? styles.favoritado : ''}`}
               onClick={toggleFavorito}
               disabled={carregando}
-              title={favoritado ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+              title={favoritado ? 'Desafixar' : 'Fixar para comparar depois'}
+              aria-pressed={favoritado}
             >
-              {favoritado ? '❤️' : '🤍'}
-              <span className={styles.txtAcao}>{favoritado ? 'Salvo' : 'Favoritar'}</span>
+              <Icone nome="fixar" tamanho={16} preenchido={favoritado} />
+              <span className={styles.txtAcao}>{favoritado ? 'Fixado' : 'Fixar'}</span>
             </button>
             <button
               type="button"
@@ -333,8 +335,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               onClick={handleCopiarLink}
               title="Copiar link do imóvel"
             >
-              🔗
-              <span className={styles.txtAcao}>{linkCopiado ? '✓ Copiado!' : 'Copiar Link'}</span>
+              <Icone nome="link" tamanho={16} />
+              <span className={styles.txtAcao}>{linkCopiado ? 'Copiado' : 'Copiar link'}</span>
             </button>
           </div>
         </div>
@@ -381,7 +383,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                   setModalFoto(true)
                 }}
               >
-                📷 Ver todas as {fotos.length} fotos
+ Ver todas as {fotos.length} fotos
               </button>
             </div>
           ) : (
@@ -395,14 +397,14 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
-                {fotos.length === 0 && <div className={styles.semFoto}>🏠</div>}
+                {fotos.length === 0 && <div className={styles.semFoto}><Icone nome="casa" tamanho={16} /></div>}
 
                 {/* Marca d'água na foto */}
                 <MarcaDaguaTeste variante="grande" />
 
                 {fotos.length > 0 && (
                   <div className={styles.badgeQtdFotos}>
-                    📷 {fotoAtiva + 1} / {fotos.length}
+                    <Icone nome="camera" tamanho={16} /> {fotoAtiva + 1} / {fotos.length}
                   </div>
                 )}
 
@@ -429,7 +431,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
                 <div className={styles.galeriaOverlay}>
                   <button type="button" className={styles.btnVerFotos}>
-                    📷 Ver fotos em tela cheia ({fotos.length || 1})
+ Ver fotos em tela cheia ({fotos.length || 1})
                   </button>
                 </div>
               </div>
@@ -447,29 +449,29 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             <div className={styles.cabecalhoInfo}>
               <div className={styles.selos}>
                 <span className={`${styles.tagBadge} ${imovel.negociacao === 'venda' ? styles.tagVenda : styles.tagAluguel}`}>
-                  {imovel.negociacao === 'venda' ? '🏷️ Venda' : '🔑 Aluguel'}
+                  {imovel.negociacao === 'venda' ? 'Venda' : 'Aluguel'}
                 </span>
                 <span className={`${styles.tagBadge} styles.tagTipo`}>
                   {labelTipoImovel(imovel.tipo)}
                 </span>
                 {imovel.aceita_pets && (
                   <span className={`${styles.tagBadge} styles.tagPet`}>
-                    🐾 Aceita Pets
-                  </span>
+ Aceita pets
+ </span>
                 )}
                 {imovel.mobiliado && (
                   <span className={`${styles.tagBadge} styles.tagMobiliado`}>
-                    🛋️ Mobiliado
-                  </span>
+ Mobiliado
+ </span>
                 )}
                 {imovel.destaque && (
                   <span className={`${styles.tagBadge} styles.tagDestaque`}>
-                    ⭐ Destaque
-                  </span>
+ Destaque
+ </span>
                 )}
                 {codigoExibicao && (
                   <div className={styles.badgeCodigoImovel} title="Código do imóvel para referência">
-                    <span>🏷️ Cód. <strong>{codigoExibicao}</strong></span>
+                    <span>Cód. <strong>{codigoExibicao}</strong></span>
                     <button
                       type="button"
                       className={styles.btnCopiarCodigo}
@@ -482,7 +484,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                       }}
                       title="Copiar código do anúncio"
                     >
-                      {codigoCopiado ? '✓ Copiado' : 'Copiar'}
+                      {codigoCopiado ? 'Copiado' : 'Copiar'}
                     </button>
                   </div>
                 )}
@@ -491,7 +493,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
               <h1 className={styles.titulo}>{imovel.titulo}</h1>
 
               <p className={styles.endereco}>
-                <span>📍</span> {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade} - {imovel.estado || 'MG'}
+                <span><Icone nome="local" tamanho={16} /></span> {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade} - {imovel.estado || 'MG'}
               </p>
 
               {/* Bloco de Preço & Custos */}
@@ -507,8 +509,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
                 {isSobConsulta ? (
                   <div style={{ fontSize: '0.8rem', color: '#2C5F8A', background: '#FAF7F1', border: '1px solid #CFC6B6', padding: '8px 12px', borderRadius: '6px', marginTop: '2px', lineHeight: 1.4 }}>
-                    💬 Consulte valores atualizados, condições especiais e agende uma visita diretamente com a nossa equipe.
-                  </div>
+ Consulte valores atualizados, condições especiais e agende uma visita diretamente com a nossa equipe.
+ </div>
                 ) : (
                   (imovel.condominio || imovel.iptu) && (
                     <div className={styles.detalhamentoCustos}>
@@ -526,7 +528,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                       )}
                       {imovel.negociacao === 'aluguel' && (
                         <div className={styles.itemCustoTotal}>
-                          <span className={styles.itemCustoLabel}>Total Mensal Estimado:</span>
+                          <span className={styles.itemCustoLabel}>Total mensal estimado:</span>
                           <strong className={styles.itemCustoValorTotal}>R$ {custoTotalMensal.toLocaleString('pt-BR')}</strong>
                         </div>
                       )}
@@ -537,7 +539,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
               {historico.length > 0 && (
                 <div className={styles.historicoPreco}>
-                  📉 Preço reduzido! Era {formatarPreco(historico[0].preco_anterior)}
+ Preço reduzido! Era {formatarPreco(historico[0].preco_anterior)}
                 </div>
               )}
             </div>
@@ -545,16 +547,16 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             {/* ESPECIFICAÇÕES PRINCIPAIS (GRID MODERNO) */}
             <div className={styles.especificacoesGrid}>
               <div className={styles.especificacaoCard}>
-                <span className={styles.especificacaoIcone}>📐</span>
+                <span className={styles.especificacaoIcone}><Icone nome="area" tamanho={16} /></span>
                 <div className={styles.especificacaoInfo}>
                   <strong>{formatarArea((imovel.area || imovel.area_construida)!)}</strong>
-                  <span>Área Útil</span>
+                  <span>Área útil</span>
                 </div>
               </div>
 
               {imovel.banheiros != null && imovel.banheiros > 0 && (
                 <div className={styles.especificacaoCard}>
-                  <span className={styles.especificacaoIcone}>🚿</span>
+                  <span className={styles.especificacaoIcone}><Icone nome="banho" tamanho={16} /></span>
                   <div className={styles.especificacaoInfo}>
                     <strong>{imovel.banheiros}</strong>
                     <span>{imovel.banheiros === 1 ? 'Banheiro' : 'Banheiros'}</span>
@@ -564,7 +566,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
               {imovel.vagas != null && imovel.vagas > 0 && (
                 <div className={styles.especificacaoCard}>
-                  <span className={styles.especificacaoIcone}>🚗</span>
+                  <span className={styles.especificacaoIcone}><Icone nome="vaga" tamanho={16} /></span>
                   <div className={styles.especificacaoInfo}>
                     <strong>{imovel.vagas}</strong>
                     <span>{imovel.vagas === 1 ? 'Vaga' : 'Vagas'}</span>
@@ -574,7 +576,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
               {imovel.quartos != null && imovel.quartos > 0 ? (
                 <div className={styles.especificacaoCard}>
-                  <span className={styles.especificacaoIcone}>🛏️</span>
+                  <span className={styles.especificacaoIcone}><Icone nome="quarto" tamanho={16} /></span>
                   <div className={styles.especificacaoInfo}>
                     <strong>{imovel.quartos}</strong>
                     <span>{imovel.quartos === 1 ? 'Quarto' : 'Quartos'}</span>
@@ -582,10 +584,10 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                 </div>
               ) : (
                 <div className={styles.especificacaoCard}>
-                  <span className={styles.especificacaoIcone}>🏢</span>
+                  <span className={styles.especificacaoIcone}><Icone nome="predio" tamanho={16} /></span>
                   <div className={styles.especificacaoInfo}>
-                    <strong>Vão Livre</strong>
-                    <span>Espaço Amplo</span>
+                    <strong>Vão livre</strong>
+                    <span>Espaço amplo</span>
                   </div>
                 </div>
               )}
@@ -594,7 +596,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             {/* Descrição do Imóvel */}
             {imovel.descricao && (
               <div className={styles.secaoDetalhe}>
-                <h2 className={styles.secaoSubtitulo}>Sobre o Imóvel</h2>
+                <h2 className={styles.secaoSubtitulo}>Sobre o imóvel</h2>
                 <p className={styles.descricaoTexto}>{imovel.descricao}</p>
               </div>
             )}
@@ -602,11 +604,11 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             {/* Características e Comodidades */}
             {caracteristicas.length > 0 && (
               <div className={styles.secaoDetalhe}>
-                <h2 className={styles.secaoSubtitulo}>Comodidades & Características</h2>
+                <h2 className={styles.secaoSubtitulo}>Comodidades & características</h2>
                 <div className={styles.gridCaracteristicas}>
                   {caracteristicas.map((c) => (
                     <div key={c} className={styles.caracteristicaItem}>
-                      <span className={styles.caracteristicaIcone}>{CARACTERISTICAS_ICONES[c] ?? '✨'}</span>
+                      <span className={styles.caracteristicaIcone}>{CARACTERISTICAS_ICONES[c] ?? ''}</span>
                       <span className={styles.caracteristicaNome}>{c.replace(/_/g, ' ')}</span>
                     </div>
                   ))}
@@ -616,12 +618,12 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
             {/* Localização & Mapa Interativo */}
             <div className={styles.secaoDetalhe}>
-              <h2 className={styles.secaoSubtitulo}>📍 Localização no Mapa</h2>
+              <h2 className={styles.secaoSubtitulo}>Localização no mapa</h2>
               <p className={styles.enderecoCompleto}>
                 {imovel.bairro ? `${imovel.bairro}, ` : ''}{imovel.cidade} - {imovel.estado || 'MG'}
               </p>
               <p style={{ fontSize: '0.82rem', color: '#7A7264', margin: '-4px 0 12px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <span>🛡️</span> Região aproximada para privacidade e segurança do imóvel. O endereço exato é fornecido no agendamento da visita.
+                <span><Icone nome="escudo" tamanho={16} /></span> Região aproximada para privacidade e segurança do imóvel. O endereço exato é fornecido no agendamento da visita.
               </p>
               <div className={styles.mapaImovelWrapper}>
                 <MapaImovel
@@ -670,10 +672,10 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                       )}
                       <div className={styles.tarjaTextos}>
                         <div className={styles.tarjaBadge}>
-                          <span>{isImob ? '🏢 Portfólio Exclusivo' : isCorretorAutonomo ? '👔 Carteira do Corretor' : '🏡 Mais Imóveis'}</span>
+                          <span>{isImob ? 'Portfólio exclusivo' : isCorretorAutonomo ? 'Carteira do Corretor' : 'Mais Imóveis'}</span>
                         </div>
                         <h2 className={styles.tarjaTitulo}>
-                          Mais Imóveis {imovel.negociacao === 'venda' ? 'à Venda' : 'para Alugar'} de {isImob ? nomeImobiliaria : nomeAnunciante}
+                          Mais imóveis {imovel.negociacao === 'venda' ? 'à venda' : 'para alugar'} de {isImob ? nomeImobiliaria : nomeAnunciante}
                         </h2>
                         <p className={styles.tarjaSubtitulo}>
                           {isImob
@@ -692,9 +694,9 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                       }
                       className={styles.tarjaBtnMapa}
                     >
-                      <span className={styles.tarjaBtnIcone}>🗺️</span>
-                      <span>Ver no Mapa ({totalImoveisEmpresa})</span>
-                      <span className={styles.tarjaBtnSeta}>➔</span>
+                      <span className={styles.tarjaBtnIcone}><Icone nome="mapa" tamanho={16} /></span>
+                      <span>Ver no mapa ({totalImoveisEmpresa})</span>
+                      <span className={styles.tarjaBtnSeta}><Icone nome="seta" tamanho={16} /></span>
                     </Link>
                   </div>
                 </div>
@@ -716,8 +718,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                       }
                       className={styles.btnVerTodosCatalogo}
                     >
-                      <span>{isImob ? '🏢' : '👔'} Explorar todos os <strong>{totalImoveisEmpresa} imóveis</strong> de {isImob ? nomeImobiliaria : nomeAnunciante} no mapa</span>
-                      <span className={styles.btnVerTodosSeta}>➔</span>
+                      <span>{isImob ? '' : ''} Explorar todos os <strong>{totalImoveisEmpresa} imóveis</strong> de {isImob ? nomeImobiliaria : nomeAnunciante} no mapa</span>
+                      <span className={styles.btnVerTodosSeta}><Icone nome="seta" tamanho={16} /></span>
                     </Link>
                   </div>
                 )}
@@ -747,7 +749,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                     <span className={styles.bannerImobSubtitulo}>Corretor: {anunciante.nome}</span>
                   )}
                   <span className={styles.bannerImobSelo}>
-                    <span>✓</span> {seloAnunciante}
+                    <span><Icone nome="check" tamanho={16} /></span> {seloAnunciante}
                   </span>
                 </div>
                 {anunciante?.creci && (
@@ -762,7 +764,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                   className={styles.btnWhatsAppDestaque}
                   onClick={handleWhatsApp}
                 >
-                  <span>💬</span> Conversar no WhatsApp
+                  <span><Icone nome="chat" tamanho={16} /></span> Conversar no WhatsApp
                 </button>
 
                 {anunciante?.telefone && (
@@ -770,7 +772,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                     href={`tel:${anunciante.telefone}`}
                     className={styles.btnLigarDestaque}
                   >
-                    <span>📞</span> {isImob ? 'Ligar para a Imobiliária' : isCorretorAutonomo ? 'Ligar para o Corretor' : 'Ligar para o Proprietário'}
+                    <span><Icone nome="telefone" tamanho={16} /></span> {isImob ? 'Ligar para a imobiliária' : isCorretorAutonomo ? 'Ligar para o Corretor' : 'Ligar para o Proprietário'}
                   </a>
                 )}
               </div>
@@ -784,7 +786,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                   }
                   className={styles.btnVerTodosImoveisImob}
                 >
-                  <span>{isImob ? '🏢' : '👔'}</span> Ver outros imóveis de {imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} de {isImob ? nomeImobiliaria : nomeAnunciante} ({totalImoveisEmpresa})
+                  <span>{isImob ? '' : ''}</span> Ver outros imóveis de {imovel.negociacao === 'venda' ? 'venda' : 'aluguel'} de {isImob ? nomeImobiliaria : nomeAnunciante} ({totalImoveisEmpresa})
                 </Link>
                 {isImob && imobiliariaId && (
                   <Link
@@ -801,8 +803,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
               {leadEnviado ? (
                 <div className={styles.sucessoLeadCard}>
-                  <div style={{ fontSize: '2rem', marginBottom: '4px' }}>🎉</div>
-                  <strong>Mensagem Enviada!</strong>
+                  <div style={{ fontSize: '2rem', marginBottom: '4px' }}><Icone nome="check" tamanho={27} /></div>
+                  <strong>Mensagem enviada!</strong>
                   <p>O corretor responsável entrará em contato em instantes pelo WhatsApp.</p>
                 </div>
               ) : (
@@ -845,7 +847,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                     className={styles.btnEnviarLead}
                     disabled={enviandoLead}
                   >
-                    {enviandoLead ? 'Enviando...' : '✉️ Obter Mais Informações'}
+                    {enviandoLead ? 'Enviando...' : 'Obter mais informações'}
                   </button>
                 </form>
               )}
@@ -856,8 +858,8 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                   Código: <strong>{imovel.codigo || imovel.id.slice(0, 8).toUpperCase()}</strong>
                 </div>
                 <p className={styles.avisoSeguro}>
-                  🔒 Seus dados são protegidos e enviados com exclusividade para a equipe autorizada.
-                </p>
+ Seus dados são protegidos e enviados com exclusividade para a equipe autorizada.
+ </p>
               </div>
             </div>
           </div>
@@ -883,7 +885,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
             className={styles.btnWhatsAppMobile}
             onClick={handleWhatsApp}
           >
-            <span>💬</span> WhatsApp
+            <span><Icone nome="chat" tamanho={16} /></span> WhatsApp
           </button>
         </div>
       </div>
@@ -902,7 +904,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
                 onClick={() => setModalFoto(false)}
                 aria-label="Fechar galeria"
               >
-                ✕
+                <Icone nome="fechar" tamanho={16} />
               </button>
             </div>
 

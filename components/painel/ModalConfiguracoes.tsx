@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import styles from './ModalConfiguracoes.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface ModalConfiguracoesProps {
   aberto: boolean
@@ -256,7 +257,7 @@ export default function ModalConfiguracoes({
         const confirmou = await confirmar({
           titulo: 'Descartar alterações?',
           mensagem: 'Você tem modificações não salvas nas configurações. Deseja realmente sair sem salvar?',
-          icone: '⚠️',
+          icone: 'alerta',
           tipo: 'aviso',
           textoBotaoConfirmar: 'Sim, Descartar',
         })
@@ -411,10 +412,10 @@ export default function ModalConfiguracoes({
 
   const labelPoliticaPrecoImob =
     modoExibicaoPreco === 'sob_consulta'
-      ? '💬 Preço Sempre Sob Consulta'
+      ? 'Preço Sempre Sob Consulta'
       : modoExibicaoPreco === 'por_anuncio'
-      ? '🎛️ Opcional por Anúncio'
-      : '💰 Preço Sempre Visível'
+      ? 'Opcional por Anúncio'
+      : 'Preço Sempre Visível'
 
   return (
     <div className={styles.backdrop} onClick={handleCancelar}>
@@ -422,16 +423,16 @@ export default function ModalConfiguracoes({
         {/* Cabeçalho Fixo */}
         <div className={styles.headerModal}>
           <div className={styles.tituloArea}>
-            <div className={styles.iconeTopo}>⚙️</div>
+            <div className={styles.iconeTopo}><Icone nome="config" tamanho={16} /></div>
             <div>
-              <h2 className={styles.titulo}>Configurações da Conta</h2>
+              <h2 className={styles.titulo}>Configurações da conta</h2>
               <p className={styles.subtitulo}>
                 Personalize seu perfil, identidade de anúncios e regras de operação
               </p>
             </div>
           </div>
           <button type="button" className={styles.btnFechar} onClick={handleCancelar} title="Fechar (ESC)">
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
         </div>
 
@@ -444,9 +445,9 @@ export default function ModalConfiguracoes({
               className={`${styles.btnAba} ${abaAtiva === 'perfil' ? styles.btnAbaAtiva : ''}`}
               onClick={() => setAbaAtiva('perfil')}
             >
-              <span className={styles.iconeAba}>👤</span>
+              <span className={styles.iconeAba}><Icone nome="usuario" tamanho={16} /></span>
               <div className={styles.textosAba}>
-                <span className={styles.tituloAba}>Perfil & Atuação</span>
+                <span className={styles.tituloAba}>Perfil & atuação</span>
                 <span className={styles.descAba}>Tipo de conta e CRECI</span>
               </div>
             </button>
@@ -456,9 +457,9 @@ export default function ModalConfiguracoes({
               className={`${styles.btnAba} ${abaAtiva === 'marca' ? styles.btnAbaAtiva : ''}`}
               onClick={() => setAbaAtiva('marca')}
             >
-              <span className={styles.iconeAba}>🎨</span>
+              <span className={styles.iconeAba}><Icone nome="editar" tamanho={16} /></span>
               <div className={styles.textosAba}>
-                <span className={styles.tituloAba}>Marca & Anúncios</span>
+                <span className={styles.tituloAba}>Marca & anúncios</span>
                 <span className={styles.descAba}>Logotipo, preços e códigos</span>
               </div>
             </button>
@@ -469,9 +470,9 @@ export default function ModalConfiguracoes({
                 className={`${styles.btnAba} ${abaAtiva === 'distribuicao' ? styles.btnAbaAtiva : ''}`}
                 onClick={() => setAbaAtiva('distribuicao')}
               >
-                <span className={styles.iconeAba}>⚡</span>
+                <span className={styles.iconeAba}><Icone nome="raio" tamanho={16} /></span>
                 <div className={styles.textosAba}>
-                  <span className={styles.tituloAba}>Leads & Equipe</span>
+                  <span className={styles.tituloAba}>Leads & equipe</span>
                   <span className={styles.descAba}>Distribuição e WhatsApp</span>
                 </div>
               </button>
@@ -484,13 +485,13 @@ export default function ModalConfiguracoes({
             {abaAtiva === 'perfil' && (
               <div>
                 <div className={styles.secaoTituloArea}>
-                  <span className={styles.secaoTitulo}>Tipo de Atuação no Fixum</span>
+                  <span className={styles.secaoTitulo}>Tipo de atuação no Fixum</span>
                   <span className={styles.secaoSubtitulo}>Define os recursos, cota e identificação da sua conta</span>
                 </div>
 
                 {imobiliariaDona ? (
                   <div className={styles.avisoVinculoEquipe}>
-                    <span>🏢 Conta vinculada à equipe de <strong>{imobiliariaDona.nome}</strong>. Seu papel é gerenciado pela imobiliária.</span>
+                    <span>Conta vinculada à equipe de <strong>{imobiliariaDona.nome}</strong>. Seu papel é gerenciado pela imobiliária.</span>
                   </div>
                 ) : (
                   <div className={styles.gridTiposConta}>
@@ -498,9 +499,9 @@ export default function ModalConfiguracoes({
                       className={`${styles.cardTipoConta} ${tipoAnunciante === 'proprietario' ? styles.cardTipoContaSelecionado : ''}`}
                       onClick={() => setTipoAnunciante('proprietario')}
                     >
-                      <div className={styles.tipoContaIcone}>👤</div>
+                      <div className={styles.tipoContaIcone}><Icone nome="usuario" tamanho={16} /></div>
                       <div className={styles.tipoContaInfo}>
-                        <strong>Proprietário Direto</strong>
+                        <strong>Proprietário direto</strong>
                         <span>Particular • Anuncie 1 imóvel grátis no mapa</span>
                       </div>
                     </div>
@@ -509,9 +510,9 @@ export default function ModalConfiguracoes({
                       className={`${styles.cardTipoConta} ${tipoAnunciante === 'corretor' ? styles.cardTipoContaSelecionado : ''}`}
                       onClick={() => setTipoAnunciante('corretor')}
                     >
-                      <div className={styles.tipoContaIcone}>👔</div>
+                      <div className={styles.tipoContaIcone}><Icone nome="maleta" tamanho={16} /></div>
                       <div className={styles.tipoContaInfo}>
-                        <strong>Corretor Autônomo</strong>
+                        <strong>Corretor autônomo</strong>
                         <span>Profissional independente • CRECI e faturas próprias</span>
                       </div>
                     </div>
@@ -520,7 +521,7 @@ export default function ModalConfiguracoes({
                       className={`${styles.cardTipoConta} ${tipoAnunciante === 'imobiliaria' ? styles.cardTipoContaSelecionado : ''}`}
                       onClick={() => setTipoAnunciante('imobiliaria')}
                     >
-                      <div className={styles.tipoContaIcone}>🏢</div>
+                      <div className={styles.tipoContaIcone}><Icone nome="predio" tamanho={16} /></div>
                       <div className={styles.tipoContaInfo}>
                         <strong>Imobiliária</strong>
                         <span>Gestão de equipe, múltiplos corretores e cota corporativa</span>
@@ -552,7 +553,7 @@ export default function ModalConfiguracoes({
             {abaAtiva === 'marca' && (
               <div>
                 <div className={styles.secaoTituloArea}>
-                  <span className={styles.secaoTitulo}>Identidade Visual & Anúncios</span>
+                  <span className={styles.secaoTitulo}>Identidade visual & anúncios</span>
                   <span className={styles.secaoSubtitulo}>Foto/logotipo, visibilidade de preços e formato do código</span>
                 </div>
 
@@ -571,7 +572,7 @@ export default function ModalConfiguracoes({
                     </div>
                     <div className={styles.logoTextosCompacto}>
                       <span className={styles.logoTituloCompacto}>
-                        {ehImobiliaria ? 'Logotipo da Imobiliária' : 'Foto de Perfil / Marca'}
+                        {ehImobiliaria ? 'Logotipo da imobiliária' : 'Foto de perfil / marca'}
                       </span>
                       <div className={styles.logoBotoesCompacto}>
                         <label className={styles.btnUploadLogoCompacto}>
@@ -582,7 +583,7 @@ export default function ModalConfiguracoes({
                             style={{ display: 'none' }}
                             disabled={uploadingLogo}
                           />
-                          {uploadingLogo ? 'Enviando...' : logoUrl ? '📁 Trocar' : '📷 Enviar Foto'}
+                          {uploadingLogo ? 'Enviando...' : logoUrl ? 'Trocar' : 'Enviar Foto'}
                         </label>
                         {logoUrl && (
                           <button
@@ -591,7 +592,7 @@ export default function ModalConfiguracoes({
                             onClick={handleRemoverLogo}
                             title="Remover logotipo"
                           >
-                            ✕
+                            <Icone nome="fechar" tamanho={16} />
                           </button>
                         )}
                       </div>
@@ -622,14 +623,14 @@ export default function ModalConfiguracoes({
                 {/* Regra de Exibição de Preço nos Anúncios */}
                 {imobiliariaDona && !isImobiliaria ? (
                   <div className={styles.avisoVinculoEquipe} style={{ marginTop: '0.65rem' }}>
-                    <span>🏢 <strong>Política da Imobiliária:</strong> A exibição de valores nos anúncios ({labelPoliticaPrecoImob}) e os códigos ({modoCodigo === 'proprio' ? 'Código Interno/CRM' : `Sequencial: ${prefixo || prefixoPadrao}-0001`}) são definidos pela <strong>{imobiliariaDona.nome}</strong>.</span>
+                    <span><Icone nome="predio" tamanho={16} /> <strong>Política da imobiliária:</strong> A exibição de valores nos anúncios ({labelPoliticaPrecoImob}) e os códigos ({modoCodigo === 'proprio' ? 'Código Interno/CRM' : `Sequencial: ${prefixo || prefixoPadrao}-0001`}) são definidos pela <strong>{imobiliariaDona.nome}</strong>.</span>
                   </div>
                 ) : (
                   <>
                     {/* Seção 1: Exibição de Preço */}
                     <div className={styles.secaoBloco}>
                       <label className={styles.labelCampo} style={{ marginBottom: '3px' }}>
-                        <span>Exibição de Preço nos Anúncios (Mapa e Lista)</span>
+                        <span>Exibição de preço nos anúncios (mapa e lista)</span>
                       </label>
                       <div className={styles.gridModos}>
                         {/* Opção 1: Sempre Visível (Sim) */}
@@ -638,7 +639,7 @@ export default function ModalConfiguracoes({
                           onClick={() => setModoExibicaoPreco('visivel')}
                         >
                           <div className={styles.cardModoTopo}>
-                            <span className={styles.cardModoTitulo}>💰 Sempre Visível</span>
+                            <span className={styles.cardModoTitulo}>Sempre visível</span>
                             <span className={styles.badgeRecomendado}>Padrão</span>
                           </div>
                           <p className={styles.cardModoTexto}>
@@ -655,7 +656,7 @@ export default function ModalConfiguracoes({
                           onClick={() => setModoExibicaoPreco('sob_consulta')}
                         >
                           <div className={styles.cardModoTopo}>
-                            <span className={styles.cardModoTitulo}>💬 Sob Consulta</span>
+                            <span className={styles.cardModoTitulo}>Sob consulta</span>
                             <span className={styles.badgeEstrategico}>Leads</span>
                           </div>
                           <p className={styles.cardModoTexto}>
@@ -672,13 +673,13 @@ export default function ModalConfiguracoes({
                           onClick={() => setModoExibicaoPreco('por_anuncio')}
                         >
                           <div className={styles.cardModoTopo}>
-                            <span className={styles.cardModoTitulo}>🎛️ Por Anúncio</span>
+                            <span className={styles.cardModoTitulo}>Por anúncio</span>
                             <span className={styles.badgeRecomendado} style={{ background: '#FBEFD3', color: '#8A5F12', border: '1px solid #F2D48E' }}>Flexível</span>
                           </div>
                           <p className={styles.cardModoTexto}>
                             Escolha individualmente em cada imóvel no cadastro/edição.
                           </p>
-                          <div className={styles.cardModoExemplo} style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.08)' }}>
+                          <div className={styles.cardModoExemplo} style={{ color: '#45566B', background: 'rgba(69, 86, 107, 0.08)' }}>
                             Configuração individual
                           </div>
                         </div>
@@ -688,7 +689,7 @@ export default function ModalConfiguracoes({
                     {/* Seção 2: Modo de Código */}
                     <div className={styles.secaoBloco}>
                       <label className={styles.labelCampo} style={{ marginBottom: '3px' }}>
-                        <span>Modo de Criação do Código</span>
+                        <span>Modo de criação do código</span>
                       </label>
                       <div className={styles.gridModos}>
                         <div
@@ -696,7 +697,7 @@ export default function ModalConfiguracoes({
                           onClick={() => setModoCodigo('automatico')}
                         >
                           <div className={styles.cardModoTopo}>
-                            <span className={styles.cardModoTitulo}>⚡ Automático</span>
+                            <span className={styles.cardModoTitulo}>Automático</span>
                             <span className={styles.badgeRecomendado}>Padrão</span>
                           </div>
                           <p className={styles.cardModoTexto}>
@@ -712,7 +713,7 @@ export default function ModalConfiguracoes({
                           onClick={() => setModoCodigo('proprio')}
                         >
                           <div className={styles.cardModoTopo}>
-                            <span className={styles.cardModoTitulo}>🏷️ Próprio / CRM</span>
+                            <span className={styles.cardModoTitulo}>Próprio / CRM</span>
                           </div>
                           <p className={styles.cardModoTexto}>
                             Habilita campo para digitar códigos manuais.
@@ -732,7 +733,7 @@ export default function ModalConfiguracoes({
             {abaAtiva === 'distribuicao' && ehImobiliaria && (
               <div>
                 <div className={styles.secaoTituloArea}>
-                  <span className={styles.secaoTitulo}>Distribuição de Leads da Equipe</span>
+                  <span className={styles.secaoTitulo}>Distribuição de leads da equipe</span>
                   <span className={styles.secaoSubtitulo}>Como contatos e mensagens recebidos no portal serão encaminhados</span>
                 </div>
 
@@ -743,7 +744,7 @@ export default function ModalConfiguracoes({
                     onClick={() => setRegraDistribuicao('captador')}
                   >
                     <div className={styles.regraItemHeader}>
-                      <span className={styles.regraItemTitulo}>📌 Direto ao Captador</span>
+                      <span className={styles.regraItemTitulo}>Direto ao captador</span>
                       {regraDistribuicao === 'captador' && (
                         <span className={styles.regraBadgeAtivo}>Ativo</span>
                       )}
@@ -759,7 +760,7 @@ export default function ModalConfiguracoes({
                     onClick={() => setRegraDistribuicao('roleta')}
                   >
                     <div className={styles.regraItemHeader}>
-                      <span className={styles.regraItemTitulo}>🎲 Roleta de Plantão</span>
+                      <span className={styles.regraItemTitulo}>Roleta de plantão</span>
                       {regraDistribuicao === 'roleta' && (
                         <span className={styles.regraBadgeAtivo}>Ativo</span>
                       )}
@@ -775,7 +776,7 @@ export default function ModalConfiguracoes({
                     onClick={() => setRegraDistribuicao('gestor')}
                   >
                     <div className={styles.regraItemHeader}>
-                      <span className={styles.regraItemTitulo}>🎯 Triagem na Gestão</span>
+                      <span className={styles.regraItemTitulo}>Triagem na gestão</span>
                       {regraDistribuicao === 'gestor' && (
                         <span className={styles.regraBadgeAtivo}>Ativo</span>
                       )}
@@ -799,7 +800,7 @@ export default function ModalConfiguracoes({
                         checked={whatsappDestino === 'corretor'}
                         onChange={() => setWhatsappDestino('corretor')}
                       />
-                      <span>Corretor do Imóvel</span>
+                      <span>Corretor do imóvel</span>
                     </label>
                     <label style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
                       <input
@@ -809,7 +810,7 @@ export default function ModalConfiguracoes({
                         checked={whatsappDestino === 'imobiliaria'}
                         onChange={() => setWhatsappDestino('imobiliaria')}
                       />
-                      <span>WhatsApp Central</span>
+                      <span>WhatsApp central</span>
                     </label>
                   </div>
                 </div>
@@ -824,7 +825,7 @@ export default function ModalConfiguracoes({
             Cancelar
           </button>
           <button type="button" className={styles.btnSalvar} onClick={handleSalvar} disabled={salvando}>
-            {salvando ? 'Salvando...' : mensagemSucesso ? '✓ Salvo!' : 'Salvar Alterações'}
+            {salvando ? 'Salvando...' : mensagemSucesso ? 'Salvo' : 'Salvar Alterações'}
           </button>
         </div>
       </div>

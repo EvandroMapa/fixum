@@ -8,6 +8,7 @@ import { linkWhatsAppComercial } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
 import { Plano } from '@/lib/types'
 import styles from './page.module.css'
+import Icone from '@/components/ui/Icone'
 
 export default function ParaImobiliariasPage() {
   const [qtdImoveis, setQtdImoveis] = useState<number>(100)
@@ -70,7 +71,7 @@ export default function ParaImobiliariasPage() {
         <section className={styles.hero}>
           <div className={styles.container}>
             <div className={styles.heroBadge}>
-              <span>🏢 Fixum para Imobiliárias & Redes</span>
+              <span>Fixum para imobiliárias & redes</span>
             </div>
 
             <h1 className={styles.heroTitulo}>
@@ -85,19 +86,19 @@ export default function ParaImobiliariasPage() {
 
             <div className={styles.heroAcoes}>
               <Link href="/cadastro?tipo=imobiliaria" className="btn btn-primario btn-lg">
-                🏢 Cadastrar Minha Imobiliária
-              </Link>
+ Cadastrar minha imobiliária
+ </Link>
               <Link href="/painel" className="btn btn-outline btn-lg" style={{ background: '#ffffff', color: '#16201C', borderColor: '#CFC6B6' }}>
-                🔑 Acessar Painel Imobiliário
-              </Link>
+ Acessar painel imobiliário
+ </Link>
               <a
                 href={linkWhatsAppComercial(undefined, 'Olá! Gostaria de saber mais sobre os planos da Fixum para minha imobiliária.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-outline btn-lg"
               >
-                💬 Falar com um Consultor
-              </a>
+ Falar com um consultor
+ </a>
             </div>
 
             {/* Transição para planos individuais */}
@@ -113,32 +114,32 @@ export default function ParaImobiliariasPage() {
           <div className={styles.container}>
             <div className={styles.gridDiferenciais}>
               <div className={styles.cardDiferencial}>
-                <span className={styles.iconeDiferencial}>💰</span>
+                <span className={styles.iconeDiferencial}><Icone nome="moeda" tamanho={16} /></span>
                 <span className={styles.destaqueDiferencial}>
                   A partir de {formatarMoeda(menorCustoUnitario)}
                 </span>
-                <h4>Custo por Imóvel</h4>
+                <h4>Custo por imóvel</h4>
                 <p>Quanto maior sua carteira, menor o custo de cada anúncio ativo.</p>
               </div>
 
               <div className={styles.cardDiferencial}>
-                <span className={styles.iconeDiferencial}>👥</span>
-                <span className={styles.destaqueDiferencial}>Múltiplos Corretores</span>
-                <h4>Gestão de Equipe</h4>
+                <span className={styles.iconeDiferencial}><Icone nome="pessoas" tamanho={16} /></span>
+                <span className={styles.destaqueDiferencial}>Múltiplos corretores</span>
+                <h4>Gestão de equipe</h4>
                 <p>Cadastre seus corretores para operarem sob a mesma conta e cota corporativa.</p>
               </div>
 
               <div className={styles.cardDiferencial}>
-                <span className={styles.iconeDiferencial}>🏷️</span>
-                <span className={styles.destaqueDiferencial}>Sua Marca em Destaque</span>
-                <h4>Branding Imobiliário</h4>
+                <span className={styles.iconeDiferencial}><Icone nome="etiqueta" tamanho={16} /></span>
+                <span className={styles.destaqueDiferencial}>Sua marca em destaque</span>
+                <h4>Branding imobiliário</h4>
                 <p>Seu logotipo e página exclusiva da imobiliária em todos os seus anúncios no mapa.</p>
               </div>
 
               <div className={styles.cardDiferencial}>
                 <span className={styles.iconeDiferencial}>0%</span>
-                <span className={styles.destaqueDiferencial}>Zero Comissão</span>
-                <h4>Lucro 100% Seu</h4>
+                <span className={styles.destaqueDiferencial}>Zero comissão</span>
+                <h4>Lucro 100% seu</h4>
                 <p>A Fixum cobra apenas mensalidade de anúncio. Nenhuma taxa sobre o fechamento.</p>
               </div>
             </div>
@@ -150,7 +151,7 @@ export default function ParaImobiliariasPage() {
           <div className={styles.container}>
             <div className={styles.cardSimulador}>
               <div className={styles.simuladorHeader}>
-                <h2>Simulador de Carteira Corporativa</h2>
+                <h2>Simulador de carteira corporativa</h2>
                 <p>Selecione o tamanho do estoque de imóveis da sua imobiliária</p>
               </div>
 
@@ -187,7 +188,7 @@ export default function ParaImobiliariasPage() {
               {/* Box de Resultado */}
               <div className={styles.resultadoSimulador}>
                 <div className={styles.resultadoInfo}>
-                  <span className={styles.tagResultado}>Plano Corporativo Ideal</span>
+                  <span className={styles.tagResultado}>Plano Corporativo ideal</span>
                   <h3>{planoRecomendado.nome}</h3>
                   <p>
                     Capacidade para até <strong>{planoRecomendado.limite_imoveis_max >= 99999 ? '+500' : planoRecomendado.limite_imoveis_max} anúncios ativos simultâneos</strong>.
@@ -196,7 +197,7 @@ export default function ParaImobiliariasPage() {
 
                 <div className={styles.resultadoPreco}>
                   {planoRecomendado.id === 'enterprise_plus' ? (
-                    <span className={styles.precoConsulta}>Sob Consulta (Personalizado)</span>
+                    <span className={styles.precoConsulta}>Sob consulta (personalizado)</span>
                   ) : (
                     <>
                       <div className={styles.precoMensal}>
@@ -217,7 +218,7 @@ export default function ParaImobiliariasPage() {
                     href={`/cadastro?tipo=imobiliaria&plano=${planoRecomendado.id}`}
                     className="btn btn-primario"
                   >
-                    {planoRecomendado.id === 'enterprise_plus' ? 'Falar com Consultor' : `Contratar ${planoRecomendado.nome}`}
+                    {planoRecomendado.id === 'enterprise_plus' ? 'Falar com consultor' : `Contratar ${planoRecomendado.nome}`}
                   </Link>
                 </div>
               </div>
@@ -229,7 +230,7 @@ export default function ParaImobiliariasPage() {
         <section className={styles.secaoPlanos}>
           <div className={styles.container}>
             <div className={styles.secaoHeaderCentral}>
-              <h2>Planos Exclusivos para Imobiliárias</h2>
+              <h2>Planos exclusivos para imobiliárias</h2>
               <p>Escalabilidade, previsibilidade financeira e controle total para a sua empresa</p>
             </div>
 
@@ -243,7 +244,7 @@ export default function ParaImobiliariasPage() {
                     key={plano.id}
                     className={`${styles.cardPlano} ${isDestaque ? styles.cardPlanoDestaque : ''}`}
                   >
-                    {isDestaque && <span className={styles.badgePopular}>Mais Escolhido</span>}
+                    {isDestaque && <span className={styles.badgePopular}>Mais escolhido</span>}
 
                     <h3 className={styles.cardPlanoNome}>{plano.nome}</h3>
                     <p className={styles.cardPlanoDesc}>{plano.descricao}</p>
@@ -276,12 +277,12 @@ export default function ParaImobiliariasPage() {
                     )}
 
                     <ul className={styles.listaBeneficios}>
-                      <li>✓ Multi-usuários para corretores da equipe</li>
-                      <li>✓ Logotipo da imobiliária em todos os anúncios</li>
-                      <li>✓ Perfil exclusivo da imobiliária na Fixum</li>
-                      <li>✓ Leads diretos para o WhatsApp dos corretores</li>
-                      <li>✓ Gestão de estoque com pausa e reativação livre</li>
-                      <li>✓ Relatórios e suporte prioritário</li>
+                      <li>Multi-usuários para corretores da equipe</li>
+                      <li>Logotipo da imobiliária em todos os anúncios</li>
+                      <li>Perfil exclusivo da imobiliária na Fixum</li>
+                      <li>Leads diretos para o WhatsApp dos corretores</li>
+                      <li>Gestão de estoque com pausa e reativação livre</li>
+                      <li>Relatórios e suporte prioritário</li>
                     </ul>
 
                     <div className={styles.cardAcao}>
@@ -289,7 +290,7 @@ export default function ParaImobiliariasPage() {
                         href={`/cadastro?tipo=imobiliaria&plano=${plano.id}`}
                         className={`btn ${isDestaque ? 'btn-primario' : 'btn-outline'} ${styles.btnContratar}`}
                       >
-                        {plano.id === 'enterprise_plus' ? 'Solicitar Proposta' : `Assinar ${plano.nome}`}
+                        {plano.id === 'enterprise_plus' ? 'Solicitar proposta' : `Assinar ${plano.nome}`}
                       </Link>
                     </div>
                   </div>

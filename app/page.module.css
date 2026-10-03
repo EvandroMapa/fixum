@@ -88,8 +88,8 @@
 
 .mapaImagem {
   object-fit: cover;
-  /* Aquece o estilo "light" do Mapbox para o tom Papel da marca */
-  filter: sepia(0.28) saturate(0.85) brightness(1.02);
+  /* Leva o estilo "streets" do Mapbox para o tom Papel da marca, mantendo as ruas legíveis */
+  filter: grayscale(0.92) sepia(0.18) contrast(1.04) brightness(1.05);
 }
 
 .mapaAreaBtn {

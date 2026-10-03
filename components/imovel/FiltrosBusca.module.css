@@ -74,9 +74,9 @@
 }
 
 .badgeAluguel {
-  background: #ffedd5;
+  background: #FBE6DF;
   color: var(--marco-escuro);
-  border: 1.5px solid #fdba74;
+  border: 1.5px solid #EBA592;
 }
 
 /* Botão Filtros Gerais Mobile */
@@ -257,15 +257,19 @@
 }
 
 .labelGrupo {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--fonte-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 99px;
-  background: var(--pedra-100);
-  color: var(--tinta-2);
+  color: var(--pedra-600);
+}
+
+.labelGrupo svg {
+  color: var(--tinta);
 }
 
 .btnToggleTodos {
@@ -285,39 +289,6 @@
   background: var(--papel);
   color: var(--tinta);
   border-color: var(--pedra-300);
-}
-
-.grupoResidencial .labelGrupo {
-  background: var(--pedra-100);
-  color: var(--tinta-2);
-}
-
-.grupoResidencial .todosAtivos {
-  background: var(--pedra-200);
-  color: var(--tinta-2);
-  border-color: var(--pedra-400);
-}
-
-.grupoComercial .labelGrupo {
-  background: var(--marco-claro);
-  color: var(--marco-escuro);
-}
-
-.grupoComercial .todosAtivos {
-  background: #ffedd5;
-  color: var(--marco-escuro);
-  border-color: #fdba74;
-}
-
-.grupoRural .labelGrupo {
-  background: var(--cor-sucesso-claro);
-  color: var(--cerrado);
-}
-
-.grupoRural .todosAtivos {
-  background: var(--cerrado-claro);
-  color: var(--cerrado);
-  border-color: #A9CDB6;
 }
 
 .chipTipo {
@@ -774,7 +745,7 @@
   .chipAluguel {
     background: var(--marco-claro);
     color: var(--marco-escuro);
-    border-color: #fed7aa;
+    border-color: #F3C3B5;
     font-weight: 700;
   }
 
@@ -868,3 +839,9 @@
   }
 }
 
+
+.todosAtivos {
+  background: var(--tinta);
+  color: var(--papel);
+  border-color: var(--tinta);
+}

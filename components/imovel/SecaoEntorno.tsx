@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { type PontoInteresse } from '@/lib/types'
 import styles from './SecaoEntorno.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 interface Props {
   lat: number | string | null | undefined
@@ -13,14 +14,14 @@ interface Props {
 }
 
 const CATEGORIAS = [
-  { id: 'supermercados', label: 'Supermercados', icone: '🛒' },
-  { id: 'farmacias', label: 'Farmácias', icone: '💊' },
-  { id: 'escolas', label: 'Escolas e Creches', icone: '🏫' },
-  { id: 'restaurantes', label: 'Restaurantes e Cafés', icone: '🍽️' },
-  { id: 'academias', label: 'Academias', icone: '🏋️' },
-  { id: 'hospitais', label: 'Hospitais e Saúde', icone: '🏥' },
-  { id: 'bancos', label: 'Bancos e Caixas', icone: '🏦' },
-  { id: 'transporte', label: 'Transporte Público', icone: '🚌' },
+  { id: 'supermercados', label: 'Supermercados', icone: 'carrinho' },
+  { id: 'farmacias', label: 'Farmácias', icone: 'farmacia' },
+  { id: 'escolas', label: 'Escolas e creches', icone: 'escola' },
+  { id: 'restaurantes', label: 'Restaurantes e cafés', icone: 'talheres' },
+  { id: 'academias', label: 'Academias', icone: 'haltere' },
+  { id: 'hospitais', label: 'Hospitais e saúde', icone: 'hospital' },
+  { id: 'bancos', label: 'Bancos e caixas', icone: 'banco' },
+  { id: 'transporte', label: 'Transporte público', icone: 'onibus' },
 ]
 
 export default function SecaoEntorno({
@@ -99,7 +100,7 @@ export default function SecaoEntorno({
     <div className={styles.containerEntorno}>
       <div className={styles.cabecalhoSecao}>
         <div>
-          <h2 className={styles.tituloSecao}>🏘️ O que tem no entorno?</h2>
+          <h2 className={styles.tituloSecao}>O que tem no entorno?</h2>
           <p className={styles.subtituloSecao}>
             Conveniências reais calculadas a partir deste endereço (distância e tempo a pé)
           </p>
@@ -120,7 +121,7 @@ export default function SecaoEntorno({
               className={`${styles.btnCategoria} ${ativa ? styles.btnCategoriaAtiva : ''}`}
               onClick={() => handleTrocarCategoria(cat.id)}
             >
-              <span className={styles.iconeCat}>{cat.icone}</span>
+              <span className={styles.iconeCat}>{ehNomeIcone(cat.icone) && <Icone nome={cat.icone} tamanho={18} />}</span>
               <span>{cat.label}</span>
               {qtd !== null && qtd > 0 && <span className={styles.badgeQtd}>{qtd}</span>}
             </button>
@@ -148,23 +149,23 @@ export default function SecaoEntorno({
                 title="Clique para ver no mapa acima"
               >
                 <div className={styles.poiInfoPrincipal}>
-                  <div className={styles.poiIconeWrapper}>{poi.icone}</div>
+                  <div className={styles.poiIconeWrapper}>{ehNomeIcone(poi.icone) && <Icone nome={poi.icone} tamanho={18} />}</div>
                   <div className={styles.poiTextos}>
                     <strong className={styles.poiNome}>{poi.nome}</strong>
                     <div className={styles.poiDistancias}>
                       <span className={styles.poiDistanciaBadge}>{poi.distanciaFormatada}</span>
-                      <span className={styles.poiTempoPe}>🚶 {poi.tempoPe}</span>
+                      <span className={styles.poiTempoPe}><Icone nome="caminhada" tamanho={16} /> {poi.tempoPe}</span>
                     </div>
                   </div>
                 </div>
-                <span className={styles.poiSetaVer}>📍</span>
+                <span className={styles.poiSetaVer}><Icone nome="local" tamanho={16} /></span>
               </div>
             )
           })}
         </div>
       ) : (
         <div className={styles.vazioPois}>
-          <span>🔍 Nenhum ponto de {catConfig.label.toLowerCase()} encontrado num raio de 2.5 km.</span>
+          <span>Nenhum ponto de {catConfig.label.toLowerCase()} encontrado num raio de 2.5 km.</span>
         </div>
       )}
     </div>

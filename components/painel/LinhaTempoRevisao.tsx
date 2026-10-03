@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import styles from './LinhaTempoRevisao.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 export interface EventoRevisao {
   id: string
@@ -108,23 +109,23 @@ export default function LinhaTempoRevisao({
   function getIconeETitulo(tipo: EventoRevisao['tipo_evento']) {
     switch (tipo) {
       case 'solicitacao_ajuste':
-        return { icone: '⚠️', titulo: 'Ajustes Solicitados pelo Gestor' }
+        return { icone: 'alerta', titulo: 'Ajustes solicitados pelo gestor' }
       case 'resposta_corretor':
-        return { icone: '📤', titulo: 'Reenviado para Revisão com Correções' }
+        return { icone: 'enviar', titulo: 'Reenviado para revisão com correções' }
       case 'aprovacao':
-        return { icone: '✅', titulo: 'Anúncio Aprovado e Publicado' }
+        return { icone: 'check', titulo: 'Anúncio aprovado e publicado' }
       case 'submissao_inicial':
-        return { icone: '📝', titulo: 'Cadastro Submetido para Revisão' }
+        return { icone: 'editar', titulo: 'Cadastro submetido para revisão' }
       default:
-        return { icone: '💬', titulo: 'Atualização no Anúncio' }
+        return { icone: 'chat', titulo: 'Atualização no anúncio' }
     }
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.tituloSecao}>
-        <span>💬</span>
-        <span>Histórico de Moderação & Mensagens ({eventos.length})</span>
+        <span><Icone nome="chat" tamanho={16} /></span>
+        <span>Histórico de moderação & mensagens ({eventos.length})</span>
       </div>
 
       {carregando ? (
@@ -143,7 +144,7 @@ export default function LinhaTempoRevisao({
             </div>
             <div className={styles.conteudoItem}>
               <div className={styles.cabecalhoItem}>
-                <span className={styles.autorNome}>Gestor da Imobiliária</span>
+                <span className={styles.autorNome}>Gestor da imobiliária</span>
                 <span className={`${styles.badgePapel} ${styles.badgeGestor}`}>Gestor</span>
               </div>
               <div className={styles.mensagemTexto}>{motivoRejeicaoAtual}</div>
@@ -187,7 +188,7 @@ export default function LinhaTempoRevisao({
                   </div>
 
                   <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#5A5449', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>{icone}</span>
+                    <span>{ehNomeIcone(icone) && <Icone nome={icone} tamanho={16} />}</span>
                     <span>{titulo}</span>
                   </div>
 

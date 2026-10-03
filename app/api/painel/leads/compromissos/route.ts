@@ -194,7 +194,7 @@ export async function POST(req: Request) {
 
     // 3. Registrar na timeline de atividades
     const dataFormatada = new Date(data_hora).toLocaleString('pt-BR')
-    const descricaoAtividade = `📅 Compromisso agendado: "${titulo}" para ${dataFormatada} (${responsavel_nome || 'Equipe'}).`
+    const descricaoAtividade = `Compromisso agendado: "${titulo}" para ${dataFormatada} (${responsavel_nome || 'Equipe'}).`
 
     try {
       await fetch(new URL('/api/painel/leads', req.url).toString(), {

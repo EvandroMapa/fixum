@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import styles from './ModalConfigSeguranca.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface ModalConfigSegurancaProps {
   aberto: boolean
@@ -129,9 +130,9 @@ export default function ModalConfigSeguranca({
   // Desativar 2FA
   async function handleDesativar2FA() {
     const confirma = await confirmar({
-      titulo: 'Desativar Verificação em 2 Etapas?',
+      titulo: 'Desativar verificação em 2 etapas?',
       mensagem: 'Deseja realmente desativar o 2FA por e-mail? Sua conta ficará protegida apenas pela senha.',
-      icone: '🔓',
+      icone: 'cadeado',
       textoBotaoConfirmar: 'Sim, Desativar 2FA',
       tipo: 'aviso',
     })
@@ -185,12 +186,12 @@ export default function ModalConfigSeguranca({
     <div className={styles.overlay} onClick={onFechar}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.btnFechar} onClick={onFechar} aria-label="Fechar">
-          ✕
+          <Icone nome="fechar" tamanho={16} />
         </button>
 
         <div className={styles.cabecalho}>
-          <span className={styles.iconeModal}>🛡️</span>
-          <h2>Segurança da Conta</h2>
+          <span className={styles.iconeModal}><Icone nome="escudo" tamanho={16} /></span>
+          <h2>Segurança da conta</h2>
           <p className={styles.subtitulo}>
             Proteja seus imóveis, leads e planos com autenticação em duas etapas via E-mail
           </p>
@@ -198,13 +199,13 @@ export default function ModalConfigSeguranca({
 
         {mensagemSucesso && (
           <div className={styles.alertaSucesso}>
-            ✓ {mensagemSucesso}
+            <Icone nome="check" tamanho={16} /> {mensagemSucesso}
           </div>
         )}
 
         {erro && (
           <div className={styles.alertaErro}>
-            ⚠️ {erro}
+            <Icone nome="alerta" tamanho={16} /> {erro}
           </div>
         )}
 
@@ -212,11 +213,11 @@ export default function ModalConfigSeguranca({
         <div className={styles.secaoCard}>
           <div className={styles.secaoHeader}>
             <div>
-              <h3>Verificação em 2 Etapas por E-mail (2FA)</h3>
+              <h3>Verificação em 2 etapas por e-mail (2FA)</h3>
               <p>Receba um código de 6 dígitos na sua caixa de entrada a cada novo login.</p>
             </div>
             <span className={`${styles.badgeStatus} ${temMfaAtivo ? styles.badgeAtivo : styles.badgeInativo}`}>
-              {temMfaAtivo ? 'Ativado 🔒' : 'Desativado ⚠️'}
+              {temMfaAtivo ? 'Ativado ' : 'Desativado '}
             </span>
           </div>
 
@@ -262,7 +263,7 @@ export default function ModalConfigSeguranca({
                   className="btn btn-primario"
                   disabled={carregando || codigoConfirmacao.length < 6}
                 >
-                  {carregando ? 'Validando...' : 'Confirmar e Ativar 2FA'}
+                  {carregando ? 'Validando...' : 'Confirmar e ativar 2FA'}
                 </button>
                 <button
                   type="button"
@@ -287,7 +288,7 @@ export default function ModalConfigSeguranca({
                     cursor: timerReenvio > 0 ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {timerReenvio > 0 ? `Reenviar código em ${timerReenvio}s` : '🔄 Reenviar código para meu e-mail'}
+                  {timerReenvio > 0 ? `Reenviar código em ${timerReenvio}s` : 'Reenviar código para meu e-mail'}
                 </button>
               </div>
             </form>
@@ -300,8 +301,8 @@ export default function ModalConfigSeguranca({
                 onClick={handleIniciarAtivacao2FA}
                 disabled={carregando}
               >
-                🔐 Ativar Verificação por E-mail
-              </button>
+ Ativar verificação por e-mail
+ </button>
             </div>
           )}
         </div>
@@ -310,7 +311,7 @@ export default function ModalConfigSeguranca({
         <div className={styles.secaoCard}>
           <div className={styles.secaoHeader}>
             <div>
-              <h3>Sessões Ativas e Dispositivos</h3>
+              <h3>Sessões ativas e dispositivos</h3>
               <p>Desconecte todos os outros computadores e celulares conectados à sua conta.</p>
             </div>
           </div>
@@ -322,8 +323,8 @@ export default function ModalConfigSeguranca({
               onClick={handleDesconectarOutros}
               disabled={carregando}
             >
-              🚪 Desconectar todas as outras sessões
-            </button>
+ Desconectar todas as outras sessões
+ </button>
           </div>
         </div>
 

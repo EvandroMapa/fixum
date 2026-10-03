@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import styles from './ModalEditarCorretor.module.css'
+import Icone from '@/components/ui/Icone'
 
 export interface MembroEquipe {
   id: string
@@ -122,14 +123,14 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
         {/* Cabeçalho */}
         <div className={styles.cabecalho}>
           <div className={styles.tituloWrapper}>
-            <div className={styles.iconeModal}>✏️</div>
+            <div className={styles.iconeModal}><Icone nome="editar" tamanho={16} /></div>
             <div>
-              <h2 className={styles.titulo}>Editar Dados do Corretor</h2>
+              <h2 className={styles.titulo}>Editar dados do corretor</h2>
               <span className={styles.subtitulo}>Atualize os dados de contato, foto e registro profissional</span>
             </div>
           </div>
           <button type="button" className={styles.btnFechar} onClick={onFechar}>
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
         </div>
 
@@ -153,7 +154,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
             </div>
 
             <div className={styles.fotoInfo}>
-              <span className={styles.labelFoto}>Foto de Perfil</span>
+              <span className={styles.labelFoto}>Foto de perfil</span>
               <span className={styles.sublabelFoto}>
                 Exibida no ranking, no pódio e nos cards de atendimento
               </span>
@@ -171,7 +172,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
                   onClick={() => inputFileRef.current?.click()}
                   disabled={uploadingFoto}
                 >
-                  {uploadingFoto ? 'Enviando foto...' : avatarUrl ? '📷 Alterar Foto' : '📷 Adicionar Foto'}
+                  {uploadingFoto ? 'Enviando foto...' : avatarUrl ? 'Alterar Foto' : 'Adicionar Foto'}
                 </button>
                 {avatarUrl && (
                   <button
@@ -187,7 +188,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
           </div>
 
           <div className={styles.campo}>
-            <label className={styles.label}>Nome Completo *</label>
+            <label className={styles.label}>Nome completo *</label>
             <input
               type="text"
               className={styles.input}
@@ -199,7 +200,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
           </div>
 
           <div className={styles.campo}>
-            <label className={styles.label}>E-mail de Login</label>
+            <label className={styles.label}>E-mail de login</label>
             <input
               type="email"
               className={styles.input}
@@ -211,7 +212,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
 
           <div className={styles.gridCampos}>
             <div className={styles.campo}>
-              <label className={styles.label}>WhatsApp / Telefone</label>
+              <label className={styles.label}>WhatsApp / telefone</label>
               <input
                 type="text"
                 className={styles.input}
@@ -236,7 +237,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
           {/* Papel na Equipe */}
           {!isPrincipal ? (
             <div className={styles.campo}>
-              <label className={styles.label}>Papel na Equipe</label>
+              <label className={styles.label}>Papel na equipe</label>
               <div className={styles.grupoRadios}>
                 <label className={`${styles.radioCard} ${papel === 'corretor' ? styles.radioCardAtivo : ''}`}>
                   <input
@@ -247,7 +248,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
                     onChange={() => setPapel('corretor')}
                   />
                   <div>
-                    <span className={styles.radioTitulo}>👤 Corretor</span>
+                    <span className={styles.radioTitulo}>Corretor</span>
                     <span className={styles.radioDesc}>Anuncia imóveis com a cota e atende seus leads</span>
                   </div>
                 </label>
@@ -261,7 +262,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
                     onChange={() => setPapel('gestor')}
                   />
                   <div>
-                    <span className={styles.radioTitulo}>👑 Gestor / Gerente</span>
+                    <span className={styles.radioTitulo}>Gestor / gerente</span>
                     <span className={styles.radioDesc}>Acesso total aos anúncios, equipe e homologação de vendas</span>
                   </div>
                 </label>
@@ -269,8 +270,8 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
             </div>
           ) : (
             <div className={styles.infoPrincipal}>
-              <span>👑</span>
-              <p>Este membro é o <strong>Gestor Titular / Administrador Master</strong> da imobiliária.</p>
+              <span><Icone nome="coroa" tamanho={16} /></span>
+              <p>Este membro é o <strong>Gestor titular / administrador Master</strong> da imobiliária.</p>
             </div>
           )}
 
@@ -280,7 +281,7 @@ export default function ModalEditarCorretor({ membro, onFechar, onSalvo }: Props
               Cancelar
             </button>
             <button type="submit" className={styles.btnSalvar} disabled={salvando || uploadingFoto}>
-              {salvando ? 'Salvando...' : 'Salvar Alterações'}
+              {salvando ? 'Salvando...' : 'Salvar alterações'}
             </button>
           </div>
         </form>

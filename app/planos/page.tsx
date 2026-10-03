@@ -12,6 +12,7 @@ import {
 } from '@/lib/planos'
 import { PeriodicidadePlano } from '@/lib/types'
 import styles from './page.module.css'
+import Icone from '@/components/ui/Icone'
 
 export default function PlanosPage() {
   const [qtdImoveisSimulador, setQtdImoveisSimulador] = useState<number>(1)
@@ -29,7 +30,7 @@ export default function PlanosPage() {
         {/* ── HERO SECTION ── */}
         <section className={styles.hero}>
           <div className={styles.container}>
-            <span className={styles.heroBadge}>Planos & Assinaturas</span>
+            <span className={styles.heroBadge}>Planos & assinaturas</span>
             <h1 className={styles.heroTitulo}>
               Anuncie seus imóveis na Fixum.<br />
               <span className={styles.gradiente}>Comece grátis.</span>
@@ -41,10 +42,10 @@ export default function PlanosPage() {
 
             <div className={styles.heroAcoes}>
               <Link href="/cadastro?tipo=proprietario" className="btn btn-primario btn-lg">
-                Começar Grátis com 1 Imóvel
+                Começar Grátis com 1 imóvel
               </Link>
               <a href="#simulador" className="btn btn-outline btn-lg">
-                Simular Minha Carteira
+                Simular minha carteira
               </a>
             </div>
 
@@ -66,7 +67,7 @@ export default function PlanosPage() {
             }}>
               <div>
                 <div style={{ fontWeight: 700, color: '#16201C', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>🏢</span> Representa uma Imobiliária ou Rede?
+                  <span><Icone nome="predio" tamanho={16} /></span> Representa uma imobiliária ou rede?
                 </div>
                 <div style={{ fontSize: '0.85rem', color: '#7A7264', marginTop: '2px' }}>
                   Condições especiais para +50 imóveis, múltiplos corretores e menor custo.
@@ -77,7 +78,7 @@ export default function PlanosPage() {
                 className="btn btn-primario btn-sm"
                 style={{ whiteSpace: 'nowrap' }}
               >
-                Ver Planos para Imobiliárias →
+                Ver planos para imobiliárias →
               </Link>
             </div>
           </div>
@@ -125,7 +126,7 @@ export default function PlanosPage() {
               {/* Resultado do Simulador */}
               <div className={styles.resultadoSimulador}>
                 <div className={styles.resultadoInfo}>
-                  <span className={styles.tagResultado}>Plano Recomendado</span>
+                  <span className={styles.tagResultado}>Plano recomendado</span>
                   <h3>{planoSugerido.nome}</h3>
                   <p>
                     Comporta até <strong>{planoSugerido.limite_imoveis_max >= 99999 ? '+500' : planoSugerido.limite_imoveis_max} imóveis ativos</strong> simultâneos.
@@ -167,7 +168,7 @@ export default function PlanosPage() {
         <section className={styles.secaoPlanos}>
           <div className={styles.container}>
             <div className={styles.secaoHeaderCentral}>
-              <h2>Tabela Oficial de Planos</h2>
+              <h2>Tabela oficial de planos</h2>
               <p>Transparência total: escolha o plano sob medida para sua estratégia de vendas</p>
             </div>
 
@@ -188,7 +189,7 @@ export default function PlanosPage() {
                 { id: 'mensal', label: 'Mensal', tag: null },
                 { id: 'trimestral', label: '3 Meses', tag: '-10% OFF' },
                 { id: 'semestral', label: '6 Meses', tag: '-15% OFF' },
-                { id: 'anual', label: '1 Ano 🔥', tag: '-20% OFF' },
+                { id: 'anual', label: '1 Ano ', tag: '-20% OFF' },
               ].map((c) => {
                 const isAtivo = periodicidade === c.id
                 return (
@@ -244,8 +245,8 @@ export default function PlanosPage() {
                       ${isGratis ? styles.cardPlanoGratis : ''}
                     `}
                   >
-                    {isDestaque && <span className={styles.badgePopular}>Mais Popular</span>}
-                    {isGratis && <span className={styles.badgeGratis}>Entrada Livre</span>}
+                    {isDestaque && <span className={styles.badgePopular}>Mais popular</span>}
+                    {isGratis && <span className={styles.badgeGratis}>Entrada livre</span>}
 
                     <h3 className={styles.cardPlanoTitulo}>{p.nome}</h3>
                     <p className={styles.cardPlanoDescricao}>{p.descricao}</p>
@@ -274,8 +275,7 @@ export default function PlanosPage() {
                     </div>
 
                     {detalhes.descontoPct > 0 && p.preco_mensal > 0 && (
-                      <div style={{ fontSize: '0.75rem', color: '#2E6B4E', fontWeight: 600, marginBottom: '8px' }}>
-                        🎉 {detalhes.descontoPct}% OFF (Total: {formatarMoeda(detalhes.valorTotalComDesconto)})
+                      <div style={{ fontSize: '0.75rem', color: '#2E6B4E', fontWeight: 600, marginBottom: '8px' }}><Icone nome="check" tamanho={16} /> {detalhes.descontoPct}% OFF (total: {formatarMoeda(detalhes.valorTotalComDesconto)})
                       </div>
                     )}
 
@@ -289,11 +289,11 @@ export default function PlanosPage() {
                     })()}
 
                     <ul className={styles.listaRecursos}>
-                      <li>✓ Mapa interativo e busca georreferenciada</li>
-                      <li>✓ Fotos ilimitadas em alta resolução</li>
-                      <li>✓ Recebimento de contatos direto no WhatsApp</li>
-                      <li>✓ Painel de gestão e edição de anúncios</li>
-                      <li>✓ Flexibilidade para pausar e reativar imóveis</li>
+                      <li>Mapa interativo e busca georreferenciada</li>
+                      <li>Fotos ilimitadas em alta resolução</li>
+                      <li>Recebimento de contatos direto no WhatsApp</li>
+                      <li>Painel de gestão e edição de anúncios</li>
+                      <li>Flexibilidade para pausar e reativar imóveis</li>
                     </ul>
 
                     <div className={styles.cardPlanoBtnWrapper}>
@@ -325,7 +325,7 @@ export default function PlanosPage() {
         <section className={styles.secaoComparativo}>
           <div className={styles.container}>
             <div className={styles.secaoHeaderCentral}>
-              <h2>Custo Efetivo por Imóvel</h2>
+              <h2>Custo efetivo por imóvel</h2>
               <p>Veja como o custo unitário cai progressivamente à medida que sua carteira cresce</p>
             </div>
 
@@ -334,9 +334,9 @@ export default function PlanosPage() {
                 <thead>
                   <tr>
                     <th>Plano</th>
-                    <th>Imóveis Ativos</th>
+                    <th>Imóveis ativos</th>
                     <th>Mensalidade</th>
-                    <th>Custo Máximo por Imóvel</th>
+                    <th>Custo máximo por imóvel</th>
                     <th>Economia</th>
                   </tr>
                 </thead>
@@ -370,32 +370,32 @@ export default function PlanosPage() {
 
             <div className={styles.gridVantagens}>
               <div className={styles.cardVantagem}>
-                <span className={styles.iconeVantagem}>🎯</span>
-                <h3>0% de Comissão</h3>
+                <span className={styles.iconeVantagem}><Icone nome="alvo" tamanho={16} /></span>
+                <h3>0% de comissão</h3>
                 <p>
                   A Fixum cobra apenas pela utilização da plataforma. Toda a comissão da venda ou aluguel é 100% sua.
                 </p>
               </div>
 
               <div className={styles.cardVantagem}>
-                <span className={styles.iconeVantagem}>🗺️</span>
-                <h3>Descoberta Visual no Mapa</h3>
+                <span className={styles.iconeVantagem}><Icone nome="mapa" tamanho={16} /></span>
+                <h3>Descoberta visual no mapa</h3>
                 <p>
                   Compradores e locatários encontram seus imóveis navegando pelo mapa com alta precisão e fluidez.
                 </p>
               </div>
 
               <div className={styles.cardVantagem}>
-                <span className={styles.iconeVantagem}>⏸️</span>
-                <h3>Pausa Inteligente de Anúncios</h3>
+                <span className={styles.iconeVantagem}><Icone nome="pausa" tamanho={16} /></span>
+                <h3>Pausa inteligente de anúncios</h3>
                 <p>
                   Imóveis pausados não consomem sua cota do plano. Pause e reative seus anúncios conforme o estoque gira.
                 </p>
               </div>
 
               <div className={styles.cardVantagem}>
-                <span className={styles.iconeVantagem}>💬</span>
-                <h3>Leads Diretos no WhatsApp</h3>
+                <span className={styles.iconeVantagem}><Icone nome="chat" tamanho={16} /></span>
+                <h3>Leads diretos no WhatsApp</h3>
                 <p>
                   Interessados entram em contato diretamente com você via WhatsApp e ficam salvos no seu painel.
                 </p>
@@ -408,7 +408,7 @@ export default function PlanosPage() {
         <section className={styles.secaoFaqPublico}>
           <div className={styles.container}>
             <div className={styles.secaoHeaderCentral}>
-              <h2>Perguntas Frequentes</h2>
+              <h2>Perguntas frequentes</h2>
               <p>Tudo o que você precisa saber sobre o funcionamento dos planos</p>
             </div>
 
@@ -451,7 +451,7 @@ export default function PlanosPage() {
               <h2>Pronto para anunciar seus imóveis com o melhor custo-benefício?</h2>
               <p>Cadastre-se gratuitamente agora mesmo e publique seu primeiro anúncio em menos de 3 minutos.</p>
               <Link href="/cadastro" className="btn btn-primario btn-lg">
-                Criar Conta Gratuita
+                Criar conta gratuita
               </Link>
             </div>
           </div>

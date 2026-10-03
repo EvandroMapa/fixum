@@ -11,7 +11,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const { id } = await params
-    if (!id) return { title: 'Imóvel não encontrado • FIXUM' }
+    if (!id) return { title: 'Imóvel não encontrado • Fixum' }
 
     const supabase = criarClienteAdmin()
 
@@ -22,13 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       .maybeSingle()
 
     if (!imovel) {
-      return { title: 'Imóvel não encontrado • FIXUM' }
+      return { title: 'Imóvel não encontrado • Fixum' }
     }
 
     const cod = imovel.codigo ? ` (Cód: ${imovel.codigo})` : ''
     const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(imovel.preco || 0)
-    const titulo = `${imovel.titulo || 'Imóvel'}${cod} • ${imovel.cidade || ''} | FIXUM`
-    const descricao = `${imovel.negociacao === 'venda' ? 'Venda' : 'Aluguel'}: ${precoFormatado} • ${imovel.cidade || ''}${imovel.bairro ? ` - ${imovel.bairro}` : ''}. Veja fotos e localização no FIXUM.`
+    const titulo = `${imovel.titulo || 'Imóvel'}${cod} • ${imovel.cidade || ''} | Fixum`
+    const descricao = `${imovel.negociacao === 'venda' ? 'Venda' : 'Aluguel'}: ${precoFormatado} • ${imovel.cidade || ''}${imovel.bairro ? ` - ${imovel.bairro}` : ''}. Veja fotos e localização no Fixum.`
     const fotoCapa = imovel.fotos_imovel?.find((f: any) => f.principal)?.url || imovel.fotos_imovel?.[0]?.url || 'https://www.fixum.com.br/og-fixum.jpg'
 
     return {
@@ -38,13 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: titulo,
         description: descricao,
         url: `https://www.fixum.com.br/imovel/${imovel.id}`,
-        siteName: 'FIXUM Imóveis',
+        siteName: 'Fixum',
         images: [
           {
             url: fotoCapa,
             width: 1200,
             height: 630,
-            alt: imovel.titulo || 'Imóvel FIXUM',
+            alt: imovel.titulo || 'Imóvel Fixum',
           },
         ],
         type: 'article',
@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     }
   } catch {
-    return { title: 'Imóvel • FIXUM' }
+    return { title: 'Imóvel • Fixum' }
   }
 }
 
@@ -168,7 +168,7 @@ export default async function PaginaImovel({ params }: Props) {
   if (!perfil) {
     perfil = {
       id: anuncianteId,
-      nome: 'Imobiliária Parceira',
+      nome: 'Imobiliária parceira',
       tipo: 'imobiliaria',
       imobiliaria_nome: 'Imobiliária Parceira',
     }

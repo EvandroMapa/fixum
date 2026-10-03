@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import styles from './BotoesHero.module.css'
+import Icone from '@/components/ui/Icone'
 
 export default function BotoesHero() {
   return (
@@ -11,7 +12,7 @@ export default function BotoesHero() {
         href="/explorar?negociacao=venda"
         className={`btn btn-acento btn-lg ${styles.btnPrimario}`}
       >
-        <span>🏠</span> Quero Comprar
+        <span><Icone nome="casa" tamanho={16} /></span> Quero comprar
       </Link>
 
       {/* Alugar — vai direto para o mapa com filtro de aluguel */}
@@ -19,7 +20,7 @@ export default function BotoesHero() {
         href="/explorar?negociacao=aluguel"
         className={`btn btn-lg ${styles.btnSecundario}`}
       >
-        <span>🔑</span> Quero Alugar
+        <span><Icone nome="chave" tamanho={16} /></span> Quero alugar
       </Link>
 
       {/* Explorar no mapa — visão geral */}
@@ -27,7 +28,7 @@ export default function BotoesHero() {
         href="/explorar"
         className={`btn btn-lg ${styles.btnMapa}`}
       >
-        <span>🗺️</span> Explorar no mapa
+        <span><Icone nome="mapa" tamanho={16} /></span> Explorar no mapa
       </Link>
     </div>
   )

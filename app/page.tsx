@@ -35,7 +35,7 @@ const BENEFICIOS = [
   'Comece grátis com um imóvel ativo',
 ]
 
-const MAPA_ESTATICO = `https://api.mapbox.com/styles/v1/mapbox/light-v11/static/-43.7867,-20.6603,14.2,0/720x560@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}&attribution=false&logo=false`
+const MAPA_ESTATICO = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/-43.7867,-20.6603,14.4,0/720x560@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}&attribution=false&logo=false`
 
 export default function HomePage() {
   return (

@@ -376,13 +376,13 @@
   text-transform: uppercase;
   font-size: 0.72rem;
   letter-spacing: 0.05em;
-  background: #172033;
+  background: #16201C;
 }
 
 .tabela td {
   padding: 14px;
   color: var(--pedra-200);
-  border-bottom: 1px solid #283548;
+  border-bottom: 1px solid #22302A;
 }
 
 .linhaClicavel {
@@ -391,7 +391,7 @@
 }
 
 .linhaClicavel:hover {
-  background: #283548;
+  background: #22302A;
 }
 
 /* ── BADGES & TAGS ── */
@@ -419,7 +419,7 @@
 
 .badgeEstorno {
   background: rgba(168, 85, 247, 0.2);
-  color: #c084fc;
+  color: #9AAABD;
 }
 
 .badgeDisputa {
@@ -428,7 +428,7 @@
 }
 
 .badgeImobiliaria { background: rgba(240, 165, 143, 0.2); color: #F0A58F; }
-.badgeCorretor { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+.badgeCorretor { background: rgba(168, 85, 247, 0.2); color: #9AAABD; }
 .badgeProprietario { background: rgba(227, 167, 47, 0.2); color: #E8B84A; }
 
 .badgePlano {
@@ -728,7 +728,7 @@
     height: auto !important;
     min-height: 100vh;
     overflow-y: auto !important;
-    background: #090d16;
+    background: #0F1714;
   }
 
   .adminPocketMobile {
@@ -743,7 +743,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #090d16;
+    background: #0F1714;
     border-bottom: 1px solid var(--tinta-2);
     padding: 8px 14px;
     height: 52px;
@@ -798,8 +798,8 @@
   }
 
   .pocketBtnIcone {
-    background: #162032;
-    border: 1px solid #24334d;
+    background: #16201C;
+    border: 1px solid #22302A;
     color: var(--pedra-300);
     width: 32px;
     height: 32px;
@@ -846,15 +846,15 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 4px;
     padding: 8px 12px;
-    background: #0d1322;
+    background: #0F1714;
     border-bottom: 1px solid var(--tinta-2);
     width: 100%;
     box-sizing: border-box;
   }
 
   .pocketNavPill {
-    background: #162032;
-    border: 1px solid #24334d;
+    background: #16201C;
+    border: 1px solid #22302A;
     color: var(--pedra-400);
     height: 36px;
     padding: 0 4px;

@@ -4,9 +4,11 @@ import { useState, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
-import LogoGota from "@/components/ui/LogoGota"
+import { Logotipo } from "@/components/ui/Logo"
 import InputSenha from "@/components/ui/InputSenha"
 import styles from "./page.module.css"
+import Icone from '@/components/ui/Icone'
+import CurvasDeNivel from '@/components/ui/CurvasDeNivel'
 
 function traduzirErro(msg: string): string {
   if (msg.includes("For security purposes") || msg.includes("after")) {
@@ -136,8 +138,7 @@ function LoginConteudo() {
           {/* Topo com Logo e Voltar */}
           <div className={styles.topoForm}>
             <Link href="/" className={styles.logo}>
-              <LogoGota size={32} />
-              <span>FIXUM</span>
+              <Logotipo largura={92} />
             </Link>
             <Link href="/" className={styles.linkVoltarHome}>
               <span>←</span> Voltar ao início
@@ -146,13 +147,13 @@ function LoginConteudo() {
 
           {precisaMfa ? (
             <div className={styles.cardMfa}>
-              <div className={styles.iconeMfa}>🔐</div>
-              <h1>Autenticação em 2 Fatores</h1>
+              <div className={styles.iconeMfa}><Icone nome="cadeado" tamanho={16} /></div>
+              <h1>Autenticação em 2 fatores</h1>
               <p>Digite o código de 6 dígitos gerado no seu aplicativo autenticador (Google Authenticator ou similar).</p>
 
               <form onSubmit={handleVerificarMfa} className={styles.form}>
                 <div className={styles.campo}>
-                  <label>Código de Segurança (TOTP)</label>
+                  <label>Código de segurança (TOTP)</label>
                   <input
                     type="text"
                     className="campo"
@@ -169,7 +170,7 @@ function LoginConteudo() {
                 {erro && <div className={styles.erro}>{erro}</div>}
 
                 <button type="submit" className="btn btn-primario btn-lg" disabled={carregando || codigoMfa.length < 6}>
-                  {carregando ? "Verificando..." : "Confirmar e Entrar"}
+                  {carregando ? "Verificando..." : "Confirmar e entrar"}
                 </button>
 
                 <div className={styles.rodape}>
@@ -242,17 +243,17 @@ function LoginConteudo() {
                 <button type="submit" className={`btn btn-primario btn-lg ${styles.btnSubmit}`} disabled={carregando}>
                   {carregando ? (
                     <span className={styles.btnCarregando}>
-                      <span className={styles.spinner} /> Entrando...
+                      <span className={styles.spinner} /> Entrando…
                     </span>
                   ) : (
-                    "Acessar Conta"
+                    "Entrar"
                   )}
                 </button>
               </form>
 
               <div className={styles.rodape}>
                 <span>Ainda não tem uma conta?</span>
-                <Link href="/cadastro" className={styles.linkCadastro}>Criar Conta Gratuita</Link>
+                <Link href="/cadastro" className={styles.linkCadastro}>Criar conta gratuita</Link>
               </div>
             </div>
           )}
@@ -261,54 +262,34 @@ function LoginConteudo() {
 
       {/* Lado Direito: Painel Decorativo Visual (Estilo Pro) */}
       <div className={styles.ladoVisual}>
-        <div className={styles.glow1} />
-        <div className={styles.glow2} />
-        <div className={styles.gridBackground} />
+        <CurvasDeNivel className={styles.curvasLado} picos={[{ x: 0.7, y: 0.35, aneis: 18, passo: 34, semente: 11 }]} />
 
         <div className={styles.ladoVisualConteudo}>
           {/* Badge flutuante */}
           <div className={styles.badgeDestaque}>
             <span className={styles.pontoVerde} />
-            <span>Plataforma Imobiliária Geolocalizada</span>
+            <span>Fixum</span>
           </div>
 
-          <h2>Encontre e anuncie imóveis com inteligência no mapa.</h2>
-          <p>A ferramenta completa para imobiliárias, corretores autônomos e proprietários conectarem compradores em tempo real.</p>
+          <h2>Seu próximo lugar começa <em>no mapa.</em></h2>
+          <p>Entre para ver seus imóveis fixados, acompanhar contatos e gerenciar seus anúncios.</p>
 
           {/* Card Mockup Flutuante com Efeito Glassmorphism */}
           <div className={styles.cardPreviewGlass}>
             <div className={styles.cardPreviewTopo}>
-              <div className={styles.tagStatus}>⚡ Novo Lead Recebido</div>
+              <div className={styles.tagStatus}>Novo contato</div>
               <span className={styles.horarioLead}>Há 2 min</span>
             </div>
             <div className={styles.cardPreviewCorpo}>
-              <div className={styles.avatarLead}>👤</div>
+              <div className={styles.avatarLead}><Icone nome="usuario" tamanho={16} /></div>
               <div>
                 <div className={styles.nomeLead}>Rodrigo Silveira</div>
-                <div className={styles.interesseLead}>Interesse em: Apartamento 3Q · Centro</div>
+                <div className={styles.interesseLead}>Interesse: apartamento 3 quartos · Centro</div>
               </div>
             </div>
             <div className={styles.cardPreviewFooter}>
-              <span className={styles.badgeConversao}>📍 Encontrado no Mapa</span>
+              <span className={styles.badgeConversao}>Veio pelo mapa</span>
               <span className={styles.valorPreco}>R$ 480.000</span>
-            </div>
-          </div>
-
-          {/* Métricas de Confiança */}
-          <div className={styles.metricasConfianca}>
-            <div className={styles.metricaItem}>
-              <strong>+5.000</strong>
-              <span>Imóveis Mapeados</span>
-            </div>
-            <div className={styles.divisorMetrica} />
-            <div className={styles.metricaItem}>
-              <strong>100%</strong>
-              <span>Precisão GPS</span>
-            </div>
-            <div className={styles.divisorMetrica} />
-            <div className={styles.metricaItem}>
-              <strong>24/7</strong>
-              <span>Gestão de Leads</span>
             </div>
           </div>
         </div>

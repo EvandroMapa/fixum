@@ -190,10 +190,10 @@ export async function PATCH(req: Request) {
 
     if (status_homologacao === 'aprovado') {
       tipoAtividade = 'homologacao_venda'
-      descricaoAtividade = descricaoAtividade || `🏆 Venda homologada e aprovada pelo Gestor ${autorNome}.`
+      descricaoAtividade = descricaoAtividade || `Venda homologada e aprovada pelo Gestor ${autorNome}.`
     } else if (status_homologacao === 'rejeitado') {
       tipoAtividade = 'rejeicao_homologacao'
-      descricaoAtividade = descricaoAtividade || `⚠️ Homologação de venda rejeitada pelo Gestor ${autorNome}.`
+      descricaoAtividade = descricaoAtividade || `Homologação de venda rejeitada pelo Gestor ${autorNome}.`
     } else if (primeiro_contato) {
       tipoAtividade = 'contato_whatsapp'
       descricaoAtividade = descricaoAtividade || 'Primeiro contato realizado via WhatsApp.'

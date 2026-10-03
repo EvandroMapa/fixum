@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import InputSenha from '@/components/ui/InputSenha'
 import styles from './ModalNovoOperador.module.css'
 import { OperadorAdmin } from '@/app/api/admin/operadores/route'
+import Icone from '@/components/ui/Icone'
 
 interface ModalEditarOperadorProps {
   operador: OperadorAdmin | null
@@ -16,17 +17,17 @@ interface ModalEditarOperadorProps {
 const CARGOS_DISPONIVEIS = [
   {
     id: 'master',
-    titulo: '👑 Master / Diretoria',
+    titulo: 'Master / diretoria',
     descricao: 'Acesso total e irrestrito (planos, financeiro, estornos e gestão de operadores).',
   },
   {
     id: 'financeiro',
-    titulo: '💳 Gestor Financeiro',
+    titulo: 'Gestor financeiro',
     descricao: 'Gestão de faturas, chargebacks, estornos, devoluções e relatórios de receita.',
   },
   {
     id: 'suporte',
-    titulo: '🎧 Suporte & Moderação',
+    titulo: 'Suporte & moderação',
     descricao: 'Aprovação de anúncios, conferência de clientes e atendimento a corretores/imobiliárias.',
   },
 ]
@@ -110,10 +111,10 @@ export default function ModalEditarOperador({
         {/* Cabeçalho */}
         <div className={styles.cabecalho}>
           <div className={styles.iconeTopo} style={{ background: 'rgba(44, 95, 138, 0.18)', borderColor: 'rgba(44, 95, 138, 0.35)' }}>
-            ✏️
+            <Icone nome="editar" tamanho={16} />
           </div>
           <div>
-            <h2 className={styles.titulo}>Editar Operador</h2>
+            <h2 className={styles.titulo}>Editar operador</h2>
             <p className={styles.subtitulo}>
               Atualize as credenciais e o nível de acesso de <strong style={{ color: '#ffffff' }}>{operador.nome}</strong>
             </p>
@@ -124,14 +125,14 @@ export default function ModalEditarOperador({
         <form onSubmit={handleSubmit} className={styles.corpo}>
           {erro && (
             <div className={styles.alertaErro}>
-              <span>⚠️</span>
+              <span><Icone nome="alerta" tamanho={16} /></span>
               <span>{erro}</span>
             </div>
           )}
 
           <div className={styles.grupoCampo}>
             <label className={styles.label}>
-              <span>Nome Completo</span>
+              <span>Nome completo</span>
               <span className={styles.obrigatorio}>* Obrigatório</span>
             </label>
             <input
@@ -169,7 +170,7 @@ export default function ModalEditarOperador({
           {/* Seletor de Cargo */}
           <div className={styles.grupoCampo}>
             <label className={styles.label}>
-              <span>Nível de Acesso / Cargo</span>
+              <span>Nível de acesso / cargo</span>
               <span className={styles.obrigatorio}>* Selecione um</span>
             </label>
             {operador.is_raiz ? (
@@ -177,7 +178,7 @@ export default function ModalEditarOperador({
                 className={`${styles.cardCargo} ${styles.cardCargoAtivo}`}
                 style={{ cursor: 'default' }}
               >
-                <strong style={{ color: '#ffffff', fontSize: '0.88rem' }}>👑 Master / Diretoria (Conta Raiz)</strong>
+                <strong style={{ color: '#ffffff', fontSize: '0.88rem' }}>Master / diretoria (conta raiz)</strong>
                 <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#A39A8A' }}>
                   Superadministrador vitalício com acesso total irrestrito.
                 </p>
@@ -196,8 +197,8 @@ export default function ModalEditarOperador({
                         <strong style={{ color: '#ffffff', fontSize: '0.88rem' }}>{c.titulo}</strong>
                         {selecionado && (
                           <span style={{ color: '#F0A58F', fontSize: '0.78rem', fontWeight: 800 }}>
-                            ✓ Selecionado
-                          </span>
+ Selecionado
+ </span>
                         )}
                       </div>
                       <p style={{ margin: 0, fontSize: '0.75rem', color: '#A39A8A', lineHeight: 1.35 }}>
@@ -214,7 +215,7 @@ export default function ModalEditarOperador({
           {!operador.is_raiz && (
             <div className={styles.grupoCampo}>
               <label className={styles.label}>
-                <span>Status da Conta</span>
+                <span>Status da conta</span>
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <button
@@ -235,8 +236,8 @@ export default function ModalEditarOperador({
                     gap: '6px',
                   }}
                 >
-                  <span>🟢</span>
-                  <span>Conta Ativa</span>
+                  <span><Icone nome="ponto" tamanho={16} /></span>
+                  <span>Conta ativa</span>
                 </button>
 
                 <button
@@ -257,7 +258,7 @@ export default function ModalEditarOperador({
                     gap: '6px',
                   }}
                 >
-                  <span>⏸️</span>
+                  <span><Icone nome="pausa" tamanho={16} /></span>
                   <span>Suspensa</span>
                 </button>
               </div>
@@ -267,14 +268,14 @@ export default function ModalEditarOperador({
           {/* PIN Master de Confirmação */}
           <div className={styles.grupoCampo} style={{ marginTop: '4px' }}>
             <label className={styles.label}>
-              <span>Chave Secreta Master (PIN de Autorização)</span>
+              <span>Chave secreta Master (PIN de autorização)</span>
               <span className={styles.obrigatorio}>* Obrigatório</span>
             </label>
             <InputSenha
               name="admin-pin-editar-operador"
               value={adminPin}
               onChange={(e) => setAdminPin(e.target.value)}
-              placeholder="Digite a Chave Secreta Master"
+              placeholder="Digite a chave secreta Master"
               className={styles.input}
               estiloDark={true}
               required
@@ -296,7 +297,7 @@ export default function ModalEditarOperador({
               className={styles.btnConfirmar}
               disabled={carregando}
             >
-              {carregando ? 'Salvando...' : '💾 Salvar Alterações'}
+              {carregando ? 'Salvando...' : 'Salvar alterações'}
             </button>
           </div>
         </form>

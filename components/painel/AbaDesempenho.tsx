@@ -199,7 +199,7 @@ export default function AbaDesempenho({
         <div className={styles.masterCabecalho}>
           <div className={styles.topoInfo}>
             <h2 className={styles.topoTitulo}>
-              Desempenho & Métricas
+              Desempenho & métricas
             </h2>
             <p className={styles.topoSubtitulo}>
               Visão consolidada do pipeline de vendas, produtividade e conversão de leads.
@@ -212,9 +212,9 @@ export default function AbaDesempenho({
               {(
                 [
                   { id: '7d', label: '7 dias' },
-                  { id: 'mes', label: 'Este Mês' },
+                  { id: 'mes', label: 'Este mês' },
                   { id: '90d', label: '90 dias' },
-                  { id: 'ano', label: 'Este Ano' },
+                  { id: 'ano', label: 'Este ano' },
                   { id: 'tudo', label: 'Tudo' },
                 ] as { id: Periodo; label: string }[]
               ).map((p) => (
@@ -236,7 +236,7 @@ export default function AbaDesempenho({
                 value={corretorFiltro}
                 onChange={(e) => setCorretorFiltro(e.target.value)}
               >
-                <option value="todos">Toda a Equipe</option>
+                <option value="todos">Toda a equipe</option>
                 {listaCorretores.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.nome}
@@ -263,14 +263,14 @@ export default function AbaDesempenho({
         <div className={styles.gridKpis}>
           {/* Total de Leads */}
           <div className={styles.cardKpi}>
-            <span className={styles.kpiRotulo}>Total de Leads</span>
+            <span className={styles.kpiRotulo}>Total de leads</span>
             <strong className={styles.kpiValor}>{metricas.totalLeads}</strong>
             <span className={styles.kpiSub}>{metricas.taxaAtendimento}% com atendimento iniciado</span>
           </div>
 
           {/* Velocidade de Resposta / SLA */}
           <div className={styles.cardKpi}>
-            <span className={styles.kpiRotulo}>Tempo Médio de Resposta</span>
+            <span className={styles.kpiRotulo}>Tempo médio de resposta</span>
             <strong className={styles.kpiValor}>
               {metricas.tempoMedioMinutos < 60
                 ? `${metricas.tempoMedioMinutos} min`
@@ -281,28 +281,28 @@ export default function AbaDesempenho({
 
           {/* VGV em Negociação */}
           <div className={styles.cardKpi}>
-            <span className={styles.kpiRotulo}>VGV em Negociação</span>
+            <span className={styles.kpiRotulo}>VGV em negociação</span>
             <strong className={styles.kpiValor}>{formatarMoeda(metricas.vgvPropostas)}</strong>
             <span className={styles.kpiSub}>{metricas.propostas + metricas.emNegociacao} propostas e negociações</span>
           </div>
 
           {/* VGV Fechado */}
           <div className={styles.cardKpi}>
-            <span className={styles.kpiRotulo}>VGV Fechado</span>
+            <span className={styles.kpiRotulo}>VGV fechado</span>
             <strong className={`${styles.kpiValor} ${styles.kpiValorDestaque}`}>{formatarMoeda(metricas.vgvFechado)}</strong>
             <span className={styles.kpiSub}>{metricas.fechados} negócios homologados</span>
           </div>
 
           {/* Taxa de Conversão */}
           <div className={styles.cardKpi}>
-            <span className={styles.kpiRotulo}>Taxa de Conversão</span>
+            <span className={styles.kpiRotulo}>Taxa de conversão</span>
             <strong className={styles.kpiValor}>{metricas.taxaConversao}%</strong>
-            <span className={styles.kpiSub}>Leads ➔ Vendas Fechadas</span>
+            <span className={styles.kpiSub}>Leads vendas fechadas</span>
           </div>
 
           {/* Ticket Médio */}
           <div className={styles.cardKpi}>
-            <span className={styles.kpiRotulo}>Ticket Médio</span>
+            <span className={styles.kpiRotulo}>Ticket médio</span>
             <strong className={styles.kpiValor}>{metricas.ticketMedio > 0 ? formatarMoeda(metricas.ticketMedio) : '—'}</strong>
             <span className={styles.kpiSub}>Média por negócio fechado</span>
           </div>
@@ -314,7 +314,7 @@ export default function AbaDesempenho({
           <div className={styles.subBlocoAnalitico}>
             <div className={styles.subBlocoHeader}>
               <div>
-                <h3 className={styles.subBlocoTitulo}>Funil de Vendas do CRM</h3>
+                <h3 className={styles.subBlocoTitulo}>Funil de vendas do CRM</h3>
                 <p className={styles.subBlocoSubtitulo}>Volume e taxa de retenção por etapa do pipeline</p>
               </div>
               <span className={styles.secaoBadge}>{metricas.totalLeads} no funil</span>
@@ -324,7 +324,7 @@ export default function AbaDesempenho({
               {[
                 { etapa: '1. Novos Contatos', qtd: metricas.totalLeads, cor: '#2C5F8A' },
                 { etapa: '2. Em Atendimento', qtd: metricas.contatados, cor: '#2C5F8A' },
-                { etapa: '3. Visitas Agendadas', qtd: metricas.visitas, cor: '#6366f1' },
+                { etapa: '3. Visitas Agendadas', qtd: metricas.visitas, cor: '#45566B' },
                 { etapa: '4. Propostas', qtd: metricas.propostas, cor: '#E3A72F' },
                 { etapa: '5. Em Negociação', qtd: metricas.emNegociacao, cor: '#B23318' },
                 { etapa: '6. Negócios Fechados', qtd: metricas.fechados, cor: '#2E6B4E' },
@@ -354,7 +354,7 @@ export default function AbaDesempenho({
           <div className={styles.subBlocoAnalitico}>
             <div className={styles.subBlocoHeader}>
               <div>
-                <h3 className={styles.subBlocoTitulo}>Motivos de Perda / Descarte</h3>
+                <h3 className={styles.subBlocoTitulo}>Motivos de perda / descarte</h3>
                 <p className={styles.subBlocoSubtitulo}>Diagnóstico de oportunidades não convertidas</p>
               </div>
               <span className={styles.secaoBadge}>{metricas.perdidos} perdas</span>
@@ -392,7 +392,7 @@ export default function AbaDesempenho({
           <div className={styles.subBlocoTabela}>
             <div className={styles.subBlocoHeader}>
               <div>
-                <h3 className={styles.subBlocoTitulo}>Produtividade Comercial da Equipe</h3>
+                <h3 className={styles.subBlocoTitulo}>Produtividade comercial da equipe</h3>
                 <p className={styles.subBlocoSubtitulo}>Desempenho individual, SLA e volume financeiro no período</p>
               </div>
               <span className={styles.secaoBadge}>{tabelaCorretores.length} corretores ativos</span>
@@ -409,9 +409,9 @@ export default function AbaDesempenho({
                     <th style={{ textAlign: 'right' }}>Visitas</th>
                     <th style={{ textAlign: 'right' }}>Propostas/Neg.</th>
                     <th style={{ textAlign: 'right' }}>Fechados</th>
-                    <th style={{ textAlign: 'right' }}>VGV Fechado</th>
+                    <th style={{ textAlign: 'right' }}>VGV fechado</th>
                     <th style={{ textAlign: 'right' }}>Conversão</th>
-                    <th style={{ textAlign: 'right' }}>Ticket Médio</th>
+                    <th style={{ textAlign: 'right' }}>Ticket médio</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -450,8 +450,8 @@ export default function AbaDesempenho({
                         {c.propostas + c.negociacoes}
                         {c.negociacoes > 0 && (
                           <span style={{ fontSize: '0.72rem', color: '#B23318', marginLeft: '4px', fontWeight: 600 }} title={`${c.negociacoes} em negociação avançada`}>
-                            ({c.negociacoes} 🤝)
-                          </span>
+                            ({c.negociacoes} )
+ </span>
                         )}
                       </td>
                       <td style={{ textAlign: 'right' }}>

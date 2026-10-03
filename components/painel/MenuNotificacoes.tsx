@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import styles from './MenuNotificacoes.module.css'
+import Icone from '@/components/ui/Icone'
 
 export interface NotificacaoItem {
   id: string
@@ -89,10 +90,10 @@ export default function MenuNotificacoes({
 
   function iconePorTipo(tipo: NotificacaoItem['tipo']) {
     switch (tipo) {
-      case 'revisao_pendente': return '⏳'
-      case 'imovel_aprovado': return '🎉'
-      case 'imovel_recusado': return '⚠️'
-      default: return '🔔'
+      case 'revisao_pendente': return ''
+      case 'imovel_aprovado': return ''
+      case 'imovel_recusado': return ''
+      default: return ''
     }
   }
 
@@ -102,9 +103,9 @@ export default function MenuNotificacoes({
         type="button"
         className={styles.btnSino}
         onClick={() => setAberto(!aberto)}
-        title="Notificações e Avisos"
+        title="Notificações e avisos"
       >
-        <span>🔔</span>
+        <span><Icone nome="sino" tamanho={16} /></span>
         {naoLidas > 0 && <span className={styles.badgeContador}>{naoLidas}</span>}
       </button>
 
@@ -126,7 +127,7 @@ export default function MenuNotificacoes({
           <div className={styles.listaNotificacoes}>
             {notificacoes.length === 0 ? (
               <div className={styles.vazio}>
-                <span>🔕</span>
+                <span><Icone nome="sino" tamanho={16} /></span>
                 <span>Nenhuma notificação no momento</span>
               </div>
             ) : (

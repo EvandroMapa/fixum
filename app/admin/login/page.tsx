@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { salvarSessaoAdmin, verificarAdminNoServidor } from '@/lib/admin-auth'
 import InputSenha from '@/components/ui/InputSenha'
 import styles from './page.module.css'
+import Icone from '@/components/ui/Icone'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -112,8 +113,8 @@ export default function AdminLoginPage() {
     <div className={styles.paginaLogin}>
       <div className={styles.cardLogin}>
         <div className={styles.cabecalho}>
-          <div className={styles.escudoIcone}>🛡️</div>
-          <h1 className={styles.titulo}>Painel Executivo Fixum</h1>
+          <div className={styles.escudoIcone}><Icone nome="escudo" tamanho={16} /></div>
+          <h1 className={styles.titulo}>Painel executivo Fixum</h1>
           <p className={styles.subtitulo}>
             Acesso restrito para administradores autorizados
           </p>
@@ -121,7 +122,7 @@ export default function AdminLoginPage() {
 
         {erro && (
           <div className={styles.alertaErro}>
-            <span>⚠️</span>
+            <span><Icone nome="alerta" tamanho={16} /></span>
             <span>{erro}</span>
           </div>
         )}
@@ -140,7 +141,7 @@ export default function AdminLoginPage() {
           }}>
             <div>
               <div style={{ fontSize: '0.72rem', color: '#A39A8A', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Conta Master Conectada
+                Conta Master conectada
               </div>
               <div style={{ fontSize: '0.9rem', color: '#ffffff', fontWeight: 700, wordBreak: 'break-all' }}>
                 {usuarioSessaoAtiva.email}
@@ -163,7 +164,7 @@ export default function AdminLoginPage() {
               }}
               title="Sair desta conta para entrar com outras credenciais"
             >
-              Trocar Conta
+              Trocar conta
             </button>
           </div>
         )}
@@ -172,7 +173,7 @@ export default function AdminLoginPage() {
           {!usuarioSessaoAtiva && (
             <>
               <div className={styles.grupoInput}>
-                <label htmlFor="admin-email" className={styles.label}>E-mail de Administrador</label>
+                <label htmlFor="admin-email" className={styles.label}>E-mail de administrador</label>
                 <input
                   id="admin-email"
                   name="username"
@@ -188,7 +189,7 @@ export default function AdminLoginPage() {
               </div>
 
               <div className={styles.grupoInput}>
-                <label htmlFor="admin-password" className={styles.label}>Senha Mestra</label>
+                <label htmlFor="admin-password" className={styles.label}>Senha mestra</label>
                 <InputSenha
                   id="admin-password"
                   name="password"
@@ -206,7 +207,7 @@ export default function AdminLoginPage() {
 
           <div className={styles.grupoInput}>
             <label htmlFor="admin-pin-master" className={styles.label}>
-              <span>Chave Secreta Master / PIN</span>
+              <span>Chave secreta Master / PIN</span>
               <span style={{ fontSize: '0.75rem', color: '#E8836B' }}>Obrigatório</span>
             </label>
             <InputSenha

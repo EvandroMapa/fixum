@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import styles from './ModalReatribuirCorretor.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface ModalReatribuirCorretorProps {
   aberto: boolean
@@ -62,7 +63,7 @@ export default function ModalReatribuirCorretor({
       onFechar()
     } catch (err: any) {
       await alertar({
-        titulo: 'Erro ao Transferir',
+        titulo: 'Erro ao transferir',
         mensagem: err.message || 'Ocorreu um erro ao transferir o imóvel.',
         tipo: 'perigo',
       })
@@ -76,11 +77,11 @@ export default function ModalReatribuirCorretor({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <div className={styles.headerTitle}>
-            <span className={styles.iconeHeader}>👔</span>
-            <h2>{isMultiplo ? 'Transferir Imóveis em Lote' : 'Reatribuir Corretor Responsável'}</h2>
+            <span className={styles.iconeHeader}><Icone nome="maleta" tamanho={16} /></span>
+            <h2>{isMultiplo ? 'Transferir imóveis em lote' : 'Reatribuir corretor responsável'}</h2>
           </div>
           <button type="button" className={styles.btnFechar} onClick={onFechar}>
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
         </div>
 
@@ -104,25 +105,25 @@ export default function ModalReatribuirCorretor({
 
             {responsavelAtualNome && (
               <div className={styles.linhaResponsavelAtual}>
-                <span className={styles.alertaTitulo}>Responsável Atual:</span>
+                <span className={styles.alertaTitulo}>Responsável atual:</span>
                 <span className={styles.badgeResponsavelAtual}>
-                  👤 <strong>{responsavelAtualNome}</strong>
+                  <Icone nome="usuario" tamanho={16} /> <strong>{responsavelAtualNome}</strong>
                 </span>
               </div>
             )}
           </div>
 
           <div className={styles.campoGrupo}>
-            <label className={styles.label}>Novo Responsável:</label>
+            <label className={styles.label}>Novo responsável:</label>
             <select
               className={styles.select}
               value={corretorDestinoId}
               onChange={(e) => setCorretorDestinoId(e.target.value)}
             >
-              <option value={imobiliariaId}>🏢 {imobiliariaNome} (Gestão Direta da Imobiliária)</option>
+              <option value={imobiliariaId}><Icone nome="predio" tamanho={16} /> {imobiliariaNome} (Gestão direta da imobiliária)</option>
               {corretores.map((c) => (
                 <option key={c.id} value={c.id}>
-                  👤 {c.nome} (Corretor da Equipe)
+                  <Icone nome="usuario" tamanho={16} /> {c.nome} (Corretor da equipe)
                 </option>
               ))}
             </select>
@@ -144,7 +145,7 @@ export default function ModalReatribuirCorretor({
             onClick={handleConfirmar}
             disabled={salvando || !corretorDestinoId}
           >
-            {salvando ? 'Transferindo...' : 'Confirmar Transferência'}
+            {salvando ? 'Transferindo...' : 'Confirmar transferência'}
           </button>
         </div>
       </div>

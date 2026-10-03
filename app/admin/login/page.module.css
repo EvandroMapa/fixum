@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top, var(--tinta-2) 0%, #090d16 100%);
+  background: radial-gradient(circle at top, var(--tinta-2) 0%, #0F1714 100%);
   padding: 24px;
   font-family: inherit;
   color: var(--papel-claro);
@@ -93,7 +93,7 @@
   font-family: monospace;
   font-weight: 700;
   color: #EBA592;
-  background: #181c2b;
+  background: #16201C;
 }
 
 .alertaErro {

@@ -3,6 +3,7 @@
 import styles from './ModalLimiteAtingido.module.css'
 import { Plano } from '@/lib/types'
 import { formatarMoeda } from '@/lib/planos'
+import Icone from '@/components/ui/Icone'
 
 interface ModalLimiteAtingidoProps {
   aberto: boolean
@@ -31,11 +32,11 @@ export default function ModalLimiteAtingido({
     <div className={styles.overlay} onClick={onFechar}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.btnFechar} onClick={onFechar} aria-label="Fechar">
-          ✕
+          <Icone nome="fechar" tamanho={16} />
         </button>
 
         <div className={styles.iconeAlerta}>
-          <span>🚀</span>
+          <span><Icone nome="seta" tamanho={16} /></span>
         </div>
 
         <h2 className={styles.titulo}>Você atingiu o limite do seu plano</h2>
@@ -48,7 +49,7 @@ export default function ModalLimiteAtingido({
 
         <div className={styles.cardComparativo}>
           <div className={styles.infoPlanoAtual}>
-            <span className={styles.tagAtual}>Plano Atual</span>
+            <span className={styles.tagAtual}>Plano atual</span>
             <h4>{planoAtual.nome}</h4>
             <p>{planoAtual.limite_imoveis_max} {planoAtual.limite_imoveis_max === 1 ? 'imóvel ativo' : 'imóveis ativos'}</p>
             <span className={styles.precoAtual}>{formatarMoeda(planoAtual.preco_mensal)}/mês</span>
@@ -56,7 +57,7 @@ export default function ModalLimiteAtingido({
 
           {proximoPlano && (
             <>
-              <div className={styles.setaUpgrade}>➜</div>
+              <div className={styles.setaUpgrade}><Icone nome="seta" tamanho={16} /></div>
               <div className={styles.infoProximoPlano}>
                 <span className={styles.tagRecomendado}>Recomendado</span>
                 <h4>{proximoPlano.nome}</h4>
@@ -79,7 +80,7 @@ export default function ModalLimiteAtingido({
                 onFazerUpgrade(proximoPlano)
               }}
             >
-              Fazer Upgrade para {proximoPlano.nome}
+              Fazer upgrade para {proximoPlano.nome}
             </button>
           ) : (
             <button

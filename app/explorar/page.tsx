@@ -12,6 +12,7 @@ import { type Imovel, type FiltrosBusca as TFiltros } from '@/lib/types'
 import { createClient } from '@/lib/supabase/client'
 import styles from './page.module.css'
 import mapboxgl from 'mapbox-gl'
+import Icone from '@/components/ui/Icone'
 
 const MapaExplorar = dynamic(() => import('@/components/mapa/MapaExplorar'), {
   ssr: false,
@@ -33,7 +34,8 @@ function ExplorarConteudo() {
       const salvo = sessionStorage.getItem('fixum_vista_ativa')
       if (salvo === 'mapa' || salvo === 'lista') return salvo
     }
-    return 'lista'
+    // O mapa é o centro da experiência: no celular, abre no mapa (no desktop os dois aparecem juntos)
+    return 'mapa'
   })
   const [voarPara, setVoarPara] = useState<[number, number] | null>(null)
   const imobiliariaId = searchParams.get('imobiliaria') || searchParams.get('imobiliaria_id') || null
@@ -412,14 +414,14 @@ function ExplorarConteudo() {
               className={`${styles.btnVista} ${vistaAtiva === 'lista' ? styles.vistaAtiva : ''}`}
               onClick={() => setVistaAtiva('lista')}
             >
-              📋 Lista
-            </button>
+ Lista
+ </button>
             <button
               className={`${styles.btnVista} ${vistaAtiva === 'mapa' ? styles.vistaAtiva : ''}`}
               onClick={() => setVistaAtiva('mapa')}
             >
-              🗺️ Mapa
-            </button>
+ Mapa
+ </button>
           </div>
         </div>
       </div>
@@ -431,7 +433,7 @@ function ExplorarConteudo() {
           {(imobiliariaId || anuncianteId) && (
             <div className={styles.bannerFiltroImobiliaria}>
               <div className={styles.infoFiltroImob}>
-                <span className={styles.iconeFiltroImob}>{imobiliariaId ? '🏢' : '👔'}</span>
+                <span className={styles.iconeFiltroImob}>{imobiliariaId ? '' : ''}</span>
                 <div>
                   <strong className={styles.nomeFiltroImob}>
                     {nomeFiltroAnunciante || nomeImobiliaria || (imobiliariaId ? 'Imobiliária Parceira' : 'Corretor Credenciado')}
@@ -447,8 +449,8 @@ function ExplorarConteudo() {
                 onClick={handleLimparFiltroImobiliaria}
                 title="Ver todos os imóveis da plataforma"
               >
-                ✕ Ver todos os imóveis
-              </button>
+ Ver todos os imóveis
+ </button>
             </div>
           )}
 
@@ -457,11 +459,11 @@ function ExplorarConteudo() {
               <span className={styles.carregando}>Buscando imóveis...</span>
             ) : isFavoritos ? (
               <span className={styles.resultados} style={{ color: '#8F2812' }}>
-                <strong>❤️ {totalResultados}</strong> {totalResultados === 1 ? 'imóvel favorito' : 'imóveis favoritos'}
+                <strong><Icone nome="fixar" tamanho={16} /> {totalResultados}</strong> {totalResultados === 1 ? 'imóvel fixado' : 'imóveis fixados'}
               </span>
             ) : imobiliariaId ? (
               <span className={styles.resultados} style={{ color: '#22302A' }}>
-                <strong>🏢 {totalResultados}</strong> {totalResultados === 1 ? 'imóvel desta imobiliária' : 'imóveis desta imobiliária'}
+                <strong><Icone nome="predio" tamanho={16} /> {totalResultados}</strong> {totalResultados === 1 ? 'imóvel desta imobiliária' : 'imóveis desta imobiliária'}
               </span>
             ) : filtros.cidade ? (
               <span className={styles.resultados}>
@@ -488,7 +490,7 @@ function ExplorarConteudo() {
               alignItems: 'center',
               gap: '8px'
             }}>
-              <span>📍</span>
+              <span><Icone nome="local" tamanho={16} /></span>
               <span>
                 Sua localização foi detectada no mapa. Mostrando imóveis disponíveis cadastrados na plataforma.
               </span>
@@ -503,36 +505,36 @@ function ExplorarConteudo() {
             </div>
           ) : precisaLoginFavoritos ? (
             <div className={styles.semResultados}>
-              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>🔒</span>
-              <h3>Acesse sua conta para ver seus favoritos</h3>
+              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}><Icone nome="cadeado" tamanho={34} /></span>
+              <h3>Entre para ver seus imóveis fixados</h3>
               <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
-                Você precisa estar conectado para salvar e visualizar sua lista personalizada de imóveis favoritos em qualquer dispositivo.
+                Os imóveis que você fixa ficam guardados na sua conta, em qualquer dispositivo.
               </p>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                 <Link href="/login?next=/explorar?favoritos=true" className="btn btn-primario btn-sm">
-                  Entrar na Conta
+                  Entrar na conta
                 </Link>
                 <Link href="/explorar" className="btn btn-outline btn-sm">
-                  Ver Todos no Mapa
+                  Ver todos no mapa
                 </Link>
               </div>
             </div>
           ) : isFavoritos && imoveis.length === 0 ? (
             <div className={styles.semResultados}>
-              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>🤍</span>
-              <h3>Nenhum imóvel favoritado ainda</h3>
+              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}><Icone nome="fixar" tamanho={34} /></span>
+              <h3>Nenhum imóvel fixado ainda</h3>
               <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
-                Quando você encontrar um imóvel que gostou pelo mapa ou lista, clique no ícone de coração <strong>❤️</strong> para salvá-lo aqui e compará-lo depois.
+                Quando um imóvel chamar sua atenção, toque no alfinete <Icone nome="fixar" tamanho={16} /> do card ou do mapa. Ele aparece aqui para você comparar depois.
               </p>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                 <Link href="/explorar" className="btn btn-primario btn-sm">
-                  🗺️ Explorar Imóveis no Mapa
-                </Link>
+ Explorar imóveis no mapa
+ </Link>
               </div>
             </div>
           ) : imoveis.length === 0 ? (
             <div className={styles.semResultados}>
-              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}>📍</span>
+              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}><Icone nome="local" tamanho={34} /></span>
               <h3>Nenhum imóvel encontrado{filtros.cidade ? ` em ${filtros.cidade}` : ' nesta área do mapa'}</h3>
               <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
                 {filtros.cidade
@@ -541,7 +543,7 @@ function ExplorarConteudo() {
               </p>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Link href="/painel/novo-imovel" className="btn btn-primario btn-sm">
-                  + Anunciar Imóvel Aqui
+                  + Anunciar imóvel aqui
                 </Link>
                 {filtros.cidade && (
                   <button
@@ -549,7 +551,7 @@ function ExplorarConteudo() {
                     className="btn btn-outline btn-sm"
                     onClick={() => handleFiltrosChange({ ...filtros, cidade: undefined })}
                   >
-                    Ver Todos os Imóveis
+                    Ver todos os imóveis
                   </button>
                 )}
               </div>
@@ -597,13 +599,13 @@ function ExplorarConteudo() {
       >
         {vistaAtiva === 'lista' ? (
           <>
-            <span className={styles.iconeFlutuante}>🗺️</span>
-            <span>Ver no Mapa</span>
+            <span className={styles.iconeFlutuante}><Icone nome="mapa" tamanho={16} /></span>
+            <span>Ver no mapa</span>
           </>
         ) : (
           <>
-            <span className={styles.iconeFlutuante}>📋</span>
-            <span>Ver Lista</span>
+            <span className={styles.iconeFlutuante}><Icone nome="lista" tamanho={16} /></span>
+            <span>{carregando ? 'Ver lista' : `Ver lista · ${totalResultados}`}</span>
           </>
         )}
       </button>

@@ -219,7 +219,7 @@ export async function POST(req: Request) {
     } catch {}
 
     // Registrar na timeline de atividades
-    const descricaoAtividade = `📎 Documento anexado: "${nomeOriginal}" (${usuarioNome}).`
+    const descricaoAtividade = `Documento anexado: "${nomeOriginal}" (${usuarioNome}).`
     try {
       await fetch(new URL('/api/painel/leads', req.url).toString(), {
         method: 'POST',

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import LinhaTempoRevisao from "@/components/painel/LinhaTempoRevisao"
 import styles from "./page.module.css"
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 interface DadosImovel {
   codigo: string
@@ -42,25 +43,25 @@ interface FotoPreview {
 }
 
 const TIPOS = [
-  { valor: "apartamento", icone: "🏢", label: "Apartamento" },
-  { valor: "casa", icone: "🏠", label: "Casa" },
-  { valor: "sobrado", icone: "🏡", label: "Sobrado" },
-  { valor: "casa_condominio", icone: "🏘️", label: "Casa em Condomínio" },
-  { valor: "cobertura", icone: "🌇", label: "Cobertura" },
-  { valor: "kitnet", icone: "🛏️", label: "Kitnet / Studio" },
-  { valor: "flat", icone: "🏨", label: "Flat" },
-  { valor: "lote", icone: "📐", label: "Lote" },
-  { valor: "comercial", icone: "📁", label: "Sala Comercial" },
-  { valor: "loja", icone: "🏪", label: "Loja / Ponto" },
-  { valor: "galpao", icone: "🏭", label: "Galpão" },
-  { valor: "predio_comercial", icone: "🏬", label: "Prédio Comercial" },
-  { valor: "garagem", icone: "🚗", label: "Garagem" },
-  { valor: "terreno_comercial", icone: "🏗️", label: "Terreno" },
-  { valor: "sitio", icone: "🌿", label: "Sítio" },
-  { valor: "chacara", icone: "🌳", label: "Chácara" },
-  { valor: "fazenda", icone: "🌾", label: "Fazenda" },
-  { valor: "rancho", icone: "🐄", label: "Rancho" },
-  { valor: "outro", icone: "🏷️", label: "Outro" },
+  { valor: "apartamento", icone: "predio", label: "Apartamento" },
+  { valor: "casa", icone: "casa", label: "Casa" },
+  { valor: "sobrado", icone: "casa", label: "Sobrado" },
+  { valor: "casa_condominio", icone: "predio", label: "Casa em condomínio" },
+  { valor: "cobertura", icone: "predio", label: "Cobertura" },
+  { valor: "kitnet", icone: "quarto", label: "Kitnet / studio" },
+  { valor: "flat", icone: "predio", label: "Flat" },
+  { valor: "lote", icone: "area", label: "Lote" },
+  { valor: "comercial", icone: "pasta", label: "Sala comercial" },
+  { valor: "loja", icone: "predio", label: "Loja / ponto" },
+  { valor: "galpao", icone: "predio", label: "Galpão" },
+  { valor: "predio_comercial", icone: "predio", label: "Prédio comercial" },
+  { valor: "garagem", icone: "vaga", label: "Garagem" },
+  { valor: "terreno_comercial", icone: "predio", label: "Terreno" },
+  { valor: "sitio", icone: "folha", label: "Sítio" },
+  { valor: "chacara", icone: "folha", label: "Chácara" },
+  { valor: "fazenda", icone: "folha", label: "Fazenda" },
+  { valor: "rancho", icone: "folha", label: "Rancho" },
+  { valor: "outro", icone: "etiqueta", label: "Outro" },
 ]
 
 function normalizarTipoParaBanco(tipo: string): string {
@@ -480,7 +481,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
         <Link href="/painel?aba=imoveis" className={styles.btnVoltar}>
           ← Painel
         </Link>
-        <h1 className={styles.headerTitulo}>Editar Imóvel</h1>
+        <h1 className={styles.headerTitulo}>Editar imóvel</h1>
         <div />
       </header>
 
@@ -500,11 +501,11 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 gap: '0.85rem'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8A5F12', fontWeight: 800, fontSize: '0.95rem' }}>
-                  <span>⚠️</span>
-                  <span>Ajustes Solicitados pela Gestão da Imobiliária</span>
+                  <span><Icone nome="alerta" tamanho={16} /></span>
+                  <span>Ajustes solicitados pela gestão da imobiliária</span>
                 </div>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: '#78350f', lineHeight: 1.5 }}>
-                  O gestor solicitou correções neste anúncio. Faça as alterações necessárias no formulário abaixo e, ao terminar, clique em <strong>"Reenviar para Revisão"</strong>.
+                <p style={{ margin: 0, fontSize: '0.85rem', color: '#8A5F12', lineHeight: 1.5 }}>
+                  O gestor solicitou correções neste anúncio. Faça as alterações necessárias no formulário abaixo e, ao terminar, clique em <strong>"Reenviar para revisão"</strong>.
                 </p>
                 <LinhaTempoRevisao
                   imovelId={id}
@@ -524,7 +525,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 fontSize: "0.85rem",
                 fontWeight: 600,
               }}>
-                ✅ {reenviando || modalReenvioAberto ? "Imóvel reenviado para a revisão do gestor com sucesso!" : "Imóvel atualizado com sucesso!"}
+                <Icone nome="check" tamanho={16} /> {reenviando || modalReenvioAberto ? "Imóvel reenviado para a revisão do gestor" : "Imóvel atualizado"}
               </div>
             )}
 
@@ -538,13 +539,13 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 marginBottom: "1rem",
                 fontSize: "0.85rem",
               }}>
-                ⚠️ {erro}
+                <Icone nome="alerta" tamanho={16} /> {erro}
               </div>
             )}
 
             {/* Tipo */}
             <div className={styles.grupo}>
-              <label className={styles.label}>Tipo de Imóvel</label>
+              <label className={styles.label}>Tipo de imóvel</label>
               <div className={styles.gridTipos}>
                 {TIPOS.map((t) => (
                   <button
@@ -553,7 +554,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                     className={`${styles.tipoCard} ${dados.tipo === t.valor ? styles.tipoSelecionado : ""}`}
                     onClick={() => atualizar("tipo", t.valor)}
                   >
-                    <span className={styles.tipoIcone}>{t.icone}</span>
+                    <span className={styles.tipoIcone}>{ehNomeIcone(t.icone) && <Icone nome={t.icone} tamanho={22} />}</span>
                     <span className={styles.tipoLabel}>{t.label}</span>
                   </button>
                 ))}
@@ -562,7 +563,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
 
             {/* Negociação */}
             <div className={styles.grupo} style={{ marginTop: "0.5rem" }}>
-              <label className={styles.label}>Modalidade de Negociação</label>
+              <label className={styles.label}>Modalidade de negociação</label>
               <div className={styles.btnGroup}>
                 {["venda", "aluguel"].map((neg) => (
                   <button
@@ -590,10 +591,10 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
             {/* Código de Referência */}
             <div className={styles.grupo} style={{ marginTop: "0.5rem" }}>
               <label className={styles.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>Código do Anúncio / Referência {modoCodigo === 'proprio' ? '*' : '(Ref)'}</span>
+                <span>Código do anúncio / referência {modoCodigo === 'proprio' ? '*' : '(Ref)'}</span>
                 <span style={{ fontSize: '0.725rem', color: modoCodigo === 'proprio' ? '#B23318' : '#7A7264', fontWeight: 'normal' }}>
                   {modoCodigo === 'proprio'
-                    ? (dados.codigo ? '✓ Código Próprio/CRM' : '⚠️ Obrigatório (Modo Próprio/CRM)')
+                    ? (dados.codigo ? 'Código Próprio/CRM' : 'Obrigatório (Modo Próprio/CRM)')
                     : (dados.codigo ? 'Personalizado' : `Automático (${prefixo || 'FIX'}-XXXX)`)}
                 </span>
               </label>
@@ -603,7 +604,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 onChange={(e) => atualizar("codigo", e.target.value.toUpperCase().replace(/\s+/g, ''))}
                 placeholder={modoCodigo === 'proprio' ? 'Ex: AP-104, CAS-002 (Informe o código do seu sistema)' : `Ex: ${prefixo || 'FIX'}-1042 (Deixe vazio para gerar auto)`}
                 maxLength={20}
-                style={modoCodigo === 'proprio' && !dados.codigo ? { borderColor: '#fb923c' } : undefined}
+                style={modoCodigo === 'proprio' && !dados.codigo ? { borderColor: '#E8836B' } : undefined}
               />
             </div>
 
@@ -614,11 +615,11 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 className={styles.input}
                 value={formatarPreco(dados.preco)}
                 onChange={(e) => atualizar("preco", e.target.value)}
-                placeholder="0 = Sob Consulta"
+                placeholder="0 = Sob consulta"
               />
               {dados.preco && dados.preco.replace(/\D/g, "") === "0" && (
                 <span style={{ display: 'block', fontSize: '0.725rem', color: '#2C5F8A', marginTop: '3px' }}>
-                  ℹ️ R$ 0: o anúncio será exibido automaticamente como <strong>Sob Consulta</strong>.
+ R$ 0: o anúncio será exibido automaticamente como <strong>Sob consulta</strong>.
                 </span>
               )}
             </div>
@@ -690,7 +691,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                 />
               </div>
               <div className={styles.grupo}>
-                <label className={styles.label}>Endereço (Rua, Av)</label>
+                <label className={styles.label}>Endereço (rua, av)</label>
                 <input
                   className={styles.input}
                   value={dados.endereco}
@@ -760,7 +761,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
             {/* Galeria de Fotos */}
             <div style={{ marginTop: "1rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <label className={styles.label}>Galeria de Fotos ({fotos.length})</label>
+                <label className={styles.label}>Galeria de fotos ({fotos.length})</label>
                 <button
                   type="button"
                   onClick={() => inputFotoRef.current?.click()}
@@ -790,14 +791,14 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                       <img src={foto.preview} alt={`Foto ${idx + 1}`} className={styles.fotoImgPro} />
 
                       {foto.principal ? (
-                        <div className={styles.badgeCapa}>⭐ Capa</div>
+                        <div className={styles.badgeCapa}>Capa</div>
                       ) : (
                         <button
                           type="button"
                           className={styles.btnTornarCapa}
                           onClick={() => definirPrincipal(idx)}
                         >
-                          Tornar Capa
+                          Tornar capa
                         </button>
                       )}
 
@@ -809,7 +810,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                           removerFoto(idx)
                         }}
                       >
-                        ✕
+                        <Icone nome="fechar" tamanho={16} />
                       </button>
                     </div>
                   ))}
@@ -831,8 +832,8 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   animation: 'fadeIn 0.2s ease'
                 }}>
                   <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#22302A' }}>
-                    💬 Descreva brevemente as correções feitas (opcional):
-                  </span>
+ Descreva brevemente as correções feitas (opcional):
+ </span>
                   <textarea
                     style={{
                       width: '100%',
@@ -864,7 +865,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                   disabled={salvando || reenviando}
                   style={{ height: "38px", fontSize: "0.85rem", fontWeight: 600 }}
                 >
-                  {salvando ? "Salvando..." : "💾 Salvar Rascunho"}
+                  {salvando ? "Salvando..." : "Salvar rascunho"}
                 </button>
 
                 {!modalReenvioAberto ? (
@@ -875,8 +876,8 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                     disabled={salvando || reenviando}
                     style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#2E6B4E', borderColor: '#2E6B4E' }}
                   >
-                    📤 Reenviar para Revisão do Gestor
-                  </button>
+ Reenviar para revisão do gestor
+ </button>
                 ) : (
                   <button
                     type="button"
@@ -885,7 +886,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
                     disabled={salvando || reenviando}
                     style={{ height: "38px", fontSize: "0.85rem", fontWeight: 700, background: '#2E6B4E', borderColor: '#2E6B4E' }}
                   >
-                    {reenviando ? "Reenviando..." : "✅ Confirmar e Notificar Gestor"}
+                    {reenviando ? "Reenviando..." : "Confirmar e notificar gestor"}
                   </button>
                 )}
               </div>

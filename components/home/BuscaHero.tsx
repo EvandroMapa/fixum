@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './BuscaHero.module.css'
+import Icone from '@/components/ui/Icone'
 
 const SUGESTOES_RAPIDAS = [
   { label: 'Casas à venda', href: '/explorar?negociacao=venda&tipo=casa' },
@@ -58,7 +59,7 @@ export default function BuscaHero() {
           />
           {query && (
             <button type="button" className={styles.btnLimpar} onClick={() => { setQuery(''); inputRef.current?.focus() }}>
-              ✕
+              <Icone nome="fechar" tamanho={16} />
             </button>
           )}
         </div>

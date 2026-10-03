@@ -125,7 +125,7 @@
 
 .kpiVerde { border-left: 4px solid #3F8A66; }
 .kpiAzul { border-left: 4px solid #F0A58F; }
-.kpiRoxo { border-left: 4px solid #a855f7; }
+.kpiRoxo { border-left: 4px solid #45566B; }
 .kpiDourado { border-left: 4px solid var(--ouro); }
 
 .kpiInfo {
@@ -231,7 +231,7 @@
 
 .growthBadgeRoxo {
   background: rgba(168, 85, 247, 0.2);
-  color: #c084fc;
+  color: #9AAABD;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 3px 8px;
@@ -429,7 +429,7 @@
 .tabela td {
   padding: 14px;
   color: var(--pedra-200);
-  border-bottom: 1px solid #283548;
+  border-bottom: 1px solid #22302A;
 }
 
 .cidadeCell {

@@ -30,9 +30,21 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **NUNCA utilizar `window.confirm()` ou `window.alert()` nativos do navegador** (eles aparecem colados no topo da barra de endereços e quebram a experiência visual da plataforma).
 - Usar SEMPRE o hook `const { confirmar, alertar } = useConfirm()` importado de `@/contexts/ModalConfirmacaoContext`.
 - **Confirmações de Ações (`confirmar`)**:
-  - Modal centralizado com backdrop blur, ícone temático (👑, 🗑️, 🚪, ⚠️, ℹ️), título destacado, mensagem explicativa e botões 'Cancelar' + ação (ex: 'Sim, Promover', 'Sim, Excluir').
+  - Modal centralizado com backdrop blur, ícone temático, título destacado, mensagem explicativa e botões 'Cancelar' + ação (ex: 'Sim, promover', 'Sim, excluir').
+  - `icone` recebe o NOME de um ícone de `components/ui/Icone.tsx` (ex: 'coroa', 'lixeira', 'sair', 'alerta', 'info'). Sem `icone`, o modal escolhe pelo `tipo`.
   - Suporta tipo: `'primario'`, `'perigo'`, `'aviso'`, `'sucesso'`.
-  - Exemplo: `const confirmou = await confirmar({ titulo: 'Promover a Gestor?', mensagem: '...', icone: '👑', tipo: 'primario' })`
+  - Exemplo: `const confirmou = await confirmar({ titulo: 'Promover a gestor?', mensagem: '...', icone: 'coroa', tipo: 'primario' })`
 - **Alertas e Notificações Informativas (`alertar`)**:
   - Modal centralizado com ícone temático, título, mensagem clara e botão único 'Entendi'.
-  - Exemplo: `await alertar({ titulo: 'Imóvel Publicado!', mensagem: '...', icone: '🎉', tipo: 'sucesso' })`
+  - Exemplo: `await alertar({ titulo: 'Imóvel publicado', mensagem: '...', icone: 'check', tipo: 'sucesso' })`
+
+## 5. IDENTIDADE VISUAL (MARCA FIXUM)
+- Fonte de verdade: `brand/brandbook-fixum.html` (PDF em `brand/brandbook-fixum.pdf`).
+- Cores, fontes, raios e sombras vêm dos tokens em `app/globals.css` (`var(--tinta)`, `var(--papel)`, `var(--marco)`…). Não usar hex soltos nem a paleta do Tailwind (azuis/cinzas frios).
+- Logo: `<Logotipo />` e `<Simbolo />` de `components/ui/Logo.tsx`. Nunca usar os dois lado a lado.
+- Ícones: `<Icone nome="..." />` de `components/ui/Icone.tsx` (traço 1,75). **Nunca usar emojis na interface**: nem em botões, títulos, menus, modais, toasts ou notificações.
+- Vermelho Marco (`--marco`) é raro: CTA principal (no máximo um por tela), pin do local exato e ponto do logo.
+- Textos de interface em caixa de frase ("Salvar alterações", não "Salvar Alterações"), sem exclamações em excesso, sempre com acentuação correta.
+- Vocabulário: "Fixar"/"Fixados" no lugar de favoritar/favoritos; "Explorar" no lugar de buscar.
+- Preços no mapa: `formatarPrecoCurto()` de `lib/utils.ts` ("R$ 450 mil", "R$ 1.800/mês").
+

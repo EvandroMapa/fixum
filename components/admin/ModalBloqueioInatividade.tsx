@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import InputSenha from '@/components/ui/InputSenha'
 import { desbloquearTelaComPin } from '@/lib/admin-auth'
 import styles from './ModalBloqueioInatividade.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface ModalBloqueioInatividadeProps {
   onDesbloqueado: () => void
@@ -38,22 +39,22 @@ export default function ModalBloqueioInatividade({
   return (
     <div className={styles.overlay}>
       <div className={styles.cardBloqueio}>
-        <div className={styles.iconeEscudo}>🛡️</div>
-        <h2 className={styles.titulo}>Painel Bloqueado por Segurança</h2>
+        <div className={styles.iconeEscudo}><Icone nome="escudo" tamanho={16} /></div>
+        <h2 className={styles.titulo}>Painel bloqueado por segurança</h2>
         <p className={styles.subtitulo}>
           A sessão executiva da Fixum foi bloqueada para proteger dados fiscais e cadastrais. Insira seu PIN Master para retomar o trabalho.
         </p>
 
         {erro && (
           <div className={styles.alertaErro}>
-            <span>⚠️</span>
+            <span><Icone nome="alerta" tamanho={16} /></span>
             <span>{erro}</span>
           </div>
         )}
 
         <form onSubmit={handleDesbloquear} className={styles.form}>
           <div className={styles.campo}>
-            <label className={styles.label}>PIN Master / Chave Secreta Master</label>
+            <label className={styles.label}>PIN Master / chave secreta Master</label>
             <InputSenha
               value={pin}
               onChange={(e) => setPin(e.target.value)}
@@ -66,14 +67,14 @@ export default function ModalBloqueioInatividade({
           </div>
 
           <button type="submit" className={styles.btnDesbloquear}>
-            🔓 Desbloquear Painel
-          </button>
+ Desbloquear painel
+ </button>
         </form>
 
         <div className={styles.rodape}>
           <button type="button" onClick={onEncerrarSessao} className={styles.btnSair}>
-            🔒 Encerrar Sessão e Sair
-          </button>
+ Encerrar sessão e sair
+ </button>
         </div>
       </div>
     </div>

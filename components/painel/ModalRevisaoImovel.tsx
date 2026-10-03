@@ -7,6 +7,7 @@ import { formatarPreco, labelTipoImovel, fotoPrincipal } from '@/lib/utils'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import LinhaTempoRevisao from './LinhaTempoRevisao'
 import styles from './ModalRevisaoImovel.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface ModalRevisaoImovelProps {
   aberto: boolean
@@ -49,9 +50,9 @@ export default function ModalRevisaoImovel({
 
     if (usoPlano.atingiuLimite) {
       await alertar({
-        titulo: 'Cota Corporativa Atingida',
+        titulo: 'Cota corporativa atingida',
         mensagem: `A imobiliária atingiu o limite de ${usoPlano.limiteMaximo} anúncios ativos do plano ${usoPlano.plano.nome}. Faça upgrade ou pause um anúncio antes de aprovar este novo imóvel.`,
-        icone: '⚠️',
+        icone: 'alerta',
         tipo: 'aviso',
       })
       return
@@ -91,16 +92,16 @@ export default function ModalRevisaoImovel({
       if (!res.ok) throw new Error(json.error || 'Erro ao aprovar imóvel.')
 
       await alertar({
-        titulo: 'Imóvel Aprovado!',
+        titulo: 'Imóvel aprovado',
         mensagem: 'O anúncio foi aprovado e já está publicado e visível no mapa público do Fixum.',
-        icone: '🎉',
+        icone: 'check',
         tipo: 'sucesso',
       })
       await onSucesso()
       onFechar()
     } catch (err: any) {
       await alertar({
-        titulo: 'Erro ao Aprovar',
+        titulo: 'Erro ao aprovar',
         mensagem: err.message || 'Ocorreu um erro ao aprovar o imóvel.',
         tipo: 'perigo',
       })
@@ -114,9 +115,9 @@ export default function ModalRevisaoImovel({
 
     if (!motivoRecusa.trim()) {
       await alertar({
-        titulo: 'Motivo Obrigatório',
+        titulo: 'Motivo obrigatório',
         mensagem: 'Por favor, descreva o motivo da solicitação de ajustes para orientar o corretor.',
-        icone: '✍️',
+        icone: 'editar',
         tipo: 'aviso',
       })
       return
@@ -144,16 +145,16 @@ export default function ModalRevisaoImovel({
       if (!res.ok) throw new Error(json.error || 'Erro ao recusar imóvel.')
 
       await alertar({
-        titulo: 'Ajustes Solicitados',
+        titulo: 'Ajustes solicitados',
         mensagem: `A solicitação com suas orientações foi enviada com sucesso para o corretor ${nomeCorretor}.`,
-        icone: '📬',
+        icone: 'email',
         tipo: 'info',
       })
       await onSucesso()
       onFechar()
     } catch (err: any) {
       await alertar({
-        titulo: 'Erro ao Solicitar Ajustes',
+        titulo: 'Erro ao solicitar ajustes',
         mensagem: err.message || 'Ocorreu um erro ao processar a solicitação de ajustes.',
         tipo: 'perigo',
       })
@@ -172,16 +173,16 @@ export default function ModalRevisaoImovel({
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.headerTitle}>
-            <span className={styles.iconeHeader}>{isAtivo ? '🛡️' : '🔍'}</span>
+            <span className={styles.iconeHeader}>{isAtivo ? '' : ''}</span>
             <div>
-              <h2>{isAtivo ? 'Auditoria & Moderação de Imóvel' : isPausado ? 'Auditoria de Imóvel Pausado' : 'Revisão e Moderação de Anúncio'}</h2>
+              <h2>{isAtivo ? 'Auditoria & moderação de imóvel' : isPausado ? 'Auditoria de Imóvel Pausado' : 'Revisão e Moderação de Anúncio'}</h2>
               <div className={styles.subtituloHeader}>
-                Corretor responsável: <strong>{nomeCorretor}</strong> • {isAtivo ? '🟢 Ativo no Mapa Público' : isPausado ? '⏸️ Pausado' : '⏳ Aguardando aprovação'}
+                Corretor responsável: <strong>{nomeCorretor}</strong> • {isAtivo ? 'Ativo no mapa público' : isPausado ? 'Pausado' : 'Aguardando aprovação'}
               </div>
             </div>
           </div>
           <button type="button" className={styles.btnFechar} onClick={onFechar}>
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
         </div>
 
@@ -201,9 +202,9 @@ export default function ModalRevisaoImovel({
               alignItems: 'center',
               gap: '10px',
             }}>
-              <span style={{ fontSize: '1.3rem' }}>🛡️</span>
+              <span style={{ fontSize: '1.3rem' }}><Icone nome="escudo" tamanho={18} /></span>
               <span>
-                <strong>Auditoria da Gestão:</strong> Este anúncio está atualmente no ar. Ao clicar em <strong>"Solicitar Ajustes"</strong>, ele será <strong>imediatamente suspenso do mapa público</strong> para proteger a imobiliária e reatribuído ao corretor com as suas orientações.
+                <strong>Auditoria da gestão:</strong> Este anúncio está atualmente no ar. Ao clicar em <strong>"Solicitar ajustes"</strong>, ele será <strong>imediatamente suspenso do mapa público</strong> para proteger a imobiliária e reatribuído ao corretor com as suas orientações.
               </span>
             </div>
           )}
@@ -211,7 +212,7 @@ export default function ModalRevisaoImovel({
           {/* Galeria de Fotos */}
           <div>
             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#5A5449', display: 'block', marginBottom: '6px' }}>
-              📸 Fotos do Imóvel ({fotos.length}):
+ Fotos do imóvel ({fotos.length}):
             </span>
             {fotos.length > 0 ? (
               <div className={styles.galeriaPreview}>
@@ -227,8 +228,8 @@ export default function ModalRevisaoImovel({
               </div>
             ) : (
               <div style={{ padding: '1rem', background: '#F3EEE4', borderRadius: '8px', color: '#7A7264', fontSize: '0.85rem' }}>
-                ⚠️ Nenhuma foto cadastrada neste anúncio.
-              </div>
+ Nenhuma foto cadastrada neste anúncio.
+ </div>
             )}
           </div>
 
@@ -237,8 +238,7 @@ export default function ModalRevisaoImovel({
             <div className={styles.linhaTituloPreco}>
               <div>
                 <h3 className={styles.tituloImovel}>{imovel.titulo}</h3>
-                <span style={{ fontSize: '0.825rem', color: '#7A7264' }}>
-                  📍 {imovel.cidade} {imovel.bairro ? `• ${imovel.bairro}` : ''} {imovel.endereco ? `• ${imovel.endereco}` : ''}
+                <span style={{ fontSize: '0.825rem', color: '#7A7264' }}><Icone nome="local" tamanho={16} /> {imovel.cidade} {imovel.bairro ? `• ${imovel.bairro}` : ''} {imovel.endereco ? `• ${imovel.endereco}` : ''}
                 </span>
               </div>
               <div className={styles.precoImovel}>
@@ -276,7 +276,7 @@ export default function ModalRevisaoImovel({
             {imovel.descricao && (
               <div>
                 <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#7A7264', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
-                  Descrição do Anúncio:
+                  Descrição do anúncio:
                 </span>
                 <div className={styles.descricaoTexto}>
                   {imovel.descricao}
@@ -307,16 +307,16 @@ export default function ModalRevisaoImovel({
                   }}
                   title="Editar e corrigir informações diretamente antes de publicar"
                 >
-                  ✏️ Editar Anúncio
-                </button>
+ Editar anúncio
+ </button>
               ) : (
                 <Link
                   href={`/painel/editar-imovel/${imovel.id}`}
                   className={styles.btnEditar}
                   title="Editar e corrigir informações diretamente antes de publicar"
                 >
-                  ✏️ Editar Anúncio
-                </Link>
+ Editar anúncio
+ </Link>
               )}
 
               <div className={styles.botoesAcao}>
@@ -327,7 +327,7 @@ export default function ModalRevisaoImovel({
                   disabled={salvando}
                   style={isAtivo ? { background: '#FDF7E8', borderColor: '#E3A72F', color: '#8A5F12' } : {}}
                 >
-                  {isAtivo ? '⚠️ Solicitar Ajustes (Suspender do Mapa)' : '❌ Solicitar Ajustes'}
+                  {isAtivo ? 'Solicitar ajustes (suspender do mapa)' : 'Solicitar ajustes'}
                 </button>
 
                 <button
@@ -336,7 +336,7 @@ export default function ModalRevisaoImovel({
                   onClick={handleAprovar}
                   disabled={salvando}
                 >
-                  {salvando ? 'Salvando...' : isAtivo ? '✅ Manter Publicado' : '✅ Aprovar e Publicar no Mapa'}
+                  {salvando ? 'Salvando...' : isAtivo ? 'Manter Publicado' : 'Aprovar e Publicar no Mapa'}
                 </button>
               </div>
             </>
@@ -345,7 +345,7 @@ export default function ModalRevisaoImovel({
             <div className={styles.boxRecusaRodape}>
               <div className={styles.boxRecusaHeader}>
                 <span className={styles.boxRecusaTitulo}>
-                  ⚠️ O que o corretor <strong>{nomeCorretor}</strong> precisa corrigir?
+ O que o corretor <strong>{nomeCorretor}</strong> precisa corrigir?
                 </span>
                 <span style={{ fontSize: '0.75rem', color: '#7A7264' }}>
                   O corretor receberá esta instrução no painel dele.
@@ -378,7 +378,7 @@ export default function ModalRevisaoImovel({
                   onClick={handleConfirmarRecusa}
                   disabled={salvando || !motivoRecusa.trim()}
                 >
-                  {salvando ? 'Enviando...' : '📤 Enviar Ajustes para o Corretor'}
+                  {salvando ? 'Enviando...' : 'Enviar ajustes para o corretor'}
                 </button>
               </div>
             </div>

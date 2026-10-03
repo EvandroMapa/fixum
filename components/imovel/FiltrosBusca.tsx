@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { type FiltrosBusca, type TipoNegociacao } from '@/lib/types'
 import BuscaAutoComplete, { type Sugestao } from './BuscaAutoComplete'
 import styles from './FiltrosBusca.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 interface Props {
   filtros: FiltrosBusca
@@ -15,33 +16,33 @@ interface Props {
 const GRUPOS_TIPO = [
   {
     grupo: 'Residencial',
-    icone: '🏠',
+    icone: 'casa',
     tipos: [
       { valor: 'apartamento',     label: 'Apartamento' },
       { valor: 'casa',            label: 'Casa' },
       { valor: 'sobrado',         label: 'Sobrado' },
-      { valor: 'casa_condominio', label: 'Casa em Condomínio' },
+      { valor: 'casa_condominio', label: 'Casa em condomínio' },
       { valor: 'cobertura',       label: 'Cobertura' },
-      { valor: 'kitnet',          label: 'Kitnet / Studio' },
+      { valor: 'kitnet',          label: 'Kitnet / studio' },
       { valor: 'flat',            label: 'Flat' },
       { valor: 'lote',            label: 'Lote' },
     ],
   },
   {
     grupo: 'Comercial',
-    icone: '🏢',
+    icone: 'predio',
     tipos: [
-      { valor: 'sala_comercial',    label: 'Sala Comercial' },
-      { valor: 'loja',              label: 'Loja / Ponto Comercial' },
+      { valor: 'sala_comercial',    label: 'Sala comercial' },
+      { valor: 'loja',              label: 'Loja / ponto comercial' },
       { valor: 'galpao',            label: 'Galpão' },
-      { valor: 'predio',            label: 'Prédio Comercial' },
+      { valor: 'predio',            label: 'Prédio comercial' },
       { valor: 'garagem',           label: 'Garagem' },
-      { valor: 'terreno_comercial', label: 'Terreno / Lote' },
+      { valor: 'terreno_comercial', label: 'Terreno / lote' },
     ],
   },
   {
     grupo: 'Rural',
-    icone: '🌾',
+    icone: 'folha',
     tipos: [
       { valor: 'sitio',   label: 'Sítio' },
       { valor: 'chacara', label: 'Chácara' },
@@ -223,14 +224,14 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
             {gi > 0 && <div className={styles.divisorVertical} />}
             <div className={`${styles.colunaGrupo} ${classeGrupo}`}>
               <div className={styles.headerGrupo}>
-                <span className={styles.labelGrupo}>{g.icone} {g.grupo}</span>
+                <span className={styles.labelGrupo}>{ehNomeIcone(g.icone) && <Icone nome={g.icone} tamanho={16} />} {g.grupo}</span>
                 <button
                   type="button"
                   className={`${styles.btnToggleTodos} ${status.todosAtivos ? styles.todosAtivos : ''}`}
                   onClick={() => toggleCategoria(g)}
                   title={status.todosAtivos ? `Desmarcar todos de ${g.grupo}` : `Marcar todos de ${g.grupo}`}
                 >
-                  {status.todosAtivos ? '✓ Todos' : '+ Marcar todos'}
+                  {status.todosAtivos ? 'Todos' : '+ Marcar todos'}
                 </button>
               </div>
               <div className={styles.dropdownGrid}>
@@ -311,7 +312,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
           className={`${styles.badgeModoDesktop} ${filtros.negociacao === 'aluguel' ? styles.badgeAluguel : styles.badgeCompra}`}
           title="Clique para voltar e trocar o modo"
         >
-          {filtros.negociacao === 'aluguel' ? '🔑 Aluguel' : '🏠 Compra'}
+          {filtros.negociacao === 'aluguel' ? 'Aluguel' : 'Compra'}
         </Link>
 
         {/* Autocomplete por cidade/bairro */}
@@ -357,7 +358,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                   onClick={handleLimparTipo}
                   title="Limpar tipos selecionados"
                 >
-                  ✕
+                  <Icone nome="fechar" tamanho={16} />
                 </span>
               ) : (
                 <span className={styles.setinha}>▾</span>
@@ -373,8 +374,8 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                 {conteudoTipos}
                 <div className={styles.dropdownFooter}>
                   <button className={styles.btnAplicar} onClick={() => setModalAberto(null)}>
-                    ✕ Fechar
-                  </button>
+ Fechar
+ </button>
                 </div>
               </div>
             )}
@@ -395,7 +396,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                   onClick={handleLimparPreco}
                   title="Limpar faixa de preço"
                 >
-                  ✕
+                  <Icone nome="fechar" tamanho={16} />
                 </span>
               ) : (
                 <span className={styles.setinha}>▾</span>
@@ -424,7 +425,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                   onClick={handleLimparQuartos}
                   title="Limpar filtro de quartos"
                 >
-                  ✕
+                  <Icone nome="fechar" tamanho={16} />
                 </span>
               ) : (
                 <span className={styles.setinha}>▾</span>
@@ -441,8 +442,8 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
           {/* Limpar todos os filtros */}
           {temFiltrosAtivos && (
             <button className={styles.btnLimpar} onClick={limparFiltros} title="Limpar todos os filtros">
-              ✕ Limpar Tudo
-            </button>
+ Limpar tudo
+ </button>
           )}
         </div>
       </div>
@@ -455,7 +456,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
           className={`${styles.chipMobile} ${filtros.negociacao === 'aluguel' ? styles.chipAluguel : styles.chipCompra}`}
           onClick={() => handleNegociacao(filtros.negociacao === 'aluguel' ? 'venda' : 'aluguel')}
         >
-          {filtros.negociacao === 'aluguel' ? '🔑 Aluguel' : '🏠 Compra'}
+          {filtros.negociacao === 'aluguel' ? 'Aluguel' : 'Compra'}
           <span className={styles.chipTrocaModo}>⇄</span>
         </button>
 
@@ -474,7 +475,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               onClick={handleLimparTipo}
               title="Limpar tipos"
             >
-              ✕
+              <Icone nome="fechar" tamanho={16} />
             </span>
           ) : (
             <span className={styles.setinha}>▾</span>
@@ -496,7 +497,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               onClick={handleLimparPreco}
               title="Limpar preço"
             >
-              ✕
+              <Icone nome="fechar" tamanho={16} />
             </span>
           ) : (
             <span className={styles.setinha}>▾</span>
@@ -518,7 +519,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               onClick={handleLimparQuartos}
               title="Limpar quartos"
             >
-              ✕
+              <Icone nome="fechar" tamanho={16} />
             </span>
           ) : (
             <span className={styles.setinha}>▾</span>
@@ -533,8 +534,8 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
             onClick={limparFiltros}
             title="Limpar todos os filtros"
           >
-            ✕ Limpar Tudo
-          </button>
+ Limpar tudo
+ </button>
         )}
       </div>
 
@@ -556,7 +557,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                 onClick={() => setModalAberto(null)}
                 aria-label="Fechar"
               >
-                ✕
+                <Icone nome="fechar" tamanho={16} />
               </button>
             </div>
 
@@ -571,15 +572,15 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                       className={`${styles.btnToggleNeg} ${filtros.negociacao !== 'aluguel' ? styles.btnToggleNegAtivo : ''}`}
                       onClick={() => handleNegociacao('venda')}
                     >
-                      🏠 Comprar
-                    </button>
+ Comprar
+ </button>
                     <button
                       type="button"
                       className={`${styles.btnToggleNeg} ${filtros.negociacao === 'aluguel' ? styles.btnToggleNegAtivo : ''}`}
                       onClick={() => handleNegociacao('aluguel')}
                     >
-                      🔑 Alugar
-                    </button>
+ Alugar
+ </button>
                   </div>
                 </div>
               )}
@@ -588,7 +589,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
               {(modalAberto === 'tipo' || modalAberto === 'todos') && (
                 <div className={styles.drawerSecao}>
                   {modalAberto === 'todos' && (
-                    <span className={styles.drawerSecaoTitulo}>Tipo de Imóvel</span>
+                    <span className={styles.drawerSecaoTitulo}>Tipo de imóvel</span>
                   )}
                   {conteudoTipos}
                 </div>
@@ -630,7 +631,7 @@ export default function FiltrosBusca({ filtros, onChange, onLocalSelecionado }: 
                 className={styles.drawerBtnAplicar}
                 onClick={() => setModalAberto(null)}
               >
-                Aplicar Filtros
+                Aplicar filtros
               </button>
             </div>
           </div>

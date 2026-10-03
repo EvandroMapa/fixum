@@ -6,6 +6,7 @@ import { type Lead } from '@/lib/types'
 import { formatarPreco, formatarTelefone } from '@/lib/utils'
 import ModalDetalhesLead from './ModalDetalhesLead'
 import styles from './AbaLeads.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 interface Props {
   leads: Lead[]
@@ -22,11 +23,11 @@ type ModoVisualizacao = 'kanban' | 'lista'
 type FiltroStatusPipeline = 'abertos' | 'fechados' | 'perdidos' | 'arquivados'
 
 const ETAPAS_KANBAN_ATIVAS = [
-  { id: 'novo', titulo: 'Novos', icone: '📥', cor: '#2C5F8A' },
-  { id: 'em_contato', titulo: 'Em Contato', icone: '💬', cor: '#2C5F8A' },
-  { id: 'visita_agendada', titulo: 'Visita Agendada', icone: '📅', cor: '#8b5cf6' },
-  { id: 'proposta', titulo: 'Proposta', icone: '💰', cor: '#E3A72F' },
-  { id: 'negociacao', titulo: 'Em Negociação', icone: '🤝', cor: '#B23318' },
+  { id: 'novo', titulo: 'Novos', icone: 'baixar', cor: '#2C5F8A' },
+  { id: 'em_contato', titulo: 'Em contato', icone: 'chat', cor: '#2C5F8A' },
+  { id: 'visita_agendada', titulo: 'Visita agendada', icone: 'calendario', cor: '#45566B' },
+  { id: 'proposta', titulo: 'Proposta', icone: 'moeda', cor: '#E3A72F' },
+  { id: 'negociacao', titulo: 'Em negociação', icone: 'pessoas', cor: '#B23318' },
 ]
 
 function extrairIniciais(nome: string) {
@@ -39,10 +40,10 @@ function extrairIniciais(nome: string) {
 const CORES_AVATAR = [
   { bg: '#EAE4D8', text: '#22302A', border: '#CFC6B6' },
   { bg: '#EEF5F0', text: '#2E6B4E', border: '#C3DACB' },
-  { bg: '#faf5ff', text: '#7e22ce', border: '#e9d5ff' },
-  { bg: '#FBE6DF', text: '#B23318', border: '#fed7aa' },
-  { bg: '#fdf2f8', text: '#be185d', border: '#fbcfe8' },
-  { bg: '#f0fdfa', text: '#0f766e', border: '#99f6e4' },
+  { bg: '#EEF1F4', text: '#3A4A5E', border: '#D5DCE4' },
+  { bg: '#FBE6DF', text: '#B23318', border: '#F3C3B5' },
+  { bg: '#FDF1EC', text: '#B23318', border: '#FBE6DF' },
+  { bg: '#EEF5F0', text: '#2F6F6A', border: '#C3DACB' },
 ]
 
 function obterCorAvatar(nome: string) {
@@ -436,7 +437,7 @@ export default function AbaLeads({
           arquivado: false,
           usuario_autor_id: usuarioId,
           usuario_autor_nome: usuarioNome,
-          mensagem_atividade: `🏆 Negócio marcado como FECHADO no valor de ${formatarPreco(valorNum)}. Enviado para homologação do Gestor.`,
+          mensagem_atividade: `Negócio marcado como FECHADO no valor de ${formatarPreco(valorNum)}. Enviado para homologação do Gestor.`,
         }),
       })
       setLeadParaFechamento(null)
@@ -477,7 +478,7 @@ export default function AbaLeads({
           arquivado: false,
           usuario_autor_id: usuarioId,
           usuario_autor_nome: usuarioNome,
-          mensagem_atividade: `❌ Oportunidade marcada como PERDIDA. Motivo: "${motivoPerdaInput}".`,
+          mensagem_atividade: `Oportunidade marcada como PERDIDA. Motivo: "${motivoPerdaInput}".`,
         }),
       })
       setLeadParaPerda(null)
@@ -514,7 +515,7 @@ export default function AbaLeads({
           motivo_perda: null,
           usuario_autor_id: usuarioId,
           usuario_autor_nome: usuarioNome,
-          mensagem_atividade: `🔄 Oportunidade REATIVADA por ${usuarioNome} e retornada para a etapa de Novos Leads.`,
+          mensagem_atividade: `Oportunidade REATIVADA por ${usuarioNome} e retornada para a etapa de Novos Leads.`,
         }),
       })
       if (onRecarregarDados) onRecarregarDados()
@@ -547,7 +548,7 @@ export default function AbaLeads({
           data_arquivamento: agora,
           usuario_autor_id: usuarioId,
           usuario_autor_nome: usuarioNome,
-          mensagem_atividade: `📁 Lead arquivado por ${usuarioNome}.`,
+          mensagem_atividade: `Lead arquivado por ${usuarioNome}.`,
         }),
       })
       if (onRecarregarDados) onRecarregarDados()
@@ -580,7 +581,7 @@ export default function AbaLeads({
           status: statusRestaurado,
           usuario_autor_id: usuarioId,
           usuario_autor_nome: usuarioNome,
-          mensagem_atividade: `📂 Lead DESARQUIVADO por ${usuarioNome} e retornado para o funil ativo.`,
+          mensagem_atividade: `Lead DESARQUIVADO por ${usuarioNome} e retornado para o funil ativo.`,
         }),
       })
       if (onRecarregarDados) onRecarregarDados()
@@ -619,7 +620,7 @@ export default function AbaLeads({
           data_homologacao: agora,
           usuario_autor_id: usuarioId,
           usuario_autor_nome: usuarioNome,
-          mensagem_atividade: `🏆 Venda homologada e aprovada pelo Gestor ${usuarioNome}.`,
+          mensagem_atividade: `Venda homologada e aprovada pelo Gestor ${usuarioNome}.`,
         }),
       })
     } catch (err) {
@@ -654,7 +655,7 @@ export default function AbaLeads({
           motivo_rejeicao_homologacao: 'Retornado para negociação pelo gestor',
           usuario_autor_id: usuarioId,
           usuario_autor_nome: usuarioNome,
-          mensagem_atividade: `⚠️ Homologação de venda recusada pelo Gestor ${usuarioNome}. Lead retornado para a etapa de Negociação.`,
+          mensagem_atividade: `Homologação de venda recusada pelo Gestor ${usuarioNome}. Lead retornado para a etapa de Negociação.`,
         }),
       })
     } catch (err) {
@@ -687,7 +688,7 @@ export default function AbaLeads({
         ? `${window.location.origin}/imovel/${lead.imovel.id}`
         : ''
     const codTexto = lead.imovel?.codigo ? ` (Ref: ${lead.imovel.codigo})` : ''
-    const texto = `Olá ${lead.nome}! Sou ${usuarioNome} do portal de imóveis Fixum.\n\nVi seu interesse no imóvel *${lead.imovel?.titulo || 'anunciado na Fixum'}*${codTexto}.\n${urlImovel ? `🔗 ${urlImovel}\n\n` : ''}Como posso te ajudar?`
+    const texto = `Olá ${lead.nome}! Sou ${usuarioNome} do portal de imóveis Fixum.\n\nVi seu interesse no imóvel *${lead.imovel?.titulo || 'anunciado na Fixum'}*${codTexto}.\n${urlImovel ? `${urlImovel}\n\n` : ''}Como posso te ajudar?`
 
     const msg = encodeURIComponent(texto)
     window.open(`https://wa.me/55${telLimpo}?text=${msg}`, '_blank')
@@ -699,7 +700,7 @@ export default function AbaLeads({
       {(isGestor || isImobiliaria) && leadsNaoAtribuidos.length > 0 && (
         <section className={styles.bannerTriagem}>
           <div className={styles.bannerTriagemTitulo}>
-            <span className={styles.badgeAlertaTriagem}>🚨 Fila de Triagem</span>
+            <span className={styles.badgeAlertaTriagem}>Fila de triagem</span>
             <strong>
               {leadsNaoAtribuidos.length === 1
                 ? '1 lead recebido aguarda atribuição de corretor'
@@ -718,8 +719,8 @@ export default function AbaLeads({
               }
             >
               {filtroCorretor === 'nao_atribuidos'
-                ? '✕ Ver Toda a Equipe'
-                : '🔍 Filtrar Fila de Triagem'}
+                ? 'Ver toda a equipe'
+                : 'Filtrar fila de triagem'}
             </button>
 
             {listaCorretores.length > 0 && (
@@ -730,7 +731,7 @@ export default function AbaLeads({
                 disabled={distribuindoRoleta}
                 title="Distribuir igualmente todos os leads da triagem entre os corretores da equipe"
               >
-                {distribuindoRoleta ? 'Distribuindo...' : '⚡ Distribuir em Roleta'}
+                {distribuindoRoleta ? 'Distribuindo...' : 'Distribuir em roleta'}
               </button>
             )}
           </div>
@@ -748,7 +749,7 @@ export default function AbaLeads({
             }`}
             onClick={() => setFiltroStatusPipeline('abertos')}
           >
-            <span>🟢 Em Aberto</span>
+            <span>Em aberto</span>
             <span className={styles.badgePillQtd}>{contagensPipeline.abertos}</span>
           </button>
 
@@ -759,7 +760,7 @@ export default function AbaLeads({
             }`}
             onClick={() => setFiltroStatusPipeline('fechados')}
           >
-            <span>🏆 Fechados</span>
+            <span>Fechados</span>
             <span className={styles.badgePillQtd}>{contagensPipeline.fechados}</span>
           </button>
 
@@ -770,7 +771,7 @@ export default function AbaLeads({
             }`}
             onClick={() => setFiltroStatusPipeline('perdidos')}
           >
-            <span>❌ Perdidos</span>
+            <span>Perdidos</span>
             <span className={styles.badgePillQtd}>{contagensPipeline.perdidos}</span>
           </button>
 
@@ -781,7 +782,7 @@ export default function AbaLeads({
             }`}
             onClick={() => setFiltroStatusPipeline('arquivados')}
           >
-            <span>📁 Arquivados</span>
+            <span>Arquivados</span>
             <span className={styles.badgePillQtd}>{contagensPipeline.arquivados}</span>
           </button>
         </div>
@@ -795,9 +796,9 @@ export default function AbaLeads({
                 modoVisualizacao === 'kanban' ? styles.btnToggleAtivo : ''
               }`}
               onClick={() => setModoVisualizacao('kanban')}
-              title="Visualização em Funil Kanban"
+              title="Visualização em funil kanban"
             >
-              <span>📊</span>
+              <span><Icone nome="grafico" tamanho={16} /></span>
             </button>
             <button
               type="button"
@@ -805,9 +806,9 @@ export default function AbaLeads({
                 modoVisualizacao === 'lista' ? styles.btnToggleAtivo : ''
               }`}
               onClick={() => setModoVisualizacao('lista')}
-              title="Visualização em Lista / Tabela"
+              title="Visualização em lista / tabela"
             >
-              <span>📋</span>
+              <span><Icone nome="lista" tamanho={16} /></span>
             </button>
           </div>
 
@@ -817,8 +818,8 @@ export default function AbaLeads({
               value={filtroCorretor}
               onChange={(e) => setFiltroCorretor(e.target.value)}
             >
-              <option value="todos">👔 Toda a Equipe</option>
-              <option value="nao_atribuidos">🚨 Fila de Triagem</option>
+              <option value="todos">Toda a equipe</option>
+              <option value="nao_atribuidos">Fila de triagem</option>
               {listaCorretores.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.nome}
@@ -833,7 +834,7 @@ export default function AbaLeads({
               value={filtroImovel}
               onChange={(e) => setFiltroImovel(e.target.value)}
             >
-              <option value="todos">🏠 Todos os Imóveis</option>
+              <option value="todos">Todos os imóveis</option>
               {listaImoveisFiltro.map((im) => (
                 <option key={im.id} value={im.id}>
                   {im.titulo}
@@ -843,7 +844,7 @@ export default function AbaLeads({
           )}
 
           <div className={styles.campoBuscaWrapper}>
-            <span className={styles.iconeBusca}>🔍</span>
+            <span className={styles.iconeBusca}><Icone nome="busca" tamanho={16} /></span>
             <input
               type="text"
               placeholder="Buscar cliente, imóvel..."
@@ -857,7 +858,7 @@ export default function AbaLeads({
                 className={styles.btnLimparBusca}
                 onClick={() => setBuscaTexto('')}
               >
-                ✕
+                <Icone nome="fechar" tamanho={16} />
               </button>
             )}
           </div>
@@ -916,7 +917,7 @@ export default function AbaLeads({
                 {/* Topo da Coluna */}
                 <div className={styles.colunaCabecalho} style={{ borderTopColor: etapa.cor }}>
                   <div className={styles.colunaTituloWrapper}>
-                    <span className={styles.colunaIcone}>{etapa.icone}</span>
+                    <span className={styles.colunaIcone}>{ehNomeIcone(etapa.icone) && <Icone nome={etapa.icone} tamanho={16} />}</span>
                     <strong className={styles.colunaTitulo}>{etapa.titulo}</strong>
                   </div>
                   <span className={styles.colunaContador}>{listaCards.length}</span>
@@ -968,7 +969,7 @@ export default function AbaLeads({
                           {/* Placeholder antes do card */}
                           {isDropAqui && (
                             <div className={styles.dropPlaceholder}>
-                              <span>✨ Soltar nesta posição</span>
+                              <span>Soltar nesta posição</span>
                             </div>
                           )}
 
@@ -1013,8 +1014,8 @@ export default function AbaLeads({
                                       {lead.nome}
                                     </strong>
                                     {lead.temperatura === 'quente' && (
-                                      <span className={styles.badgeQuente} title="Lead de Alta Prioridade">
-                                        🔥
+                                      <span className={styles.badgeQuente} title="Lead de alta prioridade">
+                                        <Icone nome="raio" tamanho={16} />
                                       </span>
                                     )}
                                   </div>
@@ -1053,8 +1054,8 @@ export default function AbaLeads({
                                     className={styles.badgeAguardandoCorretor}
                                     title="Aguardando atribuição de corretor"
                                   >
-                                    🔔 Triagem
-                                  </span>
+ Triagem
+ </span>
                                 )}
                                 <div
                                   className={`${styles.tagContatoCompacta} ${
@@ -1073,20 +1074,20 @@ export default function AbaLeads({
                                   }
                                 >
                                   {fezContato ? (
-                                    <span>✓ Contatado</span>
+                                    <span>Contatado</span>
                                   ) : isNaoAtribuido ? (
                                     <span>
                                       {minutosCriacao < 60
-                                        ? `⏱️ ${minutosCriacao}m`
-                                        : `🚨 ${horasCriacao}h s/ corretor`}
+                                        ? `${minutosCriacao}m`
+                                        : `${horasCriacao}h s/ corretor`}
                                     </span>
                                   ) : (
                                     <span>
                                       {horasCriacao >= 24
-                                        ? `🚨 +24h`
+                                        ? `+24h`
                                         : horasCriacao >= 2
-                                        ? `⏳ +${horasCriacao}h`
-                                        : '⏳ Aguardando'}
+                                        ? `+${horasCriacao}h`
+                                        : 'Aguardando'}
                                     </span>
                                   )}
                                 </div>
@@ -1104,7 +1105,7 @@ export default function AbaLeads({
                                   />
                                 ) : (
                                   <div className={styles.cardImovelThumbPlaceholder}>
-                                    🏢
+                                    <Icone nome="predio" tamanho={16} />
                                   </div>
                                 )}
                                 <div className={styles.cardImovelTextos}>
@@ -1124,7 +1125,7 @@ export default function AbaLeads({
                             {/* Dados da Visita ou Proposta */}
                             {lead.data_visita ? (
                               <div className={styles.cardDestaqueVisita}>
-                                📅 Visita:{' '}
+ Visita:{' '}
                                 {new Date(lead.data_visita).toLocaleString('pt-BR', {
                                   day: '2-digit',
                                   month: '2-digit',
@@ -1137,15 +1138,15 @@ export default function AbaLeads({
                                 className={styles.cardDestaquePendente}
                                 title="Clique no card para agendar a data"
                               >
-                                📅 Agendar data da visita
-                              </div>
+ Agendar data da visita
+ </div>
                             ) : null}
 
                             {lead.valor_proposta ? (
                               <div className={styles.cardDestaqueProposta}>
                                 {lead.status === 'negociacao'
-                                  ? '🤝 Negociação: '
-                                  : '💰 Proposta: '}
+                                  ? 'Negociação: '
+                                  : 'Proposta: '}
                                 {formatarPreco(lead.valor_proposta)}
                               </div>
                             ) : lead.status === 'proposta' || lead.status === 'negociacao' ? (
@@ -1154,8 +1155,8 @@ export default function AbaLeads({
                                 title="Clique no card para registrar o valor"
                               >
                                 {lead.status === 'negociacao'
-                                  ? '🤝 Em negociação de valores'
-                                  : '💰 Registrar valor da proposta'}
+                                  ? 'Em negociação de valores'
+                                  : 'Registrar valor da proposta'}
                               </div>
                             ) : null}
 
@@ -1180,18 +1181,18 @@ export default function AbaLeads({
                                     title="Atribuir corretor da equipe"
                                   >
                                     <option value="" disabled>
-                                      ⚡ Atribuir ▾
-                                    </option>
+ Atribuir ▾
+ </option>
                                     {listaCorretores.map((c) => (
                                       <option key={c.id} value={c.id}>
-                                        👔 {c.nome}
+                                        <Icone nome="maleta" tamanho={16} /> {c.nome}
                                       </option>
                                     ))}
                                   </select>
                                 </div>
                               ) : (
                                 <div className={styles.cardCorretorTag} title="Corretor responsável">
-                                  <span className={styles.iconeCorretorPill}>👔</span>
+                                  <span className={styles.iconeCorretorPill}><Icone nome="maleta" tamanho={16} /></span>
                                   <span className={styles.nomeCorretorPill}>
                                     {lead.corretor_nome || 'Sem corretor'}
                                   </span>
@@ -1220,7 +1221,7 @@ export default function AbaLeads({
                             dropTarget.index === listaCards.length &&
                             arrastandoLeadId !== lead.id && (
                               <div className={styles.dropPlaceholder}>
-                                <span>✨ Soltar no final</span>
+                                <span>Soltar no final</span>
                               </div>
                             )}
                         </div>
@@ -1240,9 +1241,9 @@ export default function AbaLeads({
           <div className={styles.secaoDedicadaHeader}>
             <div>
               <h3 className={styles.secaoDedicadaTitulo}>
-                {filtroStatusPipeline === 'fechados' && '🏆 Vendas & Negócios Fechados'}
-                {filtroStatusPipeline === 'perdidos' && '❌ Oportunidades Perdidas / Descartadas'}
-                {filtroStatusPipeline === 'arquivados' && '📁 Leads Arquivados'}
+                {filtroStatusPipeline === 'fechados' && 'Vendas & Negócios Fechados'}
+                {filtroStatusPipeline === 'perdidos' && 'Oportunidades Perdidas / Descartadas'}
+                {filtroStatusPipeline === 'arquivados' && 'Leads Arquivados'}
               </h3>
               <p className={styles.secaoDedicadaSub}>
                 {filtroStatusPipeline === 'fechados' &&
@@ -1258,7 +1259,7 @@ export default function AbaLeads({
 
           {leadsFiltrados.length === 0 ? (
             <div className={styles.vazioDedicada}>
-              <span>🔍</span>
+              <span><Icone nome="busca" tamanho={16} /></span>
               <h4>Nenhum lead nesta categoria</h4>
               <p>Os leads marcados como {filtroStatusPipeline} aparecerão organizados aqui.</p>
             </div>
@@ -1278,19 +1279,19 @@ export default function AbaLeads({
 
                     {lead.status === 'fechado' &&
                       (lead.status_homologacao === 'pendente' ? (
-                        <span className={styles.badgePendenteHomologacao}>⏳ Aguardando Gestor</span>
+                        <span className={styles.badgePendenteHomologacao}>Aguardando gestor</span>
                       ) : (
-                        <span className={styles.badgeFechadoAprovado}>🏆 Homologado</span>
+                        <span className={styles.badgeFechadoAprovado}>Homologado</span>
                       ))}
 
                     {lead.status === 'perdido' && (
                       <span className={styles.badgeMotivoPerda} title={lead.motivo_perda}>
-                        ❌ {lead.motivo_perda || 'Descartado'}
+                        <Icone nome="fechar" tamanho={16} /> {lead.motivo_perda || 'Descartado'}
                       </span>
                     )}
 
                     {(lead.arquivado || lead.status === 'arquivado') && (
-                      <span className={styles.badgeArquivado}>📁 Arquivado</span>
+                      <span className={styles.badgeArquivado}>Arquivado</span>
                     )}
                   </div>
 
@@ -1298,7 +1299,7 @@ export default function AbaLeads({
                     <div className={styles.imovelDedicadoInfo}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                         {lead.imovel.codigo && (
-                          <span className={styles.badgeCodigoCardLead} title="Código do Imóvel">
+                          <span className={styles.badgeCodigoCardLead} title="Código do imóvel">
                             Ref: {lead.imovel.codigo}
                           </span>
                         )}
@@ -1314,7 +1315,7 @@ export default function AbaLeads({
 
                   <div className={styles.cardDedicadoRodape}>
                     <span className={styles.metaCorretorData}>
-                      👔 {lead.corretor_nome || 'Sem corretor'} •{' '}
+                      <Icone nome="maleta" tamanho={16} /> {lead.corretor_nome || 'Sem corretor'} •{' '}
                       {new Date(lead.created_at).toLocaleDateString('pt-BR')}
                     </span>
 
@@ -1332,15 +1333,15 @@ export default function AbaLeads({
                               onClick={(e) => handleHomologarVenda(e, lead)}
                               title="Homologar venda"
                             >
-                              ✓ Homologar
-                            </button>
+ Homologar
+ </button>
                             <button
                               type="button"
                               className={styles.btnRecusarDedicado}
                               onClick={(e) => handleRecusarHomologacao(e, lead)}
                               title="Recusar homologação"
                             >
-                              ✕
+                              <Icone nome="fechar" tamanho={16} />
                             </button>
                           </>
                         )}
@@ -1352,17 +1353,17 @@ export default function AbaLeads({
                           onClick={(e) => handleDesarquivarLead(e, lead)}
                           title="Desarquivar lead e mover de volta para o funil ativo"
                         >
-                          📂 Desarquivar
-                        </button>
+ Desarquivar
+ </button>
                       ) : lead.status === 'perdido' ? (
                         <button
                           type="button"
                           className={styles.btnReativarDedicado}
                           onClick={(e) => handleReativarLead(e, lead)}
-                          title="Reativar oportunidade e mover de volta para Novos"
+                          title="Reativar oportunidade e mover de volta para novos"
                         >
-                          🔄 Reativar
-                        </button>
+ Reativar
+ </button>
                       ) : (
                         <button
                           type="button"
@@ -1370,8 +1371,8 @@ export default function AbaLeads({
                           onClick={(e) => handleArquivarLead(e, lead)}
                           title="Arquivar lead"
                         >
-                          📁 Arquivar
-                        </button>
+ Arquivar
+ </button>
                       )}
                     </div>
                   </div>
@@ -1387,7 +1388,7 @@ export default function AbaLeads({
         <section className={styles.tabelaContainer}>
           {leadsFiltrados.length === 0 ? (
             <div className={styles.vazio}>
-              <span>🔍</span>
+              <span><Icone nome="busca" tamanho={16} /></span>
               <h3>Nenhum lead encontrado</h3>
               <p>Tente ajustar os filtros ou a busca para localizar seus atendimentos.</p>
             </div>
@@ -1397,10 +1398,10 @@ export default function AbaLeads({
                 <thead>
                   <tr>
                     <th>Cliente</th>
-                    <th>Imóvel de Interesse</th>
-                    <th>1º Contato</th>
+                    <th>Imóvel de interesse</th>
+                    <th>1º contato</th>
                     <th>Corretor</th>
-                    <th>Status / Etapa</th>
+                    <th>Status / etapa</th>
                     <th>Data</th>
                     <th style={{ textAlign: 'right' }}>Ações</th>
                   </tr>
@@ -1445,7 +1446,7 @@ export default function AbaLeads({
                                 <span
                                   className={styles.badgeCodigoCardLead}
                                   style={{ width: 'fit-content', marginBottom: '2px' }}
-                                  title="Código de Referência"
+                                  title="Código de referência"
                                 >
                                   Ref: {lead.imovel.codigo}
                                 </span>
@@ -1479,9 +1480,9 @@ export default function AbaLeads({
                             }`}
                           >
                             {fezContato
-                              ? '✓ Feito'
+                              ? 'Feito'
                               : isNaoAtribuido
-                              ? '⚠️ Aguardando Corretor'
+                              ? 'Aguardando Corretor'
                               : `${horasCriacao}h sem retorno`}
                           </span>
                         </td>
@@ -1502,17 +1503,17 @@ export default function AbaLeads({
                               title="Atribuir corretor da equipe"
                             >
                               <option value="" disabled>
-                                ⚡ Atribuir ▾
-                              </option>
+ Atribuir ▾
+ </option>
                               {listaCorretores.map((c) => (
                                 <option key={c.id} value={c.id}>
-                                  👔 {c.nome}
+                                  <Icone nome="maleta" tamanho={16} /> {c.nome}
                                 </option>
                               ))}
                             </select>
                           ) : (
                             <span className={styles.tabelaCorretor}>
-                              👔 {lead.corretor_nome || 'Sem corretor'}
+                              <Icone nome="maleta" tamanho={16} /> {lead.corretor_nome || 'Sem corretor'}
                             </span>
                           )}
                         </td>
@@ -1523,13 +1524,13 @@ export default function AbaLeads({
                             onClick={(e) => e.stopPropagation()}
                             onChange={(e) => handleMoverEtapa(lead.id, e.target.value)}
                           >
-                            <option value="novo">📥 Novos</option>
-                            <option value="em_contato">💬 Em Contato</option>
-                            <option value="visita_agendada">📅 Visita Agendada</option>
-                            <option value="proposta">💰 Proposta</option>
-                            <option value="negociacao">🤝 Em Negociação</option>
-                            <option value="fechado">🏆 Fechados</option>
-                            <option value="perdido">❌ Perdidos</option>
+                            <option value="novo">Novos</option>
+                            <option value="em_contato">Em contato</option>
+                            <option value="visita_agendada">Visita agendada</option>
+                            <option value="proposta">Proposta</option>
+                            <option value="negociacao">Em negociação</option>
+                            <option value="fechado">Fechados</option>
+                            <option value="perdido">Perdidos</option>
                           </select>
                         </td>
                         <td>
@@ -1546,8 +1547,8 @@ export default function AbaLeads({
                               setLeadSelecionado(lead)
                             }}
                           >
-                            Ver CRM ➔
-                          </button>
+ Ver CRM 
+ </button>
                         </td>
                       </tr>
                     )
@@ -1576,9 +1577,9 @@ export default function AbaLeads({
               handleDropFechamento(arrastandoLeadId)
             }}
           >
-            <span className={styles.dropZoneIcone}>🏆</span>
+            <span className={styles.dropZoneIcone}><Icone nome="trofeu" tamanho={16} /></span>
             <div>
-              <strong className={styles.dropZoneTitulo}>Fechar Venda / Ganho</strong>
+              <strong className={styles.dropZoneTitulo}>Fechar venda / ganho</strong>
               <span className={styles.dropZoneSub}>Solte aqui para oficializar o fechamento</span>
             </div>
           </div>
@@ -1597,9 +1598,9 @@ export default function AbaLeads({
               handleDropPerda(arrastandoLeadId)
             }}
           >
-            <span className={styles.dropZoneIcone}>❌</span>
+            <span className={styles.dropZoneIcone}><Icone nome="fechar" tamanho={16} /></span>
             <div>
-              <strong className={styles.dropZoneTitulo}>Marcar como Perdido</strong>
+              <strong className={styles.dropZoneTitulo}>Marcar como perdido</strong>
               <span className={styles.dropZoneSub}>Solte aqui para registrar o motivo da perda</span>
             </div>
           </div>
@@ -1611,15 +1612,15 @@ export default function AbaLeads({
         <div className={styles.overlayAcaoModal}>
           <div className={styles.cardAcaoModal}>
             <div className={styles.cardAcaoModalTopo}>
-              <span className={styles.iconeAcaoModal}>🏆</span>
+              <span className={styles.iconeAcaoModal}><Icone nome="trofeu" tamanho={16} /></span>
               <div>
-                <h3>Confirmar Fechamento de Venda</h3>
+                <h3>Confirmar fechamento de venda</h3>
                 <p>Oficialize a conclusão do negócio para {leadParaFechamento.nome}</p>
               </div>
             </div>
 
             <div className={styles.corpoAcaoModal}>
-              <label className={styles.labelAcaoModal}>Valor Final Fechado (R$):</label>
+              <label className={styles.labelAcaoModal}>Valor final fechado (R$):</label>
               <input
                 type="text"
                 className={styles.inputAcaoModal}
@@ -1629,9 +1630,9 @@ export default function AbaLeads({
                 autoFocus
               />
               <span className={styles.avisoHomologacaoModal}>
-                ℹ️ Esta venda ficará aguardando homologação do gestor para ser contabilizada no
-                ranking oficial da imobiliária.
-              </span>
+ Esta venda ficará aguardando homologação do gestor para ser contabilizada no
+ ranking oficial da imobiliária.
+ </span>
             </div>
 
             <div className={styles.rodapeAcaoModal}>
@@ -1649,7 +1650,7 @@ export default function AbaLeads({
                 onClick={handleConfirmarFechamento}
                 disabled={processandoAcao}
               >
-                {processandoAcao ? 'Gravando...' : '✓ Confirmar Venda'}
+                {processandoAcao ? 'Gravando...' : 'Confirmar venda'}
               </button>
             </div>
           </div>
@@ -1660,15 +1661,15 @@ export default function AbaLeads({
         <div className={styles.overlayAcaoModal}>
           <div className={styles.cardAcaoModal}>
             <div className={styles.cardAcaoModalTopo}>
-              <span className={styles.iconeAcaoModal}>❌</span>
+              <span className={styles.iconeAcaoModal}><Icone nome="fechar" tamanho={16} /></span>
               <div>
-                <h3>Marcar Oportunidade como Perdida</h3>
+                <h3>Marcar oportunidade como perdida</h3>
                 <p>Registre o motivo do descarte para inteligência comercial</p>
               </div>
             </div>
 
             <div className={styles.corpoAcaoModal}>
-              <label className={styles.labelAcaoModal}>Motivo da Perda:</label>
+              <label className={styles.labelAcaoModal}>Motivo da perda:</label>
               <select
                 className={styles.selectAcaoModal}
                 value={motivoPerdaInput}
@@ -1699,7 +1700,7 @@ export default function AbaLeads({
                 onClick={handleConfirmarPerda}
                 disabled={processandoAcao}
               >
-                {processandoAcao ? 'Gravando...' : 'Confirmar Perda'}
+                {processandoAcao ? 'Gravando...' : 'Confirmar perda'}
               </button>
             </div>
           </div>

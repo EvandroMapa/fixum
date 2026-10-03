@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import InputSenha from '@/components/ui/InputSenha'
 import styles from './ModalNovoOperador.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface ModalNovoOperadorProps {
   aberto: boolean
@@ -14,17 +15,17 @@ interface ModalNovoOperadorProps {
 const CARGOS_DISPONIVEIS = [
   {
     id: 'master',
-    titulo: '👑 Master / Diretoria',
+    titulo: 'Master / diretoria',
     descricao: 'Acesso total e irrestrito (planos, financeiro, estornos e gestão de operadores).',
   },
   {
     id: 'financeiro',
-    titulo: '💳 Gestor Financeiro',
+    titulo: 'Gestor financeiro',
     descricao: 'Gestão de faturas, chargebacks, estornos, devoluções e relatórios de receita.',
   },
   {
     id: 'suporte',
-    titulo: '🎧 Suporte & Moderação',
+    titulo: 'Suporte & moderação',
     descricao: 'Aprovação de anúncios, conferência de clientes e atendimento a corretores/imobiliárias.',
   },
 ]
@@ -186,11 +187,11 @@ export default function ModalNovoOperador({
         {/* Cabeçalho */}
         <div className={styles.cabecalho}>
           <div className={styles.iconeTopo}>
-            {etapa === 'otp' ? '✉️' : '👤'}
+            {etapa === 'otp' ? '' : ''}
           </div>
           <div>
             <h2 className={styles.titulo}>
-              {etapa === 'otp' ? 'Confirmação de Segurança (2FA)' : 'Novo Operador Administrativo'}
+              {etapa === 'otp' ? 'Confirmação de segurança (2FA)' : 'Novo operador administrativo'}
             </h2>
             <p className={styles.subtitulo}>
               {etapa === 'otp'
@@ -205,14 +206,14 @@ export default function ModalNovoOperador({
           <form onSubmit={handleAvancarParaOtp} className={styles.corpo}>
             {erro && (
               <div className={styles.alertaErro}>
-                <span>⚠️</span>
+                <span><Icone nome="alerta" tamanho={16} /></span>
                 <span>{erro}</span>
               </div>
             )}
 
             <div className={styles.grupoCampo}>
               <label className={styles.label}>
-                <span>Nome Completo do Operador</span>
+                <span>Nome completo do operador</span>
                 <span className={styles.obrigatorio}>* Obrigatório</span>
               </label>
               <input
@@ -243,7 +244,7 @@ export default function ModalNovoOperador({
 
             <div className={styles.grupoCampo}>
               <label className={styles.label}>
-                <span>Senha Inicial de Acesso</span>
+                <span>Senha inicial de acesso</span>
                 <span className={styles.obrigatorio}>* Mínimo 6 dígitos</span>
               </label>
               <InputSenha
@@ -260,7 +261,7 @@ export default function ModalNovoOperador({
             {/* Seletor de Cargo */}
             <div className={styles.grupoCampo}>
               <label className={styles.label}>
-                <span>Nível de Acesso / Cargo</span>
+                <span>Nível de acesso / cargo</span>
                 <span className={styles.obrigatorio}>* Selecione um</span>
               </label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -276,8 +277,8 @@ export default function ModalNovoOperador({
                         <strong style={{ color: '#ffffff', fontSize: '0.88rem' }}>{c.titulo}</strong>
                         {selecionado && (
                           <span style={{ color: '#F0A58F', fontSize: '0.78rem', fontWeight: 800 }}>
-                            ✓ Selecionado
-                          </span>
+ Selecionado
+ </span>
                         )}
                       </div>
                       <p style={{ margin: 0, fontSize: '0.75rem', color: '#A39A8A', lineHeight: 1.35 }}>
@@ -292,14 +293,14 @@ export default function ModalNovoOperador({
             {/* PIN Master de Confirmação */}
             <div className={styles.grupoCampo} style={{ marginTop: '4px' }}>
               <label className={styles.label}>
-                <span>Chave Secreta Master (PIN de Autorização)</span>
+                <span>Chave secreta Master (PIN de autorização)</span>
                 <span className={styles.obrigatorio}>* Obrigatório</span>
               </label>
               <InputSenha
                 name="admin-pin-novo-operador"
                 value={adminPin}
                 onChange={(e) => setAdminPin(e.target.value)}
-                placeholder="Digite a Chave Secreta Master"
+                placeholder="Digite a chave secreta Master"
                 className={styles.input}
                 estiloDark={true}
                 required
@@ -321,7 +322,7 @@ export default function ModalNovoOperador({
                 className={styles.btnConfirmar}
                 disabled={carregando}
               >
-                {carregando ? 'Enviando Código...' : 'Avançar para Verificação OTP ➔'}
+                {carregando ? 'Enviando código...' : 'Avançar para verificação OTP '}
               </button>
             </div>
           </form>
@@ -342,14 +343,14 @@ export default function ModalNovoOperador({
                 alignItems: 'center',
                 gap: '8px',
               }}>
-                <span>✓</span>
+                <span><Icone nome="check" tamanho={16} /></span>
                 <span>{sucesso}</span>
               </div>
             )}
 
             {erro && (
               <div className={styles.alertaErro}>
-                <span>⚠️</span>
+                <span><Icone nome="alerta" tamanho={16} /></span>
                 <span>{erro}</span>
               </div>
             )}
@@ -365,7 +366,7 @@ export default function ModalNovoOperador({
 
             <div className={styles.grupoCampo}>
               <label className={styles.label} style={{ textAlign: 'center', display: 'block' }}>
-                Código de 6 Dígitos
+                Código de 6 dígitos
               </label>
               <input
                 type="text"
@@ -416,7 +417,7 @@ export default function ModalNovoOperador({
                   fontWeight: 600,
                 }}
               >
-                {timerReenvio > 0 ? `Reenviar em ${timerReenvio}s` : '🔄 Reenviar código'}
+                {timerReenvio > 0 ? `Reenviar em ${timerReenvio}s` : 'Reenviar código'}
               </button>
             </div>
 
@@ -434,7 +435,7 @@ export default function ModalNovoOperador({
                 className={styles.btnConfirmar}
                 disabled={carregando || codigoOtp.length < 6}
               >
-                {carregando ? 'Criando Operador...' : '✓ Confirmar e Cadastrar'}
+                {carregando ? 'Criando operador...' : 'Confirmar e cadastrar'}
               </button>
             </div>
           </form>

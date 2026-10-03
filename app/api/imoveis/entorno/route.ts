@@ -13,14 +13,14 @@ interface PontoInteresse {
 }
 
 const CATEGORIAS_CONFIG: Record<string, { query: string; icone: string; label: string; cor: string }> = {
-  supermercados: { query: 'supermercado', icone: '🛒', label: 'Supermercados', cor: '#16a34a' },
-  farmacias: { query: 'farmacia', icone: '💊', label: 'Farmácias', cor: '#dc2626' },
-  escolas: { query: 'escola', icone: '🏫', label: 'Escolas e Creches', cor: '#2563eb' },
-  restaurantes: { query: 'restaurante', icone: '🍽️', label: 'Restaurantes e Cafés', cor: '#ea580c' },
-  academias: { query: 'academia', icone: '🏋️', label: 'Academias', cor: '#9333ea' },
-  hospitais: { query: 'hospital', icone: '🏥', label: 'Hospitais e Clínicas', cor: '#e11d48' },
-  bancos: { query: 'banco', icone: '🏦', label: 'Bancos e Caixas', cor: '#0d9488' },
-  transporte: { query: 'onibus', icone: '🚌', label: 'Transporte Público', cor: '#4f46e5' },
+  supermercados: { query: 'supermercado', icone: 'carrinho', label: 'Supermercados', cor: '#2E6B4E' },
+  farmacias: { query: 'farmacia', icone: 'farmacia', label: 'Farmácias', cor: '#B23318' },
+  escolas: { query: 'escola', icone: 'escola', label: 'Escolas e Creches', cor: '#2C5F8A' },
+  restaurantes: { query: 'restaurante', icone: 'talheres', label: 'Restaurantes e Cafés', cor: '#C0662B' },
+  academias: { query: 'academia', icone: 'haltere', label: 'Academias', cor: '#5B4A7A' },
+  hospitais: { query: 'hospital', icone: 'hospital', label: 'Hospitais e Clínicas', cor: '#A8323E' },
+  bancos: { query: 'banco', icone: 'banco', label: 'Bancos e Caixas', cor: '#2F6F6A' },
+  transporte: { query: 'onibus', icone: 'onibus', label: 'Transporte Público', cor: '#45566B' },
 }
 
 function calcularDistanciaMetros(lat1: number, lon1: number, lat2: number, lon2: number): number {

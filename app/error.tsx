@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
+import Icone from '@/components/ui/Icone'
 
 export default function Error({
   error,
@@ -44,7 +45,7 @@ export default function Error({
             gap: '1rem',
           }}
         >
-          <div style={{ fontSize: '3.5rem', lineHeight: 1 }}>⚠️</div>
+          <div style={{ fontSize: '3.5rem', lineHeight: 1 }}><Icone nome="alerta" tamanho={48} /></div>
           <h1
             style={{
               fontSize: '1.5rem',
@@ -88,8 +89,8 @@ export default function Error({
                 height: '48px',
               }}
             >
-              🔄 Tentar Novamente
-            </button>
+ Tentar novamente
+ </button>
             <Link
               href="/explorar"
               className="btn btn-outline btn-lg"
@@ -102,8 +103,8 @@ export default function Error({
                 height: '48px',
               }}
             >
-              🗺️ Explorar Outros Imóveis
-            </Link>
+ Explorar outros imóveis
+ </Link>
           </div>
         </div>
       </main>

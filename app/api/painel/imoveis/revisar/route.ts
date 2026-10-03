@@ -212,7 +212,7 @@ export async function POST(req: Request) {
         try {
           await criarNotificacao(supabase, {
             usuario_id: corretorId,
-            titulo: '⚠️ Ajustes Solicitados no Anúncio',
+            titulo: 'Ajustes solicitados no anúncio',
             mensagem: `O gestor ${autorNome} solicitou correções no imóvel "${imovelTitulo || 'Anúncio'}": ${mensagem || 'Favor revisar os dados do imóvel.'}`,
             tipo: 'imovel_recusado',
             imovel_id: imovelId,
@@ -235,7 +235,7 @@ export async function POST(req: Request) {
         try {
           await criarNotificacao(supabase, {
             usuario_id: imobiliariaId,
-            titulo: '📤 Anúncio Reenviado para Revisão',
+            titulo: 'Anúncio reenviado para revisão',
             mensagem: `O corretor ${autorNome} aplicou os ajustes e reenviou o imóvel "${imovelTitulo || 'Anúncio'}": ${mensagem ? `"${mensagem}"` : 'Pronto para aprovação.'}`,
             tipo: 'revisao_pendente',
             imovel_id: imovelId,
@@ -258,7 +258,7 @@ export async function POST(req: Request) {
         try {
           await criarNotificacao(supabase, {
             usuario_id: corretorId,
-            titulo: '🎉 Imóvel Aprovado e Publicado!',
+            titulo: 'Imóvel aprovado e publicado',
             mensagem: `Parabéns! O gestor ${autorNome} aprovou seu anúncio "${imovelTitulo || 'Imóvel'}". Ele já está visível no mapa público do Fixum.`,
             tipo: 'imovel_aprovado',
             imovel_id: imovelId,
@@ -272,7 +272,7 @@ export async function POST(req: Request) {
         try {
           await criarNotificacao(supabase, {
             usuario_id: destinatarioId,
-            titulo: `💬 Nova Mensagem no Chat de Moderação`,
+            titulo: `Nova mensagem na moderação`,
             mensagem: `${autorNome}: "${mensagem}" (Imóvel: ${imovelTitulo || 'Anúncio'})`,
             tipo: 'revisao_pendente',
             imovel_id: imovelId,

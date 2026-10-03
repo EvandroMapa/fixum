@@ -55,7 +55,7 @@ export async function POST(req: Request) {
         try {
           await criarNotificacao(supabase, {
             usuario_id: imovel.anunciante_id,
-            titulo: '🎉 Anúncio Aprovado e Publicado!',
+            titulo: 'Anúncio aprovado e publicado',
             mensagem: `O gestor ${gestorNome || 'da imobiliária'} avaliou e publicou seu imóvel "${imovel.titulo}" no mapa.`,
             tipo: 'imovel_aprovado',
             imovel_id: imovelId,
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
         try {
           await criarNotificacao(supabase, {
             usuario_id: imovel.anunciante_id,
-            titulo: '⚠️ Ajustes Solicitados no Anúncio',
+            titulo: 'Ajustes solicitados no anúncio',
             mensagem: `O gestor ${gestorNome || 'da imobiliária'} solicitou correções em "${imovel.titulo}": ${motivoRecusa || 'Favor revisar os dados do anúncio.'}`,
             tipo: 'imovel_recusado',
             imovel_id: imovelId,

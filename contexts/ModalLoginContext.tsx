@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
+import Icone from '@/components/ui/Icone'
 
 interface ModalLoginContextType {
   abrirModalLogin: (mensagem?: string) => void
@@ -119,19 +120,19 @@ function ModalLoginInterno({
         position: 'fixed', inset: 0, zIndex: 10000,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '16px',
-        background: 'rgba(0,0,0,0.55)',
-        backdropFilter: 'blur(4px)',
+        background: 'rgba(22, 32, 28, 0.5)',
+        backdropFilter: 'blur(6px)',
         animation: 'fadeIn 0.2s ease',
       }}
       onClick={(e) => { if (e.target === e.currentTarget) onFechar() }}
     >
       <div style={{
         background: 'white',
-        borderRadius: '24px',
-        padding: '40px 36px',
+        borderRadius: '20px',
+        padding: '36px 28px 28px',
         width: '100%',
         maxWidth: '420px',
-        boxShadow: '0 24px 80px rgba(0,0,0,0.18)',
+        boxShadow: '0 30px 80px rgba(22, 32, 28, 0.28)',
         position: 'relative',
         animation: 'slideUp 0.25s ease',
       }}>
@@ -140,27 +141,27 @@ function ModalLoginInterno({
           onClick={onFechar}
           style={{
             position: 'absolute', top: '16px', right: '16px',
-            width: '32px', height: '32px', borderRadius: '50%',
+            width: '40px', height: '40px', borderRadius: '50%',
             border: 'none', background: '#F3EEE4', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '18px', color: '#7A7264',
+            color: '#3F3B34',
           }}
-        >×</button>
+          aria-label="Fechar"
+        ><Icone nome="fechar" tamanho={18} /></button>
 
-        {/* Ícone de coração */}
+        {/* Ícone de fixar */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{
             width: '56px', height: '56px', borderRadius: '50%',
-            background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)',
+            background: '#FBE6DF', color: '#D4401F',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 12px', fontSize: '26px',
-            boxShadow: '0 8px 24px rgba(238,90,36,0.35)',
-          }}>❤️</div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#16201C', margin: '0 0 6px' }}>
-            {mensagem ?? 'Entre para salvar imóveis'}
+            margin: '0 auto 14px',
+          }}><Icone nome="fixar" tamanho={26} /></div>
+          <h2 style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em', color: '#16201C', margin: '0 0 6px' }}>
+            {mensagem ?? 'Entre para fixar imóveis'}
           </h2>
           <p style={{ fontSize: '14px', color: '#7A7264', margin: 0 }}>
-            Salve seus imóveis favoritos e acesse de qualquer dispositivo.
+            Fixe imóveis para comparar depois e acesse de qualquer dispositivo.
           </p>
         </div>
 
@@ -170,8 +171,8 @@ function ModalLoginInterno({
           onClick={handleGoogle}
           disabled={carregandoGoogle}
           style={{
-            width: '100%', padding: '12px', borderRadius: '12px',
-            border: '1.5px solid #E0D8CA', background: 'white',
+            width: '100%', minHeight: '48px', padding: '12px', borderRadius: '12px',
+            border: '1.5px solid #CFC6B6', background: 'white',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             gap: '10px', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
             color: '#16201C', marginBottom: '16px',
@@ -186,7 +187,7 @@ function ModalLoginInterno({
             <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
             <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
           </svg>
-          {carregandoGoogle ? 'Conectando...' : 'Continuar com Google'}
+          {carregandoGoogle ? 'Conectando…' : 'Continuar com Google'}
         </button>
 
         {/* Divisor */}
@@ -208,12 +209,12 @@ function ModalLoginInterno({
             onChange={(e) => setEmail(e.target.value)}
             required
             style={{
-              padding: '12px 14px', borderRadius: '12px',
-              border: '1.5px solid #E0D8CA', fontSize: '14px',
+              minHeight: '48px', padding: '12px 14px', borderRadius: '12px',
+              border: '1.5px solid #CFC6B6', fontSize: '16px',
               outline: 'none', transition: 'border 0.15s',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = '#2C5F8A')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = '#E0D8CA')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#16201C')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = '#CFC6B6')}
           />
           <input
             type="password"
@@ -222,12 +223,12 @@ function ModalLoginInterno({
             onChange={(e) => setSenha(e.target.value)}
             required
             style={{
-              padding: '12px 14px', borderRadius: '12px',
-              border: '1.5px solid #E0D8CA', fontSize: '14px',
+              minHeight: '48px', padding: '12px 14px', borderRadius: '12px',
+              border: '1.5px solid #CFC6B6', fontSize: '16px',
               outline: 'none', transition: 'border 0.15s',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = '#2C5F8A')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = '#E0D8CA')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#16201C')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = '#CFC6B6')}
           />
 
           {erro && (
@@ -243,14 +244,14 @@ function ModalLoginInterno({
             disabled={carregando}
             style={{
               padding: '13px', borderRadius: '12px', border: 'none',
-              background: 'linear-gradient(135deg, #2C5F8A, #22302A)',
-              color: 'white', fontSize: '15px', fontWeight: 700,
+              minHeight: '48px',
+              background: '#16201C',
+              color: '#F3EEE4', fontSize: '15px', fontWeight: 600,
               cursor: carregando ? 'not-allowed' : 'pointer',
-              opacity: carregando ? 0.7 : 1, transition: 'all 0.15s',
-              boxShadow: '0 4px 14px rgba(44, 95, 138,0.4)',
+              opacity: carregando ? 0.7 : 1, transition: 'background 0.15s',
             }}
           >
-            {carregando ? 'Entrando...' : 'Entrar'}
+            {carregando ? 'Entrando…' : 'Entrar'}
           </button>
         </form>
 
@@ -262,7 +263,7 @@ function ModalLoginInterno({
           Não tem conta?{' '}
           <a
             href="/cadastro"
-            style={{ color: '#2C5F8A', fontWeight: 600, textDecoration: 'none' }}
+            style={{ color: '#16201C', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}
           >
             Criar conta grátis
           </a>

@@ -31,7 +31,7 @@ export default function NotFound() {
             gap: '1rem',
           }}
         >
-          <div style={{ fontSize: '3.5rem', lineHeight: 1 }}>🏡🔍</div>
+          <div style={{ fontSize: '3.5rem', lineHeight: 1 }}></div>
           <h1
             style={{
               fontSize: '1.6rem',
@@ -75,8 +75,8 @@ export default function NotFound() {
                 height: '48px',
               }}
             >
-              🗺️ Explorar Imóveis no Mapa
-            </Link>
+ Explorar imóveis no mapa
+ </Link>
             <Link
               href="/"
               className="btn btn-outline btn-lg"
@@ -89,7 +89,7 @@ export default function NotFound() {
                 height: '48px',
               }}
             >
-              Voltar ao Início
+              Voltar ao início
             </Link>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import styles from './MenuUsuarioTopbar.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface MenuUsuarioTopbarProps {
   usuarioId: string
@@ -63,12 +64,12 @@ export default function MenuUsuarioTopbar({
   }, [aberto])
 
   const labelPapel = isImobiliaria
-    ? '🏢 Gestão Imobiliária'
+    ? 'Gestão Imobiliária'
     : isCorretor && imobiliariaDona
-      ? `👔 Equipe ${imobiliariaDona.nome}`
+      ? `Equipe ${imobiliariaDona.nome}`
       : (tipoAnunciante === 'corretor' || isCorretor)
-        ? `👔 Corretor Autônomo${creci ? ` • ${creci}` : ''}`
-        : '👤 Proprietário Direto'
+        ? `Corretor Autônomo${creci ? ` • ${creci}` : ''}`
+        : 'Proprietário Direto'
 
   return (
     <div className={styles.menuWrapper} ref={menuRef}>
@@ -114,8 +115,8 @@ export default function MenuUsuarioTopbar({
                 onAbrirConfiguracoes()
               }}
             >
-              <span className={styles.iconeItem}>⚙️</span>
-              <span>Configurações da Conta</span>
+              <span className={styles.iconeItem}><Icone nome="config" tamanho={16} /></span>
+              <span>Configurações da conta</span>
             </button>
 
             <Link
@@ -123,8 +124,8 @@ export default function MenuUsuarioTopbar({
               className={styles.itemMenu}
               onClick={() => setAberto(false)}
             >
-              <span className={styles.iconeItem}>🗺️</span>
-              <span>Voltar ao Mapa</span>
+              <span className={styles.iconeItem}><Icone nome="mapa" tamanho={16} /></span>
+              <span>Voltar ao mapa</span>
             </Link>
 
             <div className={styles.divisor} />
@@ -137,8 +138,8 @@ export default function MenuUsuarioTopbar({
                 onSair()
               }}
             >
-              <span className={styles.iconeItem}>🚪</span>
-              <span>Sair da Conta</span>
+              <span className={styles.iconeItem}><Icone nome="sair" tamanho={16} /></span>
+              <span>Sair da conta</span>
             </button>
           </div>
         </div>

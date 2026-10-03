@@ -8,6 +8,7 @@ import ModalEditarOperador from './ModalEditarOperador'
 import { obterIniciaisUsuario, obterGradienteUsuario } from '@/lib/utils'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
 import styles from '@/app/admin/page.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface AbaEquipeAdminProps {
   adminEmailLogado?: string
@@ -61,10 +62,10 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
   async function handleAlternarStatus(op: OperadorAdmin) {
     if (op.is_raiz) {
       await alertar({
-        titulo: 'Operação Bloqueada',
+        titulo: 'Operação bloqueada',
         mensagem: 'A conta raiz admin@fixum.com.br é o superadministrador e não pode ser suspensa.',
         tipo: 'aviso',
-        icone: '🛡️',
+        icone: 'escudo',
       })
       return
     }
@@ -78,7 +79,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
         novoStatus === 'suspenso'
           ? `O operador ${op.email} não conseguirá mais efetuar login no Backoffice até ser reativado.`
           : `O operador ${op.email} voltará a ter acesso às ferramentas administrativas da Fixum.`,
-      icone: novoStatus === 'suspenso' ? '⏸️' : '▶️',
+      icone: novoStatus === 'suspenso' ? '' : '▶️',
       tipo: novoStatus === 'suspenso' ? 'perigo' : 'primario',
       textoBotaoConfirmar: `Sim, ${acaoTexto}`,
     })
@@ -104,10 +105,10 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
       }
 
       await alertar({
-        titulo: 'Status Atualizado!',
+        titulo: 'Status atualizado',
         mensagem: `O operador ${op.nome} foi ${novoStatus === 'suspenso' ? 'suspenso' : 'reativado'} com sucesso.`,
         tipo: 'sucesso',
-        icone: '✓',
+        icone: 'check',
       })
 
       carregarOperadores()
@@ -116,7 +117,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
         titulo: 'Erro',
         mensagem: err?.message || 'Falha ao processar solicitação.',
         tipo: 'perigo',
-        icone: '⚠️',
+        icone: 'alerta',
       })
     }
   }
@@ -125,10 +126,10 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
   async function handleExcluirOperador(op: OperadorAdmin) {
     if (op.is_raiz) {
       await alertar({
-        titulo: 'Operação Bloqueada',
+        titulo: 'Operação bloqueada',
         mensagem: 'A conta raiz admin@fixum.com.br não pode ser excluída.',
         tipo: 'aviso',
-        icone: '🛡️',
+        icone: 'escudo',
       })
       return
     }
@@ -136,7 +137,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
     const confirmou = await confirmar({
       titulo: `Excluir operador ${op.nome}?`,
       mensagem: `Esta ação revogará definitivamente todas as credenciais de ${op.email}. O registro será arquivado na trilha de auditoria.`,
-      icone: '🗑️',
+      icone: 'lixeira',
       tipo: 'perigo',
       textoBotaoConfirmar: 'Sim, Excluir Operador',
     })
@@ -161,10 +162,10 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
       }
 
       await alertar({
-        titulo: 'Operador Excluído',
+        titulo: 'Operador excluído',
         mensagem: `A conta de ${op.nome} foi removida da equipe administrativa.`,
         tipo: 'sucesso',
-        icone: '✓',
+        icone: 'check',
       })
 
       carregarOperadores()
@@ -173,7 +174,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
         titulo: 'Erro',
         mensagem: err?.message || 'Falha ao excluir operador.',
         tipo: 'perigo',
-        icone: '⚠️',
+        icone: 'alerta',
       })
     }
   }
@@ -181,13 +182,13 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
   function labelCargo(cargo: string) {
     switch (cargo) {
       case 'master':
-        return { label: '👑 Master / Diretoria', cor: '#E3A72F', bg: 'rgba(227, 167, 47, 0.12)' }
+        return { label: 'Master / diretoria', cor: '#E3A72F', bg: 'rgba(227, 167, 47, 0.12)' }
       case 'financeiro':
-        return { label: '💳 Gestor Financeiro', cor: '#2C5F8A', bg: 'rgba(44, 95, 138, 0.12)' }
+        return { label: 'Gestor financeiro', cor: '#2C5F8A', bg: 'rgba(44, 95, 138, 0.12)' }
       case 'suporte':
-        return { label: '🎧 Suporte & Moderação', cor: '#3F8A66', bg: 'rgba(46, 107, 78, 0.12)' }
+        return { label: 'Suporte & moderação', cor: '#3F8A66', bg: 'rgba(46, 107, 78, 0.12)' }
       default:
-        return { label: '👤 Operador', cor: '#A39A8A', bg: 'rgba(163, 154, 138, 0.12)' }
+        return { label: 'Operador', cor: '#A39A8A', bg: 'rgba(163, 154, 138, 0.12)' }
     }
   }
 
@@ -197,8 +198,8 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
         <div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-            👥 Equipe & Administradores Fixum
-          </h2>
+ Equipe & administradores Fixum
+ </h2>
           <p style={{ fontSize: '0.85rem', color: '#A39A8A', margin: '4px 0 0' }}>
             Gestão exclusiva de operadores e acessos institucionais do Backoffice
           </p>
@@ -223,8 +224,8 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
             transition: 'transform 0.15s ease',
           }}
         >
-          <span>➕</span>
-          <span>Novo Operador Administrativo</span>
+          <span><Icone nome="mais" tamanho={16} /></span>
+          <span>Novo operador administrativo</span>
         </button>
       </div>
 
@@ -269,10 +270,10 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                 outline: 'none',
               }}
             >
-              <option value="todos">Todos os Cargos</option>
-              <option value="master">👑 Master / Diretoria</option>
-              <option value="financeiro">💳 Gestor Financeiro</option>
-              <option value="suporte">🎧 Suporte & Moderação</option>
+              <option value="todos">Todos os cargos</option>
+              <option value="master">Master / diretoria</option>
+              <option value="financeiro">Gestor financeiro</option>
+              <option value="suporte">Suporte & moderação</option>
             </select>
 
             <select
@@ -289,9 +290,9 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                 outline: 'none',
               }}
             >
-              <option value="todos">Todos os Status</option>
-              <option value="ativo">🟢 Ativos</option>
-              <option value="suspenso">🔴 Suspensos</option>
+              <option value="todos">Todos os status</option>
+              <option value="ativo">Ativos</option>
+              <option value="suspenso">Suspensos</option>
             </select>
           </div>
         </div>
@@ -302,12 +303,12 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
         <table className={styles.tabela}>
           <thead>
             <tr>
-              <th>Operador / Administrador</th>
-              <th>Cargo / Nível</th>
+              <th>Operador / administrador</th>
+              <th>Cargo / nível</th>
               <th>Status</th>
-              <th>Último Acesso</th>
-              <th>Data Cadastro</th>
-              <th style={{ textAlign: 'right' }}>Ações de Segurança</th>
+              <th>Último acesso</th>
+              <th>Data cadastro</th>
+              <th style={{ textAlign: 'right' }}>Ações de segurança</th>
             </tr>
           </thead>
           <tbody>
@@ -366,7 +367,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                                   textTransform: 'uppercase',
                                 }}
                               >
-                                Conta Raiz
+                                Conta raiz
                               </span>
                             )}
                           </div>
@@ -395,12 +396,12 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                     <td>
                       {op.status_conta === 'suspenso' ? (
                         <span style={{ color: '#E8836B', background: 'rgba(212, 64, 31, 0.15)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
-                          🔴 Suspenso
-                        </span>
+ Suspenso
+ </span>
                       ) : (
                         <span style={{ color: '#7DBB98', background: 'rgba(46, 107, 78, 0.15)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
-                          🟢 Ativo
-                        </span>
+ Ativo
+ </span>
                       )}
                     </td>
 
@@ -421,7 +422,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                           type="button"
                           onClick={() => setOperadorParaEditar(op)}
                           className={styles.btnAcaoTabela}
-                          title="Editar Cadastro e Permissões"
+                          title="Editar cadastro e permissões"
                           style={{
                             background: '#22302A',
                             border: '1px solid #3F3B34',
@@ -433,15 +434,15 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                             cursor: 'pointer',
                           }}
                         >
-                          ✏️ Editar
-                        </button>
+ Editar
+ </button>
 
                         {/* Redefinir Senha */}
                         <button
                           type="button"
                           onClick={() => setOperadorParaSenha(op)}
                           className={styles.btnAcaoTabela}
-                          title="Redefinir Senha do Operador"
+                          title="Redefinir senha do operador"
                           style={{
                             background: '#22302A',
                             border: '1px solid #3F3B34',
@@ -453,8 +454,8 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                             cursor: 'pointer',
                           }}
                         >
-                          🔑 Senha
-                        </button>
+ Senha
+ </button>
 
                         {/* Suspender / Reativar (bloqueado na conta raiz) */}
                         {!op.is_raiz && (
@@ -462,7 +463,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                             type="button"
                             onClick={() => handleAlternarStatus(op)}
                             className={styles.btnAcaoTabela}
-                            title={op.status_conta === 'suspenso' ? 'Reativar Acesso' : 'Suspender Acesso'}
+                            title={op.status_conta === 'suspenso' ? 'Reativar acesso' : 'Suspender acesso'}
                             style={{
                               background: op.status_conta === 'suspenso' ? 'rgba(46, 107, 78, 0.15)' : 'rgba(212, 64, 31, 0.15)',
                               border: `1px solid ${op.status_conta === 'suspenso' ? '#3F8A66' : '#D4401F'}`,
@@ -474,7 +475,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                               cursor: 'pointer',
                             }}
                           >
-                            {op.status_conta === 'suspenso' ? '▶️ Ativar' : '⏸️ Suspender'}
+                            {op.status_conta === 'suspenso' ? '▶️ Ativar' : 'Suspender'}
                           </button>
                         )}
 
@@ -484,7 +485,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                             type="button"
                             onClick={() => handleExcluirOperador(op)}
                             className={styles.btnAcaoTabela}
-                            title="Excluir Definitivamente"
+                            title="Excluir definitivamente"
                             style={{
                               background: '#22302A',
                               border: '1px solid #3F3B34',
@@ -495,7 +496,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                               cursor: 'pointer',
                             }}
                           >
-                            🗑️
+                            <Icone nome="lixeira" tamanho={16} />
                           </button>
                         )}
                       </div>

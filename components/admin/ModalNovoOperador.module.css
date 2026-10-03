@@ -17,7 +17,7 @@
 }
 
 .modal {
-  background: #0b1329;
+  background: #0F1714;
   border: 1px solid var(--tinta-2);
   border-radius: 18px;
   width: 100%;
@@ -127,7 +127,7 @@
 
 .input:focus {
   border-color: var(--hidro);
-  background: #131d38;
+  background: #16201C;
   box-shadow: 0 0 0 3px rgba(44, 95, 138, 0.2);
 }
 

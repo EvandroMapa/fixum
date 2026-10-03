@@ -62,10 +62,10 @@ export async function PUT(req: Request) {
       // Registrar se houve mudança de preço ou limites
       if (antigo) {
         if (antigo.preco_mensal !== precoMensal) {
-          alteracoesLog.push(`${p.nome}: R$ ${antigo.preco_mensal} ➔ R$ ${precoMensal}`)
+          alteracoesLog.push(`${p.nome}: R$ ${antigo.preco_mensal} → R$ ${precoMensal}`)
         }
         if (antigo.limite_imoveis_max !== limiteMax) {
-          alteracoesLog.push(`${p.nome}: Limite ${antigo.limite_imoveis_max} ➔ ${limiteMax} imóveis`)
+          alteracoesLog.push(`${p.nome}: Limite ${antigo.limite_imoveis_max} → ${limiteMax} imóveis`)
         }
         if (antigo.ativo !== p.ativo) {
           alteracoesLog.push(`${p.nome}: ${p.ativo ? 'Ativado' : 'Pausado'}`)

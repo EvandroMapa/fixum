@@ -12,6 +12,7 @@ import ModalEditarImovel from './ModalEditarImovel'
 import ModalChatModeracao from './ModalChatModeracao'
 import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import styles from './AbaImoveis.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface AbaImoveisProps {
   imoveis: Imovel[]
@@ -367,9 +368,9 @@ export default function AbaImoveis({
       const vagasDisponiveis = Math.max(0, usoPlano.limiteMaximo - usoPlano.imoveisAtivos)
       if (selecionados.length > vagasDisponiveis && usoPlano.limiteMaximo < 99999) {
         await alertar({
-          titulo: 'Limite do Plano Atingido',
+          titulo: 'Limite do plano atingido',
           mensagem: `Você selecionou ${selecionados.length} imóveis, mas possui apenas ${vagasDisponiveis} vaga(s) disponível(is) no seu plano atual. Faça upgrade para ativar mais anúncios simultâneos.`,
-          icone: '⚠️',
+          icone: 'alerta',
           tipo: 'aviso',
         })
         return
@@ -379,18 +380,18 @@ export default function AbaImoveis({
     if (acao === 'excluir') {
       if (!podeExcluir) {
         await alertar({
-          titulo: 'Ação Não Permitida',
+          titulo: 'Ação não permitida',
           mensagem: 'Apenas gestores da imobiliária têm permissão para excluir anúncios.',
-          icone: '🔒',
+          icone: 'cadeado',
           tipo: 'aviso',
         })
         return
       }
 
       const confirmou = await confirmar({
-        titulo: 'Excluir Imóveis Selecionados?',
+        titulo: 'Excluir imóveis selecionados?',
         mensagem: `Tem certeza que deseja excluir permanentemente os ${selecionados.length} imóveis selecionados? Esta ação não poderá ser desfeita.`,
-        icone: '🗑️',
+        icone: 'lixeira',
         textoBotaoConfirmar: `Sim, Excluir (${selecionados.length})`,
         tipo: 'perigo',
         destrutivo: true,
@@ -451,9 +452,9 @@ export default function AbaImoveis({
     const url = `${window.location.origin}/imovel/${id}`
     navigator.clipboard.writeText(url)
     await alertar({
-      titulo: 'Link Copiado!',
+      titulo: 'Link copiado',
       mensagem: 'O link do imóvel foi copiado para a sua área de transferência.',
-      icone: '📋',
+      icone: 'lista',
       tipo: 'sucesso',
     })
   }
@@ -477,7 +478,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
     const url = `${window.location.origin}/imovel/${imovel.id}`
     const refTexto = imovel.codigo ? `\nRef: ${imovel.codigo}` : ''
     const texto = encodeURIComponent(
-      `*FIXUM Imóveis*\n\n*${imovel.titulo}*${refTexto}\n${imovel.cidade}${imovel.bairro ? ` - ${imovel.bairro}` : ''}\n${formatarPreco(imovel.preco, imovel.negociacao)}\n\nConfira as fotos e detalhes no FIXUM:\n${url}`
+      `*Fixum Imóveis*\n\n*${imovel.titulo}*${refTexto}\n${imovel.cidade}${imovel.bairro ? ` - ${imovel.bairro}` : ''}\n${formatarPreco(imovel.preco, imovel.negociacao)}\n\nConfira as fotos e detalhes no Fixum:\n${url}`
     )
     window.open(`https://wa.me/?text=${texto}`, '_blank')
   }
@@ -488,7 +489,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
       <div className={styles.cabecalho}>
         <div className={styles.cabecalhoSuperior}>
           <div>
-            <h1 className={styles.tituloSecao}>Gestão de Imóveis</h1>
+            <h1 className={styles.tituloSecao}>Gestão de imóveis</h1>
             <p className={styles.subtituloSecao}>
               {isCorretor
                 ? 'Gerencie seus anúncios submetidos e acompanhe o status de revisão da gestão'
@@ -505,7 +506,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               className="btn btn-primario btn-md"
               style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              <span>+</span> Cadastrar Novo Imóvel
+              <span>+</span> Cadastrar novo imóvel
             </button>
           </div>
         </div>
@@ -519,11 +520,11 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
             title="Clique para ver todos os imóveis"
           >
             <div className={styles.iconeMetrica} style={{ background: '#EAE4D8', color: '#22302A' }}>
-              🏢
+              <Icone nome="predio" tamanho={16} />
             </div>
             <div className={styles.infoMetrica}>
               <span className={styles.valorMetrica}>{statsGerais.total}</span>
-              <span className={styles.labelMetrica}>Total no Portfólio</span>
+              <span className={styles.labelMetrica}>Total no portfólio</span>
             </div>
           </div>
 
@@ -541,12 +542,12 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               title="Clique para filtrar apenas imóveis em revisão"
             >
               <div className={styles.iconeMetrica} style={{ background: '#FBEFD3', color: '#8A5F12' }}>
-                ⏳
+                <Icone nome="relogio" tamanho={16} />
               </div>
               <div className={styles.infoMetrica}>
                 <span className={styles.valorMetrica} style={{ color: '#8A5F12' }}>{statsGerais.emRevisao}</span>
                 <span className={styles.labelMetrica} style={{ fontWeight: 700, color: '#8A5F12' }}>
-                  Em Revisão
+                  Em revisão
                 </span>
               </div>
             </div>
@@ -559,11 +560,11 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
             title="Clique para filtrar imóveis ativos"
           >
             <div className={styles.iconeMetrica} style={{ background: '#EEF5F0', color: '#2E6B4E' }}>
-              🟢
+              <Icone nome="ponto" tamanho={16} />
             </div>
             <div className={styles.infoMetrica}>
               <span className={styles.valorMetrica}>{statsGerais.ativos}</span>
-              <span className={styles.labelMetrica}>Ativos no Mapa</span>
+              <span className={styles.labelMetrica}>Ativos no mapa</span>
             </div>
           </div>
 
@@ -574,7 +575,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
             title="Clique para filtrar imóveis pausados"
           >
             <div className={styles.iconeMetrica} style={{ background: '#FDF7E8', color: '#C08A1E' }}>
-              ⏸️
+              <Icone nome="pausa" tamanho={16} />
             </div>
             <div className={styles.infoMetrica}>
               <span className={styles.valorMetrica}>{statsGerais.pausados}</span>
@@ -585,11 +586,11 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
           <div
             className={styles.cardMetrica}
             onClick={() => aplicarFiltroRapidoStatus('vendido')}
-            style={{ cursor: 'pointer', borderColor: filtroStatus.includes('vendido') ? '#7c3aed' : undefined }}
+            style={{ cursor: 'pointer', borderColor: filtroStatus.includes('vendido') ? '#3A4A5E' : undefined }}
             title="Clique para filtrar negociados"
           >
-            <div className={styles.iconeMetrica} style={{ background: '#f5f3ff', color: '#7c3aed' }}>
-              🏷️
+            <div className={styles.iconeMetrica} style={{ background: '#EEF1F4', color: '#3A4A5E' }}>
+              <Icone nome="etiqueta" tamanho={16} />
             </div>
             <div className={styles.infoMetrica}>
               <span className={styles.valorMetrica}>{statsGerais.negociados}</span>
@@ -599,11 +600,11 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
 
           <div className={styles.cardMetrica}>
             <div className={styles.iconeMetrica} style={{ background: '#FDF1EC', color: '#B23318' }}>
-              👥
+              <Icone nome="pessoas" tamanho={16} />
             </div>
             <div className={styles.infoMetrica}>
               <span className={styles.valorMetrica}>{statsGerais.totalLeads}</span>
-              <span className={styles.labelMetrica}>Leads Recebidos</span>
+              <span className={styles.labelMetrica}>Leads recebidos</span>
             </div>
           </div>
         </div>
@@ -623,7 +624,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
           flexWrap: 'wrap'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '1.35rem' }}>⏳</span>
+            <span style={{ fontSize: '1.35rem' }}><Icone nome="relogio" tamanho={18} /></span>
             <div>
               <strong style={{ color: '#8A5F12', fontSize: '0.9rem' }}>
                 Existem {statsGerais.emRevisao} anúncio(s) cadastrado(s) pela equipe aguardando sua revisão e aprovação.
@@ -639,7 +640,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
             style={{ background: '#8A5F12', color: '#ffffff', fontWeight: 700 }}
             onClick={() => aplicarFiltroRapidoStatus('em_analise')}
           >
-            Ver Imóveis p/ Revisão ({statsGerais.emRevisao})
+            Ver imóveis p/ revisão ({statsGerais.emRevisao})
           </button>
         </div>
       )}
@@ -648,7 +649,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
       {usoPlano.atingiuLimite && (
         <div className={styles.alertaCotaAtingida}>
           <div className={styles.alertaCotaConteudo}>
-            <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+            <span style={{ fontSize: '1.25rem' }}><Icone nome="alerta" tamanho={17} /></span>
             <span className={styles.alertaCotaTexto}>
               {isCorretor
                 ? 'A cota corporativa da imobiliária atingiu o limite de anúncios ativos. Novos anúncios revisados precisarão de vagas liberadas.'
@@ -661,7 +662,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               className={`btn btn-primario btn-sm ${styles.btnAlertaUpgrade}`}
               onClick={() => onDispararUpgrade(proximoPlano)}
             >
-              ⚡ Upgrade para {proximoPlano.nome}
+ Upgrade para {proximoPlano.nome}
             </button>
           )}
         </div>
@@ -671,7 +672,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
       <div className={styles.barraFerramentas}>
         <div className={styles.linhaBusca}>
           <div className={styles.campoBuscaWrapper}>
-            <span className={styles.iconeBusca}>🔍</span>
+            <span className={styles.iconeBusca}><Icone nome="busca" tamanho={16} /></span>
             <input
               type="text"
               placeholder="Buscar por título, bairro, cidade, tipo ou código..."
@@ -686,7 +687,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                 onClick={() => setBusca('')}
                 title="Limpar busca"
               >
-                ✕
+                <Icone nome="fechar" tamanho={16} />
               </button>
             )}
           </div>
@@ -696,18 +697,18 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               type="button"
               className={`${styles.btnViewMode} ${modoVisualizacao === 'cards' ? styles.btnViewModeAtivo : ''}`}
               onClick={() => setModoVisualizacao('cards')}
-              title="Visualizar em Cartões"
+              title="Visualizar em cartões"
             >
-              🔲 Cards
-            </button>
+ Cards
+ </button>
             <button
               type="button"
               className={`${styles.btnViewMode} ${modoVisualizacao === 'tabela' ? styles.btnViewModeAtivo : ''}`}
               onClick={() => setModoVisualizacao('tabela')}
-              title="Visualizar em Tabela Compacta"
+              title="Visualizar em tabela compacta"
             >
-              📑 Tabela
-            </button>
+ Tabela
+ </button>
           </div>
         </div>
 
@@ -729,12 +730,12 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                 >
                   <span>
                     {filtroCorretores.length === 0
-                      ? `👥 Toda a Equipe (${contagensCorretor.total})`
+                      ? `Toda a Equipe (${contagensCorretor.total})`
                       : filtroCorretores.length === 1
                         ? filtroCorretores[0] === usuarioId
-                          ? `🏢 Imobiliária (${contagensCorretor.diretos})`
-                          : `👤 ${nomesAnunciantes[filtroCorretores[0]] || 'Corretor'} (${contagensCorretor.porCorretor[filtroCorretores[0]] || 0})`
-                        : `👥 ${filtroCorretores.length} corretores (${filtroCorretores.reduce((acc, id) => (id === usuarioId ? acc + (contagensCorretor.diretos || 0) : acc + (contagensCorretor.porCorretor[id] || 0)), 0)})`}
+                          ? `Imobiliária (${contagensCorretor.diretos})`
+                          : `${nomesAnunciantes[filtroCorretores[0]] || 'Corretor'} (${contagensCorretor.porCorretor[filtroCorretores[0]] || 0})`
+                        : `${filtroCorretores.length} corretores (${filtroCorretores.reduce((acc, id) => (id === usuarioId ? acc + (contagensCorretor.diretos || 0) : acc + (contagensCorretor.porCorretor[id] || 0)), 0)})`}
                   </span>
                   <span style={{ fontSize: '0.65rem', marginLeft: '2px', opacity: 0.7 }}>▾</span>
                 </button>
@@ -749,7 +750,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                     }}
                     title="Limpar seleção de corretores"
                   >
-                    ✕
+                    <Icone nome="fechar" tamanho={16} />
                   </button>
                 )}
 
@@ -767,7 +768,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           readOnly
                           style={{ accentColor: '#16201C', pointerEvents: 'none' }}
                         />
-                        <span>👥 Toda a Equipe</span>
+                        <span>Toda a equipe</span>
                       </div>
                       <span className={styles.popoverContador}>{contagensCorretor.total}</span>
                     </div>
@@ -804,7 +805,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         >
                           IM
                         </div>
-                        <span>🏢 Diretos da Imobiliária</span>
+                        <span>Diretos da imobiliária</span>
                       </div>
                       <span className={styles.popoverContador}>{contagensCorretor.diretos}</span>
                     </div>
@@ -905,18 +906,18 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               >
                 <span>
                   {filtroStatus.length === 0
-                    ? `🏷️ Todos os Status (${contagensStatus.total})`
+                    ? `Todos os Status (${contagensStatus.total})`
                     : filtroStatus.length === 1
                       ? filtroStatus[0] === 'em_analise'
-                        ? `⏳ Em Revisão (${contagensStatus.emRevisao})`
+                        ? `Em Revisão (${contagensStatus.emRevisao})`
                         : filtroStatus[0] === 'ativo'
-                          ? `🟢 Ativos (${contagensStatus.ativos})`
+                          ? `Ativos (${contagensStatus.ativos})`
                           : filtroStatus[0] === 'pausado'
-                            ? `⏸️ Pausados (${contagensStatus.pausados})`
+                            ? `Pausados (${contagensStatus.pausados})`
                             : filtroStatus[0] === 'vendido'
-                              ? `🏷️ Negociados (${contagensStatus.negociados})`
-                              : `📝 Em Revisão (${contagensStatus.emRevisao})`
-                      : `🏷️ ${filtroStatus.length} status (${filtroStatus.reduce((acc, st) => {
+                              ? `Negociados (${contagensStatus.negociados})`
+                              : `Em Revisão (${contagensStatus.emRevisao})`
+                      : `${filtroStatus.length} status (${filtroStatus.reduce((acc, st) => {
                           if (st === 'em_analise') return acc + contagensStatus.emRevisao
                           if (st === 'ativo') return acc + contagensStatus.ativos
                           if (st === 'pausado') return acc + contagensStatus.pausados
@@ -937,7 +938,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                   }}
                   title="Limpar seleção de status"
                 >
-                  ✕
+                  <Icone nome="fechar" tamanho={16} />
                 </button>
               )}
 
@@ -955,7 +956,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         readOnly
                         style={{ accentColor: '#16201C', pointerEvents: 'none' }}
                       />
-                      <span>🏷️ Todos os Status</span>
+                      <span>Todos os status</span>
                     </div>
                     <span className={styles.popoverContador}>{contagensStatus.total}</span>
                   </div>
@@ -981,7 +982,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           readOnly
                           style={{ accentColor: '#E3A72F', pointerEvents: 'none' }}
                         />
-                        <span>⏳ Em Revisão</span>
+                        <span>Em revisão</span>
                       </div>
                       <span className={styles.popoverContador} style={{ background: '#FBEFD3', color: '#8A5F12' }}>
                         {contagensStatus.emRevisao}
@@ -1004,7 +1005,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           readOnly
                           style={{ accentColor: '#2E6B4E', pointerEvents: 'none' }}
                         />
-                        <span>🟢 Ativos no Mapa</span>
+                        <span>Ativos no mapa</span>
                       </div>
                       <span className={styles.popoverContador}>{contagensStatus.ativos}</span>
                     </div>
@@ -1023,9 +1024,9 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           type="checkbox"
                           checked={filtroStatus.includes('pausado')}
                           readOnly
-                          style={{ accentColor: '#6366f1', pointerEvents: 'none' }}
+                          style={{ accentColor: '#45566B', pointerEvents: 'none' }}
                         />
-                        <span>⏸️ Pausados</span>
+                        <span>Pausados</span>
                       </div>
                       <span className={styles.popoverContador}>{contagensStatus.pausados}</span>
                     </div>
@@ -1044,9 +1045,9 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           type="checkbox"
                           checked={filtroStatus.includes('vendido')}
                           readOnly
-                          style={{ accentColor: '#7c3aed', pointerEvents: 'none' }}
+                          style={{ accentColor: '#3A4A5E', pointerEvents: 'none' }}
                         />
-                        <span>🏷️ Negociados</span>
+                        <span>Negociados</span>
                       </div>
                       <span className={styles.popoverContador}>{contagensStatus.negociados}</span>
                     </div>
@@ -1089,12 +1090,12 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               >
                 <span>
                   {filtroNegociacoes.length === 0
-                    ? `🤝 Todas as Modalidades (${contagensNegociacao.total})`
+                    ? `Todas as Modalidades (${contagensNegociacao.total})`
                     : filtroNegociacoes.length === 1
                       ? filtroNegociacoes[0] === 'venda'
-                        ? `💰 Venda (${contagensNegociacao.venda})`
-                        : `🔑 Aluguel (${contagensNegociacao.aluguel})`
-                      : `🤝 ${filtroNegociacoes.length} modalidades (${filtroNegociacoes.reduce((acc, neg) => {
+                        ? `Venda (${contagensNegociacao.venda})`
+                        : `Aluguel (${contagensNegociacao.aluguel})`
+                      : `${filtroNegociacoes.length} modalidades (${filtroNegociacoes.reduce((acc, neg) => {
                           if (neg === 'venda') return acc + contagensNegociacao.venda
                           if (neg === 'aluguel') return acc + contagensNegociacao.aluguel
                           return acc
@@ -1113,7 +1114,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                   }}
                   title="Limpar seleção de modalidades"
                 >
-                  ✕
+                  <Icone nome="fechar" tamanho={16} />
                 </button>
               )}
 
@@ -1131,7 +1132,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         readOnly
                         style={{ accentColor: '#16201C', pointerEvents: 'none' }}
                       />
-                      <span>🤝 Todas as Modalidades</span>
+                      <span>Todas as modalidades</span>
                     </div>
                     <span className={styles.popoverContador}>{contagensNegociacao.total}</span>
                   </div>
@@ -1156,7 +1157,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           readOnly
                           style={{ accentColor: '#16201C', pointerEvents: 'none' }}
                         />
-                        <span>💰 Venda</span>
+                        <span>Venda</span>
                       </div>
                       <span className={styles.popoverContador}>{contagensNegociacao.venda}</span>
                     </div>
@@ -1177,7 +1178,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           readOnly
                           style={{ accentColor: '#16201C', pointerEvents: 'none' }}
                         />
-                        <span>🔑 Aluguel</span>
+                        <span>Aluguel</span>
                       </div>
                       <span className={styles.popoverContador}>{contagensNegociacao.aluguel}</span>
                     </div>
@@ -1219,8 +1220,8 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                 }}
                 title="Limpar todos os filtros e pesquisa"
               >
-                ✕ Limpar filtros
-              </button>
+ Limpar filtros
+ </button>
             )}
           </div>
 
@@ -1231,10 +1232,10 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               onChange={(e) => setOrdenacao(e.target.value as Ordenacao)}
               className={styles.selectFiltro}
             >
-              <option value="recentes">Mais Recentes</option>
-              <option value="leads">Mais Leads / Interesse</option>
-              <option value="preco_menor">Menor Preço</option>
-              <option value="preco_maior">Maior Preço</option>
+              <option value="recentes">Mais recentes</option>
+              <option value="leads">Mais leads / interesse</option>
+              <option value="preco_menor">Menor preço</option>
+              <option value="preco_maior">Maior preço</option>
               <option value="titulo">Título A-Z</option>
             </select>
           </div>
@@ -1256,7 +1257,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               onClick={() => handleAcaoLote('ativar')}
               disabled={executandoLote}
             >
-              ▶️ Ativar no Mapa
+              ▶️ Ativar no mapa
             </button>
             <button
               type="button"
@@ -1264,8 +1265,8 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               onClick={() => handleAcaoLote('pausar')}
               disabled={executandoLote}
             >
-              ⏸️ Pausar
-            </button>
+ Pausar
+ </button>
             {isImobiliaria && (
               <button
                 type="button"
@@ -1273,8 +1274,8 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                 onClick={() => abrirModalReatribuir(selecionados)}
                 disabled={executandoLote}
               >
-                👔 Transferir Corretor
-              </button>
+ Transferir corretor
+ </button>
             )}
             {podeExcluir && (
               <button
@@ -1283,8 +1284,8 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                 onClick={() => handleAcaoLote('excluir')}
                 disabled={executandoLote}
               >
-                🗑️ Excluir Selecionados
-              </button>
+ Excluir selecionados
+ </button>
             )}
             <button
               type="button"
@@ -1318,12 +1319,12 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
       {/* ── LISTAGEM DE IMÓVEIS: VAZIO OU RESULTADOS ── */}
       {imoveisFiltrados.length === 0 ? (
         <div className={styles.estadoVazio}>
-          <span className={styles.iconeVazio}>🏢</span>
+          <span className={styles.iconeVazio}><Icone nome="predio" tamanho={16} /></span>
           <h3 className={styles.tituloVazio}>
             {imoveis.length === 0
               ? 'Nenhum imóvel cadastrado no portfólio'
               : filtroStatus.includes('em_analise')
-                ? 'Nenhum imóvel em revisão no momento! 🎉'
+                ? 'Nenhum imóvel em revisão no momento! '
                 : 'Nenhum imóvel encontrado'}
           </h3>
           <p className={styles.textoVazio}>
@@ -1353,7 +1354,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
               }}
               className="btn btn-outline btn-sm"
             >
-              Limpar Filtros
+              Limpar filtros
             </button>
           )}
         </div>
@@ -1378,13 +1379,13 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                 style={{
                   borderWidth: isEmRevisao || isPausado ? '3px' : undefined,
                   borderStyle: isEmRevisao || isPausado ? 'solid' : undefined,
-                  borderColor: isEmRevisao ? '#E3A72F' : isPausado ? '#6366f1' : undefined,
+                  borderColor: isEmRevisao ? '#E3A72F' : isPausado ? '#45566B' : undefined,
                   boxShadow: isEmRevisao
                     ? '0 10px 28px rgba(227, 167, 47, 0.22), 0 2px 8px rgba(227, 167, 47, 0.12)'
                     : isPausado
-                      ? '0 10px 28px rgba(99, 102, 241, 0.22), 0 2px 8px rgba(99, 102, 241, 0.12)'
+                      ? '0 10px 28px rgba(69, 86, 107, 0.22), 0 2px 8px rgba(69, 86, 107, 0.12)'
                       : undefined,
-                  background: isEmRevisao ? '#fffdfa' : isPausado ? '#fafafe' : undefined,
+                  background: isEmRevisao ? '#FAF7F1' : isPausado ? '#FAF7F1' : undefined,
                 }}
               >
                 {/* ── FOTO DO IMÓVEL ── */}
@@ -1426,15 +1427,15 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                       }}
                     >
                       {isEmRevisao
-                        ? '⏳ Em Revisão'
+                        ? 'Em revisão'
                         : isAtivo
-                          ? '🟢 Ativo no Mapa'
+                          ? 'Ativo no Mapa'
                           : isPausado
-                            ? '⏸️ Pausado'
+                            ? 'Pausado'
                             : isVendido
-                              ? '🏷️ Negociado'
+                              ? 'Negociado'
                               : isRascunho
-                                ? '📝 Recusado'
+                                ? 'Recusado'
                                 : status}
                     </span>
                   </div>
@@ -1445,13 +1446,13 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
 
                   {imovel.modo_exibicao_preco === 'sob_consulta' && (
                     <div className={styles.badgeSobConsultaAdmin} title="Para o público e visitantes do portal, este imóvel aparece como 'Preço sob consulta'">
-                      💬 Sob Consulta
-                    </div>
+ Sob consulta
+ </div>
                   )}
 
                   {imovel.fotos && imovel.fotos.length > 0 && (
                     <div className={styles.badgeQtdFotos}>
-                      📷 {imovel.fotos.length}
+                      <Icone nome="camera" tamanho={16} /> {imovel.fotos.length}
                     </div>
                   )}
                 </div>
@@ -1473,7 +1474,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                       {imovel.titulo}
                     </h3>
                     <div className={styles.cardLocalizacao}>
-                      <span>📍</span>
+                      <span><Icone nome="local" tamanho={16} /></span>
                       <span>{imovel.cidade} {imovel.bairro ? `• ${imovel.bairro}` : ''}</span>
                     </div>
                     {imovel.modo_exibicao_preco === 'sob_consulta' && (
@@ -1487,19 +1488,19 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                   {/* Grade Limpa de 4 Atributos */}
                   <div className={styles.gradeAtributos}>
                     <div className={styles.gradeItem}>
-                      <span className={styles.gradeItemIcone}>📐</span>
+                      <span className={styles.gradeItemIcone}><Icone nome="area" tamanho={16} /></span>
                       <span className={styles.gradeItemValor}>{imovel.area ? `${imovel.area}m²` : '—'}</span>
                     </div>
                     <div className={styles.gradeItem}>
-                      <span className={styles.gradeItemIcone}>🛏️</span>
+                      <span className={styles.gradeItemIcone}><Icone nome="quarto" tamanho={16} /></span>
                       <span className={styles.gradeItemValor}>{imovel.quartos ? `${imovel.quartos} qts` : '—'}</span>
                     </div>
                     <div className={styles.gradeItem}>
-                      <span className={styles.gradeItemIcone}>🚿</span>
+                      <span className={styles.gradeItemIcone}><Icone nome="banho" tamanho={16} /></span>
                       <span className={styles.gradeItemValor}>{imovel.banheiros ? `${imovel.banheiros} ban` : '—'}</span>
                     </div>
                     <div className={styles.gradeItem}>
-                      <span className={styles.gradeItemIcone}>🚗</span>
+                      <span className={styles.gradeItemIcone}><Icone nome="vaga" tamanho={16} /></span>
                       <span className={styles.gradeItemValor}>{imovel.vagas ? `${imovel.vagas} vg` : '—'}</span>
                     </div>
                   </div>
@@ -1508,12 +1509,12 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                   <div className={styles.cardMetaEquipe}>
                     {isImobiliaria ? (
                       <span className={styles.tagCorretor} title={`Responsável: ${nomeResponsavel}`}>
-                        👔 {nomeResponsavel}
+                        <Icone nome="maleta" tamanho={16} /> {nomeResponsavel}
                       </span>
                     ) : <span />}
 
                     <span className={styles.tagLeads} title={`${qtdLeads} lead(s) gerado(s) por este imóvel`}>
-                      👥 {qtdLeads} lead{qtdLeads === 1 ? '' : 's'}
+                      <Icone nome="pessoas" tamanho={16} /> {qtdLeads} lead{qtdLeads === 1 ? '' : 's'}
                     </span>
                   </div>
                 </div>
@@ -1530,8 +1531,8 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         title="Revisar dados, fotos e publicar no mapa"
                         style={{ flex: 1.25 }}
                       >
-                        🔍 Revisar / Publicar
-                      </button>
+ Revisar / publicar
+ </button>
                       <button
                         type="button"
                         className={`${styles.btnAcaoPrincipal} ${(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 ? styles.btnChatComAlerta : ''}`}
@@ -1539,7 +1540,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         title={(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 ? `${mensagensNaoLidasPorImovel[imovel.id]} nova(s) mensagem(ns) no chat` : 'Abrir chat de moderação'}
                         style={{ flex: 0.75, background: '#EEF5F0', borderColor: '#A9CDB6', color: '#2E6B4E', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                       >
-                        <span>💬 Chat</span>
+                        <span>Chat</span>
                         {(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 && (
                           <span className={styles.badgeChatNaoLido}>{mensagensNaoLidasPorImovel[imovel.id]}</span>
                         )}
@@ -1554,8 +1555,8 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         onClick={() => setImovelIdParaEditar(imovel.id)}
                         title="Abrir para corrigir os dados e reenviar ao gestor"
                       >
-                        ✏️ Corrigir Dados
-                      </button>
+ Corrigir dados
+ </button>
                       <button
                         type="button"
                         className={`${styles.btnAcaoPrincipal} ${(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 ? styles.btnChatComAlerta : ''}`}
@@ -1563,7 +1564,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         title={(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 ? `${mensagensNaoLidasPorImovel[imovel.id]} nova(s) mensagem(ns) do gestor` : 'Abrir chat de moderação'}
                         style={{ flex: 0.75, background: '#EEF5F0', borderColor: '#A9CDB6', color: '#2E6B4E', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                       >
-                        <span>💬 Chat</span>
+                        <span>Chat</span>
                         {(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 && (
                           <span className={styles.badgeChatNaoLido}>{mensagensNaoLidasPorImovel[imovel.id]}</span>
                         )}
@@ -1578,18 +1579,18 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         title="Pausar anúncio no mapa"
                         style={{ flex: 1 }}
                       >
-                        ⏸️ Pausar Anúncio
-                      </button>
+ Pausar anúncio
+ </button>
                       {isImobiliaria && (
                         <button
                           type="button"
                           className={styles.btnAcaoPrincipal}
                           style={{ flex: 1, color: '#8A5F12', borderColor: '#F2D48E', background: '#FDF7E8' }}
                           onClick={() => setImovelEmRevisao(imovel)}
-                          title="Auditoria & Solicitar Revisão do Corretor"
+                          title="Auditoria & solicitar revisão do corretor"
                         >
-                          ⚠️ Pedir Revisão
-                        </button>
+ Pedir revisão
+ </button>
                       )}
                     </div>
                   ) : isPausado ? (
@@ -1601,7 +1602,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         title="Reativar anúncio no mapa"
                         style={{ flex: 1, color: '#2E6B4E', borderColor: '#C3DACB', background: '#EEF5F0' }}
                       >
-                        ▶️ Reativar no Mapa
+                        ▶️ Reativar no mapa
                       </button>
                       {isImobiliaria && (
                         <button
@@ -1609,10 +1610,10 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           className={styles.btnAcaoPrincipal}
                           style={{ flex: 1, color: '#8A5F12', borderColor: '#F2D48E', background: '#FDF7E8' }}
                           onClick={() => setImovelEmRevisao(imovel)}
-                          title="Auditoria & Solicitar Revisão do Corretor"
+                          title="Auditoria & solicitar revisão do corretor"
                         >
-                          ⚠️ Pedir Revisão
-                        </button>
+ Pedir revisão
+ </button>
                       )}
                     </div>
                   ) : null}
@@ -1626,7 +1627,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         className={styles.btnAcaoIcone}
                         title="Ver anúncio público"
                       >
-                        👁️
+                        <Icone nome="olho" tamanho={16} />
                       </Link>
 
                       <button
@@ -1635,7 +1636,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         onClick={() => setImovelIdParaEditar(imovel.id)}
                         title="Editar dados e fotos"
                       >
-                        ✏️
+                        <Icone nome="editar" tamanho={16} />
                       </button>
 
                       <button
@@ -1644,7 +1645,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                         onClick={() => copiarLinkImovel(imovel.id)}
                         title="Copiar link do anúncio"
                       >
-                        🔗
+                        <Icone nome="link" tamanho={16} />
                       </button>
 
                       <button
@@ -1666,7 +1667,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           onClick={() => abrirModalReatribuir([imovel.id])}
                           title="Transferir corretor responsável"
                         >
-                          👔
+                          <Icone nome="maleta" tamanho={16} />
                         </button>
                       )}
 
@@ -1678,7 +1679,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           title="Excluir imóvel"
                           style={{ color: '#B23318' }}
                         >
-                          🗑️
+                          <Icone nome="lixeira" tamanho={16} />
                         </button>
                       )}
                     </div>
@@ -1703,8 +1704,8 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                   />
                 </th>
                 <th style={{ width: '60px' }}>Foto</th>
-                <th>Título / Detalhes</th>
-                <th>Cidade / Bairro</th>
+                <th>Título / detalhes</th>
+                <th>Cidade / bairro</th>
                 <th>Preço</th>
                 {isImobiliaria && <th>Responsável</th>}
                 <th>Status</th>
@@ -1729,7 +1730,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                     key={imovel.id}
                     className={isSelecionado ? styles.linhaSelecionada : ''}
                     style={{
-                      background: isEmRevisao ? '#fffdfa' : undefined,
+                      background: isEmRevisao ? '#FAF7F1' : undefined,
                       borderLeft: isEmRevisao ? '4px solid #E3A72F' : undefined,
                     }}
                   >
@@ -1765,18 +1766,17 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                       </strong>
                       {imovel.modo_exibicao_preco === 'sob_consulta' ? (
                         <span className={styles.badgeTabelaSobConsulta} title="Para o público e visitantes do portal, este imóvel aparece como 'Preço sob consulta'">
-                          💬 Sob Consulta (Público)
-                        </span>
+ Sob consulta (público)
+ </span>
                       ) : (
                         <span style={{ display: 'block', fontSize: '0.685rem', color: '#2E6B4E', fontWeight: 600 }}>
-                          💰 Preço Visível
-                        </span>
+ Preço visível
+ </span>
                       )}
                     </td>
                     {isImobiliaria && (
                       <td>
-                        <span className={styles.tagCorretor} style={{ fontSize: '0.75rem' }}>
-                          👔 {nomeResponsavel}
+                        <span className={styles.tagCorretor} style={{ fontSize: '0.75rem' }}><Icone nome="maleta" tamanho={16} /> {nomeResponsavel}
                         </span>
                       </td>
                     )}
@@ -1807,12 +1807,11 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           fontWeight: 700,
                         }}
                       >
-                        {isEmRevisao ? '⏳ Em Revisão' : isAtivo ? '🟢 Ativo' : isPausado ? '⏸️ Pausado' : isVendido ? '🏷️ Negociado' : isRascunho ? '📝 Recusado' : status}
+                        {isEmRevisao ? 'Em revisão' : isAtivo ? 'Ativo' : isPausado ? 'Pausado' : isVendido ? 'Negociado' : isRascunho ? 'Recusado' : status}
                       </span>
                     </td>
                     <td>
-                      <span className={styles.tagLeads} style={{ fontSize: '0.75rem' }}>
-                        👥 {qtdLeads}
+                      <span className={styles.tagLeads} style={{ fontSize: '0.75rem' }}><Icone nome="pessoas" tamanho={16} /> {qtdLeads}
                       </span>
                     </td>
                     <td style={{ textAlign: 'right' }}>
@@ -1823,10 +1822,10 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                             className="btn btn-sm"
                             style={{ background: '#8A5F12', color: '#ffffff', fontWeight: 700, fontSize: '0.75rem', padding: '4px 8px' }}
                             onClick={() => setImovelEmRevisao(imovel)}
-                            title="Revisar e Publicar"
+                            title="Revisar e publicar"
                           >
-                            🔍 Revisar
-                          </button>
+ Revisar
+ </button>
                         ) : null}
 
                         {isEmRevisao && (
@@ -1834,7 +1833,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                             type="button"
                             className={styles.btnAcaoIcone}
                             onClick={() => abrirChatImovel(imovel)}
-                            title={(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 ? `${mensagensNaoLidasPorImovel[imovel.id]} nova(s) mensagem(ns) no chat` : 'Chat de Moderação'}
+                            title={(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 ? `${mensagensNaoLidasPorImovel[imovel.id]} nova(s) mensagem(ns) no chat` : 'Chat de moderação'}
                             style={{
                               color: '#2E6B4E',
                               background: (mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 ? '#FDF1EC' : '#EEF5F0',
@@ -1843,7 +1842,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                               fontWeight: 700,
                             }}
                           >
-                            💬
+                            <Icone nome="chat" tamanho={16} />
                             {(mensagensNaoLidasPorImovel[imovel.id] || 0) > 0 && (
                               <span
                                 style={{
@@ -1867,7 +1866,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           className={styles.btnAcaoIcone}
                           title="Ver anúncio público"
                         >
-                          👁️
+                          <Icone nome="olho" tamanho={16} />
                         </Link>
                         <button
                           type="button"
@@ -1875,7 +1874,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           onClick={() => copiarLinkImovel(imovel.id)}
                           title="Copiar link"
                         >
-                          🔗
+                          <Icone nome="link" tamanho={16} />
                         </button>
                         <button
                           type="button"
@@ -1892,16 +1891,16 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                           onClick={() => setImovelIdParaEditar(imovel.id)}
                           title="Editar"
                         >
-                          ✏️
+                          <Icone nome="editar" tamanho={16} />
                         </button>
                         {isImobiliaria && (
                           <button
                             type="button"
                             className={styles.btnAcaoIcone}
                             onClick={() => abrirModalReatribuir([imovel.id])}
-                            title="Transferir Corretor"
+                            title="Transferir corretor"
                           >
-                            👔
+                            <Icone nome="maleta" tamanho={16} />
                           </button>
                         )}
                         {isAtivo ? (
@@ -1911,7 +1910,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                             onClick={() => onAlterarStatus(imovel.id, 'pausado')}
                             title="Pausar"
                           >
-                            ⏸️
+                            <Icone nome="pausa" tamanho={16} />
                           </button>
                         ) : isPausado ? (
                           <button
@@ -1932,7 +1931,7 @@ function IconeWhatsApp({ size = 16 }: { size?: number }) {
                             title="Excluir"
                             style={{ color: '#B23318' }}
                           >
-                            🗑️
+                            <Icone nome="lixeira" tamanho={16} />
                           </button>
                         )}
                       </div>

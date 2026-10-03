@@ -3,8 +3,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
-import LogoGota from "@/components/ui/LogoGota"
+import { Logotipo } from "@/components/ui/Logo"
 import styles from "../login/page.module.css"
+import Icone from '@/components/ui/Icone'
 
 export default function RecuperarSenhaPage() {
   const [email, setEmail] = useState("")
@@ -42,8 +43,7 @@ export default function RecuperarSenhaPage() {
       <div className={styles.lado}>
         <div className={styles.ladoConteudo}>
           <Link href="/" className={styles.logo}>
-            <LogoGota size={30} />
-            <span>FIXUM</span>
+            <Logotipo largura={92} />
           </Link>
 
           <h1>Recuperar senha</h1>
@@ -58,13 +58,13 @@ export default function RecuperarSenhaPage() {
               textAlign: 'center',
               marginTop: '1.5rem'
             }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📬</div>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}><Icone nome="email" tamanho={34} /></div>
               <h3 style={{ color: '#2E6B4E', fontSize: '1.2rem', marginBottom: '0.5rem' }}>E-mail enviado!</h3>
               <p style={{ color: '#5A5449', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.25rem' }}>
                 Enviamos um link de recuperação para <strong>{email}</strong>. Verifique sua caixa de entrada e spam.
               </p>
               <Link href="/login" className="btn btn-primario" style={{ width: '100%', minHeight: '44px' }}>
-                Voltar para o Login
+                Voltar para o login
               </Link>
             </div>
           ) : (

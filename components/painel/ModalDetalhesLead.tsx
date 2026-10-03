@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { type Lead, type AtividadeLead, type CompromissoLead, type AnexoLead } from '@/lib/types'
 import { formatarPreco, formatarTelefone } from '@/lib/utils'
 import styles from './ModalDetalhesLead.module.css'
+import Icone from '@/components/ui/Icone'
 
 interface Props {
   lead: Lead
@@ -225,7 +226,7 @@ export default function ModalDetalhesLead({
       : ''
 
     const codTexto = lead.imovel?.codigo ? ` (Ref: ${lead.imovel.codigo})` : ''
-    const texto = `Olá ${lead.nome}! Sou ${usuarioNome} do portal de imóveis Fixum.\n\nVi seu interesse no imóvel *${lead.imovel?.titulo || 'anunciado na Fixum'}*${codTexto}.\n${urlImovel ? `🔗 ${urlImovel}\n\n` : ''}Como posso te ajudar?`
+    const texto = `Olá ${lead.nome}! Sou ${usuarioNome} do portal de imóveis Fixum.\n\nVi seu interesse no imóvel *${lead.imovel?.titulo || 'anunciado na Fixum'}*${codTexto}.\n${urlImovel ? `${urlImovel}\n\n` : ''}Como posso te ajudar?`
 
     const msg = encodeURIComponent(texto)
     window.open(`https://wa.me/55${telLimpo}?text=${msg}`, '_blank')
@@ -347,14 +348,14 @@ export default function ModalDetalhesLead({
     })
 
     const tipoNomes: Record<string, string> = {
-      visita: '🏠 Visita Presencial',
-      ligacao: '📞 Ligação / Follow-up',
-      proposta: '📄 Envio de Proposta/Contrato',
-      reuniao: '🤝 Reunião de Fechamento',
-      outro: '⏰ Lembrete de Negociação',
+      visita: 'Visita Presencial',
+      ligacao: 'Ligação / Follow-up',
+      proposta: 'Envio de Proposta/Contrato',
+      reuniao: 'Reunião de Fechamento',
+      outro: 'Lembrete de Negociação',
     }
 
-    const msgTexto = `🚨 *Lembrete de Compromisso - Fixum* 🚨\n\n📌 *Compromisso:* ${comp.titulo}\n🏷️ *Tipo:* ${tipoNomes[comp.tipo] || comp.tipo}\n⏰ *Data/Horário:* ${dataFmt}\n👤 *Cliente:* ${lead.nome}${lead.telefone ? ` (${lead.telefone})` : ''}\n🏢 *Imóvel:* ${lead.imovel?.titulo || 'Portfólio'}\n👔 *Responsável:* ${comp.responsavel_nome || 'Equipe'}\n\n_Não se esqueça de realizar o atendimento!_`
+    const msgTexto = `*Lembrete de Compromisso - Fixum* \n\n*Compromisso:* ${comp.titulo}\n*Tipo:* ${tipoNomes[comp.tipo] || comp.tipo}\n*Data/Horário:* ${dataFmt}\n*Cliente:* ${lead.nome}${lead.telefone ? ` (${lead.telefone})` : ''}\n*Imóvel:* ${lead.imovel?.titulo || 'Portfólio'}\n*Responsável:* ${comp.responsavel_nome || 'Equipe'}\n\n_Não se esqueça de realizar o atendimento!_`
 
     const telDestino = lead.telefone ? lead.telefone.replace(/\D/g, '') : ''
     window.open(`https://wa.me/55${telDestino}?text=${encodeURIComponent(msgTexto)}`, '_blank')
@@ -418,7 +419,7 @@ export default function ModalDetalhesLead({
               <div className={styles.linhaNome}>
                 <h2 className={styles.nomeLead}>{lead.nome}</h2>
                 <span className={`${styles.badgeTemperatura} ${styles[`temp_${lead.temperatura || 'morno'}`]}`}>
-                  {lead.temperatura === 'quente' ? '🔥 Quente' : lead.temperatura === 'frio' ? '❄️ Frio' : '☕ Morno'}
+                  {lead.temperatura === 'quente' ? 'Quente' : lead.temperatura === 'frio' ? 'Frio' : 'Morno'}
                 </span>
                 <span className={styles.badgeEtapa}>
                   Etapa: <strong>{lead.status.replace(/_/g, ' ')}</strong>
@@ -431,7 +432,7 @@ export default function ModalDetalhesLead({
           </div>
 
           <button type="button" className={styles.btnFechar} onClick={onFechar} title="Fechar">
-            ✕
+            <Icone nome="fechar" tamanho={16} />
           </button>
         </div>
 
@@ -444,7 +445,7 @@ export default function ModalDetalhesLead({
             className={`${styles.tabBtn} ${abaAtiva === 'geral' ? styles.tabBtnAtivo : ''}`}
             onClick={() => setAbaAtiva('geral')}
           >
-            <span>📋</span> Visão Geral & Imóvel
+            <span><Icone nome="lista" tamanho={16} /></span> Visão geral & imóvel
           </button>
 
           <button
@@ -452,7 +453,7 @@ export default function ModalDetalhesLead({
             className={`${styles.tabBtn} ${abaAtiva === 'timeline' ? styles.tabBtnAtivo : ''}`}
             onClick={() => setAbaAtiva('timeline')}
           >
-            <span>📝</span> Linha do Tempo ({atividades.length})
+            <span><Icone nome="editar" tamanho={16} /></span> Linha do tempo ({atividades.length})
           </button>
 
           <button
@@ -460,7 +461,7 @@ export default function ModalDetalhesLead({
             className={`${styles.tabBtn} ${abaAtiva === 'agenda' ? styles.tabBtnAtivo : ''}`}
             onClick={() => setAbaAtiva('agenda')}
           >
-            <span>📅</span> Agenda & Lembretes ({compromissos.filter((c) => !c.concluido).length})
+            <span><Icone nome="calendario" tamanho={16} /></span> Agenda & lembretes ({compromissos.filter((c) => !c.concluido).length})
           </button>
 
           <button
@@ -468,7 +469,7 @@ export default function ModalDetalhesLead({
             className={`${styles.tabBtn} ${abaAtiva === 'anexos' ? styles.tabBtnAtivo : ''}`}
             onClick={() => setAbaAtiva('anexos')}
           >
-            <span>📎</span> Documentos & Anexos ({anexos.length})
+            <span><Icone nome="anexo" tamanho={16} /></span> Documentos & anexos ({anexos.length})
           </button>
         </div>
 
@@ -476,9 +477,9 @@ export default function ModalDetalhesLead({
         {(lead.arquivado || lead.status === 'arquivado') && (
           <div className={styles.bannerArquivado}>
             <div className={styles.bannerArquivadoInfo}>
-              <span className={styles.iconeBannerArquivado}>📁</span>
+              <span className={styles.iconeBannerArquivado}><Icone nome="pasta" tamanho={16} /></span>
               <div>
-                <strong>Este Lead Está Arquivado</strong>
+                <strong>Este lead está arquivado</strong>
                 <p>
                   O lead está fora do funil ativo de atendimento diário, mas todos os históricos,
                   atividades e documentos estão 100% preservados.
@@ -493,12 +494,12 @@ export default function ModalDetalhesLead({
                 handleAtualizarCampo({
                   arquivado: false,
                   status: lead.status === 'arquivado' ? 'novo' : lead.status,
-                  mensagem_atividade: `📂 Lead DESARQUIVADO por ${usuarioNome} e retornado ao funil ativo.`,
+                  mensagem_atividade: `Lead DESARQUIVADO por ${usuarioNome} e retornado ao funil ativo.`,
                 })
               }
             >
-              📂 Desarquivar Lead
-            </button>
+ Desarquivar lead
+ </button>
           </div>
         )}
 
@@ -507,9 +508,9 @@ export default function ModalDetalhesLead({
           lead.status_homologacao === 'pendente' ? (
             <div className={styles.bannerHomologacaoPendente}>
               <div className={styles.bannerHomologacaoInfo}>
-                <span className={styles.iconeBannerHomologacao}>⏳</span>
+                <span className={styles.iconeBannerHomologacao}><Icone nome="relogio" tamanho={16} /></span>
                 <div>
-                  <strong>Fechamento de Negócio Aguardando Homologação do Gestor</strong>
+                  <strong>Fechamento de negócio aguardando homologação do gestor</strong>
                   <p>
                     {lead.corretor_nome ? `O corretor ${lead.corretor_nome}` : 'Um corretor da equipe'} marcou este lead como venda fechada.
                     {isGestor || isImobiliaria
@@ -530,12 +531,12 @@ export default function ModalDetalhesLead({
                         homologado_por_id: usuarioId,
                         homologado_por_nome: usuarioNome,
                         data_homologacao: new Date().toISOString(),
-                        mensagem_atividade: `🏆 Venda homologada e aprovada pelo Gestor ${usuarioNome}.`,
+                        mensagem_atividade: `Venda homologada e aprovada pelo Gestor ${usuarioNome}.`,
                       })
                     }
                   >
-                    ✓ Homologar Venda
-                  </button>
+ Homologar venda
+ </button>
                   <button
                     type="button"
                     className={styles.btnRecusarHomologacao}
@@ -545,18 +546,18 @@ export default function ModalDetalhesLead({
                         status: 'proposta',
                         status_homologacao: 'rejeitado',
                         motivo_rejeicao_homologacao: 'Retornado para negociação pelo gestor',
-                        mensagem_atividade: `⚠️ Homologação de venda recusada pelo Gestor ${usuarioNome}. Lead retornado para a etapa de Proposta.`,
+                        mensagem_atividade: `Homologação de venda recusada pelo Gestor ${usuarioNome}. Lead retornado para a etapa de Proposta.`,
                       })
                     }
                   >
-                    ✕ Recusar / Voltar
-                  </button>
+ Recusar / voltar
+ </button>
                 </div>
               )}
             </div>
           ) : (
             <div className={styles.bannerHomologacaoAprovada}>
-              <span>🏆 Venda homologada e confirmada por {lead.homologado_por_nome || 'Gestor'} em {lead.data_homologacao ? new Date(lead.data_homologacao).toLocaleDateString('pt-BR') : 'data recente'}.</span>
+              <span>Venda homologada e confirmada por {lead.homologado_por_nome || 'Gestor'} em {lead.data_homologacao ? new Date(lead.data_homologacao).toLocaleDateString('pt-BR') : 'data recente'}.</span>
             </div>
           )
         )}
@@ -582,9 +583,9 @@ export default function ModalDetalhesLead({
                       : styles.contatoPendente
                   }`}
                 >
-                  <div className={styles.alertaIcone}>{fezContato ? '✅' : horasCriacao >= 24 ? '🚨' : '⏳'}</div>
+                  <div className={styles.alertaIcone}>{fezContato ? '' : horasCriacao >= 24 ? '' : ''}</div>
                   <div className={styles.alertaTextos}>
-                    <strong>{fezContato ? 'Primeiro Contato Realizado' : 'Primeiro Contato Pendente'}</strong>
+                    <strong>{fezContato ? 'Primeiro contato realizado' : 'Primeiro contato pendente'}</strong>
                     <p>
                       {fezContato
                         ? `Atendido em ${new Date(lead.data_primeiro_contato!).toLocaleString('pt-BR')}`
@@ -595,10 +596,10 @@ export default function ModalDetalhesLead({
 
                 {/* Dados de Contato do Prospect */}
                 <div className={styles.cardDadosCompacto}>
-                  <h3 className={styles.subtituloCard}>👤 Dados do Prospect / Interessado</h3>
+                  <h3 className={styles.subtituloCard}>Dados do prospect / interessado</h3>
                   <div className={styles.gridContato}>
                     <div className={styles.itemContato}>
-                      <span className={styles.labelContato}>WhatsApp / Telefone:</span>
+                      <span className={styles.labelContato}>WhatsApp / telefone:</span>
                       <span className={styles.valorContato}>{formatarTelefone(lead.telefone) || 'Não informado'}</span>
                     </div>
                     <div className={styles.itemContato}>
@@ -607,7 +608,7 @@ export default function ModalDetalhesLead({
                     </div>
                     <div className={styles.itemContato}>
                       <span className={styles.labelContato}>Origem:</span>
-                      <span className={styles.valorContato}>🌐 Portal Fixum</span>
+                      <span className={styles.valorContato}>Portal Fixum</span>
                     </div>
                     <div className={styles.itemContato}>
                       <span className={styles.labelContato}>Responsável:</span>
@@ -618,15 +619,15 @@ export default function ModalDetalhesLead({
                           onChange={(e) => handleReatribuirCorretor(e.target.value)}
                           disabled={processandoAcao}
                         >
-                          <option value="">⚡ Sem Corretor (Fila de Triagem)</option>
+                          <option value="">Sem corretor (fila de triagem)</option>
                           {listaCorretores.map((c) => (
                             <option key={c.id} value={c.id}>
-                              👔 {c.nome}
+                              <Icone nome="maleta" tamanho={16} /> {c.nome}
                             </option>
                           ))}
                         </select>
                       ) : (
-                        <span className={styles.valorContato}>👔 {lead.corretor_nome || 'Sem Corretor (Triagem)'}</span>
+                        <span className={styles.valorContato}><Icone nome="maleta" tamanho={16} /> {lead.corretor_nome || 'Sem Corretor (Triagem)'}</span>
                       )}
                     </div>
                   </div>
@@ -641,9 +642,9 @@ export default function ModalDetalhesLead({
                   {/* Destaque de Proposta Ativa */}
                   {lead.valor_proposta && (
                     <div className={styles.destaquePropostaGeral}>
-                      <div className={styles.destaquePropostaIcone}>💰</div>
+                      <div className={styles.destaquePropostaIcone}><Icone nome="moeda" tamanho={16} /></div>
                       <div className={styles.destaquePropostaTextos}>
-                        <span className={styles.destaquePropostaLabel}>Proposta Registrada:</span>
+                        <span className={styles.destaquePropostaLabel}>Proposta registrada:</span>
                         <strong className={styles.destaquePropostaValor}>{formatarPreco(lead.valor_proposta)}</strong>
                       </div>
                     </div>
@@ -652,9 +653,9 @@ export default function ModalDetalhesLead({
                   {/* Destaque de Visita Agendada */}
                   {lead.data_visita && (
                     <div className={styles.destaqueVisitaGeral}>
-                      <div className={styles.destaqueVisitaIcone}>📅</div>
+                      <div className={styles.destaqueVisitaIcone}><Icone nome="calendario" tamanho={16} /></div>
                       <div className={styles.destaqueVisitaTextos}>
-                        <span className={styles.destaqueVisitaLabel}>Visita Agendada:</span>
+                        <span className={styles.destaqueVisitaLabel}>Visita agendada:</span>
                         <strong className={styles.destaqueVisitaValor}>
                           {new Date(lead.data_visita).toLocaleString('pt-BR', {
                             day: '2-digit',
@@ -674,7 +675,7 @@ export default function ModalDetalhesLead({
               <div className={styles.colunaGeralDireita}>
                 {lead.imovel ? (
                   <div className={styles.cardImovelCompacto}>
-                    <h3 className={styles.subtituloCard}>🏢 Imóvel de Interesse</h3>
+                    <h3 className={styles.subtituloCard}>Imóvel de interesse</h3>
                     <div className={styles.imovelWrapperCompacto}>
                       {lead.imovel.fotos && lead.imovel.fotos[0] && (
                         <div className={styles.imovelThumbWrapper}>
@@ -688,7 +689,7 @@ export default function ModalDetalhesLead({
                       <div className={styles.imovelInfoCompacto}>
                         <strong className={styles.imovelTituloCompacto}>{lead.imovel.titulo}</strong>
                         <span className={styles.imovelLocalCompacto}>
-                          📍 {lead.imovel.bairro ? `${lead.imovel.bairro}, ` : ''}{lead.imovel.cidade}
+                          <Icone nome="local" tamanho={16} /> {lead.imovel.bairro ? `${lead.imovel.bairro}, ` : ''}{lead.imovel.cidade}
                         </span>
                         <div className={styles.imovelPrecoCompacto}>
                           {formatarPreco(lead.imovel.preco || 0)}
@@ -702,14 +703,14 @@ export default function ModalDetalhesLead({
                           target="_blank"
                           className={styles.linkImovelDestaque}
                         >
-                          Ver Anúncio Completo ↗
+                          Ver anúncio completo ↗
                         </Link>
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className={styles.cardImovelVazio}>
-                    <span>🏢</span>
+                    <span><Icone nome="predio" tamanho={16} /></span>
                     <p>Lead de interesse geral no catálogo.</p>
                   </div>
                 )}
@@ -735,7 +736,7 @@ export default function ModalDetalhesLead({
                     className={styles.btnSalvarAnotacao}
                     disabled={!novaAnotacao.trim() || salvandoAnotacao}
                   >
-                    {salvandoAnotacao ? 'Salvando...' : 'Adicionar Anotação'}
+                    {salvandoAnotacao ? 'Salvando...' : 'Adicionar anotação'}
                   </button>
                 </div>
               </form>
@@ -746,24 +747,24 @@ export default function ModalDetalhesLead({
                   <div className={styles.carregandoTimeline}>Carregando histórico...</div>
                 ) : atividades.length === 0 ? (
                   <div className={styles.vazioTimeline}>
-                    <span>💬</span>
+                    <span><Icone nome="chat" tamanho={16} /></span>
                     <p>Nenhuma interação registrada ainda. Use o campo acima para adicionar anotações internas.</p>
                   </div>
                 ) : (
                   atividades.map((atv) => {
                     const icones: Record<string, string> = {
-                      criacao: '📥',
-                      contato_whatsapp: '💬',
-                      mudanca_status: '🔄',
-                      anotacao: '📝',
-                      visita_agendada: '📅',
-                      proposta: '💰',
-                      reatribuicao: '👔',
+                      criacao: '',
+                      contato_whatsapp: '',
+                      mudanca_status: '',
+                      anotacao: '',
+                      visita_agendada: '',
+                      proposta: '',
+                      reatribuicao: '',
                     }
                     return (
                       <div key={atv.id} className={styles.itemAtividade}>
                         <div className={styles.iconeAtividade}>
-                          {icones[atv.tipo] || '📌'}
+                          {icones[atv.tipo] || ''}
                         </div>
                         <div className={styles.conteudoAtividade}>
                           <div className={styles.cabecalhoAtividade}>
@@ -792,10 +793,10 @@ export default function ModalDetalhesLead({
             <div className={styles.secaoAgenda}>
               {/* Form de Novo Compromisso */}
               <form onSubmit={handleCriarCompromisso} className={styles.formCompromisso}>
-                <h3 className={styles.subtituloCard}>📅 Agendar Novo Compromisso / Tarefa</h3>
+                <h3 className={styles.subtituloCard}>Agendar novo compromisso / tarefa</h3>
                 <div className={styles.gridFormCompromisso}>
                   <div className={styles.campoFormComp}>
-                    <label className={styles.labelFormAcao}>Título do Compromisso:</label>
+                    <label className={styles.labelFormAcao}>Título do compromisso:</label>
                     <input
                       type="text"
                       placeholder="Ex: Visita no imóvel com casal de compradores"
@@ -807,22 +808,22 @@ export default function ModalDetalhesLead({
                   </div>
 
                   <div className={styles.campoFormComp}>
-                    <label className={styles.labelFormAcao}>Tipo de Tarefa:</label>
+                    <label className={styles.labelFormAcao}>Tipo de tarefa:</label>
                     <select
                       className={styles.inputFormAcao}
                       value={novoCompTipo}
                       onChange={(e) => setNovoCompTipo(e.target.value as any)}
                     >
-                      <option value="visita">🏠 Visita Presencial</option>
-                      <option value="ligacao">📞 Ligação / Follow-up</option>
-                      <option value="proposta">📄 Envio de Proposta/Contrato</option>
-                      <option value="reuniao">🤝 Reunião de Fechamento</option>
-                      <option value="outro">⏰ Outro Lembrete</option>
+                      <option value="visita">Visita presencial</option>
+                      <option value="ligacao">Ligação / Follow-up</option>
+                      <option value="proposta">Envio de Proposta/Contrato</option>
+                      <option value="reuniao">Reunião de fechamento</option>
+                      <option value="outro">Outro lembrete</option>
                     </select>
                   </div>
 
                   <div className={styles.campoFormComp}>
-                    <label className={styles.labelFormAcao}>Data e Horário:</label>
+                    <label className={styles.labelFormAcao}>Data e horário:</label>
                     <input
                       type="datetime-local"
                       className={styles.inputFormAcao}
@@ -856,7 +857,7 @@ export default function ModalDetalhesLead({
                     className={styles.btnSalvarAcao}
                     disabled={!novoCompTitulo.trim() || !novoCompDataHora || salvandoCompromisso}
                   >
-                    {salvandoCompromisso ? 'Agendando...' : '+ Adicionar na Agenda'}
+                    {salvandoCompromisso ? 'Agendando...' : '+ Adicionar na agenda'}
                   </button>
                 </div>
               </form>
@@ -864,14 +865,14 @@ export default function ModalDetalhesLead({
               {/* Lista de Compromissos */}
               <div className={styles.listaCompromissos}>
                 <h3 className={styles.subtituloCard}>
-                  Compromissos Agendados ({compromissos.length})
+                  Compromissos agendados ({compromissos.length})
                 </h3>
 
                 {carregandoCompromissos ? (
                   <div className={styles.carregandoTimeline}>Carregando agenda...</div>
                 ) : compromissos.length === 0 ? (
                   <div className={styles.vazioTimeline}>
-                    <span>📅</span>
+                    <span><Icone nome="calendario" tamanho={16} /></span>
                     <p>Nenhum compromisso marcado para este lead ainda.</p>
                   </div>
                 ) : (
@@ -898,10 +899,10 @@ export default function ModalDetalhesLead({
                             </strong>
                             <div className={styles.compMeta}>
                               <span>
-                                ⏰ {dataComp.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                <Icone nome="relogio" tamanho={16} /> {dataComp.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                               </span>
-                              {comp.responsavel_nome && <span>👔 {comp.responsavel_nome}</span>}
-                              {atrasado && <span className={styles.badgeAtrasado}>🚨 Atrasado</span>}
+                              {comp.responsavel_nome && <span><Icone nome="maleta" tamanho={16} /> {comp.responsavel_nome}</span>}
+                              {atrasado && <span className={styles.badgeAtrasado}>Atrasado</span>}
                             </div>
                           </div>
                         </div>
@@ -913,15 +914,15 @@ export default function ModalDetalhesLead({
                             onClick={() => handleDispararLembreteWhats(comp)}
                             title="Enviar lembrete formatado no WhatsApp"
                           >
-                            💬 Lembrar no WhatsApp
-                          </button>
+ Lembrar no WhatsApp
+ </button>
                           <button
                             type="button"
                             className={styles.btnExcluirComp}
                             onClick={() => handleExcluirCompromisso(comp.id)}
                             title="Excluir compromisso"
                           >
-                            🗑️
+                            <Icone nome="lixeira" tamanho={16} />
                           </button>
                         </div>
                       </div>
@@ -937,7 +938,7 @@ export default function ModalDetalhesLead({
             <div className={styles.secaoAnexos}>
               <div className={styles.topoUploadAnexo}>
                 <div className={styles.infoUpload}>
-                  <h3 className={styles.subtituloCard}>📎 Documentos da Negociação</h3>
+                  <h3 className={styles.subtituloCard}>Documentos da negociação</h3>
                   <p className={styles.textoUpload}>
                     Anexe documentos, certidões, comprovantes e minutas de contrato.
                   </p>
@@ -956,7 +957,7 @@ export default function ModalDetalhesLead({
                     onClick={() => inputFileRef.current?.click()}
                     disabled={enviandoAnexo}
                   >
-                    <span>📁</span> {enviandoAnexo ? 'Enviando Arquivo...' : 'Anexar Documento / Foto'}
+                    <span><Icone nome="pasta" tamanho={16} /></span> {enviandoAnexo ? 'Enviando arquivo...' : 'Anexar documento / foto'}
                   </button>
                 </div>
               </div>
@@ -967,7 +968,7 @@ export default function ModalDetalhesLead({
                   <div className={styles.carregandoTimeline}>Carregando anexos...</div>
                 ) : anexos.length === 0 ? (
                   <div className={styles.vazioAnexos}>
-                    <span>📁</span>
+                    <span><Icone nome="pasta" tamanho={16} /></span>
                     <h4>Nenhum documento anexado</h4>
                     <p>Clique no botão acima para adicionar arquivos PDF, fotos ou documentos.</p>
                   </div>
@@ -979,7 +980,7 @@ export default function ModalDetalhesLead({
                     return (
                       <div key={anexo.id} className={styles.cardAnexoItem}>
                         <div className={styles.iconeAnexoWrapper}>
-                          {isImagem ? '🖼️' : isPdf ? '📄' : '📝'}
+                          {isImagem ? '' : isPdf ? '' : ''}
                         </div>
                         <div className={styles.infoAnexoItem}>
                           <strong className={styles.nomeAnexoItem} title={anexo.nome_arquivo}>
@@ -996,7 +997,7 @@ export default function ModalDetalhesLead({
                             rel="noopener noreferrer"
                             download={anexo.nome_arquivo}
                             className={styles.btnBaixarAnexo}
-                            title="Abrir ou Baixar Arquivo"
+                            title="Abrir ou baixar arquivo"
                           >
                             Abrir ↗
                           </a>
@@ -1004,9 +1005,9 @@ export default function ModalDetalhesLead({
                             type="button"
                             className={styles.btnExcluirAnexo}
                             onClick={() => handleExcluirAnexo(anexo.id)}
-                            title="Excluir Anexo"
+                            title="Excluir anexo"
                           >
-                            ✕
+                            <Icone nome="fechar" tamanho={16} />
                           </button>
                         </div>
                       </div>
@@ -1031,7 +1032,7 @@ export default function ModalDetalhesLead({
                   onClick={handleChamarWhatsApp}
                   title="Conversar com o cliente no WhatsApp"
                 >
-                  <span>💬</span> WhatsApp
+                  <span><Icone nome="chat" tamanho={16} /></span> WhatsApp
                 </button>
               )}
 
@@ -1041,7 +1042,7 @@ export default function ModalDetalhesLead({
                 onClick={() => setAbaAtiva('agenda')}
                 title="Abrir a agenda de visitas"
               >
-                <span>📅</span> Agendar Visita
+                <span><Icone nome="calendario" tamanho={16} /></span> Agendar visita
               </button>
 
               <button
@@ -1050,7 +1051,7 @@ export default function ModalDetalhesLead({
                 onClick={() => setModalPropostaAberto(true)}
                 title="Registrar proposta ofertada"
               >
-                <span>💰</span> {lead.valor_proposta ? 'Atualizar Proposta' : 'Registrar Proposta'}
+                <span><Icone nome="moeda" tamanho={16} /></span> {lead.valor_proposta ? 'Atualizar proposta' : 'Registrar proposta'}
               </button>
 
               {lead.status !== 'fechado' && (
@@ -1061,12 +1062,12 @@ export default function ModalDetalhesLead({
                     handleAtualizarCampo({
                       status: 'fechado',
                       status_homologacao: 'pendente',
-                      mensagem_atividade: `🏆 Negócio marcado como FECHADO por ${usuarioNome}. Enviado para homologação do Gestor.`,
+                      mensagem_atividade: `Negócio marcado como FECHADO por ${usuarioNome}. Enviado para homologação do Gestor.`,
                     })
                   }}
                   title="Fechar venda e enviar para homologação"
                 >
-                  <span>🏆</span> Fechar Venda
+                  <span><Icone nome="trofeu" tamanho={16} /></span> Fechar venda
                 </button>
               )}
 
@@ -1077,7 +1078,7 @@ export default function ModalDetalhesLead({
                   onClick={() => setModalPerdaAberto(true)}
                   title="Marcar oportunidade como perdida"
                 >
-                  <span>❌</span> Marcar Perdido
+                  <span><Icone nome="fechar" tamanho={16} /></span> Marcar perdido
                 </button>
               )}
 
@@ -1090,12 +1091,12 @@ export default function ModalDetalhesLead({
                     handleAtualizarCampo({
                       arquivado: false,
                       status: lead.status === 'arquivado' ? 'novo' : lead.status,
-                      mensagem_atividade: `📂 Lead DESARQUIVADO por ${usuarioNome} e retornado ao funil ativo.`,
+                      mensagem_atividade: `Lead DESARQUIVADO por ${usuarioNome} e retornado ao funil ativo.`,
                     })
                   }}
                   title="Desarquivar lead e voltar para o funil ativo"
                 >
-                  <span>📂</span> Desarquivar Lead
+                  <span><Icone nome="pasta" tamanho={16} /></span> Desarquivar lead
                 </button>
               ) : lead.status === 'perdido' ? (
                 <button
@@ -1107,12 +1108,12 @@ export default function ModalDetalhesLead({
                       status: 'novo',
                       arquivado: false,
                       motivo_perda: null,
-                      mensagem_atividade: `🔄 Lead REATIVADO por ${usuarioNome} e retornado para Novos.`,
+                      mensagem_atividade: `Lead REATIVADO por ${usuarioNome} e retornado para Novos.`,
                     })
                   }}
                   title="Reativar oportunidade e voltar para o funil ativo"
                 >
-                  <span>🔄</span> Reativar Lead
+                  <span><Icone nome="atualizar" tamanho={16} /></span> Reativar lead
                 </button>
               ) : (
                 <button
@@ -1122,12 +1123,12 @@ export default function ModalDetalhesLead({
                   onClick={() => {
                     handleAtualizarCampo({
                       arquivado: true,
-                      mensagem_atividade: `📁 Lead arquivado por ${usuarioNome}.`,
+                      mensagem_atividade: `Lead arquivado por ${usuarioNome}.`,
                     })
                   }}
                   title="Arquivar lead"
                 >
-                  <span>📁</span> Arquivar
+                  <span><Icone nome="pasta" tamanho={16} /></span> Arquivar
                 </button>
               )}
             </div>
@@ -1140,7 +1141,7 @@ export default function ModalDetalhesLead({
         {modalPropostaAberto && (
           <div className={styles.miniOverlayAcao}>
             <div className={styles.miniCardAcao}>
-              <h3 className={styles.subtituloCard}>💰 Registrar Valor da Proposta</h3>
+              <h3 className={styles.subtituloCard}>Registrar valor da proposta</h3>
               <p className={styles.textoMiniAcao}>Informe o valor ofertado pelo cliente nesta negociação:</p>
               <input
                 type="text"
@@ -1164,7 +1165,7 @@ export default function ModalDetalhesLead({
                   onClick={handleSalvarProposta}
                   disabled={!valorPropostaInput || processandoAcao}
                 >
-                  Salvar Proposta
+                  Salvar proposta
                 </button>
               </div>
             </div>
@@ -1174,7 +1175,7 @@ export default function ModalDetalhesLead({
         {modalPerdaAberto && (
           <div className={styles.miniOverlayAcao}>
             <div className={styles.miniCardAcao}>
-              <h3 className={styles.subtituloCard}>❌ Marcar Oportunidade como Perdida</h3>
+              <h3 className={styles.subtituloCard}>Marcar oportunidade como perdida</h3>
               <p className={styles.textoMiniAcao}>Selecione o motivo pelo qual a negociação não avançou:</p>
               <select
                 className={styles.inputFormAcao}
@@ -1202,7 +1203,7 @@ export default function ModalDetalhesLead({
                   onClick={handleSalvarPerda}
                   disabled={processandoAcao}
                 >
-                  Confirmar Perda
+                  Confirmar perda
                 </button>
               </div>
             </div>

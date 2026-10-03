@@ -110,6 +110,62 @@ export default function MapaExplorar({
   const [mostrarBannerDistante, setMostrarBannerDistante] = useState(false)
   const [imovelCardMobile, setImovelCardMobile] = useState<Imovel | null>(null)
   const fitInicialExecutadoRef = useRef(false)
+
+  // Agrupamento: pins que se sobrepõem na tela viram um círculo com a contagem
+  const clustersRef = useRef<mapboxgl.Marker[]>([])
+  const selecionadoRef = useRef<string | null | undefined>(imovelSelecionado)
+  const reagruparRef = useRef<() => void>(() => {})
+  reagruparRef.current = () => {
+    const mapa = mapaRef.current
+    if (!mapa) return
+    clustersRef.current.forEach((m) => m.remove())
+    clustersRef.current = []
+
+    const itens = [...marcadoresMapRef.current.entries()].map(([id, it]) => ({
+      id,
+      it,
+      p: mapa.project(it.marcador.getLngLat()),
+    }))
+    itens.forEach(({ it }) => { it.marcador.getElement().style.visibility = '' })
+    if (mapa.getZoom() >= 16.5 || itens.length < 2) return
+
+    const usados = new Set<string>()
+    for (const a of itens) {
+      if (usados.has(a.id) || a.id === selecionadoRef.current) continue
+      const grupo = itens.filter(
+        (b) =>
+          !usados.has(b.id) &&
+          b.id !== selecionadoRef.current &&
+          Math.abs(b.p.x - a.p.x) < 72 &&
+          Math.abs(b.p.y - a.p.y) < 30
+      )
+      if (grupo.length < 2) continue
+
+      const limites = new mapboxgl.LngLatBounds()
+      grupo.forEach((g) => {
+        usados.add(g.id)
+        limites.extend(g.it.marcador.getLngLat())
+        g.it.marcador.getElement().style.visibility = 'hidden'
+        if (g.it.popup.isOpen()) g.it.popup.remove()
+      })
+
+      const el = document.createElement('button')
+      el.type = 'button'
+      el.className = styles.cluster
+      el.textContent = String(grupo.length)
+      el.setAttribute('aria-label', `${grupo.length} imóveis aqui. Aproximar.`)
+      el.title = `${grupo.length} imóveis — clique para aproximar`
+      el.addEventListener('click', (e) => {
+        e.stopPropagation()
+        mapa.fitBounds(limites, { padding: 90, maxZoom: 17, duration: 600 })
+        // aproximar pelo grupo é ação do usuário: atualiza a lista para a nova área
+        mapa.once('moveend', () => onPesquisarRef.current?.(mapa.getBounds()!, true))
+      })
+      clustersRef.current.push(
+        new mapboxgl.Marker({ element: el }).setLngLat(limites.getCenter()).addTo(mapa)
+      )
+    }
+  }
   const isAnimandoProgramaticoRef = useRef(false)
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -180,6 +236,8 @@ export default function MapaExplorar({
           setImovelCardMobile(null)
         }
       })
+
+      mapa.on('zoomend', () => reagruparRef.current())
 
       mapa.on('moveend', (e) => {
         // Grava a posição contínua da câmera para que, ao abrir um imóvel e voltar, a posição seja 100% idêntica
@@ -397,26 +455,29 @@ export default function MapaExplorar({
     return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [])
 
-  // Ícone "fixar" (alfinete com x) desenhado de forma síncrona para não piscar
+  // Ícone "fixar" (tachinha) desenhado de forma síncrona para não piscar
   function criarSvgHeart(cheio: boolean): SVGSVGElement {
     const ns = 'http://www.w3.org/2000/svg'
     const svg = document.createElementNS(ns, 'svg')
     svg.setAttribute('width', '15')
     svg.setAttribute('height', '15')
     svg.setAttribute('viewBox', '0 0 24 24')
-    const pino = document.createElementNS(ns, 'path')
-    pino.setAttribute('d', 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z')
-    pino.setAttribute('fill', cheio ? '#D4401F' : 'none')
-    pino.setAttribute('stroke', cheio ? '#D4401F' : 'currentColor')
-    pino.setAttribute('stroke-width', '2')
-    pino.setAttribute('stroke-linejoin', 'round')
-    const x = document.createElementNS(ns, 'path')
-    x.setAttribute('d', 'M10 8l4 4M14 8l-4 4')
-    x.setAttribute('stroke', cheio ? '#ffffff' : 'currentColor')
-    x.setAttribute('stroke-width', '2')
-    x.setAttribute('stroke-linecap', 'round')
-    svg.appendChild(pino)
-    svg.appendChild(x)
+    svg.setAttribute('fill', 'none')
+    svg.setAttribute('stroke', cheio ? '#D4401F' : 'currentColor')
+    svg.setAttribute('stroke-width', '2')
+    svg.setAttribute('stroke-linecap', 'round')
+    svg.setAttribute('stroke-linejoin', 'round')
+    const partes: [string, boolean][] = [
+      ['M8.5 3.5h7', false],
+      ['M10 3.5v5.2L7 12.5h10l-3-3.8V3.5z', cheio],
+      ['M12 12.5V21', false],
+    ]
+    partes.forEach(([d, preencher]) => {
+      const p = document.createElementNS(ns, 'path')
+      p.setAttribute('d', d)
+      if (preencher) p.setAttribute('fill', '#D4401F')
+      svg.appendChild(p)
+    })
     return svg
   }
 
@@ -622,9 +683,13 @@ export default function MapaExplorar({
         marcadoresMapRef.current.set(i.id, { marcador, popup, inner, btnHeart })
       })
 
+    reagruparRef.current()
+
     return () => {
       marcadoresMapRef.current.forEach(({ marcador }) => marcador.remove())
       marcadoresMapRef.current.clear()
+      clustersRef.current.forEach((m) => m.remove())
+      clustersRef.current = []
     }
   }, [imoveis, mapaPronto, onSelecionarImovel])
 
@@ -638,6 +703,10 @@ export default function MapaExplorar({
       // traz o pin ativo para frente dos vizinhos
       marcador.getElement().style.zIndex = selecionado ? '3' : emFoco ? '2' : ''
     })
+    if (selecionadoRef.current !== imovelSelecionado) {
+      selecionadoRef.current = imovelSelecionado
+      reagruparRef.current()
+    }
   }, [imovelHover, imovelSelecionado])
 
   // Sincronizar seleção externa no mobile

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createPortal } from 'react-dom'
 import BuscaAutoComplete, { type Sugestao } from '@/components/imovel/BuscaAutoComplete'
 import styles from './ModalBuscaCidade.module.css'
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 interface Props {
   negociacao: 'venda' | 'aluguel'
@@ -21,7 +22,7 @@ export default function ModalBuscaCidade({ negociacao, onFechar }: Props) {
   // Garante que estamos no cliente antes de usar o portal
   useEffect(() => { setMontado(true) }, [])
 
-  const icone = negociacao === 'venda' ? '🏠' : '🔑'
+  const icone = negociacao === 'venda' ? 'casa' : 'chave'
   const titulo = negociacao === 'venda' ? 'Onde você quer comprar?' : 'Onde você quer alugar?'
 
   // Fecha ao clicar no overlay
@@ -92,7 +93,7 @@ export default function ModalBuscaCidade({ negociacao, onFechar }: Props) {
       <div className={styles.modal}>
         {/* Header */}
         <div className={styles.header}>
-          <span className={styles.icone}>{icone}</span>
+          <span className={styles.icone}><Icone nome={icone} tamanho={22} /></span>
           <h2 className={styles.titulo}>{titulo}</h2>
           <button className={styles.btnFechar} onClick={onFechar} aria-label="Fechar">×</button>
         </div>
@@ -120,7 +121,7 @@ export default function ModalBuscaCidade({ negociacao, onFechar }: Props) {
           {geoCarregando ? (
             <span className={styles.spinner} />
           ) : (
-            <span>📍</span>
+            <span><Icone nome="local" tamanho={16} /></span>
           )}
           {geoCarregando ? 'Obtendo localização...' : 'Usar minha localização atual'}
         </button>

@@ -4,12 +4,13 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import styles from "./page.module.css"
+import Icone, { ehNomeIcone } from '@/components/ui/Icone'
 
 const TIPOS = [
-  { valor: "comprador",    label: "Comprador",    icone: "🏠", desc: "Quero comprar ou alugar" },
-  { valor: "proprietario", label: "Proprietario", icone: "🏡", desc: "Anunciar meu imovel" },
-  { valor: "corretor",     label: "Corretor",     icone: "💼", desc: "Corretor de imoveis" },
-  { valor: "imobiliaria",  label: "Imobiliaria",  icone: "🏢", desc: "Represento imobiliaria" },
+  { valor: "comprador",    label: "Comprador",    icone: "casa", desc: "Quero comprar ou alugar" },
+  { valor: "proprietario", label: "Proprietario", icone: "casa", desc: "Anunciar meu imovel" },
+  { valor: "corretor",     label: "Corretor",     icone: "maleta", desc: "Corretor de imoveis" },
+  { valor: "imobiliaria",  label: "Imobiliaria",  icone: "predio", desc: "Represento imobiliaria" },
 ]
 
 export default function CompletarPerfilPage() {
@@ -96,13 +97,13 @@ export default function CompletarPerfilPage() {
         </div>
 
         <div className={styles.campo}>
-          <label className={styles.label}>Como voce vai usar o FIXUM?</label>
+          <label className={styles.label}>Como você vai usar o Fixum?</label>
           <div className={styles.gridTipos}>
             {TIPOS.map((t) => (
               <button key={t.valor} type="button"
                 className={`${styles.tipoBtn} ${tipo === t.valor ? styles.tipoBtnAtivo : ""}`}
                 onClick={() => setTipo(t.valor)}>
-                <span className={styles.tipoIcone}>{t.icone}</span>
+                <span className={styles.tipoIcone}>{ehNomeIcone(t.icone) && <Icone nome={t.icone} tamanho={22} />}</span>
                 <span className={styles.tipoLabel}>{t.label}</span>
                 <span className={styles.tipoDesc}>{t.desc}</span>
               </button>
@@ -121,7 +122,7 @@ export default function CompletarPerfilPage() {
         <button
           className={`${styles.btnSalvar} ${!tipo ? styles.btnDesabilitado : ""}`}
           onClick={salvar} disabled={!tipo || salvando}>
-          {salvando ? "Salvando..." : "Entrar no FIXUM →"}
+          {salvando ? "Salvando..." : "Entrar no Fixum →"}
         </button>
 
       </div>

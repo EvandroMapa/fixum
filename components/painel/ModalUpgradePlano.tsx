@@ -12,6 +12,7 @@ import {
 } from '@/lib/planos'
 
 import ModalCheckoutPlano from './ModalCheckoutPlano'
+import Icone from '@/components/ui/Icone'
 
 interface ModalUpgradePlanoProps {
   aberto: boolean
@@ -149,12 +150,12 @@ export default function ModalUpgradePlano({
     <div className={styles.overlay} onClick={onFechar}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.btnFechar} onClick={onFechar} aria-label="Fechar">
-          ✕
+          <Icone nome="fechar" tamanho={16} />
         </button>
 
         <div className={styles.cabecalho}>
           <h2 className={styles.titulo}>
-            {isMesmoPlano ? 'Seu Plano Atual' : isDowngrade ? 'Alterar Plano' : 'Confirmar Upgrade'}
+            {isMesmoPlano ? 'Seu plano atual' : isDowngrade ? 'Alterar Plano' : 'Confirmar Upgrade'}
           </h2>
           <p className={styles.subtitulo}>
             {isMesmoPlano
@@ -165,8 +166,8 @@ export default function ModalUpgradePlano({
 
         {sucesso ? (
           <div className={styles.containerSucesso}>
-            <div className={styles.iconeSucesso}>✓</div>
-            <h3>Plano Atualizado com Sucesso!</h3>
+            <div className={styles.iconeSucesso}><Icone nome="check" tamanho={16} /></div>
+            <h3>Plano atualizado com sucesso!</h3>
             <p>Seu novo limite de anúncios já está ativo na plataforma.</p>
           </div>
         ) : (
@@ -177,7 +178,7 @@ export default function ModalUpgradePlano({
             {!mostrarTodosPlanos && !isMesmoPlano && (
               <div className={styles.faixaPlanoAtual}>
                 <div className={styles.faixaPlanoAtualHeader}>
-                  <span className={styles.tagPlanoAtual}>Plano Atual</span>
+                  <span className={styles.tagPlanoAtual}>Plano atual</span>
                   <strong className={styles.nomePlanoAtual}>{planoAtual.nome}</strong>
                   <span className={styles.faixaPlanoAtualPreco}>
                     ({planoAtual.preco_mensal > 0 ? `${formatarMoeda(planoAtual.preco_mensal)}/mês` : 'Grátis'})
@@ -186,21 +187,21 @@ export default function ModalUpgradePlano({
 
                 <div className={styles.faixaPlanoAtualGrid}>
                   <div className={styles.itemPlanoAtual}>
-                    <span className={styles.labelPlanoAtual}>📦 Cota:</span>
+                    <span className={styles.labelPlanoAtual}>Cota:</span>
                     <strong className={styles.valorPlanoAtual}>
                       {imoveisAtivos}/{planoAtual.limite_imoveis_max >= 99999 ? '+500' : planoAtual.limite_imoveis_max}
                     </strong>
                   </div>
 
                   <div className={styles.itemPlanoAtual}>
-                    <span className={styles.labelPlanoAtual}>🏷️ Custo/imóvel:</span>
+                    <span className={styles.labelPlanoAtual}>Custo/imóvel:</span>
                     <strong className={styles.valorPlanoAtual}>
                       {custoUnitarioAtual > 0 ? `${formatarMoeda(custoUnitarioAtual)}/mês` : 'Grátis'}
                     </strong>
                   </div>
 
                   <div className={styles.itemPlanoAtual}>
-                    <span className={styles.labelPlanoAtual}>🚀 Destaque:</span>
+                    <span className={styles.labelPlanoAtual}>Destaque:</span>
                     <strong className={styles.valorPlanoAtual}>
                       {planoAtual.destaque_incluso ? 'Incluso' : 'Opcional'}
                     </strong>
@@ -214,7 +215,7 @@ export default function ModalUpgradePlano({
               <div className={styles.cardResumoPlano}>
                 <div className={styles.resumoTopo}>
                   <div>
-                    <span className={styles.badgePlanoAlvo}>Novo Plano Selecionado</span>
+                    <span className={styles.badgePlanoAlvo}>Novo plano selecionado</span>
                     <h3 className={styles.resumoNome}>{planoSelecionado.nome}</h3>
                   </div>
                   <div className={styles.resumoPrecoBox}>
@@ -246,14 +247,14 @@ export default function ModalUpgradePlano({
                 {planoSelecionado.preco_mensal > 0 && !isDowngrade && (
                   <div className={styles.seletorCicloBox}>
                     <div className={styles.seletorCicloLabel}>
-                      📅 Escolha o ciclo de pagamento:
-                    </div>
+ Escolha o ciclo de pagamento:
+ </div>
                     <div className={styles.seletorCicloGrid}>
                       {[
                         { id: 'mensal', label: 'Mensal', tag: null },
                         { id: 'trimestral', label: '3 Meses', tag: '-10% OFF' },
                         { id: 'semestral', label: '6 Meses', tag: '-15% OFF' },
-                        { id: 'anual', label: '1 Ano 🔥', tag: '-20% OFF' },
+                        { id: 'anual', label: '1 Ano ', tag: '-20% OFF' },
                       ].map((c) => {
                         const isAtivo = periodicidade === c.id
                         return (
@@ -277,7 +278,7 @@ export default function ModalUpgradePlano({
                     <div className={`${styles.barraStatusCiclo} ${detalhesPreco.descontoPct > 0 ? styles.statusPromocional : styles.statusMensal}`}>
                       {detalhesPreco.descontoPct > 0 ? (
                         <>
-                          <span>🎉 Economia de {formatarMoeda(detalhesPreco.economiaTotal)} ({detalhesPreco.descontoPct}% OFF)</span>
+                          <span>Economia de {formatarMoeda(detalhesPreco.economiaTotal)} ({detalhesPreco.descontoPct}% OFF)</span>
                           <span>Total: <strong>{formatarMoeda(detalhesPreco.valorTotalComDesconto)}</strong> ({detalhesPreco.meses} meses)</span>
                         </>
                       ) : (
@@ -292,7 +293,7 @@ export default function ModalUpgradePlano({
 
                 <div className={styles.resumoBeneficios}>
                   <div className={styles.beneficioItem}>
-                    <span>📦 Capacidade:</span>
+                    <span>Capacidade:</span>
                     <strong>
                       {planoSelecionado.limite_imoveis_max >= 99999
                         ? '+500 imóveis'
@@ -302,7 +303,7 @@ export default function ModalUpgradePlano({
 
                   {custoUnitarioDinamico > 0 && (
                     <div className={styles.beneficioItem}>
-                      <span>🏷️ Custo unitário:</span>
+                      <span>Custo unitário:</span>
                       <strong style={{ color: detalhesPreco.descontoPct > 0 ? '#2E6B4E' : '#16201C' }}>
                         {formatarMoeda(custoUnitarioDinamico)} / imóvel / mês
                       </strong>
@@ -310,7 +311,7 @@ export default function ModalUpgradePlano({
                   )}
 
                   <div className={styles.beneficioItem}>
-                    <span>🚀 Destaque no Mapa:</span>
+                    <span>Destaque no mapa:</span>
                     <strong>{planoSelecionado.destaque_incluso ? 'Incluso' : 'Opcional'}</strong>
                   </div>
                 </div>
@@ -397,8 +398,8 @@ export default function ModalUpgradePlano({
                 lineHeight: '1.4'
               }}>
                 <strong style={{ color: '#22302A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  📉 Redução de Plano (Sem cobrança no ato)
-                </strong>
+ Redução de plano (sem cobrança no ato)
+ </strong>
                 <p style={{ margin: '6px 0 0', color: '#5A5449' }}>
                   Você já possui o ciclo atual quitado até <strong>{dataFimCalculada}</strong>. Seu plano atual (<strong>{planoAtual.nome}</strong>) continuará 100% ativo até essa data.
                 </p>
@@ -406,8 +407,8 @@ export default function ModalUpgradePlano({
                   A partir de <strong>{dataFimCalculada}</strong>, sua assinatura será renovada no valor reduzido de <strong>{formatarMoeda(planoSelecionado.preco_mensal)}/mês</strong>.
                 </p>
                 <div style={{ marginTop: '8px', fontWeight: 600, color: '#2E6B4E' }}>
-                  ✓ Custo da alteração hoje: R$ 0,00
-                </div>
+ Custo da alteração hoje: R$ 0,00
+ </div>
               </div>
             )}
 
@@ -419,7 +420,7 @@ export default function ModalUpgradePlano({
 
               {isMesmoPlano ? (
                 <button className={styles.btnConfirmar} disabled>
-                  Plano Atual
+                  Plano atual
                 </button>
               ) : (
                 <button
@@ -430,12 +431,12 @@ export default function ModalUpgradePlano({
                   {carregando
                     ? 'Processando...'
                     : isDowngrade
-                    ? `📉 Confirmar Redução (R$ 0,00 Agora)`
+                    ? `Confirmar Redução (R$ 0,00 Agora)`
                     : isGratis
                     ? 'Ativar Plano Grátis'
                     : `Prosseguir para Pagamento (${formatarMoeda(
                         calcularPrecoPeriodicidade(planoSelecionado.preco_mensal, periodicidade).valorTotalComDesconto
-                      )}) ➔`}
+                      )}) `}
                 </button>
               )}
             </div>
