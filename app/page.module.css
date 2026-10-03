@@ -86,14 +86,10 @@
   box-shadow: 0 30px 70px rgba(22, 32, 28, 0.14);
 }
 
-.mapaImagem {
-  object-fit: cover;
-  /* Leva o estilo "streets" do Mapbox para o tom Papel da marca, mantendo as ruas legíveis */
-  filter: grayscale(0.92) sepia(0.18) contrast(1.04) brightness(1.05);
-}
 
 .mapaAreaBtn {
   position: absolute;
+  z-index: 2;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
@@ -111,110 +107,15 @@
   box-shadow: 0 6px 18px rgba(22, 32, 28, 0.22);
 }
 
-.pin {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 11px;
-  border-radius: 99px;
-  background: #fff;
-  color: var(--tinta);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  box-shadow: var(--sombra-pin);
-}
 
-.pin::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -4px;
-  width: 9px;
-  height: 9px;
-  background: inherit;
-  transform: translateX(-50%) rotate(45deg);
-  border-radius: 0 0 2px 0;
-}
 
-.pinAtivo {
-  background: var(--tinta);
-  color: var(--papel);
-  z-index: 2;
-}
 
-.pinDestaque::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--ouro);
-}
 
-.cluster {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--tinta);
-  color: var(--papel);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  box-shadow: 0 0 0 6px rgba(22, 32, 28, 0.18), 0 0 0 12px rgba(22, 32, 28, 0.08);
-}
 
-.mapaCard {
-  position: absolute;
-  left: 50%;
-  top: 30%;
-  transform: translate(-6%, 18px);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  width: 250px;
-  padding: 10px;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: var(--sombra-xl);
-  z-index: 3;
-}
 
-.mapaCardFoto {
-  width: 64px;
-  height: 64px;
-  border-radius: 10px;
-  flex-shrink: 0;
-  background: linear-gradient(160deg, #f2d7b8 0%, #d9a77e 45%, #8e6f55 100%);
-}
 
-.mapaCard strong {
-  display: block;
-  font-family: var(--fonte-display);
-  font-size: 1.0625rem;
-  letter-spacing: -0.01em;
-  color: var(--tinta);
-}
 
-.mapaCard span {
-  display: block;
-  font-size: 0.75rem;
-  color: var(--pedra-600);
-  line-height: 1.5;
-}
 
-.mapaCard .mapaCardLugar {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--cerrado);
-  font-weight: 600;
-}
 
 /* ── Seções ───────────────────────────────── */
 .secao {
@@ -510,14 +411,6 @@
   .mapaMoldura {
     aspect-ratio: 4 / 4.2;
     border-radius: 18px;
-  }
-  .mapaCard {
-    left: 12px;
-    right: 12px;
-    top: auto;
-    bottom: 12px;
-    width: auto;
-    transform: none;
   }
   .pilar {
     padding: 22px;

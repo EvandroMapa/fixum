@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import Header from '@/components/layout/Header'
 import Rodape from '@/components/layout/Rodape'
 import HeroBusca from '@/components/home/HeroBusca'
+import MapaVitrine from '@/components/home/MapaVitrine'
 import CurvasDeNivel from '@/components/ui/CurvasDeNivel'
 import Icone, { type NomeIcone } from '@/components/ui/Icone'
 import styles from './page.module.css'
@@ -35,7 +35,6 @@ const BENEFICIOS = [
   'Comece grátis com um imóvel ativo',
 ]
 
-const MAPA_ESTATICO = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/-43.7867,-20.6603,14.4,0/720x560@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}&attribution=false&logo=false`
 
 export default function HomePage() {
   return (
@@ -60,34 +59,11 @@ export default function HomePage() {
 
             <div className={styles.heroMapa} aria-hidden="true">
               <div className={styles.mapaMoldura}>
-                <Image
-                  src={MAPA_ESTATICO}
-                  alt=""
-                  fill
-                  sizes="(max-width: 1080px) 100vw, 560px"
-                  className={styles.mapaImagem}
-                  unoptimized
-                  priority
-                />
+                <MapaVitrine />
                 <span className={styles.mapaAreaBtn}>
                   <Icone nome="alvo" tamanho={16} />
                   Pesquisar nesta área
                 </span>
-                <span className={styles.pin} style={{ left: '26%', top: '34%' }}>R$ 420 mil</span>
-                <span className={`${styles.pin} ${styles.pinDestaque}`} style={{ left: '46%', top: '84%' }}>R$ 1.800/mês</span>
-                <span className={`${styles.pin} ${styles.pinAtivo}`} style={{ left: '66%', top: '27%' }}>R$ 285 mil</span>
-                <span className={styles.pin} style={{ left: '20%', top: '62%' }}>R$ 610 mil</span>
-                <span className={styles.cluster} style={{ left: '84%', top: '76%' }}>12</span>
-                <div className={styles.mapaCard}>
-                  <div className={styles.mapaCardFoto} />
-                  <div>
-                    <strong>R$ 285.000</strong>
-                    <span>Casa · 3 quartos · 142 m²</span>
-                    <span className={styles.mapaCardLugar}>
-                      <Icone nome="caminhada" tamanho={14} /> 5 min da praça
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

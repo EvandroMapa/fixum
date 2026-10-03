@@ -1,0 +1,123 @@
+.mapa {
+  position: absolute;
+  inset: 0;
+  background: #EFE9DD;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.pronto .canvas {
+  opacity: 1;
+}
+
+/* Pin de preço — o Mapbox posiciona o wrapper; o visual fica no balão */
+.pin {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  margin-bottom: 5px;
+  border-radius: 99px;
+  background: #fff;
+  color: var(--tinta);
+  font-family: var(--fonte-principal);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  box-shadow: var(--sombra-pin);
+}
+
+.pin::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 9px;
+  height: 9px;
+  background: inherit;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 0 0 2px 0;
+}
+
+.pinAtivo {
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+.pinDestaque::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ouro);
+}
+
+.cluster {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--tinta);
+  color: var(--papel);
+  font-family: var(--fonte-principal);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  box-shadow: 0 0 0 6px rgba(22, 32, 28, 0.18), 0 0 0 12px rgba(22, 32, 28, 0.08);
+}
+
+.card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 250px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--sombra-xl);
+  font-family: var(--fonte-principal);
+}
+
+.cardFoto {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  background: linear-gradient(160deg, #f2d7b8 0%, #d9a77e 45%, #8e6f55 100%);
+}
+
+.card strong {
+  display: block;
+  font-family: var(--fonte-display);
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  color: var(--tinta);
+}
+
+.card span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--pedra-600);
+  line-height: 1.5;
+}
+
+.card .cardLugar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--cerrado);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .card {
+    width: 220px;
+  }
+}
