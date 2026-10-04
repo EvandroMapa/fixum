@@ -1,0 +1,200 @@
+/* ============================================
+   BOTÃO FIXAR — gesto assinado da Fixum
+   ============================================ */
+.botao {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--tinta);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.botao:disabled {
+  cursor: progress;
+}
+
+/* Variante sobre a foto (cards) */
+.flutuante {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 3px rgba(22, 32, 28, 0.18);
+  transition: transform var(--transicao), box-shadow var(--transicao);
+}
+
+.flutuante:hover {
+  transform: scale(1.06);
+  box-shadow: 0 3px 10px rgba(22, 32, 28, 0.2);
+}
+
+.flutuante:active {
+  transform: scale(0.94);
+}
+
+/* Variante com texto (página do imóvel) */
+.rotulo {
+  min-height: 40px;
+  padding: 0 14px 0 10px;
+  border-radius: var(--raio-md);
+  border: 1.5px solid var(--pedra-300);
+  background: var(--cor-superficie);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.rotulo:hover {
+  border-color: var(--tinta);
+}
+
+.rotulo.fixado {
+  border-color: var(--marco);
+  background: var(--marco-claro);
+  color: var(--marco-escuro);
+}
+
+.texto {
+  min-width: 3.2em;
+  text-align: left;
+}
+
+/* ── O alfinete ── */
+.alvo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+}
+
+.pino {
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+  /* a ponta da agulha é o eixo: o alfinete gira e afunda a partir dela */
+  transform-origin: 12px 22.6px;
+}
+
+.agulha {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+}
+
+.haste {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: butt;
+}
+
+.cabeca {
+  fill: #ffffff;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+.fixado .cabeca {
+  fill: var(--marco);
+  stroke: var(--marco);
+}
+
+.flutuante.fixado {
+  color: var(--tinta);
+}
+
+/* Cravar: desce inclinado, entra com um leve achatamento e assenta */
+.cravar {
+  animation: cravar 0.52s cubic-bezier(.2, .9, .25, 1) both;
+}
+
+@keyframes cravar {
+  0% { transform: translate(5px, -9px) rotate(-22deg); opacity: 0.4; }
+  45% { transform: translate(0, 1.5px) rotate(0deg) scale(1.05, 0.88); opacity: 1; }
+  70% { transform: translate(0, -0.6px) scale(0.97, 1.04); }
+  100% { transform: none; }
+}
+
+/* Soltar: sai rápido para cima */
+.soltar {
+  animation: soltar 0.32s ease-out both;
+}
+
+@keyframes soltar {
+  0% { transform: none; }
+  40% { transform: translate(1px, -5px) rotate(10deg); opacity: 0.6; }
+  100% { transform: none; opacity: 1; }
+}
+
+/* Curvas de nível que se espalham a partir da ponta da agulha */
+.aneis {
+  position: absolute;
+  left: 50%;
+  top: 92%;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.aneis path {
+  fill: none;
+  stroke: var(--marco);
+  stroke-width: 1.1;
+  transform-origin: 12px 12px;
+  opacity: 0;
+  animation: onda 0.95s cubic-bezier(.2, .7, .3, 1) 0.18s both;
+}
+
+@keyframes onda {
+  0% { transform: scale(0.2); opacity: 0.95; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Carimbo "fixado" ao lado do botão */
+.carimbo {
+  position: absolute;
+  right: calc(100% + 6px);
+  top: 50%;
+  padding: 3px 8px;
+  border: 1.5px solid var(--marco);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--marco);
+  font-family: var(--fonte-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(22, 32, 28, 0.15);
+  animation: carimbo 1.7s cubic-bezier(.2, .9, .3, 1) 0.2s both;
+}
+
+@keyframes carimbo {
+  0% { opacity: 0; transform: translateY(-50%) scale(1.7) rotate(-10deg); }
+  14% { opacity: 1; transform: translateY(-50%) scale(0.94) rotate(-5deg); }
+  22% { transform: translateY(-50%) scale(1) rotate(-5deg); }
+  78% { opacity: 1; transform: translateY(-50%) scale(1) rotate(-5deg); }
+  100% { opacity: 0; transform: translateY(-50%) scale(1) rotate(-5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cravar,
+  .soltar,
+  .aneis path,
+  .carimbo {
+    animation: none !important;
+  }
+  .aneis,
+  .carimbo {
+    display: none;
+  }
+}

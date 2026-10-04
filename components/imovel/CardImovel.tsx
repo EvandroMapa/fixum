@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { type Imovel } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } from '@/lib/utils'
-import { useFavorito } from '@/hooks/useFavorito'
+import BotaoFixar from '@/components/ui/BotaoFixar'
 import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import Icone from '@/components/ui/Icone'
 import styles from './CardImovel.module.css'
@@ -18,7 +18,6 @@ interface Props {
 }
 
 export default function CardImovel({ imovel, destacado, selecionado, onHover, onSelecionar }: Props) {
-  const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
   const fotos = imovel.fotos ?? []
   const [fotoAtiva, setFotoAtiva] = useState(0)
   const [hovering, setHovering] = useState(false)
@@ -127,17 +126,7 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
             <span className={styles.selo}>{imovel.negociacao === 'venda' ? 'Venda' : 'Aluguel'}</span>
           </div>
 
-          <button
-            type="button"
-            className={`${styles.btnFavoritar} ${favoritado ? styles.favoritado : ''}`}
-            onClick={(e) => { e.stopPropagation(); e.preventDefault(); toggleFavorito() }}
-            disabled={carregando}
-            aria-pressed={favoritado}
-            aria-label={favoritado ? 'Desafixar imóvel' : 'Fixar imóvel'}
-            title={favoritado ? 'Desafixar' : 'Fixar para comparar depois'}
-          >
-            <Icone nome="fixar" tamanho={20} preenchido={favoritado} />
-          </button>
+          <BotaoFixar imovelId={imovel.id} className={styles.btnFavoritar} />
 
           {fotos.length > 1 && hovering && (
             <>

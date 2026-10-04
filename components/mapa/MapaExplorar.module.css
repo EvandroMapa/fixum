@@ -459,3 +459,19 @@
     color: var(--tinta);
   }
 }
+
+/* Alfinete do pin ao fixar: desce e se crava (mesmo gesto do BotaoFixar) */
+.pinoCravando {
+  transform-origin: 50% 94%;
+  animation: pinoCravar 0.5s cubic-bezier(.2, .9, .25, 1) both;
+}
+
+@keyframes pinoCravar {
+  0% { transform: translate(4px, -8px) rotate(-22deg); }
+  45% { transform: translate(0, 1px) scale(1.05, 0.88); }
+  100% { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pinoCravando { animation: none; }
+}

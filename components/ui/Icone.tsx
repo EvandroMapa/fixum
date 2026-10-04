@@ -10,8 +10,8 @@ const CAMINHOS = {
   // navegação e ações
   busca: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
   mapa: '<path d="M3 6.5L9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5M15 6.5V20"/>',
-  // tachinha: o gesto de "fixar" um imóvel para comparar depois
-  fixar: '<path d="M8.5 3.5h7"/><path d="M10 3.5v5.2L7 12.5h10l-3-3.8V3.5"/><path d="M12 12.5V21"/>',
+  // alfinete de mapa — o mesmo do "i" do logotipo
+  fixar: '<circle cx="12" cy="7.6" r="4.6"/><path d="M12 12.2v6.4"/><path d="M12 18.6v3.4" stroke-width="1.1"/>',
   local: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
   alvo: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
   mira: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5V6M12 18v3.5M2.5 12H6M18 12h3.5"/><circle cx="12" cy="12" r="7.5"/>',
@@ -113,7 +113,7 @@ export function ehNomeIcone(valor: unknown): valor is NomeIcone {
 }
 
 const FIXADO =
-  '<path d="M8.5 3.5h7"/><path d="M10 3.5v5.2L7 12.5h10l-3-3.8V3.5z" fill="currentColor"/><path d="M12 12.5V21"/>'
+  '<circle cx="12" cy="7.6" r="4.6" fill="currentColor"/><path d="M12 12.2v6.4"/><path d="M12 18.6v3.4" stroke-width="1.1"/>'
 const LOCAL_PREENCHIDO =
   '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" fill="currentColor"/>' +
   '<circle cx="12" cy="10" r="2.3" fill="#fff" stroke="none"/>'

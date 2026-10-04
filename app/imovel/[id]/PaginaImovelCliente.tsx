@@ -10,10 +10,10 @@ import SecaoEntorno from '@/components/imovel/SecaoEntorno'
 import MarcaDaguaTeste from '@/components/ui/MarcaDaguaTeste'
 import { type Imovel, type PontoInteresse } from '@/lib/types'
 import { formatarPreco, formatarArea, labelTipoImovel, resolverExibicaoPreco } from '@/lib/utils'
-import { useFavorito } from '@/hooks/useFavorito'
 import { createClient } from '@/lib/supabase/client'
 import styles from './page.module.css'
 import Icone from '@/components/ui/Icone'
+import BotaoFixar from '@/components/ui/BotaoFixar'
 
 const MapaImovel = dynamic(() => import('@/components/mapa/MapaImovel'), { ssr: false })
 
@@ -78,7 +78,6 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
   const origemParam = searchParams.get('origem')
 
   const [fotoAtiva, setFotoAtiva] = useState(0)
-  const { favoritado, toggleFavorito, carregando } = useFavorito(imovel.id)
   const [modalFoto, setModalFoto] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [codigoCopiado, setCodigoCopiado] = useState(false)
@@ -308,17 +307,7 @@ export default function PaginaImovelCliente({ imovel, historico, outrosImoveis =
 
           {/* Ações de topo rápidas (Fixar / Compartilhar) */}
           <div className={styles.acoesTopoRapidas}>
-            <button
-              type="button"
-              className={`${styles.btnAcaoTopo} ${favoritado ? styles.favoritado : ''}`}
-              onClick={toggleFavorito}
-              disabled={carregando}
-              title={favoritado ? 'Desafixar' : 'Fixar para comparar depois'}
-              aria-pressed={favoritado}
-            >
-              <Icone nome="fixar" tamanho={16} preenchido={favoritado} />
-              <span className={styles.txtAcao}>{favoritado ? 'Fixado' : 'Fixar'}</span>
-            </button>
+            <BotaoFixar imovelId={imovel.id} variante="rotulo" />
             <button
               type="button"
               className={styles.btnAcaoTopo}

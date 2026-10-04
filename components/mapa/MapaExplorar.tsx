@@ -455,29 +455,27 @@ export default function MapaExplorar({
     return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [])
 
-  // Ícone "fixar" (tachinha) desenhado de forma síncrona para não piscar
+  // Ícone "fixar": o alfinete do logotipo, desenhado de forma síncrona para não piscar
   function criarSvgHeart(cheio: boolean): SVGSVGElement {
     const ns = 'http://www.w3.org/2000/svg'
     const svg = document.createElementNS(ns, 'svg')
-    svg.setAttribute('width', '15')
-    svg.setAttribute('height', '15')
+    svg.setAttribute('width', '16')
+    svg.setAttribute('height', '16')
     svg.setAttribute('viewBox', '0 0 24 24')
     svg.setAttribute('fill', 'none')
-    svg.setAttribute('stroke', cheio ? '#D4401F' : 'currentColor')
-    svg.setAttribute('stroke-width', '2')
+    svg.setAttribute('stroke', 'currentColor')
     svg.setAttribute('stroke-linecap', 'round')
-    svg.setAttribute('stroke-linejoin', 'round')
-    const partes: [string, boolean][] = [
-      ['M8.5 3.5h7', false],
-      ['M10 3.5v5.2L7 12.5h10l-3-3.8V3.5z', cheio],
-      ['M12 12.5V21', false],
-    ]
-    partes.forEach(([d, preencher]) => {
-      const p = document.createElementNS(ns, 'path')
-      p.setAttribute('d', d)
-      if (preencher) p.setAttribute('fill', '#D4401F')
-      svg.appendChild(p)
-    })
+    const cabeca = document.createElementNS(ns, 'circle')
+    cabeca.setAttribute('cx', '12'); cabeca.setAttribute('cy', '7.6'); cabeca.setAttribute('r', '4.8')
+    cabeca.setAttribute('stroke-width', '2')
+    cabeca.setAttribute('fill', cheio ? '#D4401F' : '#ffffff')
+    if (cheio) cabeca.setAttribute('stroke', '#D4401F')
+    const haste = document.createElementNS(ns, 'path')
+    haste.setAttribute('d', 'M12 12.4v6.2'); haste.setAttribute('stroke-width', '2.2'); haste.setAttribute('stroke-linecap', 'butt')
+    const agulha = document.createElementNS(ns, 'path')
+    agulha.setAttribute('d', 'M12 18.6v3.6'); agulha.setAttribute('stroke-width', '1.2')
+    svg.append(agulha, haste, cabeca)
+    if (cheio) svg.classList.add(styles.pinoCravando)
     return svg
   }
 

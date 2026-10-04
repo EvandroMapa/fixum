@@ -51,8 +51,8 @@ export async function enviarCodigoOtpEmail({ email, codigo, motivo, nome }: Envi
           <!-- Topo Branded -->
           <tr>
             <td style="background: linear-gradient(135deg, #22302A, #16201C); padding: 28px 32px; border-bottom: 1px solid #22302A; text-align: center;">
-              <h1 style="margin: 0; color: #F3EEE4; font-size: 28px; font-weight: 800; letter-spacing: -0.03em; font-family: Arial, Helvetica, sans-serif;">
-                fi<span style="color: #D4401F;">x</span>um
+              <h1 style="margin: 0; color: #F3EEE4; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; font-family: Georgia, 'Times New Roman', serif;">
+                fixum<span style="color: #D4401F;">.</span>
               </h1>
               <p style="margin: 6px 0 0 0; color: #A39A8A; font-size: 13px;">
                 Explore onde você quer viver.
