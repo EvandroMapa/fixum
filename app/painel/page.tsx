@@ -311,6 +311,9 @@ function PainelConteudo() {
   )
 
   const proximoPlano = obterProximoPlano(usoPlano.plano.id)
+  // Proprietário começa com 1 anúncio grátis; se assinar um plano (mais imóveis),
+  // o painel passa a mostrar o plano e as vagas, como para o corretor.
+  const proprietarioComPlano = isProprietario && usoPlano.plano.id !== 'gratis'
 
   async function alterarStatus(id: string, novoStatus: string) {
     // Se está tentando publicar/ativar, checa se atingiu o limite do plano
@@ -562,14 +565,14 @@ function PainelConteudo() {
                 {usoPlano.plano.nome}
               </span>
             </button>
-          ) : isImobiliaria ? (
+          ) : isImobiliaria || proprietarioComPlano ? (
             <button
               type="button"
               className={styles.badgePlanoTopbar}
               onClick={() => trocarAba('plano')}
-              title="Gerenciar plano & faturas da imobiliária"
+              title={isImobiliaria ? 'Gerenciar plano e faturas da imobiliária' : 'Gerenciar plano e faturas'}
             >
-              <span className={styles.iconePlano}><Icone nome="predio" tamanho={16} /></span>
+              <span className={styles.iconePlano}><Icone nome={isImobiliaria ? 'predio' : 'casa'} tamanho={16} /></span>
               <span>Plano <strong>{usoPlano.plano.nome}</strong></span>
               <span className={styles.vagasPill}>
                 {usoPlano.imoveisAtivos}/{usoPlano.limiteMaximo >= 99999 ? '∞' : usoPlano.limiteMaximo} vagas
@@ -581,7 +584,7 @@ function PainelConteudo() {
               style={{ cursor: 'default', background: '#EEF5F0', borderColor: '#C3DACB', color: '#24563E' }}
               title="Proprietário direto com 1 anúncio gratuito ativo no mapa Fixum"
             >
-              <span><Icone nome="etiqueta" tamanho={16} /> <strong>1 Anúncio Grátis</strong></span>
+              <span><Icone nome="etiqueta" tamanho={16} /> <strong>1 anúncio grátis</strong></span>
             </div>
           )}
 
@@ -635,7 +638,7 @@ function PainelConteudo() {
               { id: 'leads', icone: 'pessoas', label: 'Leads & CRM', labelMobile: 'Leads', badge: stats.leadsNovos },
               ...(isImobiliaria ? [{ id: 'corretores', icone: 'maleta', label: 'Equipe de corretores', labelMobile: 'Equipe', badge: 0 }] : []),
               ...(!isProprietario ? [{ id: 'desempenho', icone: 'tendencia', label: 'Desempenho & ranking', labelMobile: 'Ranking', badge: 0 }] : []),
-              ...(!isCorretorEquipe ? [{ id: 'plano', icone: 'cartao', label: isProprietario ? 'Meu Anúncio' : 'Meu Plano', labelMobile: isProprietario ? 'Anúncio' : 'Plano', badge: 0 }] : []),
+              ...(!isCorretorEquipe ? [{ id: 'plano', icone: 'cartao', label: isProprietario && !proprietarioComPlano ? 'Meu anúncio' : 'Meu plano', labelMobile: isProprietario && !proprietarioComPlano ? 'Anúncio' : 'Plano', badge: 0 }] : []),
             ].map((item) => (
               <button
                 key={item.id}
@@ -684,19 +687,23 @@ function PainelConteudo() {
             <div className={styles.secao}>
               <h1>Olá, {usuarioNome}! </h1>
               <p className={styles.subtitulo}>
-                {isProprietario
+                {isProprietario && !proprietarioComPlano
                   ? 'Acompanhe o desempenho do seu anúncio particular'
+                  : isProprietario
+                  ? 'Acompanhe o desempenho dos seus anúncios'
                   : 'Aqui está o resumo e desempenho da sua carteira de anúncios'}
               </p>
 
               {/* Card Adaptativo: Proprietário vs Corretor Autônomo / Imobiliária */}
-              {isProprietario ? (
+              {isProprietario && !proprietarioComPlano ? (
                 <div className={styles.cardProprietarioBoasVindas}>
                   <div className={styles.proprietarioInfo}>
                     <div className={styles.proprietarioTag}>
                       <span>Anúncio particular</span>
                       <span className={styles.proprietarioStatusBadge}>
-                        {stats.publicados > 0 ? '1 imóvel ativo no mapa' : 'Nenhum imóvel publicado'}
+                        {stats.publicados === 0
+                          ? 'Nenhum imóvel publicado'
+                          : `${stats.publicados} ${stats.publicados === 1 ? 'imóvel ativo' : 'imóveis ativos'} no mapa`}
                       </span>
                     </div>
                     <p className={styles.proprietarioDescricao}>
@@ -711,7 +718,7 @@ function PainelConteudo() {
                         className={`btn btn-primario btn-sm ${styles.btnPlanoAcao}`}
                         onClick={() => setModalNovoImovelAberto(true)}
                       >
- Publicar imóvel Grátis
+ Publicar imóvel grátis
  </button>
                     ) : (
                       <button

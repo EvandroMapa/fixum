@@ -317,7 +317,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
             setIsCorretor(true)
             if (dadosCota.imobiliariaNome) setImobiliariaNome(dadosCota.imobiliariaNome)
           }
-          setImoveisAtivosCount(dadosCota.imoveisAtivosCount || 0)
+          // A rota /api/painel/cota devolve a contagem como "totalAtivos"
+          setImoveisAtivosCount(dadosCota.totalAtivos || 0)
         }
       } catch (err) {
         console.error('Erro ao carregar cota:', err)
