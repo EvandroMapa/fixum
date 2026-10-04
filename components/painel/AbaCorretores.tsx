@@ -135,7 +135,7 @@ export default function AbaCorretores({ imobiliariaId, imobiliariaNome }: AbaCor
       titulo: 'Desvincular da equipe?',
       mensagem: `Deseja desvincular o membro "${nomeCorretor}" da sua imobiliária? Ele não poderá mais publicar usando a sua cota.`,
       icone: 'sair',
-      textoBotaoConfirmar: 'Sim, Desvincular',
+      textoBotaoConfirmar: 'Sim, desvincular',
       tipo: 'perigo',
       destrutivo: true,
     })

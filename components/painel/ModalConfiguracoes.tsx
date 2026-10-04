@@ -259,7 +259,7 @@ export default function ModalConfiguracoes({
           mensagem: 'Você tem modificações não salvas nas configurações. Deseja realmente sair sem salvar?',
           icone: 'alerta',
           tipo: 'aviso',
-          textoBotaoConfirmar: 'Sim, Descartar',
+          textoBotaoConfirmar: 'Sim, descartar',
         })
 
         if (!confirmou) return

@@ -58,7 +58,7 @@ export default function ModalDetalhesCliente({
       titulo: 'Alterar plano manualmente?',
       mensagem: `Deseja realmente alterar o plano de ${cliente.nome} para o plano "${PLANOS_OFICIAIS.find((p) => p.id === novoPlano)?.nome}"? Esta ação será registrada na trilha de auditoria.`,
       icone: 'coroa',
-      textoBotaoConfirmar: 'Sim, Alterar Plano',
+      textoBotaoConfirmar: 'Sim, alterar plano',
       tipo: 'primario',
     })
 

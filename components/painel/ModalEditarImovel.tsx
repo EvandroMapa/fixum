@@ -317,8 +317,8 @@ export default function ModalEditarImovel({
         mensagem: 'Você fez modificações neste imóvel que ainda não foram salvas. Tem certeza que deseja sair e perder as alterações?',
         icone: 'alerta',
         tipo: 'perigo',
-        textoBotaoConfirmar: 'Sim, Descartar',
-        textoBotaoCancelar: 'Continuar Editando',
+        textoBotaoConfirmar: 'Sim, descartar',
+        textoBotaoCancelar: 'Continuar editando',
       })
 
       if (!confirmou) return
@@ -377,10 +377,10 @@ export default function ModalEditarImovel({
       const data = await res.json()
 
       if (data.erro) {
-        setErroCep('CEP não encontrado nos Correios. Preencha Cidade, Estado e Endereço manualmente.')
+        setErroCep('Não encontramos esse CEP. Preencha cidade, estado e endereço abaixo.')
         setSucessoCep('')
-        // Zera os campos preenchidos pelo CEP anterior para evitar dados inconsistentes
-        setDados((prev) => ({
+        // Zera só o que veio de uma busca de CEP anterior (não apaga o que a pessoa digitou)
+        if (sucessoCep) setDados((prev) => ({
           ...prev,
           endereco: '',
           bairro: '',
@@ -877,7 +877,8 @@ export default function ModalEditarImovel({
                         className={styles.input}
                         value={dados.cep}
                         onChange={(e) => {
-                          const val = e.target.value
+                          const digitos = e.target.value.replace(/\D/g, '').slice(0, 8)
+                          const val = digitos.length > 5 ? `${digitos.slice(0, 5)}-${digitos.slice(5)}` : digitos
                           atualizar('cep', val)
                           if (val.replace(/\D/g, '').length < 8) {
                             if (erroCep) setErroCep('')
@@ -886,6 +887,8 @@ export default function ModalEditarImovel({
                           }
                         }}
                         maxLength={9}
+                        inputMode="numeric"
+                        placeholder="00000-000"
                         style={erroCep ? { borderColor: '#E3A72F' } : undefined}
                       />
                       {buscandoCep && <span style={{ alignSelf: 'center', fontSize: '0.75rem', color: '#7A7264' }}>...</span>}

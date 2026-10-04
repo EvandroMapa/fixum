@@ -121,6 +121,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
   const [etapa, setEtapa] = useState<Etapa>(1)
   const [salvando, setSalvando] = useState(false)
+  // Texto do botão enquanto salva ("Salvando dados…", "Enviando fotos 1 de 3…")
+  const [progresso, setProgresso] = useState('')
   const [erro, setErro] = useState("")
   const [buscandoCep, setBuscandoCep] = useState(false)
   const [erroCep, setErroCep] = useState('')
@@ -195,8 +197,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         mensagem: 'Você possui dados preenchidos neste formulário. Se sair agora, todas as informações digitadas serão perdidas.',
         icone: 'alerta',
         tipo: 'perigo',
-        textoBotaoConfirmar: 'Sim, Descartar',
-        textoBotaoCancelar: 'Continuar Cadastrando',
+        textoBotaoConfirmar: 'Sim, descartar',
+        textoBotaoCancelar: 'Continuar cadastrando',
       })
 
       if (!confirmou) return
@@ -348,10 +350,10 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
       const data = await res.json()
 
       if (data.erro) {
-        setErroCep('CEP não encontrado nos Correios. Preencha Cidade, Estado e Endereço manualmente.')
+        setErroCep('Não encontramos esse CEP. Preencha cidade, estado e endereço abaixo.')
         setSucessoCep('')
-        // Zera os campos preenchidos pelo CEP anterior para evitar dados inconsistentes
-        setDados((prev) => ({
+        // Zera só o que veio de uma busca de CEP anterior (não apaga o que a pessoa digitou)
+        if (sucessoCep) setDados((prev) => ({
           ...prev,
           endereco: '',
           bairro: '',
@@ -484,6 +486,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
 
   async function salvar(statusDesejado: 'publicado' | 'pausado' | 'rascunho' | 'ativo' | 'em_analise' = 'publicado') {
     setSalvando(true)
+    setProgresso('Salvando dados…')
     setErro("")
 
     try {
@@ -613,12 +616,14 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         throw new Error(erroImovel.message || "Não foi possível cadastrar o imóvel no banco de dados.")
       }
 
-      // Upload das fotos
+      // Upload das fotos (em paralelo; o progresso aparece no botão)
       if (fotos.length > 0 && imovel?.id) {
-        for (let i = 0; i < fotos.length; i++) {
-          const foto = fotos[i]
+        const imovelId = imovel.id
+        let enviadas = 0
+        setProgresso(`Enviando fotos 0 de ${fotos.length}…`)
+        await Promise.all(fotos.map(async (foto, i) => {
           const ext = foto.arquivo.name.split(".").pop() || 'jpg'
-          const caminho = `${user.id}/${imovel.id}/${Date.now()}-${i}.${ext}`
+          const caminho = `${user.id}/${imovelId}/${Date.now()}-${i}.${ext}`
 
           try {
             const { error: erroUpload } = await supabase.storage
@@ -631,7 +636,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                 .getPublicUrl(caminho)
 
               await supabase.from("fotos_imovel").insert({
-                imovel_id: imovel.id,
+                imovel_id: imovelId,
                 url: urlData.publicUrl,
                 principal: foto.principal,
                 ordem: i,
@@ -639,8 +644,11 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
             }
           } catch (errFoto) {
             console.error("Erro upload foto:", errFoto)
+          } finally {
+            enviadas++
+            setProgresso(`Enviando fotos ${enviadas} de ${fotos.length}…`)
           }
-        }
+        }))
       }
 
       // Se for corretor, notificar os gestores da imobiliária
@@ -660,8 +668,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         } catch {}
       }
 
-      // 1. Atualiza a lista do workspace primeiro
-      await onImovelCriado()
+      // 1. Atualiza a lista do workspace em segundo plano (não segura o modal aberto)
+      void onImovelCriado()
 
       // 2. Feedback se for corretor
       if (isCorretor) {
@@ -673,10 +681,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         })
       }
 
-      // 3. Pequeno intervalo para renderização da lista ao fundo
-      await new Promise((resolve) => setTimeout(resolve, 200))
-
-      // 4. Limpa o formulário e fecha a janela suavemente
+      // 3. Limpa o formulário e fecha a janela suavemente
       resetarFormulario()
       onClose()
     } catch (e: unknown) {
@@ -684,6 +689,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
       setErro(e instanceof Error ? e.message : "Erro ao salvar imóvel. Verifique os dados.")
     } finally {
       setSalvando(false)
+      setProgresso('')
     }
   }
 
@@ -875,7 +881,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       className={styles.input}
                       value={dados.cep}
                       onChange={(e) => {
-                        const val = e.target.value
+                        const digitos = e.target.value.replace(/\D/g, "").slice(0, 8)
+                        const val = digitos.length > 5 ? `${digitos.slice(0, 5)}-${digitos.slice(5)}` : digitos
                         atualizar("cep", val)
                         if (val.replace(/\D/g, "").length < 8) {
                           if (erroCep) setErroCep('')
@@ -884,6 +891,8 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                         }
                       }}
                       maxLength={9}
+                      inputMode="numeric"
+                      placeholder="00000-000"
                       name="imovel_d_cep"
                       autoComplete="one-time-code"
                       data-lpignore="true"
@@ -1284,7 +1293,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       disabled={salvando}
                       style={{ background: '#C08A1E' }}
                     >
-                      {salvando ? "Enviando..." : "Enviar para revisão do gestor"}
+                      {salvando ? progresso || "Enviando…" : "Enviar para revisão do gestor"}
                     </button>
                   </>
                 ) : usoPlano.atingiuLimite ? (
@@ -1339,7 +1348,7 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
                       onClick={() => salvar('ativo')}
                       disabled={salvando}
                     >
-                      {salvando ? "Publicando..." : "Publicar direto no mapa"}
+                      {salvando ? progresso || "Publicando…" : "Publicar direto no mapa"}
                     </button>
                   </>
                 )}

@@ -84,7 +84,9 @@ export default async function PaginaImovel({ params }: Props) {
   const anuncianteId = imovel.anunciante_id || imovel.usuario_id
   let perfil: any = null
   let imobiliariaNome = ''
-  let imobiliariaId = anuncianteId
+  // Só existe quando o anunciante é uma imobiliária ou está vinculado a uma.
+  // Proprietário e corretor autônomo ficam sem (senão aparecem como "Imobiliária Verificada").
+  let imobiliariaId: string | null = null
   let idsAnunciantes: string[] = [anuncianteId]
 
   if (anuncianteId) {

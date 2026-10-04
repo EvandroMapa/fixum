@@ -349,7 +349,7 @@ function PainelConteudo() {
       titulo: 'Excluir anúncio?',
       mensagem: `Tem certeza que deseja excluir permanentemente o anúncio "${titulo}"? Esta ação não pode ser desfeita.`,
       icone: 'lixeira',
-      textoBotaoConfirmar: 'Sim, Excluir Anúncio',
+      textoBotaoConfirmar: 'Sim, excluir anúncio',
       tipo: 'perigo',
       destrutivo: true,
     })
@@ -461,7 +461,7 @@ function PainelConteudo() {
       titulo: 'Encerrar sessão?',
       mensagem: 'Deseja realmente sair da sua conta na Fixum?',
       icone: 'sair',
-      textoBotaoConfirmar: 'Sim, Sair',
+      textoBotaoConfirmar: 'Sim, sair',
       tipo: 'aviso',
     })
     if (!confirmou) return
@@ -696,12 +696,12 @@ function PainelConteudo() {
                     <div className={styles.proprietarioTag}>
                       <span>Anúncio particular</span>
                       <span className={styles.proprietarioStatusBadge}>
-                        {stats.publicados > 0 ? '1 Imóvel ativo no mapa' : 'Nenhum imóvel publicado'}
+                        {stats.publicados > 0 ? '1 imóvel ativo no mapa' : 'Nenhum imóvel publicado'}
                       </span>
                     </div>
                     <p className={styles.proprietarioDescricao}>
                       {stats.publicados > 0
-                        ? 'Seu imóvel está anunciado e visível para milhares de compradores e locatários no mapa Fixum.'
+                        ? 'Seu imóvel já aparece no mapa da Fixum para quem procura na região.'
                         : 'Você tem direito a 1 anúncio 100% gratuito para divulgar seu imóvel direto com interessados.'}
                     </p>
                   </div>
