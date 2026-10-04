@@ -27,6 +27,37 @@ const ANEIS = [
 
 export default function BotaoFixar({ imovelId, variante = 'flutuante', className }: Props) {
   const { favoritado, toggleFavorito, carregando } = useFavorito(imovelId)
+  return (
+    <AlfineteFixar
+      favoritado={favoritado}
+      carregando={carregando}
+      onAlternar={toggleFavorito}
+      variante={variante}
+      className={className}
+    />
+  )
+}
+
+/** Versão de demonstração (home): mesmo gesto, estado só local, sem login. */
+export function BotaoFixarDemo({ variante = 'flutuante', className }: Omit<Props, 'imovelId'>) {
+  const [favoritado, setFavoritado] = useState(false)
+  return (
+    <AlfineteFixar
+      favoritado={favoritado}
+      onAlternar={() => setFavoritado((f) => !f)}
+      variante={variante}
+      className={className}
+    />
+  )
+}
+
+interface PropsAlfinete extends Omit<Props, 'imovelId'> {
+  favoritado: boolean
+  carregando?: boolean
+  onAlternar: () => void
+}
+
+function AlfineteFixar({ favoritado, carregando = false, onAlternar, variante = 'flutuante', className }: PropsAlfinete) {
   const acionadoRef = useRef(false)
   const anteriorRef = useRef(favoritado)
   const [animacao, setAnimacao] = useState<'cravar' | 'soltar' | null>(null)
@@ -49,7 +80,7 @@ export default function BotaoFixar({ imovelId, variante = 'flutuante', className
     e.preventDefault()
     e.stopPropagation()
     acionadoRef.current = true
-    toggleFavorito()
+    onAlternar()
   }
 
   const rotulo = favoritado ? 'Fixado' : 'Fixar'

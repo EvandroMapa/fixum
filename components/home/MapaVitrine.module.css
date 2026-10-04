@@ -1,28 +1,46 @@
 .mapa {
   position: absolute;
   inset: 0;
+  overflow: hidden;
+  container-type: size;
   background: #EFE9DD;
 }
 
-.canvas {
+/* Palco 9:7 que cobre a moldura (como object-fit: cover); pins em % dele */
+.palco {
   position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, calc(100cqh * 9 / 7));
+  aspect-ratio: 9 / 7;
+  transform: translate(-50%, -50%);
 }
 
-.pronto .canvas {
-  opacity: 1;
+.imagem {
+  object-fit: fill;
+  user-select: none;
 }
 
-/* Pin de preço — o Mapbox posiciona o wrapper; o visual fica no balão */
+.atribuicao {
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.625rem;
+  color: var(--pedra-600);
+  opacity: 0.85;
+}
+
+/* Pin de preço: a ponta da setinha fica sobre o ponto (x, y) */
 .pin {
-  position: relative;
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 4px));
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 7px 11px;
-  margin-bottom: 5px;
   border-radius: 99px;
   background: #fff;
   color: var(--tinta);
@@ -60,6 +78,8 @@
 }
 
 .cluster {
+  position: absolute;
+  transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
   width: 40px;
@@ -74,6 +94,9 @@
 }
 
 .card {
+  position: absolute;
+  z-index: 1;
+  transform: translate(-62%, 12px);
   display: flex;
   gap: 12px;
   align-items: center;
@@ -90,7 +113,13 @@
   height: 64px;
   border-radius: 10px;
   flex-shrink: 0;
-  background: linear-gradient(160deg, #f2d7b8 0%, #d9a77e 45%, #8e6f55 100%);
+  position: relative;
+  overflow: hidden;
+  background: var(--pedra-100);
+}
+
+.cardImagem {
+  object-fit: cover;
 }
 
 .card strong {
