@@ -62,7 +62,14 @@ export default function RedefinirSenhaPage() {
         router.push("/painel")
       }, 2000)
     } catch (err: unknown) {
-      setErro(err instanceof Error ? err.message : "Erro ao redefinir senha. O link pode ter expirado.")
+      const msg = err instanceof Error ? err.message : ""
+      setErro(
+        msg.includes("session") || msg.includes("Auth")
+          ? "Você precisa estar logado para criar a senha. Entre com um código em “Esqueceu a senha?” e tente de novo."
+          : msg.includes("different from the old")
+          ? "A nova senha precisa ser diferente da atual."
+          : "Não foi possível salvar a senha. Tente novamente."
+      )
     } finally {
       setCarregando(false)
     }

@@ -12,7 +12,6 @@ import Icone from '@/components/ui/Icone'
 
 interface AbaEquipeAdminProps {
   adminEmailLogado?: string
-  adminPinPadrao?: string
 }
 
 export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps) {
@@ -63,7 +62,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
     if (op.is_raiz) {
       await alertar({
         titulo: 'Operação bloqueada',
-        mensagem: 'A conta raiz admin@fixum.com.br é o superadministrador e não pode ser suspensa.',
+        mensagem: 'A conta do dono da plataforma não pode ser suspensa.',
         tipo: 'aviso',
         icone: 'escudo',
       })
@@ -122,12 +121,52 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
     }
   }
 
+  // Conta de cliente com acesso de admin: só remove o acesso (a conta de cliente continua)
+  async function handleRemoverAcesso(op: OperadorAdmin) {
+    const confirmou = await confirmar({
+      titulo: `Remover o acesso de administrador de ${op.nome}?`,
+      mensagem: `${op.email} deixa de entrar no painel administrativo. A conta de anunciante, os imóveis e a assinatura continuam como estão.`,
+      icone: 'cadeado',
+      tipo: 'perigo',
+      textoBotaoConfirmar: 'Sim, remover acesso',
+    })
+    if (!confirmou) return
+
+    try {
+      const res = await fetch('/api/admin/operadores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          acao: 'remover_admin',
+          operadorId: op.id,
+          justificativa: `Acesso de administrador removido por ${adminEmailLogado || 'admin'}`,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok || json.error) throw new Error(json.error || 'Falha ao remover o acesso.')
+      await alertar({
+        titulo: 'Acesso removido',
+        mensagem: `${op.nome} não tem mais acesso ao painel administrativo.`,
+        tipo: 'sucesso',
+        icone: 'check',
+      })
+      carregarOperadores()
+    } catch (err) {
+      await alertar({
+        titulo: 'Erro',
+        mensagem: err instanceof Error ? err.message : 'Falha ao remover o acesso.',
+        tipo: 'perigo',
+        icone: 'alerta',
+      })
+    }
+  }
+
   // Ação de Excluir Operador
   async function handleExcluirOperador(op: OperadorAdmin) {
     if (op.is_raiz) {
       await alertar({
         titulo: 'Operação bloqueada',
-        mensagem: 'A conta raiz admin@fixum.com.br não pode ser excluída.',
+        mensagem: 'A conta do dono da plataforma não pode ser excluída.',
         tipo: 'aviso',
         icone: 'escudo',
       })
@@ -139,7 +178,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
       mensagem: `Esta ação revogará definitivamente todas as credenciais de ${op.email}. O registro será arquivado na trilha de auditoria.`,
       icone: 'lixeira',
       tipo: 'perigo',
-      textoBotaoConfirmar: 'Sim, Excluir Operador',
+      textoBotaoConfirmar: 'Sim, excluir operador',
     })
 
     if (!confirmou) return
@@ -367,7 +406,24 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                                   textTransform: 'uppercase',
                                 }}
                               >
-                                Conta raiz
+                                Dono
+                              </span>
+                            )}
+                            {op.tambem_cliente && (
+                              <span
+                                title="Conta de cliente da plataforma que também tem acesso de administrador"
+                                style={{
+                                  fontSize: '0.65rem',
+                                  fontWeight: 800,
+                                  background: 'rgba(44, 95, 138, 0.2)',
+                                  color: '#8DB6D9',
+                                  border: '1px solid rgba(44, 95, 138, 0.45)',
+                                  padding: '1px 6px',
+                                  borderRadius: '999px',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                Também anunciante
                               </span>
                             )}
                           </div>
@@ -417,6 +473,29 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
 
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                        {op.tambem_cliente && op.is_raiz ? (
+                          <span style={{ fontSize: '0.75rem', color: '#A39A8A' }}>Protegida</span>
+                        ) : op.tambem_cliente ? (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoverAcesso(op)}
+                            className={styles.btnAcaoTabela}
+                            title="Tira só o acesso ao painel administrativo; a conta de anunciante continua"
+                            style={{
+                              background: 'rgba(212, 64, 31, 0.15)',
+                              border: '1px solid #D4401F',
+                              color: '#E8836B',
+                              borderRadius: '8px',
+                              padding: '6px 10px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Remover acesso
+                          </button>
+                        ) : (
+                        <>
                         {/* Editar Operador */}
                         <button
                           type="button"
@@ -475,7 +554,7 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                               cursor: 'pointer',
                             }}
                           >
-                            {op.status_conta === 'suspenso' ? '▶️ Ativar' : 'Suspender'}
+                            {op.status_conta === 'suspenso' ? 'Ativar' : 'Suspender'}
                           </button>
                         )}
 
@@ -498,6 +577,8 @@ export default function AbaEquipeAdmin({ adminEmailLogado }: AbaEquipeAdminProps
                           >
                             <Icone nome="lixeira" tamanho={16} />
                           </button>
+                        )}
+                        </>
                         )}
                       </div>
                     </td>

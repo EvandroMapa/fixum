@@ -13,6 +13,7 @@ import {
   isSessaoBloqueadaPorInatividade,
   bloquearTelaAdmin,
   registrarAtividadeAdmin,
+  apagarSeloAdmin,
 } from '@/lib/admin-auth'
 import {
   ClienteAdmin360,
@@ -411,7 +412,6 @@ export default function AdminPage() {
     motivo: string
     tipoReembolso: string
     justificativa: string
-    adminPin: string
   }) {
     const res = await fetch('/api/admin/estorno', {
       method: 'POST',
@@ -719,6 +719,7 @@ export default function AdminPage() {
 
   async function handleLogoutAdmin() {
     encerrarSessaoAdmin()
+    await apagarSeloAdmin()
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
@@ -862,7 +863,7 @@ export default function AdminPage() {
                 setTelaBloqueada(true)
               }}
               className={styles.pocketBtnIcone}
-              title="Bloquear painel com PIN Master"
+              title="Bloquear painel (desbloqueio com código no e-mail)"
             >
               <Icone nome="cadeado" tamanho={16} />
             </button>
@@ -1248,7 +1249,7 @@ export default function AdminPage() {
               {/* AVISO DESKTOP NO RODAPÉ */}
               <div className={styles.pocketAvisoDesktop}>
                 <Icone nome="painel" tamanho={16} /> <strong>Acesso Master desktop</strong><br />
-                Para editar planos, alterar credenciais de API/Webhook e realizar estornos com PIN master, utilize o computador.
+                Para editar planos, alterar credenciais de API/Webhook e realizar estornos, utilize o computador.
               </div>
             </>
           )}
@@ -1387,7 +1388,7 @@ export default function AdminPage() {
                 setTelaBloqueada(true)
               }}
               className={styles.btnBloquearTela}
-              title="Bloquear a tela com PIN Master"
+              title="Bloquear a tela (desbloqueio com código no e-mail)"
             >
  Bloquear tela
  </button>

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { criarClienteAdmin } from '@/lib/supabase/admin'
-import { exigirAdmin, pinAdminValido, respostaPinInvalido } from '@/lib/auth/servidor'
+import { exigirAdmin } from '@/lib/auth/servidor'
 
 export async function GET(req: Request) {
   try {
@@ -30,15 +30,10 @@ export async function PUT(req: Request) {
     if (!auth.ok) return auth.resposta
     const adminEmail = auth.usuario.email || 'admin'
 
-    const { planos, descontos, pinMaster } = await req.json()
+    const { planos, descontos } = await req.json()
 
     if (!Array.isArray(planos) || planos.length === 0) {
       return NextResponse.json({ error: 'Nenhum plano fornecido para atualização.' }, { status: 400 })
-    }
-
-    // Validação de segurança básica para ações administrativas
-    if (pinMaster && !pinAdminValido(pinMaster)) {
-      return respostaPinInvalido('PIN Master inválido para alteração de precificação.')
     }
 
     const supabase = criarClienteAdmin()

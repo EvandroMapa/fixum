@@ -1,23 +1,23 @@
 import { NextResponse } from 'next/server'
-import { exigirAdmin, pinAdminValido, respostaPinInvalido } from '@/lib/auth/servidor'
+import { exigirAdmin } from '@/lib/auth/servidor'
+import { COOKIE_SELO_ADMIN } from '@/lib/auth/selo-admin'
 
-// GET: confirma no servidor se a sessão atual pertence a um administrador
+/**
+ * GET: confirma no servidor se a sessão atual é de um administrador e em que etapa do login ela está:
+ *   etapa 'codigo_email' → e-mail e senha ok, falta o código enviado por e-mail
+ *   etapa 'liberado'     → código confirmado (selo válido), acesso total ao painel
+ */
 export async function GET(req: Request) {
-  const auth = await exigirAdmin(req)
+  const auth = await exigirAdmin(req, { permitirCodigoPendente: true })
   if (!auth.ok) return auth.resposta
 
-  return NextResponse.json({ admin: true, email: auth.usuario.email })
+  const etapa = auth.codigoConfirmado ? 'liberado' : 'codigo_email'
+  return NextResponse.json({ admin: true, email: auth.usuario.email, etapa })
 }
 
-// POST: confere o PIN Master (login no painel e desbloqueio da tela por inatividade)
-export async function POST(req: Request) {
-  const auth = await exigirAdmin(req)
-  if (!auth.ok) return auth.resposta
-
-  const { pin } = await req.json().catch(() => ({ pin: null }))
-  if (!pinAdminValido(pin)) {
-    return respostaPinInvalido('Chave Secreta Master inválida. Acesso administrativo bloqueado.')
-  }
-
-  return NextResponse.json({ admin: true, email: auth.usuario.email })
+/** DELETE: ao sair do painel, apaga o selo da verificação por e-mail. */
+export async function DELETE() {
+  const resposta = NextResponse.json({ ok: true })
+  resposta.cookies.delete(COOKIE_SELO_ADMIN)
+  return resposta
 }

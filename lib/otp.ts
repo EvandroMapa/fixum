@@ -1,10 +1,9 @@
-import type { SupabaseClient, User } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { randomInt } from 'crypto'
 
 /**
- * Códigos OTP de 6 dígitos enviados por e-mail.
- * - Conta existente: código guardado em app_metadata (o usuário não consegue ler nem alterar).
- * - E-mail ainda sem conta (cadastro / novo operador): código guardado em logs_auditoria_admin.
+ * Código de 6 dígitos para confirmar o e-mail de um novo OPERADOR do painel admin (guardado em logs_auditoria_admin).
+ * Login e cadastro de clientes usam o código nativo do Supabase Auth, não este módulo.
  * Cada código aceita no máximo MAX_TENTATIVAS erros antes de exigir um novo envio.
  */
 
@@ -19,41 +18,6 @@ export function gerarCodigoOtp(): string {
 
 export function limparCodigo(codigo: unknown): string {
   return (codigo ?? '').toString().replace(/\D/g, '')
-}
-
-/** Valida (e opcionalmente consome) o OTP de um usuário que já existe no Auth. */
-export async function verificarOtpUsuario(
-  supabase: SupabaseClient,
-  usuario: User,
-  codigo: unknown,
-  opcoes: { consumir: boolean }
-): Promise<ResultadoOtp> {
-  const app = usuario.app_metadata || {}
-  const codigoLimpo = limparCodigo(codigo)
-
-  if (!app.otp_code || !app.otp_expires) {
-    return { ok: false, erro: 'Nenhum código ativo encontrado. Solicite um novo código.' }
-  }
-  if (Date.now() > app.otp_expires) {
-    return { ok: false, erro: 'O código de verificação expirou. Solicite um novo código.' }
-  }
-  if ((app.otp_tentativas || 0) >= MAX_TENTATIVAS_OTP) {
-    return { ok: false, erro: 'Muitas tentativas incorretas. Solicite um novo código.' }
-  }
-
-  if (app.otp_code !== codigoLimpo) {
-    await supabase.auth.admin.updateUserById(usuario.id, {
-      app_metadata: { ...app, otp_tentativas: (app.otp_tentativas || 0) + 1 },
-    })
-    return { ok: false, erro: 'Código de verificação incorreto. Verifique os números recebidos.' }
-  }
-
-  if (opcoes.consumir) {
-    await supabase.auth.admin.updateUserById(usuario.id, {
-      app_metadata: { ...app, otp_code: null, otp_expires: null, otp_tentativas: 0 },
-    })
-  }
-  return { ok: true }
 }
 
 /** Valida (e opcionalmente consome) o OTP pendente de um e-mail que ainda não tem conta. */

@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import InputSenha from '@/components/ui/InputSenha'
 import styles from './ModalNovoOperador.module.css'
 import { OperadorAdmin } from '@/app/api/admin/operadores/route'
 import Icone from '@/components/ui/Icone'
@@ -43,7 +42,6 @@ export default function ModalEditarOperador({
   const [email, setEmail] = useState('')
   const [cargo, setCargo] = useState<'master' | 'financeiro' | 'suporte'>('suporte')
   const [statusConta, setStatusConta] = useState<'ativo' | 'suspenso'>('ativo')
-  const [adminPin, setAdminPin] = useState('')
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -53,7 +51,6 @@ export default function ModalEditarOperador({
       setEmail(operador.email || '')
       setCargo(operador.cargo || 'suporte')
       setStatusConta(operador.status_conta || 'ativo')
-      setAdminPin('')
       setErro(null)
     }
   }, [operador, aberto])
@@ -69,11 +66,6 @@ export default function ModalEditarOperador({
       return
     }
 
-    if (!adminPin.trim()) {
-      setErro('Informe a Chave Secreta Master para autorizar a alteração.')
-      return
-    }
-
     setCarregando(true)
     try {
       const res = await fetch('/api/admin/operadores', {
@@ -86,7 +78,6 @@ export default function ModalEditarOperador({
           email: email.trim().toLowerCase(),
           cargo,
           status_conta: statusConta,
-          adminPin: adminPin.trim(),
           adminEmail: adminEmailLogado,
         }),
       })
@@ -264,23 +255,6 @@ export default function ModalEditarOperador({
               </div>
             </div>
           )}
-
-          {/* PIN Master de Confirmação */}
-          <div className={styles.grupoCampo} style={{ marginTop: '4px' }}>
-            <label className={styles.label}>
-              <span>Chave secreta Master (PIN de autorização)</span>
-              <span className={styles.obrigatorio}>* Obrigatório</span>
-            </label>
-            <InputSenha
-              name="admin-pin-editar-operador"
-              value={adminPin}
-              onChange={(e) => setAdminPin(e.target.value)}
-              placeholder="Digite a chave secreta Master"
-              className={styles.input}
-              estiloDark={true}
-              required
-            />
-          </div>
 
           {/* Ações */}
           <div className={styles.rodape}>

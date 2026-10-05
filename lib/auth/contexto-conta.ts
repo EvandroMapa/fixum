@@ -22,6 +22,18 @@ export interface ContextoConta {
   isCorretorVinculado: boolean
 }
 
+/**
+ * Colunas de perfis que podem ir para páginas e APIs públicas (contato comercial).
+ * Nunca usar select('*') em perfis numa resposta pública: a tabela tem cpf_cnpj, notas_admin, is_admin etc.
+ */
+export const COLUNAS_PERFIL_PUBLICO =
+  'id, nome, email, tipo, foto_url, telefone, whatsapp, creci, cidade, uf, modo_exibicao_preco, created_at'
+
+/** A conta é uma imobiliária? (perfis.tipo ou o tipo declarado no cadastro — há contas com os dois divergentes) */
+export function ehContaImobiliaria(tipoPerfil: string | null | undefined, metaUsuario: Record<string, unknown> = {}): boolean {
+  return tipoPerfil === 'imobiliaria' || metaUsuario.tipo === 'imobiliaria' || metaUsuario.tipo_anunciante === 'imobiliaria'
+}
+
 export function lerVinculo(usuario: Pick<User, 'app_metadata'>): { imobiliariaId: string | null; papel: PapelEquipe | null } {
   const app = usuario.app_metadata || {}
   const papel = app.papel === 'gestor' || app.papel === 'corretor' ? (app.papel as PapelEquipe) : null

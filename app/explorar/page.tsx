@@ -202,7 +202,7 @@ function ExplorarConteudo() {
         mapaMembroParaImob = new Map<string, any>()
         try {
           const { data: todosPerfisList } = await supabase
-            .from('perfis')
+            .from('perfis_publicos')
             .select('id, nome, tipo, foto_url')
 
           const todosPerfis = todosPerfisList ?? []

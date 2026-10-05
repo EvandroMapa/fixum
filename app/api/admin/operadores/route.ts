@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verificarOtpPendente } from '@/lib/otp'
 import { criarClienteAdmin } from '@/lib/supabase/admin'
-import { exigirAdmin, pinAdminValido, respostaPinInvalido } from '@/lib/auth/servidor'
+import { exigirAdmin } from '@/lib/auth/servidor'
 
 export interface OperadorAdmin {
   id: string
@@ -12,6 +12,18 @@ export interface OperadorAdmin {
   created_at: string
   last_sign_in_at: string | null
   is_raiz: boolean
+  /** Conta de cliente (proprietário, corretor…) que também tem acesso de administrador */
+  tambem_cliente: boolean
+}
+
+const TIPOS_CLIENTE = ['corretor', 'imobiliaria', 'proprietario', 'comprador']
+
+/**
+ * Dono da plataforma: marcado em app_metadata.dono (só o servidor altera).
+ * Não pode ser suspenso, excluído nem perder o acesso de admin — evita a plataforma ficar sem administrador.
+ */
+function ehDono(usuario: { app_metadata?: Record<string, unknown> } | null | undefined): boolean {
+  return usuario?.app_metadata?.dono === true
 }
 
 // ── GET: LISTAR TODOS OS OPERADORES ADMINISTRATIVOS ──
@@ -36,23 +48,18 @@ export async function GET(req: Request) {
       if (p.email) mapaPerfis[p.email.toLowerCase()] = p
     })
 
-    // 3. Filtrar apenas quem é Administrador
+    // 3. Todos que têm acesso de administrador (inclusive clientes promovidos: ninguém com acesso fica fora da lista)
     const operadores: OperadorAdmin[] = []
 
     for (const u of authData.users) {
       const p = mapaPerfis[u.id] || mapaPerfis[(u.email || '').toLowerCase()]
       const tipoPerfil = p?.tipo || u.user_metadata?.tipo
+      const tambemCliente = TIPOS_CLIENTE.includes(tipoPerfil)
 
-      // Bloquear sumariamente qualquer usuário que seja cliente da plataforma (corretor, imobiliária, proprietário, comprador)
-      const isClientePlataforma = ['corretor', 'imobiliaria', 'proprietario', 'comprador'].includes(tipoPerfil)
+      const temAcessoAdmin = p?.is_admin === true || ehDono(u)
 
-      const ehOperadorInterno = !isClientePlataforma && (
-        u.email === 'admin@fixum.com.br' ||
-        (p?.tipo === 'admin' && p?.is_admin === true)
-      )
-
-      if (ehOperadorInterno) {
-        const cargoRaw = p?.cargo_admin || u.user_metadata?.cargo || (u.email === 'admin@fixum.com.br' ? 'master' : 'master')
+      if (temAcessoAdmin) {
+        const cargoRaw = p?.cargo_admin || u.user_metadata?.cargo || 'master'
         const cargoFinal: 'master' | 'financeiro' | 'suporte' =
           ['master', 'financeiro', 'suporte'].includes(cargoRaw) ? cargoRaw : 'master'
 
@@ -64,7 +71,8 @@ export async function GET(req: Request) {
           status_conta: (p?.status_conta === 'suspenso' ? 'suspenso' : 'ativo'),
           created_at: u.created_at,
           last_sign_in_at: u.last_sign_in_at || null,
-          is_raiz: u.email === 'admin@fixum.com.br',
+          is_raiz: ehDono(u),
+          tambem_cliente: tambemCliente,
         })
       }
     }
@@ -86,18 +94,50 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { acao, adminPin } = body
+    const { acao } = body
 
-    // 1. Sessão de administrador + PIN Master (conferido no servidor) nas ações em que o admin digita o PIN
+    // 1. Sessão de administrador confirmada com o código do e-mail
     const auth = await exigirAdmin(req)
     if (!auth.ok) return auth.resposta
     const adminEmail = auth.usuario.email || 'admin'
 
-    if (['criar', 'alterar_senha', 'editar'].includes(acao) && !pinAdminValido(adminPin)) {
-      return respostaPinInvalido()
-    }
-
     const supabase = criarClienteAdmin()
+
+    // Conta de cliente com acesso de admin: aqui só dá para remover o acesso de administrador.
+    // Editar, suspender, trocar senha ou excluir mexeria na conta de cliente (imóveis, assinatura).
+    if (['alterar_status', 'alterar_senha', 'excluir', 'editar', 'remover_admin'].includes(acao)) {
+      const { data: perfilAlvo } = await supabase.from('perfis').select('tipo').eq('id', body.operadorId).maybeSingle()
+      const alvoCliente = TIPOS_CLIENTE.includes(perfilAlvo?.tipo)
+
+      if (acao === 'remover_admin') {
+        const { data: alvo } = await supabase.auth.admin.getUserById(body.operadorId)
+        if (ehDono(alvo?.user)) {
+          return NextResponse.json({ error: 'A conta do dono da plataforma não pode perder o acesso de administrador.' }, { status: 400 })
+        }
+        if (body.operadorId === auth.usuario.id) {
+          return NextResponse.json({ error: 'Você não pode remover o seu próprio acesso.' }, { status: 400 })
+        }
+        await supabase.from('perfis').update({ is_admin: false }).eq('id', body.operadorId)
+        await supabase.from('logs_auditoria_admin').insert({
+          admin_email: adminEmail,
+          tipo_acao: 'REMOVER_ACESSO_ADMIN',
+          entidade: 'perfis',
+          entidade_id: body.operadorId,
+          dados_anteriores: { is_admin: true },
+          dados_novos: { is_admin: false },
+          justificativa: body.justificativa || 'Acesso de administrador removido',
+          created_at: new Date().toISOString(),
+        })
+        return NextResponse.json({ sucesso: true })
+      }
+
+      if (alvoCliente) {
+        return NextResponse.json(
+          { error: 'Esta conta também é anunciante. Aqui só dá para remover o acesso de administrador.' },
+          { status: 400 }
+        )
+      }
+    }
 
     // ── AÇÃO 1: CRIAR NOVO OPERADOR ADMINISTRATIVO (COM CÓDIGO OTP) ──
     if (acao === 'criar') {
@@ -173,8 +213,8 @@ export async function POST(req: Request) {
 
       // Proteger conta raiz
       const { data: usuarioAlvo } = await supabase.auth.admin.getUserById(operadorId)
-      if (usuarioAlvo?.user?.email === 'admin@fixum.com.br') {
-        return NextResponse.json({ error: 'A conta raiz admin@fixum.com.br não pode ser suspensa.' }, { status: 400 })
+      if (ehDono(usuarioAlvo?.user)) {
+        return NextResponse.json({ error: 'A conta do dono da plataforma não pode ser suspensa.' }, { status: 400 })
       }
 
       await supabase
@@ -233,8 +273,8 @@ export async function POST(req: Request) {
       }
 
       const { data: usuarioAlvo } = await supabase.auth.admin.getUserById(operadorId)
-      if (usuarioAlvo?.user?.email === 'admin@fixum.com.br') {
-        return NextResponse.json({ error: 'A conta raiz admin@fixum.com.br não pode ser excluída.' }, { status: 400 })
+      if (ehDono(usuarioAlvo?.user)) {
+        return NextResponse.json({ error: 'A conta do dono da plataforma não pode ser excluída.' }, { status: 400 })
       }
 
       await supabase.auth.admin.deleteUser(operadorId)
@@ -264,7 +304,7 @@ export async function POST(req: Request) {
 
       // Proteger conta raiz contra mudança de cargo indevida
       const { data: usuarioAlvo } = await supabase.auth.admin.getUserById(operadorId)
-      const isRaiz = usuarioAlvo?.user?.email === 'admin@fixum.com.br'
+      const isRaiz = ehDono(usuarioAlvo?.user)
 
       const cargoFinal = isRaiz ? 'master' : cargo
       const statusFinal = isRaiz ? 'ativo' : (status_conta || 'ativo')
@@ -293,7 +333,7 @@ export async function POST(req: Request) {
       // Atualizar no banco (perfis)
       await supabase.from('perfis').update({
         nome: nome.trim(),
-        email: isRaiz ? 'admin@fixum.com.br' : emailLimpo,
+        email: isRaiz ? (usuarioAlvo?.user?.email || emailLimpo) : emailLimpo,
         cargo_admin: cargoFinal,
         status_conta: statusFinal,
       }).eq('id', operadorId)

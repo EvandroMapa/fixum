@@ -131,7 +131,7 @@ function PainelConteudo() {
       .maybeSingle()
 
     const meta = user.user_metadata || {}
-    const ehAdmin = perfil?.is_admin === true || perfil?.tipo === 'admin' || meta?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
+    const ehAdmin = perfil?.is_admin === true || perfil?.tipo === 'admin' || meta?.tipo === 'admin'
 
     // ── PROTEÇÃO DE ACESSO: Administrador Master não acessa painel de anúncios de imóveis ──
     if (ehAdmin) {

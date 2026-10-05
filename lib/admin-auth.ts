@@ -1,6 +1,6 @@
 /**
  * Autenticação e Blindagem do Painel Administrativo Fixum
- * Camadas de segurança Zero-Trust: Supabase Auth + Verificação is_admin + PIN Master + Timeout de Inatividade + Auditoria
+ * Camadas de segurança: Supabase Auth + is_admin (servidor) + código por e-mail obrigatório + Timeout de Inatividade + Auditoria
  */
 
 import { createClient } from '@/lib/supabase/client'
@@ -77,34 +77,73 @@ export function bloquearTelaAdmin(): void {
   sessionStorage.setItem(CHAVE_STORAGE_BLOQUEIO, 'true')
 }
 
+export type EtapaAdmin = 'codigo_email' | 'liberado'
+
 /**
- * Confere no servidor se a sessão atual é de administrador e, se informado, se o PIN Master está correto.
- * O PIN nunca fica no navegador: ele é comparado em /api/admin/sessao (variável ADMIN_PIN do servidor).
+ * Confere no servidor se a sessão atual é de administrador e em que etapa do login está.
+ * ok = true só quando a sessão está liberada (admin + código do e-mail confirmado).
  */
-export async function verificarAdminNoServidor(pin?: string): Promise<{ ok: boolean; erro?: string }> {
+export async function verificarAdminNoServidor(): Promise<{ ok: boolean; etapa?: EtapaAdmin; erro?: string; codigo?: string }> {
   try {
-    const res = await fetch('/api/admin/sessao', pin === undefined
-      ? { method: 'GET' }
-      : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: pin.trim() }) })
-    if (res.ok) return { ok: true }
+    const res = await fetch('/api/admin/sessao', { method: 'GET' })
     const json = await res.json().catch(() => ({}))
-    return { ok: false, erro: json.error }
+    if (!res.ok) return { ok: false, erro: json.error, codigo: json.codigo }
+    return { ok: json.etapa === 'liberado', etapa: json.etapa }
+  } catch {
+    return { ok: false, erro: 'Falha de comunicação com o servidor.' }
+  }
+}
+
+/** Pede ao servidor um código de 6 dígitos no e-mail do administrador logado. */
+export async function enviarCodigoAdmin(): Promise<{ ok: boolean; erro?: string }> {
+  try {
+    const res = await fetch('/api/admin/codigo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'enviar' }),
+    })
+    const json = await res.json().catch(() => ({}))
+    return res.ok ? { ok: true } : { ok: false, erro: json.error || 'Não foi possível enviar o código.' }
+  } catch {
+    return { ok: false, erro: 'Falha de comunicação com o servidor.' }
+  }
+}
+
+/** Confere o código do e-mail; se certo, o servidor grava o selo da verificação (cookie httpOnly). */
+export async function confirmarCodigoAdmin(codigo: string): Promise<{ ok: boolean; erro?: string }> {
+  try {
+    const res = await fetch('/api/admin/codigo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'confirmar', codigo: codigo.replace(/D/g, '') }),
+    })
+    const json = await res.json().catch(() => ({}))
+    return res.ok ? { ok: true } : { ok: false, erro: json.error || 'Código incorreto.' }
   } catch {
     return { ok: false, erro: 'Falha de comunicação com o servidor.' }
   }
 }
 
 /**
- * Desbloqueia a tela administrativa com o PIN Master (validado no servidor)
+ * Desbloqueia a tela administrativa (bloqueada por inatividade) com um novo código do e-mail.
  */
-export async function desbloquearTelaComPin(pin: string): Promise<boolean> {
-  if (typeof window === 'undefined') return false
-  const { ok } = await verificarAdminNoServidor(pin)
-  if (ok) {
+export async function desbloquearTelaComCodigo(codigo: string): Promise<{ ok: boolean; erro?: string }> {
+  if (typeof window === 'undefined') return { ok: false }
+  const resultado = await confirmarCodigoAdmin(codigo)
+  if (resultado.ok) {
     sessionStorage.removeItem(CHAVE_STORAGE_BLOQUEIO)
     sessionStorage.setItem(CHAVE_STORAGE_ULTIMA_ATIVIDADE, Date.now().toString())
   }
-  return ok
+  return resultado
+}
+
+/** Ao sair do painel: apaga no servidor o selo da verificação por e-mail. */
+export async function apagarSeloAdmin(): Promise<void> {
+  try {
+    await fetch('/api/admin/sessao', { method: 'DELETE' })
+  } catch {
+    /* sem rede: o selo expira sozinho em 12 h */
+  }
 }
 
 /**

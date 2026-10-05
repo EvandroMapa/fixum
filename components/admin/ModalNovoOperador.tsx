@@ -41,7 +41,6 @@ export default function ModalNovoOperador({
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [cargo, setCargo] = useState<'master' | 'financeiro' | 'suporte'>('suporte')
-  const [adminPin, setAdminPin] = useState('')
   const [codigoOtp, setCodigoOtp] = useState('')
   const [timerReenvio, setTimerReenvio] = useState(0)
   const [carregando, setCarregando] = useState(false)
@@ -56,7 +55,6 @@ export default function ModalNovoOperador({
     setNome('')
     setEmail('')
     setSenha('')
-    setAdminPin('')
     setCodigoOtp('')
     setErro(null)
     setSucesso(null)
@@ -68,7 +66,7 @@ export default function ModalNovoOperador({
     setErro(null)
     setSucesso(null)
 
-    if (!nome.trim() || !email.trim() || !senha || !adminPin.trim()) {
+    if (!nome.trim() || !email.trim() || !senha) {
       setErro('Preencha todos os campos obrigatórios.')
       return
     }
@@ -129,7 +127,6 @@ export default function ModalNovoOperador({
           email: email.trim().toLowerCase(),
           senha,
           cargo,
-          adminPin: adminPin.trim(),
           adminEmail: adminEmailLogado,
           codigoOtp: codigoOtp.trim(),
         }),
@@ -288,23 +285,6 @@ export default function ModalNovoOperador({
                   )
                 })}
               </div>
-            </div>
-
-            {/* PIN Master de Confirmação */}
-            <div className={styles.grupoCampo} style={{ marginTop: '4px' }}>
-              <label className={styles.label}>
-                <span>Chave secreta Master (PIN de autorização)</span>
-                <span className={styles.obrigatorio}>* Obrigatório</span>
-              </label>
-              <InputSenha
-                name="admin-pin-novo-operador"
-                value={adminPin}
-                onChange={(e) => setAdminPin(e.target.value)}
-                placeholder="Digite a chave secreta Master"
-                className={styles.input}
-                estiloDark={true}
-                required
-              />
             </div>
 
             {/* Ações */}

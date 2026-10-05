@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { criarClienteAdmin } from '@/lib/supabase/admin'
-import { exigirAdmin, pinAdminValido, respostaPinInvalido } from '@/lib/auth/servidor'
+import { exigirAdmin } from '@/lib/auth/servidor'
 
 const ASAAS_API_URL = process.env.ASAAS_API_URL || (
   process.env.NODE_ENV === 'production' && !process.env.ASAAS_SANDBOX
@@ -23,13 +23,7 @@ export async function POST(req: Request) {
       motivo,
       tipoReembolso,
       justificativa,
-      adminPin,
     } = body
-
-    // 1. Validação do PIN Master do Administrador
-    if (!pinAdminValido(adminPin)) {
-      return respostaPinInvalido('PIN Master inválido. Operação de estorno rejeitada.')
-    }
 
     if (!faturaId || !usuarioId || !justificativa) {
       return NextResponse.json({ error: 'Parâmetros obrigatórios ausentes (faturaId, usuarioId, justificativa).' }, { status: 400 })

@@ -1,8 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useConfirm } from '@/contexts/ModalConfirmacaoContext'
+import { listarTotpAtivos, removerTotp } from '@/lib/auth/mfa-cliente'
+import CadastroTotp from '@/components/auth/CadastroTotp'
+import InputSenha from '@/components/ui/InputSenha'
 import styles from './ModalConfigSeguranca.module.css'
 import Icone from '@/components/ui/Icone'
 
@@ -17,161 +20,108 @@ export default function ModalConfigSeguranca({
   onFechar,
   usuarioEmail,
 }: ModalConfigSegurancaProps) {
-  const supabase = createClient()
-  const { confirmar, alertar } = useConfirm()
+  const { confirmar } = useConfirm()
 
   const [carregando, setCarregando] = useState(false)
-  const [temMfaAtivo, setTemMfaAtivo] = useState(false)
-  const [etapaAtivacao, setEtapaAtivacao] = useState<'inicio' | 'codigo' | 'sucesso'>('inicio')
-  const [codigoConfirmacao, setCodigoConfirmacao] = useState('')
-  const [timerReenvio, setTimerReenvio] = useState(0)
+  const [fatorAtivoId, setFatorAtivoId] = useState<string | null>(null)
+  const [cadastrandoApp, setCadastrandoApp] = useState(false)
+  const [editandoSenha, setEditandoSenha] = useState(false)
+  const [novaSenha, setNovaSenha] = useState('')
+  const [confirmarSenha, setConfirmarSenha] = useState('')
   const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
 
+  const carregarStatus = useCallback(async () => {
+    setCarregando(true)
+    try {
+      const ativos = await listarTotpAtivos(createClient())
+      setFatorAtivoId(ativos[0]?.id ?? null)
+    } catch (e) {
+      console.error('Erro ao verificar verificação em duas etapas:', e)
+    } finally {
+      setCarregando(false)
+    }
+  }, [])
+
+  // Ao abrir o modal: consulta o status do app autenticador e limpa mensagens anteriores
   useEffect(() => {
     if (!aberto) return
-    async function verificarStatus2FA() {
-      setCarregando(true)
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const { data: perfil } = await supabase
-            .from('perfis')
-            .select('two_factor_enabled')
-            .eq('id', user.id)
-            .maybeSingle()
-
-          const ativo = perfil?.two_factor_enabled === true || user.user_metadata?.two_factor_enabled === true
-          setTemMfaAtivo(ativo)
-        }
-      } catch (e) {
-        console.error('Erro ao verificar 2FA:', e)
-      } finally {
-        setCarregando(false)
-      }
+    async function prepararAbertura() {
+      await carregarStatus()
+      setMensagemSucesso(null)
+      setErro(null)
+      setCadastrandoApp(false)
+      setEditandoSenha(false)
     }
-    verificarStatus2FA()
-  }, [aberto, supabase])
+    void prepararAbertura()
+  }, [aberto, carregarStatus])
 
-  // Timer regressivo de reenvio
-  useEffect(() => {
-    if (timerReenvio <= 0) return
-    const interval = setInterval(() => {
-      setTimerReenvio((prev) => prev - 1)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [timerReenvio])
-
-  // Iniciar ativação disparando código por e-mail
-  async function handleIniciarAtivacao2FA() {
-    setCarregando(true)
-    setErro(null)
-    setMensagemSucesso(null)
-
-    try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          acao: 'enviar',
-          email: usuarioEmail,
-          motivo: 'ativar_2fa',
-        }),
-      })
-
-      const json = await res.json()
-      if (!res.ok || json.error) {
-        throw new Error(json.error || 'Erro ao enviar código de verificação.')
-      }
-
-      setEtapaAtivacao('codigo')
-      setTimerReenvio(60)
-      setMensagemSucesso(`Enviamos um código de teste de 6 dígitos para o e-mail: ${usuarioEmail}`)
-    } catch (e: unknown) {
-      setErro(e instanceof Error ? e.message : 'Erro ao iniciar ativação de 2FA')
-    } finally {
-      setCarregando(false)
-    }
+  async function aoConcluirCadastroApp() {
+    setCadastrandoApp(false)
+    await carregarStatus()
+    setMensagemSucesso('Verificação em duas etapas ativada! A partir de agora, ao entrar, vamos pedir o código do seu app autenticador. Nos outros aparelhos já conectados, será preciso entrar de novo.')
   }
 
-  // Confirmar código de 6 dígitos e ativar 2FA
-  async function handleConfirmarCodigo2FA(e: React.FormEvent) {
-    e.preventDefault()
-    setCarregando(true)
-    setErro(null)
-
-    try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          acao: 'validar',
-          email: usuarioEmail,
-          codigo: codigoConfirmacao,
-          motivo: 'ativar_2fa',
-        }),
-      })
-
-      const json = await res.json()
-      if (!res.ok || json.error) {
-        throw new Error(json.error || 'Código incorreto ou expirado.')
-      }
-
-      setTemMfaAtivo(true)
-      setEtapaAtivacao('sucesso')
-      setMensagemSucesso('Verificação em 2 Etapas ativada com sucesso! A cada login um código será enviado ao seu e-mail.')
-    } catch (e: unknown) {
-      setErro(e instanceof Error ? e.message : 'Código incorreto ou expirado.')
-    } finally {
-      setCarregando(false)
-    }
-  }
-
-  // Desativar 2FA
   async function handleDesativar2FA() {
+    if (!fatorAtivoId) return
     const confirma = await confirmar({
-      titulo: 'Desativar verificação em 2 etapas?',
-      mensagem: 'Deseja realmente desativar o 2FA por e-mail? Sua conta ficará protegida apenas pela senha.',
+      titulo: 'Desativar verificação em duas etapas?',
+      mensagem: 'Sua conta deixa de pedir o código do app autenticador ao entrar e fica protegida só pelo acesso ao seu e-mail (ou senha).',
       icone: 'cadeado',
-      textoBotaoConfirmar: 'Sim, Desativar 2FA',
+      textoBotaoConfirmar: 'Sim, desativar',
       tipo: 'aviso',
     })
     if (!confirma) return
 
     setCarregando(true)
     setErro(null)
-
     try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          acao: 'desativar_2fa',
-          email: usuarioEmail,
-        }),
-      })
-
-      const json = await res.json()
-      if (!res.ok || json.error) {
-        throw new Error(json.error || 'Erro ao desativar 2FA.')
-      }
-
-      setTemMfaAtivo(false)
-      setEtapaAtivacao('inicio')
-      setMensagemSucesso('Verificação em 2 Etapas desativada com sucesso.')
+      await removerTotp(createClient(), fatorAtivoId)
+      setFatorAtivoId(null)
+      setMensagemSucesso('Verificação em duas etapas desativada.')
     } catch (e: unknown) {
-      setErro(e instanceof Error ? e.message : 'Erro ao desativar 2FA')
+      setErro(e instanceof Error ? e.message : 'Erro ao desativar a verificação em duas etapas.')
     } finally {
       setCarregando(false)
     }
   }
 
-  // Desconectar outras sessões
+  async function handleSalvarSenha(e: React.FormEvent) {
+    e.preventDefault()
+    setErro(null)
+    if (novaSenha.length < 8) {
+      setErro('A senha precisa ter pelo menos 8 caracteres.')
+      return
+    }
+    if (novaSenha !== confirmarSenha) {
+      setErro('As senhas digitadas não coincidem.')
+      return
+    }
+    setCarregando(true)
+    try {
+      const { error } = await createClient().auth.updateUser({ password: novaSenha })
+      if (error) throw error
+      setEditandoSenha(false)
+      setNovaSenha('')
+      setConfirmarSenha('')
+      setMensagemSucesso('Senha salva. Você pode entrar com ela ou continuar usando o código por e-mail.')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : ''
+      setErro(msg.includes('different from the old')
+        ? 'A nova senha precisa ser diferente da atual.'
+        : msg.includes('reauthentication') || msg.includes('recent')
+        ? 'Por segurança, saia e entre de novo antes de trocar a senha.'
+        : 'Não foi possível salvar a senha. Tente novamente.')
+    } finally {
+      setCarregando(false)
+    }
+  }
+
   async function handleDesconectarOutros() {
     setCarregando(true)
     setErro(null)
     try {
-      await supabase.auth.signOut({ scope: 'others' })
+      await createClient().auth.signOut({ scope: 'others' })
       setMensagemSucesso('Todas as outras sessões ativas foram desconectadas.')
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : 'Erro ao desconectar sessões')
@@ -193,7 +143,7 @@ export default function ModalConfigSeguranca({
           <span className={styles.iconeModal}><Icone nome="escudo" tamanho={16} /></span>
           <h2>Segurança da conta</h2>
           <p className={styles.subtitulo}>
-            Proteja seus imóveis, leads e planos com autenticação em duas etapas via E-mail
+            Conta: <strong>{usuarioEmail}</strong>
           </p>
         </div>
 
@@ -209,105 +159,95 @@ export default function ModalConfigSeguranca({
           </div>
         )}
 
-        {/* ── SEÇÃO 2FA VIA E-MAIL ── */}
+        {/* ── VERIFICAÇÃO EM DUAS ETAPAS (APP AUTENTICADOR) ── */}
         <div className={styles.secaoCard}>
           <div className={styles.secaoHeader}>
             <div>
-              <h3>Verificação em 2 etapas por e-mail (2FA)</h3>
-              <p>Receba um código de 6 dígitos na sua caixa de entrada a cada novo login.</p>
+              <h3>Verificação em duas etapas</h3>
+              <p>Além do e-mail, pede um código do app autenticador do seu celular a cada login.</p>
             </div>
-            <span className={`${styles.badgeStatus} ${temMfaAtivo ? styles.badgeAtivo : styles.badgeInativo}`}>
-              {temMfaAtivo ? 'Ativado ' : 'Desativado '}
+            <span className={`${styles.badgeStatus} ${fatorAtivoId ? styles.badgeAtivo : styles.badgeInativo}`}>
+              {fatorAtivoId ? 'Ativada' : 'Desativada'}
             </span>
           </div>
 
-          {temMfaAtivo ? (
+          {fatorAtivoId ? (
             <div className={styles.mfaAtivoBox}>
-              <p>
-                Sua conta está protegida! Toda vez que você entrar, um código de segurança será enviado para: <strong>{usuarioEmail}</strong>.
-              </p>
+              <p>Sua conta está protegida pelo app autenticador.</p>
               <button
                 type="button"
                 className={styles.btnDesativarMfa}
                 onClick={handleDesativar2FA}
                 disabled={carregando}
               >
-                Desativar 2FA
+                Desativar
               </button>
             </div>
-          ) : etapaAtivacao === 'codigo' ? (
-            <form onSubmit={handleConfirmarCodigo2FA} className={styles.formAtivacao}>
-              <div className={styles.instrucoesMfa}>
-                <p>
-                  1. Enviamos um código de segurança de 6 dígitos para <strong>{usuarioEmail}</strong>.
-                </p>
-                <p>2. Digite os números abaixo para confirmar a ativação:</p>
-              </div>
-
-              <div className={styles.campoCodigo}>
-                <input
-                  type="text"
-                  placeholder="000000"
-                  maxLength={6}
-                  value={codigoConfirmacao}
-                  onChange={(e) => setCodigoConfirmacao(e.target.value.replace(/\D/g, ''))}
-                  className={styles.inputCodigo}
-                  required
-                  autoFocus
-                />
-              </div>
-
-              <div className={styles.acoesMfa}>
-                <button
-                  type="submit"
-                  className="btn btn-primario"
-                  disabled={carregando || codigoConfirmacao.length < 6}
-                >
-                  {carregando ? 'Validando...' : 'Confirmar e ativar 2FA'}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() => setEtapaAtivacao('inicio')}
-                >
-                  Cancelar
-                </button>
-              </div>
-
-              <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                <button
-                  type="button"
-                  onClick={handleIniciarAtivacao2FA}
-                  disabled={carregando || timerReenvio > 0}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: timerReenvio > 0 ? '#A39A8A' : 'var(--cor-primaria)',
-                    fontSize: '0.8rem',
-                    fontWeight: 600,
-                    cursor: timerReenvio > 0 ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {timerReenvio > 0 ? `Reenviar código em ${timerReenvio}s` : 'Reenviar código para meu e-mail'}
-                </button>
-              </div>
-            </form>
+          ) : cadastrandoApp ? (
+            <CadastroTotp aoConcluir={aoConcluirCadastroApp} aoCancelar={() => setCadastrandoApp(false)} />
           ) : (
             <div className={styles.mfaInativoBox}>
-              <p>Recomendado para corretores e imobiliárias que gerenciam planos e grandes volumes de anúncios.</p>
+              <p>Recomendado para corretores e imobiliárias, que lidam com leads e dados de clientes.</p>
               <button
                 type="button"
                 className="btn btn-primario"
-                onClick={handleIniciarAtivacao2FA}
+                onClick={() => { setMensagemSucesso(null); setErro(null); setCadastrandoApp(true) }}
                 disabled={carregando}
               >
- Ativar verificação por e-mail
- </button>
+                Ativar com app autenticador
+              </button>
             </div>
           )}
         </div>
 
-        {/* ── SEÇÃO SESSÕES ATIVAS ── */}
+        {/* ── SENHA (OPCIONAL) ── */}
+        <div className={styles.secaoCard}>
+          <div className={styles.secaoHeader}>
+            <div>
+              <h3>Senha</h3>
+              <p>Opcional. Você sempre pode entrar com um código enviado ao seu e-mail.</p>
+            </div>
+          </div>
+
+          {editandoSenha ? (
+            <form onSubmit={handleSalvarSenha} className={styles.formAtivacao} style={{ gap: '0.75rem', alignItems: 'stretch' }}>
+              <InputSenha
+                placeholder="Nova senha (mínimo 8 caracteres)"
+                value={novaSenha}
+                onChange={(e) => setNovaSenha(e.target.value)}
+                autoComplete="new-password"
+                required
+              />
+              <InputSenha
+                placeholder="Repita a nova senha"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                autoComplete="new-password"
+                required
+              />
+              <div className={styles.acoesMfa}>
+                <button type="submit" className="btn btn-primario" disabled={carregando}>
+                  {carregando ? 'Salvando…' : 'Salvar senha'}
+                </button>
+                <button type="button" className="btn btn-outline" onClick={() => setEditandoSenha(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div style={{ marginTop: '0.75rem' }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => { setMensagemSucesso(null); setErro(null); setEditandoSenha(true) }}
+              >
+                Criar ou trocar senha
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ── SESSÕES ATIVAS ── */}
         <div className={styles.secaoCard}>
           <div className={styles.secaoHeader}>
             <div>
@@ -323,8 +263,8 @@ export default function ModalConfigSeguranca({
               onClick={handleDesconectarOutros}
               disabled={carregando}
             >
- Desconectar todas as outras sessões
- </button>
+              Desconectar todas as outras sessões
+            </button>
           </div>
         </div>
 

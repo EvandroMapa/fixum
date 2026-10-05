@@ -30,6 +30,7 @@ function traduzirErro(msg: string): string {
   if (msg.includes("Password should be at least")) return "A senha deve ter pelo menos 6 caracteres."
   if (msg.includes("Invalid email")) return "E-mail inválido."
   if (msg.includes("Email rate limit") || msg.includes("email rate limit")) return "Muitas tentativas. Aguarde alguns minutos."
+  if (msg.includes("Token has expired") || msg.includes("is invalid")) return "Código incorreto ou expirado. Confira o e-mail ou peça um novo código."
   return msg
 }
 
@@ -76,15 +77,16 @@ function CadastroConteudo() {
     if (!imobiliariaId) return
     async function carregarImobiliaria() {
       const supabase = createClient()
+      // Dados públicos da imobiliária anfitriã (view sem e-mail, CPF/CNPJ e campos administrativos)
       const { data } = await supabase
-        .from('perfis')
-        .select('nome, foto_url, cidade, estado, creci')
+        .from('perfis_publicos')
+        .select('nome, foto_url, cidade, uf, creci')
         .eq('id', imobiliariaId)
         .single()
 
       if (data?.nome) {
         setEmpresaNome(data.nome)
-        setImobiliariaInfo(data)
+        setImobiliariaInfo({ ...data, estado: data.uf })
       }
     }
     carregarImobiliaria()
@@ -97,51 +99,49 @@ function CadastroConteudo() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const emailValido = emailRegex.test(email.trim())
   const nomeValido = nome.trim().length >= 3
-  const senhaValida = senha.length >= 8
+  // Senha é opcional (a entrada padrão é por código no e-mail); se for digitada, precisa ter 8+ caracteres
+  const senhaValida = senha.length === 0 || senha.length >= 8
   const telefoneDigitos = telefone.replace(/\D/g, "")
   const telefoneValido = (isImobiliaria || isCorretor) ? telefoneDigitos.length >= 10 : true
 
   const podeAvancar = nomeValido && emailValido && senhaValida && telefoneValido && !carregando
 
-  // ── ETAPA 1: VALIDAR DADOS E DISPARAR CÓDIGO OTP POR E-MAIL ──
+  const tipoFinal = tipo || (imobiliariaId ? "corretor" : "imobiliaria")
+
+  // Envia o código de 6 dígitos pelo próprio Supabase Auth (cria a conta, ainda não confirmada)
+  async function enviarCodigo() {
+    const { error } = await createClient().auth.signInWithOtp({
+      email: email.trim().toLowerCase(),
+      options: {
+        shouldCreateUser: true,
+        data: { nome: nome.trim(), tipo: tipoFinal, tipo_anunciante: tipoFinal, telefone: telefone || null, creci: creci || null },
+      },
+    })
+    if (error) throw error
+  }
+
+  // ── ETAPA 1: VALIDAR DADOS E ENVIAR O CÓDIGO POR E-MAIL ──
   async function handleAvancarParaOtp(e: React.FormEvent) {
     e.preventDefault()
     setErro("")
     setSucesso("")
 
-    if (!nome.trim() || !email.trim() || !senha) {
+    if (!nome.trim() || !email.trim()) {
       setErro("Preencha todos os campos obrigatórios.")
       return
     }
 
-    if (senha.length < 8) {
-      setErro("A senha deve ter no mínimo 8 caracteres.")
+    if (senha && senha.length < 8) {
+      setErro("Se quiser criar uma senha, ela precisa ter no mínimo 8 caracteres.")
       return
     }
 
     setCarregando(true)
     try {
-      const emailLimpo = email.trim().toLowerCase()
-
-      // 1. Disparar código OTP via Resend
-      const resOtp = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          acao: 'enviar',
-          email: emailLimpo,
-          motivo: 'cadastro',
-        }),
-      })
-
-      const jsonOtp = await resOtp.json()
-      if (!resOtp.ok || jsonOtp.error) {
-        throw new Error(jsonOtp.error || 'Erro ao enviar código de verificação.')
-      }
-
+      await enviarCodigo()
       setPasso(3)
       setTimerReenvio(60)
-      setSucesso(`Código de segurança enviado para ${emailLimpo}.`)
+      setSucesso(`Código de segurança enviado para ${email.trim().toLowerCase()}.`)
     } catch (err: unknown) {
       setErro(traduzirErro(err instanceof Error ? err.message : "Erro ao enviar código"))
     } finally {
@@ -149,107 +149,66 @@ function CadastroConteudo() {
     }
   }
 
-  // ── ETAPA 2: VALIDAR OTP E EFETIVAR O CADASTRO ──
+  // ── ETAPA 2: CONFIRMAR O CÓDIGO (CRIA A SESSÃO) E COMPLETAR O PERFIL ──
   async function handleConfirmarCadastro(e: React.FormEvent) {
     e.preventDefault()
     setErro("")
     setCarregando(true)
 
     try {
-      const emailLimpo = email.trim().toLowerCase()
-      const codigoLimpo = codigoOtp.replace(/\D/g, "")
-
+      const codigoLimpo = codigoOtp.replace(/D/g, "")
       if (codigoLimpo.length < 6) {
-        setErro("Digite o código de 6 dígitos recebido por e-mail.")
+        setErro("Digite o código recebido por e-mail.")
         setCarregando(false)
         return
       }
 
-      // 1. Validar Código OTP
-      const resVal = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          acao: 'validar',
-          email: emailLimpo,
-          codigo: codigoLimpo,
-          motivo: 'cadastro',
-        }),
+      const supabase = createClient()
+      const { error: erroCodigo } = await supabase.auth.verifyOtp({
+        email: email.trim().toLowerCase(),
+        token: codigoLimpo,
+        type: "email",
       })
+      if (erroCodigo) throw erroCodigo
 
-      const jsonVal = await resVal.json()
-      if (!resVal.ok || jsonVal.error) {
-        throw new Error(jsonVal.error || 'Código incorreto ou expirado.')
+      // Senha opcional: se a pessoa criou uma, já fica gravada na conta
+      if (senha.length >= 8) {
+        await supabase.auth.updateUser({ password: senha })
       }
 
-      // 2. Criar a conta com segurança no Supabase
-      const tipoFinal = tipo || (imobiliariaId ? "corretor" : "imobiliaria")
-      const resCad = await fetch('/api/auth/cadastrar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // Perfil, tipo de conta e vínculo com a imobiliária (convite) são gravados no servidor
+      const res = await fetch("/api/auth/finalizar-cadastro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: emailLimpo,
-          password: senha,
           nome: nome.trim(),
           tipo: tipoFinal,
           telefone: telefone || null,
-          imobiliaria_id: imobiliariaId || null,
           creci: creci || null,
-          codigo: codigoLimpo,
+          imobiliaria_id: imobiliariaId || null,
         }),
       })
-
-      const jsonCad = await resCad.json()
-      if (!resCad.ok) {
-        throw new Error(jsonCad.error || 'Erro ao processar cadastro')
-      }
-
-      // 3. Autenticar a sessão
-      const supabase = createClient()
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: emailLimpo,
-        password: senha,
-      })
-
-      if (loginError) {
-        throw loginError
-      }
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || "Erro ao concluir cadastro")
 
       router.push("/painel")
     } catch (err: unknown) {
       setErro(traduzirErro(err instanceof Error ? err.message : "Erro ao concluir cadastro"))
-    } finally {
       setCarregando(false)
     }
   }
 
-  // Reenviar OTP
+  // Reenviar código
   async function handleReenviarOtp() {
     if (timerReenvio > 0) return
     setErro("")
     setCarregando(true)
-
     try {
-      const emailLimpo = email.trim().toLowerCase()
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          acao: 'enviar',
-          email: emailLimpo,
-          motivo: 'cadastro',
-        }),
-      })
-
-      const json = await res.json()
-      if (!res.ok || json.error) {
-        throw new Error(json.error || 'Falha ao reenviar código.')
-      }
-
+      await enviarCodigo()
       setTimerReenvio(60)
-      setSucesso(`Novo código de segurança enviado para ${emailLimpo}.`)
+      setSucesso(`Novo código de segurança enviado para ${email.trim().toLowerCase()}.`)
     } catch (err: unknown) {
-      setErro(err instanceof Error ? err.message : "Falha ao reenviar código.")
+      setErro(traduzirErro(err instanceof Error ? err.message : "Falha ao reenviar código."))
     } finally {
       setCarregando(false)
     }
@@ -260,12 +219,10 @@ function CadastroConteudo() {
     setErro("")
     try {
       const supabase = createClient()
-      const redirectUrl = tipo
-        ? `${window.location.origin}/painel?tipo=${tipo}`
-        : `${window.location.origin}/painel`
+      // Conta nova pelo Google cai em /completar-perfil (via /auth/callback) para escolher o tipo de conta
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: redirectUrl },
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=/painel` },
       })
       if (error) throw error
     } catch {
@@ -474,13 +431,12 @@ function CadastroConteudo() {
               )}
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>Criar senha</label>
+                <label style={{ fontSize: '0.78rem', fontWeight: 600, color: '#3F3B34' }}>Criar senha <span style={{ fontWeight: 400, color: '#7A7264' }}>(opcional — você pode sempre entrar com um código no e-mail)</span></label>
                 <InputSenha
                   placeholder="Mínimo 8 caracteres"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  minLength={8}
-                  required
+                  autoComplete="new-password"
                 />
               </div>
 
@@ -578,11 +534,13 @@ function CadastroConteudo() {
 
               <div style={{ textAlign: "center", padding: '8px 0' }}>
                 <label style={{ display: "block", marginBottom: "6px", fontSize: '0.82rem', color: '#5A5449', fontWeight: 600 }}>
-                  Digite o código de 6 dígitos recebido por e-mail:
+                  Digite o código recebido por e-mail:
                 </label>
                 <input
                   type="text"
-                  maxLength={6}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={8}
                   value={codigoOtp}
                   onChange={(e) => setCodigoOtp(e.target.value.replace(/\D/g, ""))}
                   placeholder="123456"

@@ -1,0 +1,26 @@
+# Arquivos que NUNCA devem subir num deploy via CLI (segredos, dados pessoais, rascunhos)
+# Caminhos com "/" no início valem só para a raiz do projeto (ex.: /supabase não afeta lib/supabase)
+.env*
+!.env.example
+/.git
+/.vercel
+/.claude
+/.next
+/node_modules
+
+# Dados locais de leads (contêm dados pessoais de clientes)
+/data_*.json
+
+# Scripts e anotações internas
+/scratch
+/scripts
+/supabase
+/*.txt
+/*.pdf
+/0auth*
+/Projeto*
+/perfil_contratacao_fixum.html
+/tsconfig.tsbuildinfo
+
+# Material de marca (estudos, não faz parte do site)
+/brand

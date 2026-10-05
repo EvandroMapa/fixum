@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { criarClienteAdmin } from '@/lib/supabase/admin'
-import { listarMembrosEquipe, lerVinculo } from '@/lib/auth/contexto-conta'
+import { listarMembrosEquipe, lerVinculo, COLUNAS_PERFIL_PUBLICO, ehContaImobiliaria } from '@/lib/auth/contexto-conta'
 
 export async function GET(
   req: NextRequest,
@@ -17,7 +17,7 @@ export async function GET(
     // 1. Buscar perfil da imobiliária
     const { data: perfil, error: erroPerfil } = await supabase
       .from('perfis')
-      .select('*')
+      .select(COLUNAS_PERFIL_PUBLICO)
       .eq('id', id)
       .maybeSingle()
 
@@ -25,8 +25,12 @@ export async function GET(
       return NextResponse.json({ error: 'Imobiliária não encontrada.' }, { status: 404 })
     }
 
+    // Só contas de imobiliária têm página pública (evita expor contato de qualquer usuário pelo ID)
     const { data: donoData } = await supabase.auth.admin.getUserById(id)
     const donoMeta = donoData?.user?.user_metadata || {}
+    if (!ehContaImobiliaria(perfil.tipo, donoMeta)) {
+      return NextResponse.json({ error: 'Imobiliária não encontrada.' }, { status: 404 })
+    }
     const modoExibicaoPreco = perfil.modo_exibicao_preco || donoMeta.modo_exibicao_preco || 'visivel'
 
     const perfilFinal = {

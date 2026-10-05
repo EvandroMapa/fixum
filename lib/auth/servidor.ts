@@ -1,19 +1,42 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
-import { timingSafeEqual } from 'crypto'
 import type { User } from '@supabase/supabase-js'
 import { criarClienteAdmin } from '@/lib/supabase/admin'
+import { COOKIE_SELO_ADMIN, seloValido } from '@/lib/auth/selo-admin'
 
 /**
  * Autenticação das rotas /api no servidor.
  * A identidade do usuário vem SEMPRE da sessão (cookie do Supabase ou header Authorization: Bearer),
  * nunca de um usuario_id enviado no corpo/query da requisição.
+ *
+ * Verificação em duas etapas:
+ * - Clientes: app autenticador (TOTP) opcional; quem ativou só é aceito com a sessão em "aal2".
+ * - Administradores: código por e-mail obrigatório (selo assinado em cookie, ver selo-admin.ts).
  */
 
 type ResultadoAuth<T> = ({ ok: true } & T) | { ok: false; resposta: NextResponse }
 
-export async function obterUsuarioDaRequisicao(req: Request): Promise<User | null> {
+export type NivelSessao = 'aal1' | 'aal2'
+
+interface Autenticacao {
+  usuario: User
+  /** Nível de garantia da sessão atual: aal2 = passou pelo app autenticador */
+  nivel: NivelSessao
+  /** O usuário tem app autenticador cadastrado e verificado */
+  temMfa: boolean
+}
+
+function lerNivelDoToken(token: string | null | undefined): NivelSessao {
+  try {
+    const payload = JSON.parse(Buffer.from((token || '').split('.')[1], 'base64url').toString('utf8'))
+    return payload.aal === 'aal2' ? 'aal2' : 'aal1'
+  } catch {
+    return 'aal1'
+  }
+}
+
+async function obterAutenticacao(req: Request): Promise<Autenticacao | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const chaveAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !chaveAnon) return null
@@ -34,32 +57,52 @@ export async function obterUsuarioDaRequisicao(req: Request): Promise<User | nul
   const header = req.headers.get('authorization') || ''
   const tokenBearer = header.toLowerCase().startsWith('bearer ') ? header.slice(7).trim() : null
 
+  // getUser() valida o token no servidor do Supabase; só depois disso o conteúdo do token é confiável
   const { data, error } = tokenBearer
     ? await supabase.auth.getUser(tokenBearer)
     : await supabase.auth.getUser()
-
   if (error || !data?.user) return null
-  return data.user
+
+  const token = tokenBearer || (await supabase.auth.getSession()).data.session?.access_token
+  const temMfa = (data.user.factors || []).some((f) => f.status === 'verified')
+
+  return { usuario: data.user, nivel: lerNivelDoToken(token), temMfa }
+}
+
+export async function obterUsuarioDaRequisicao(req: Request): Promise<User | null> {
+  const auth = await obterAutenticacao(req)
+  return auth?.usuario ?? null
+}
+
+function negar(status: number, error: string, codigo: string): { ok: false; resposta: NextResponse } {
+  return { ok: false, resposta: NextResponse.json({ error, codigo }, { status }) }
 }
 
 export async function exigirUsuario(req: Request): Promise<ResultadoAuth<{ usuario: User }>> {
-  const usuario = await obterUsuarioDaRequisicao(req)
-  if (!usuario) {
-    return {
-      ok: false,
-      resposta: NextResponse.json({ error: 'Sessão inválida ou expirada. Faça login novamente.' }, { status: 401 }),
-    }
+  const auth = await obterAutenticacao(req)
+  if (!auth) {
+    return negar(401, 'Sessão inválida ou expirada. Faça login novamente.', 'sessao_invalida')
   }
-  return { ok: true, usuario }
+  if (auth.temMfa && auth.nivel !== 'aal2') {
+    return negar(401, 'Confirme o código do seu app autenticador para continuar.', 'mfa_pendente')
+  }
+  return { ok: true, usuario: auth.usuario }
 }
 
 /**
  * Exige sessão de um administrador. O privilégio é lido do banco (perfis.is_admin) com a service role —
  * nunca de user_metadata, que pode ser alterado pelo próprio usuário.
+ * O código por e-mail é obrigatório: sem o selo da verificação (cookie assinado), o acesso é negado.
+ * `permitirCodigoPendente` serve só para o login do admin (saber a etapa e enviar/confirmar o código).
  */
-export async function exigirAdmin(req: Request): Promise<ResultadoAuth<{ usuario: User }>> {
-  const auth = await exigirUsuario(req)
-  if (!auth.ok) return auth
+export async function exigirAdmin(
+  req: Request,
+  opcoes: { permitirCodigoPendente?: boolean } = {}
+): Promise<ResultadoAuth<{ usuario: User; codigoConfirmado: boolean }>> {
+  const auth = await obterAutenticacao(req)
+  if (!auth) {
+    return negar(401, 'Sessão inválida ou expirada. Faça login novamente.', 'sessao_invalida')
+  }
 
   const supabase = criarClienteAdmin()
   const { data: perfil } = await supabase
@@ -70,31 +113,13 @@ export async function exigirAdmin(req: Request): Promise<ResultadoAuth<{ usuario
 
   const contaBloqueada = perfil?.status_conta && perfil.status_conta !== 'ativo'
   if (perfil?.is_admin !== true || contaBloqueada) {
-    return {
-      ok: false,
-      resposta: NextResponse.json({ error: 'Acesso restrito a administradores.' }, { status: 403 }),
-    }
+    return negar(403, 'Acesso restrito a administradores.', 'nao_admin')
   }
 
-  return auth
-}
+  const codigoConfirmado = seloValido((await cookies()).get(COOKIE_SELO_ADMIN)?.value, auth.usuario.id)
+  if (!codigoConfirmado && !opcoes.permitirCodigoPendente) {
+    return negar(403, 'Confirme o código enviado ao seu e-mail para continuar.', 'codigo_pendente')
+  }
 
-/**
- * Confere o PIN Master do painel administrativo. O PIN fica apenas no servidor (ADMIN_PIN, sem NEXT_PUBLIC_).
- * Se a variável não estiver configurada, nenhum PIN é aceito.
- */
-export function pinAdminValido(pin: unknown): boolean {
-  const esperado = process.env.ADMIN_PIN
-  if (!esperado || typeof pin !== 'string') return false
-
-  const a = Buffer.from(pin.trim())
-  const b = Buffer.from(esperado)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
-export function respostaPinInvalido(mensagem = 'Chave Secreta Master inválida. Ação bloqueada.') {
-  const mensagemFinal = process.env.ADMIN_PIN
-    ? mensagem
-    : 'ADMIN_PIN não está configurado no servidor. Defina a variável de ambiente para liberar ações administrativas.'
-  return NextResponse.json({ error: mensagemFinal }, { status: 403 })
+  return { ok: true, usuario: auth.usuario, codigoConfirmado }
 }

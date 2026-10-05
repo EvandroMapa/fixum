@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { FaturaAdmin } from '@/lib/admin-service'
 import { formatarMoeda } from '@/lib/planos'
-import InputSenha from '@/components/ui/InputSenha'
 import styles from './ModalEstornoFatura.module.css'
 import Icone from '@/components/ui/Icone'
 
@@ -17,7 +16,6 @@ interface ModalEstornoFaturaProps {
     motivo: string
     tipoReembolso: string
     justificativa: string
-    adminPin: string
   }) => Promise<void>
 }
 
@@ -38,7 +36,6 @@ export default function ModalEstornoFatura({
   const [motivo, setMotivo] = useState(MOTIVOS_ESTORNO[0])
   const [tipoReembolso, setTipoReembolso] = useState('pix')
   const [justificativa, setJustificativa] = useState('')
-  const [adminPin, setAdminPin] = useState('')
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -54,11 +51,6 @@ export default function ModalEstornoFatura({
       return
     }
 
-    if (!adminPin.trim()) {
-      setErro('Insira o PIN Master / Chave Secreta para autorizar o estorno.')
-      return
-    }
-
     setCarregando(true)
     try {
       await onConfirmarEstorno({
@@ -68,7 +60,6 @@ export default function ModalEstornoFatura({
         motivo,
         tipoReembolso,
         justificativa,
-        adminPin,
       })
       onFechar()
     } catch (err: any) {
@@ -160,22 +151,6 @@ export default function ModalEstornoFatura({
               onChange={(e) => setJustificativa(e.target.value)}
               placeholder="Descreva o motivo detalhado, protocolo de atendimento ou comprovante..."
               className={styles.textarea}
-              required
-            />
-          </div>
-
-          {/* PIN Master de Segurança */}
-          <div className={styles.campo}>
-            <label className={styles.label}>
-              <span>PIN Master / chave secreta Master:</span>
-              <span style={{ color: '#E8836B', fontSize: '0.75rem' }}>* Blindagem de segurança</span>
-            </label>
-            <InputSenha
-              value={adminPin}
-              onChange={(e) => setAdminPin(e.target.value)}
-              placeholder="Chave de segurança master"
-              className={styles.inputPin}
-              estiloDark={true}
               required
             />
           </div>

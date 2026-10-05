@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import PaginaImobiliariaCliente from './PaginaImobiliariaCliente'
 import { criarClienteAdmin } from '@/lib/supabase/admin'
-import { listarMembrosEquipe } from '@/lib/auth/contexto-conta'
+import { listarMembrosEquipe, COLUNAS_PERFIL_PUBLICO, ehContaImobiliaria } from '@/lib/auth/contexto-conta'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -48,11 +48,17 @@ export default async function PaginaImobiliaria({ params }: Props) {
   // 1. Buscar perfil da imobiliária
   const { data: perfil, error: erroPerfil } = await supabase
     .from('perfis')
-    .select('*')
+    .select(COLUNAS_PERFIL_PUBLICO)
     .eq('id', id)
     .maybeSingle()
 
   if (erroPerfil || !perfil) {
+    notFound()
+  }
+
+  // Só contas de imobiliária têm página pública
+  const { data: donoAuth } = await supabase.auth.admin.getUserById(id)
+  if (!ehContaImobiliaria(perfil.tipo, donoAuth?.user?.user_metadata || {})) {
     notFound()
   }
 

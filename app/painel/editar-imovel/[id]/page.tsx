@@ -190,7 +190,7 @@ export default function EditarImovelPage({ params }: { params: Promise<{ id: str
           }
         }
 
-        const ehAdmin = perfil?.is_admin === true || perfil?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin' || user.email === 'admin@fixum.com.br'
+        const ehAdmin = perfil?.is_admin === true || perfil?.tipo_anunciante === 'admin' || user.user_metadata?.tipo === 'admin'
         if (ehAdmin) {
           router.replace('/admin')
           return

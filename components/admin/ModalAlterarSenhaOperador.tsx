@@ -21,7 +21,6 @@ export default function ModalAlterarSenhaOperador({
 }: ModalAlterarSenhaOperadorProps) {
   const [novaSenha, setNovaSenha] = useState('')
   const [justificativa, setJustificativa] = useState('')
-  const [adminPin, setAdminPin] = useState('')
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -41,11 +40,6 @@ export default function ModalAlterarSenhaOperador({
       return
     }
 
-    if (!adminPin.trim()) {
-      setErro('Insira a Chave Secreta Master para autorizar.')
-      return
-    }
-
     setCarregando(true)
     try {
       const res = await fetch('/api/admin/operadores', {
@@ -56,7 +50,6 @@ export default function ModalAlterarSenhaOperador({
           operadorId: operador?.id,
           novaSenha,
           justificativa: justificativa.trim(),
-          adminPin: adminPin.trim(),
           adminEmail: adminEmailLogado,
         }),
       })
@@ -70,7 +63,6 @@ export default function ModalAlterarSenhaOperador({
       onFechar()
       setNovaSenha('')
       setJustificativa('')
-      setAdminPin('')
     } catch (err: any) {
       setErro(err?.message || 'Falha ao alterar senha.')
     } finally {
@@ -129,22 +121,6 @@ export default function ModalAlterarSenhaOperador({
               value={justificativa}
               onChange={(e) => setJustificativa(e.target.value)}
               placeholder="Ex: Rotação periódica ou solicitação do operador"
-              required
-            />
-          </div>
-
-          <div className={styles.grupoCampo} style={{ marginTop: '4px' }}>
-            <label className={styles.label}>
-              <span>Chave secreta Master (PIN de autorização)</span>
-              <span className={styles.obrigatorio}>* Obrigatório</span>
-            </label>
-            <InputSenha
-              name="admin-pin-redefinir-senha"
-              value={adminPin}
-              onChange={(e) => setAdminPin(e.target.value)}
-              placeholder="Digite a chave secreta Master"
-              className={styles.input}
-              estiloDark={true}
               required
             />
           </div>
