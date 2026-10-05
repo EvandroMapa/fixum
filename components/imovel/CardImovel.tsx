@@ -15,9 +15,14 @@ interface Props {
   selecionado?: boolean
   onHover?: (id: string | null) => void
   onSelecionar?: (id: string) => void
+  /** Quando há mapa ao lado (Explorar no computador): o clique no card mostra o imóvel no mapa. */
+  onMostrarNoMapa?: (id: string) => void
 }
 
-export default function CardImovel({ imovel, destacado, selecionado, onHover, onSelecionar }: Props) {
+// Mesmo corte do Explorar: abaixo disso lista e mapa são telas separadas
+const MAPA_AO_LADO = '(min-width: 769px)'
+
+export default function CardImovel({ imovel, destacado, selecionado, onHover, onSelecionar, onMostrarNoMapa }: Props) {
   const fotos = imovel.fotos ?? []
   const [fotoAtiva, setFotoAtiva] = useState(0)
   const [hovering, setHovering] = useState(false)
@@ -75,6 +80,23 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
     onHover?.(null)
   }
 
+  const mapaAoLado = () => Boolean(onMostrarNoMapa) && window.matchMedia(MAPA_AO_LADO).matches
+
+  // Link que cobre o card: com mapa ao lado, mostra no mapa em vez de abrir.
+  // Ctrl/Cmd/Shift ou botão do meio seguem o link normalmente (abrem em nova aba).
+  const handleCliqueLink = (e: React.MouseEvent) => {
+    if (!mapaAoLado() || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return
+    e.preventDefault()
+    onMostrarNoMapa?.(imovel.id)
+  }
+
+  // A foto fica por cima do link; o clique nela (fora das setas e do coração) chega só aqui
+  const handleCliqueCard = (e: React.MouseEvent) => {
+    onSelecionar?.(imovel.id)
+    if ((e.target as HTMLElement).closest('a, button')) return
+    if (mapaAoLado()) onMostrarNoMapa?.(imovel.id)
+  }
+
   const sobConsulta =
     resolverExibicaoPreco(imovel.anunciante?.modo_exibicao_preco, imovel.modo_exibicao_preco, (imovel as any).exibir_preco, imovel.preco) === 'sob_consulta'
   const area = imovel.area || imovel.area_construida
@@ -86,7 +108,7 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
       className={`${styles.card} ${destacado ? styles.destacado : ''} ${selecionado ? styles.selecionado : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={() => onSelecionar?.(imovel.id)}
+      onClick={handleCliqueCard}
     >
       {/* Link que cobre o card inteiro; botões internos ficam por cima */}
       <Link
@@ -94,7 +116,8 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
         className={styles.linkCobertura}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`${imovel.titulo} — ver detalhes`}
+        aria-label={onMostrarNoMapa ? `${imovel.titulo} — mostrar no mapa` : `${imovel.titulo} — ver detalhes`}
+        onClick={handleCliqueLink}
       />
 
       {/* ── FOTOS ── */}
@@ -167,6 +190,7 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
 
       {/* ── INFORMAÇÕES ── */}
       <div className={styles.info}>
+        <div className={styles.linhaPreco}>
         <div className={styles.preco}>
           {sobConsulta ? (
             <span className={styles.sobConsulta}>Preço sob consulta</span>
@@ -180,6 +204,18 @@ export default function CardImovel({ imovel, destacado, selecionado, onHover, on
               ) : null}
             </>
           )}
+        </div>
+        {onMostrarNoMapa && (
+          <Link
+            href={`/imovel/${imovel.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.btnVerImovel}
+            onClick={(e) => e.stopPropagation()}
+          >
+            Ver imóvel <Icone nome="externo" tamanho={14} />
+          </Link>
+        )}
         </div>
 
         <h3 className={styles.titulo}>{imovel.titulo}</h3>

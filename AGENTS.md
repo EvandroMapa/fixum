@@ -45,6 +45,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Ícones: `<Icone nome="..." />` de `components/ui/Icone.tsx` (traço 1,75). **Nunca usar emojis na interface**: nem em botões, títulos, menus, modais, toasts ou notificações.
 - Vermelho Marco (`--marco`) é raro: CTA principal (no máximo um por tela), pin do local exato e ponto do logo.
 - Textos de interface em caixa de frase ("Salvar alterações", não "Salvar Alterações"), sem exclamações em excesso, sempre com acentuação correta.
-- Vocabulário: "Fixar"/"Fixados" no lugar de favoritar/favoritos; "Explorar" no lugar de buscar.
+- Vocabulário: "Favoritos" ("Salvar nos favoritos", "Remover dos favoritos"), com o coração como ícone (`<Icone nome="coracao" />`) e o gesto animado do BotaoFixar; "Explorar" no lugar de buscar.
 - Preços no mapa: `formatarPrecoCurto()` de `lib/utils.ts` ("R$ 450 mil", "R$ 1.800/mês").
 

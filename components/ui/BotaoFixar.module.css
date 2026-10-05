@@ -1,5 +1,5 @@
 /* ============================================
-   BOTÃO FIXAR — gesto assinado da Fixum
+   BOTÃO DE FAVORITOS — gesto assinado da Fixum
    ============================================ */
 .botao {
   position: relative;
@@ -61,7 +61,7 @@
   text-align: left;
 }
 
-/* ── O alfinete ── */
+/* ── O coração ── */
 .alvo {
   position: relative;
   display: grid;
@@ -70,36 +70,22 @@
   height: 24px;
 }
 
-.pino {
+.coracao {
   width: 24px;
   height: 24px;
   overflow: visible;
-  /* a ponta da agulha é o eixo: o alfinete gira e afunda a partir dela */
-  transform-origin: 12px 22.6px;
+  transform-origin: 12px 13px;
 }
 
-.agulha {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.15;
-  stroke-linecap: round;
-}
-
-.haste {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: butt;
-}
-
-.cabeca {
+.coracao path {
   fill: #ffffff;
   stroke: currentColor;
   stroke-width: 1.8;
+  stroke-linejoin: round;
   transition: fill 0.15s ease, stroke 0.15s ease;
 }
 
-.fixado .cabeca {
+.fixado .coracao path {
   fill: var(--marco);
   stroke: var(--marco);
 }
@@ -108,34 +94,34 @@
   color: var(--tinta);
 }
 
-/* Cravar: desce inclinado, entra com um leve achatamento e assenta */
+/* Salvar: o coração pulsa e assenta */
 .cravar {
-  animation: cravar 0.52s cubic-bezier(.2, .9, .25, 1) both;
+  animation: cravar 0.5s cubic-bezier(.2, .9, .25, 1) both;
 }
 
 @keyframes cravar {
-  0% { transform: translate(5px, -9px) rotate(-22deg); opacity: 0.4; }
-  45% { transform: translate(0, 1.5px) rotate(0deg) scale(1.05, 0.88); opacity: 1; }
-  70% { transform: translate(0, -0.6px) scale(0.97, 1.04); }
+  0% { transform: scale(0.55); }
+  45% { transform: scale(1.22); }
+  70% { transform: scale(0.94); }
   100% { transform: none; }
 }
 
-/* Soltar: sai rápido para cima */
+/* Remover: encolhe rápido e volta */
 .soltar {
-  animation: soltar 0.32s ease-out both;
+  animation: soltar 0.3s ease-out both;
 }
 
 @keyframes soltar {
   0% { transform: none; }
-  40% { transform: translate(1px, -5px) rotate(10deg); opacity: 0.6; }
+  40% { transform: scale(0.78); opacity: 0.6; }
   100% { transform: none; opacity: 1; }
 }
 
-/* Curvas de nível que se espalham a partir da ponta da agulha */
+/* Curvas de nível que se espalham a partir do coração */
 .aneis {
   position: absolute;
   left: 50%;
-  top: 92%;
+  top: 54%;
   width: 46px;
   height: 46px;
   margin: -23px 0 0 -23px;
@@ -157,7 +143,7 @@
   100% { transform: scale(2); opacity: 0; }
 }
 
-/* Carimbo "fixado" ao lado do botão */
+/* Carimbo "favorito" ao lado do botão */
 .carimbo {
   position: absolute;
   right: calc(100% + 6px);

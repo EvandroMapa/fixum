@@ -171,6 +171,51 @@
   flex: 1;
 }
 
+.linhaPreco {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Abre a página do imóvel em nova aba; fica acima do link que cobre o card */
+.btnVerImovel {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  background: var(--cor-superficie);
+  color: var(--tinta);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background var(--transicao), border-color var(--transicao);
+}
+
+.btnVerImovel:hover {
+  background: var(--papel);
+  border-color: var(--pedra-300);
+}
+
+.btnVerImovel:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 2px;
+}
+
+/* No celular a lista e o mapa são telas separadas: tocar no card já abre o imóvel */
+@media (max-width: 768px) {
+  .btnVerImovel {
+    display: none;
+  }
+}
+
 .preco {
   display: flex;
   align-items: baseline;

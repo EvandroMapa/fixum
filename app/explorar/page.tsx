@@ -26,6 +26,7 @@ function ExplorarConteudo() {
   const [carregando, setCarregando] = useState(true)
   const [imovelHover, setImovelHover] = useState<string | null>(null)
   const [imovelSelecionado, setImovelSelecionado] = useState<string | null>(null)
+  const [focoNoMapa, setFocoNoMapa] = useState<{ id: string; vez: number } | null>(null)
   const [totalResultados, setTotalResultados] = useState(0)
   const [vistaAtiva, setVistaAtiva] = useState<'lista' | 'mapa'>(() => {
     const param = searchParams.get('vista')
@@ -92,7 +93,14 @@ function ExplorarConteudo() {
 
   const supabase = createClient()
 
+  // Cada busca ganha um número; só a mais recente pode mexer na lista e no mapa.
+  // Sem isso, ao dar zoom rápido, uma resposta antiga (de outra área) chegava por último,
+  // sobrescrevia a lista e imóveis sumiam do mapa.
+  const ultimaBuscaRef = useRef(0)
+
   const buscarImoveis = useCallback(async (filtrosAtivos: TFiltros, bounds?: mapboxgl.LngLatBounds | null) => {
+    const estaBusca = ++ultimaBuscaRef.current
+    const ehAtual = () => estaBusca === ultimaBuscaRef.current
     setCarregando(true)
     setPrecisaLoginFavoritos(false)
     try {
@@ -101,6 +109,7 @@ function ExplorarConteudo() {
       if (isFavoritos) {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session?.user) {
+          if (!ehAtual()) return
           setPrecisaLoginFavoritos(true)
           setImoveis([])
           setTotalResultados(0)
@@ -116,6 +125,7 @@ function ExplorarConteudo() {
         idsFavoritos = (favs ?? []).map((f: any) => f.imovel_id).filter(Boolean)
 
         if (idsFavoritos.length === 0) {
+          if (!ehAtual()) return
           setImoveis([])
           setTotalResultados(0)
           setCarregando(false)
@@ -160,6 +170,7 @@ function ExplorarConteudo() {
         if (idsFavoritos.length > 0) {
           query = query.in('id', idsFavoritos)
         } else {
+          if (!ehAtual()) return
           setImoveis([])
           setTotalResultados(0)
           setCarregando(false)
@@ -274,12 +285,13 @@ function ExplorarConteudo() {
         })
       }
 
+      if (!ehAtual()) return
       setImoveis(imoveisComFotos)
       setTotalResultados(imoveisComFotos.length)
     } catch (err) {
       console.error('Erro ao buscar imoveis:', err)
     } finally {
-      setCarregando(false)
+      if (ehAtual()) setCarregando(false)
     }
   }, [supabase, isFavoritos, imobiliariaId])
 
@@ -343,9 +355,13 @@ function ExplorarConteudo() {
       }
     }
 
+    // Nos favoritos a lista não depende da área do mapa: mexer no mapa não refaz a busca
+    // (refazer fazia a lista piscar em "Buscando imóveis…" a cada zoom)
+    if (isFavoritos) return
+
     // Busca sempre garantindo os bounds reais da tela
     buscarImoveis(filtros, bounds)
-  }, [filtros, buscarImoveis])
+  }, [filtros, buscarImoveis, isFavoritos])
 
   function handleFiltrosChange(novosFiltros: TFiltros) {
     setFiltros(novosFiltros)
@@ -392,6 +408,11 @@ function ExplorarConteudo() {
       const el = document.getElementById(`card-imovel-${id}`)
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }, 50)
+  }, [])
+
+  const handleMostrarNoMapa = useCallback((id: string) => {
+    setImovelSelecionado(id)
+    setFocoNoMapa((f) => ({ id, vez: (f?.vez ?? 0) + 1 }))
   }, [])
 
   function handleLimparFiltroImobiliaria() {
@@ -459,7 +480,7 @@ function ExplorarConteudo() {
               <span className={styles.carregando}>Buscando imóveis...</span>
             ) : isFavoritos ? (
               <span className={styles.resultados} style={{ color: '#8F2812' }}>
-                <strong><Icone nome="fixar" tamanho={16} /> {totalResultados}</strong> {totalResultados === 1 ? 'imóvel fixado' : 'imóveis fixados'}
+                <strong><Icone nome="coracao" tamanho={16} /> {totalResultados}</strong> {totalResultados === 1 ? 'imóvel favorito' : 'imóveis favoritos'}
               </span>
             ) : imobiliariaId ? (
               <span className={styles.resultados} style={{ color: '#22302A' }}>
@@ -506,7 +527,7 @@ function ExplorarConteudo() {
           ) : precisaLoginFavoritos ? (
             <div className={styles.semResultados}>
               <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}><Icone nome="cadeado" tamanho={34} /></span>
-              <h3>Entre para ver seus imóveis fixados</h3>
+              <h3>Entre para ver seus favoritos</h3>
               <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
                 Os imóveis que você fixa ficam guardados na sua conta, em qualquer dispositivo.
               </p>
@@ -521,10 +542,10 @@ function ExplorarConteudo() {
             </div>
           ) : isFavoritos && imoveis.length === 0 ? (
             <div className={styles.semResultados}>
-              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}><Icone nome="fixar" tamanho={34} /></span>
-              <h3>Nenhum imóvel fixado ainda</h3>
+              <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '0.5rem' }}><Icone nome="coracao" tamanho={34} /></span>
+              <h3>Nenhum favorito ainda</h3>
               <p style={{ maxWidth: '420px', margin: '0 auto 1rem', lineHeight: '1.5' }}>
-                Quando um imóvel chamar sua atenção, toque no alfinete <Icone nome="fixar" tamanho={16} /> do card ou do mapa. Ele aparece aqui para você comparar depois.
+                Quando um imóvel chamar sua atenção, toque no coração <Icone nome="coracao" tamanho={16} /> do card ou do mapa para salvar nos favoritos. Ele aparece aqui para você comparar depois.
               </p>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                 <Link href="/explorar" className="btn btn-primario btn-sm">
@@ -566,6 +587,7 @@ function ExplorarConteudo() {
                   selecionado={imovelSelecionado === imovel.id}
                   onHover={setImovelHover}
                   onSelecionar={handleSelecionarImovel}
+                  onMostrarNoMapa={handleMostrarNoMapa}
                 />
               ))}
             </div>
@@ -579,6 +601,7 @@ function ExplorarConteudo() {
             imovelHover={imovelHover}
             imovelSelecionado={imovelSelecionado}
             onSelecionarImovel={handleSelecionarImovel}
+            focarImovel={focoNoMapa}
             onPesquisarNaArea={handlePesquisarNaArea}
             voarPara={voarPara}
             centroInicial={centroInicial}

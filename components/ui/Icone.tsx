@@ -12,6 +12,7 @@ const CAMINHOS = {
   mapa: '<path d="M3 6.5L9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5M15 6.5V20"/>',
   // alfinete de mapa — o mesmo do "i" do logotipo
   fixar: '<circle cx="12" cy="7.6" r="4.6"/><path d="M12 12.2v6.4"/><path d="M12 18.6v3.4" stroke-width="1.1"/>',
+  coracao: '<path d="M12 19.6s-7.5-4.7-7.5-10.2A4.2 4.2 0 0 1 12 6.8a4.2 4.2 0 0 1 7.5 2.6c0 5.5-7.5 10.2-7.5 10.2z"/>',
   local: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
   alvo: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
   mira: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5V6M12 18v3.5M2.5 12H6M18 12h3.5"/><circle cx="12" cy="12" r="7.5"/>',
@@ -30,6 +31,7 @@ const CAMINHOS = {
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   compartilhar: '<path d="M12 15V3M7.5 7.5L12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
   copiar: '<rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2"/><path d="M15.5 8.5V5.5A1.5 1.5 0 0 0 14 4H5.5A1.5 1.5 0 0 0 4 5.5V14a1.5 1.5 0 0 0 1.5 1.5h3"/>',
+  externo: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   editar: '<path d="M4 20h4.5L19.5 9 15 4.5 4 15.5zM13 6.5l4.5 4.5"/>',
   lixeira: '<path d="M4.5 6.5h15M9.5 6.5V4.5h5v2M6.5 6.5l1 13a1.5 1.5 0 0 0 1.5 1.4h6a1.5 1.5 0 0 0 1.5-1.4l1-13M10 10.5v6M14 10.5v6"/>',
@@ -114,6 +116,7 @@ export function ehNomeIcone(valor: unknown): valor is NomeIcone {
 
 const FIXADO =
   '<circle cx="12" cy="7.6" r="4.6" fill="currentColor"/><path d="M12 12.2v6.4"/><path d="M12 18.6v3.4" stroke-width="1.1"/>'
+const CORACAO_CHEIO = '<path d="M12 19.6s-7.5-4.7-7.5-10.2A4.2 4.2 0 0 1 12 6.8a4.2 4.2 0 0 1 7.5 2.6c0 5.5-7.5 10.2-7.5 10.2z" fill="currentColor"/>'
 const LOCAL_PREENCHIDO =
   '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" fill="currentColor"/>' +
   '<circle cx="12" cy="10" r="2.3" fill="#fff" stroke="none"/>'
@@ -127,14 +130,18 @@ interface Props {
   nome: NomeIcone
   tamanho?: number
   className?: string
-  /** Preenche o ícone "fixar" (estado fixado). */
+  /** Preenche o ícone ("coracao" nos favoritos, "fixar", "local"). */
   preenchido?: boolean
   titulo?: string
   espessura?: number
 }
 
 export default function Icone({ nome, tamanho = 20, className, preenchido, titulo, espessura = 1.75 }: Props) {
-  const conteudo = preenchido && nome === 'fixar' ? FIXADO : preenchido && nome === 'local' ? LOCAL_PREENCHIDO : CAMINHOS[nome] ?? ''
+  const conteudo =
+    preenchido && nome === 'coracao' ? CORACAO_CHEIO
+    : preenchido && nome === 'fixar' ? FIXADO
+    : preenchido && nome === 'local' ? LOCAL_PREENCHIDO
+    : CAMINHOS[nome] ?? ''
   return (
     <svg
       width={tamanho}

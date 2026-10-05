@@ -5,10 +5,10 @@ import { useFavorito } from '@/hooks/useFavorito'
 import styles from './BotaoFixar.module.css'
 
 /*
- * "Fixar" — o gesto assinado da Fixum (como o "yeah!" do Enjoei).
- * O alfinete é o mesmo do "i" do logotipo. Ao fixar: ele desce e se crava,
- * curvas de nível se espalham a partir da ponta e um carimbo "fixado" aparece.
- * Ao desafixar, o alfinete só sai. Respeita prefers-reduced-motion (via CSS).
+ * Favoritar — o gesto assinado da Fixum (como o "yeah!" do Enjoei).
+ * Ao salvar: o coração pulsa, curvas de nível se espalham a partir dele
+ * e um carimbo "favorito" aparece. Ao remover, ele só encolhe e volta.
+ * Respeita prefers-reduced-motion (via CSS).
  */
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
   className?: string
 }
 
-// Curvas irregulares (anéis de "curva de nível") ao redor da ponta da agulha
+// Curvas irregulares (anéis de "curva de nível") ao redor do coração
 const ANEIS = [
   'M12 7.2c2.9-.3 5.4 1.4 5.1 4.6-.3 3-2.7 5.1-5.6 4.9-2.8-.2-4.9-2.4-4.6-5.2.3-2.6 2.3-4 5.1-4.3z',
   'M11.6 3.4c5-.4 9.3 2.6 8.8 8-.5 5.1-4.6 8.7-9.6 8.3-4.8-.4-8.3-4.1-7.8-8.8.5-4.4 3.9-7.1 8.6-7.5z',
@@ -83,7 +83,7 @@ function AlfineteFixar({ favoritado, carregando = false, onAlternar, variante = 
     onAlternar()
   }
 
-  const rotulo = favoritado ? 'Fixado' : 'Fixar'
+  const rotulo = favoritado ? 'Favorito' : 'Favoritar'
 
   return (
     <button
@@ -92,8 +92,8 @@ function AlfineteFixar({ favoritado, carregando = false, onAlternar, variante = 
       onClick={aoClicar}
       disabled={carregando}
       aria-pressed={favoritado}
-      aria-label={favoritado ? 'Desafixar imóvel' : 'Fixar imóvel para comparar depois'}
-      title={favoritado ? 'Desafixar' : 'Fixar para comparar depois'}
+      aria-label={favoritado ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+      title={favoritado ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
     >
       <span className={styles.alvo} aria-hidden="true">
         {animacao === 'cravar' && (
@@ -104,17 +104,12 @@ function AlfineteFixar({ favoritado, carregando = false, onAlternar, variante = 
           </svg>
         )}
         <svg
-          key={`pino-${rodada}`}
-          className={`${styles.pino} ${animacao === 'cravar' ? styles.cravar : ''} ${animacao === 'soltar' ? styles.soltar : ''}`}
+          key={`coracao-${rodada}`}
+          className={`${styles.coracao} ${animacao === 'cravar' ? styles.cravar : ''} ${animacao === 'soltar' ? styles.soltar : ''}`}
           viewBox="0 0 24 24"
           onAnimationEnd={() => setAnimacao((a) => (a === 'soltar' ? null : a))}
         >
-          {/* agulha */}
-          <path className={styles.agulha} d="M12 17.5L12 22.6" />
-          {/* haste */}
-          <path className={styles.haste} d="M12 12.4V17.8" />
-          {/* cabeça — a mesma do "i" do logotipo */}
-          <circle className={styles.cabeca} cx="12" cy="7.6" r="4.9" />
+          <path d="M12 19.6s-7.5-4.7-7.5-10.2A4.2 4.2 0 0 1 12 6.8a4.2 4.2 0 0 1 7.5 2.6c0 5.5-7.5 10.2-7.5 10.2z" />
         </svg>
       </span>
 
@@ -122,7 +117,7 @@ function AlfineteFixar({ favoritado, carregando = false, onAlternar, variante = 
 
       {animacao === 'cravar' && variante === 'flutuante' && (
         <span key={`carimbo-${rodada}`} className={styles.carimbo} aria-hidden="true">
-          fixado
+          favorito
         </span>
       )}
     </button>

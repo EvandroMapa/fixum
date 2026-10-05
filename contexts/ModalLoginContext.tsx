@@ -106,19 +106,19 @@ function ModalLoginInterno({
           aria-label="Fechar"
         ><Icone nome="fechar" tamanho={18} /></button>
 
-        {/* Ícone de fixar */}
+        {/* Ícone de favoritos */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{
             width: '56px', height: '56px', borderRadius: '50%',
             background: '#FBE6DF', color: '#D4401F',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 14px',
-          }}><Icone nome="fixar" tamanho={26} /></div>
+          }}><Icone nome="coracao" tamanho={26} /></div>
           <h2 style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em', color: '#16201C', margin: '0 0 6px' }}>
-            {mensagem ?? 'Entre para fixar imóveis'}
+            {mensagem ?? 'Entre para salvar seus favoritos'}
           </h2>
           <p style={{ fontSize: '14px', color: '#7A7264', margin: 0 }}>
-            Fixe imóveis para comparar depois e acesse de qualquer dispositivo.
+            Salve imóveis nos favoritos para comparar depois e acesse de qualquer aparelho.
           </p>
         </div>
 

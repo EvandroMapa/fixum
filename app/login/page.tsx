@@ -75,7 +75,7 @@ function LoginConteudo() {
           </div>
 
           <h2>Seu próximo lugar começa <em>no mapa.</em></h2>
-          <p>Entre para ver seus imóveis fixados, acompanhar contatos e gerenciar seus anúncios.</p>
+          <p>Entre para ver seus favoritos, acompanhar contatos e gerenciar seus anúncios.</p>
 
           {/* Card Mockup Flutuante com Efeito Glassmorphism */}
           <div className={styles.cardPreviewGlass}>

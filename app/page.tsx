@@ -47,7 +47,7 @@ const CONTRASTE: { antes: string; fixum: string }[] = [
   },
   {
     antes: 'Dez abas abertas para comparar as opções.',
-    fixum: 'Os imóveis fixados juntos no mapa, para comparar de uma vez.',
+    fixum: 'Seus favoritos juntos no mapa, para comparar de uma vez.',
   },
   {
     antes: 'Formulário de contato e espera por um retorno.',
@@ -99,7 +99,7 @@ export default async function HomePage() {
   const perguntas: { p: string; r: React.ReactNode }[] = [
     {
       p: 'Preciso pagar ou criar conta para procurar imóvel?',
-      r: 'Não. Explorar o mapa, ver os imóveis e falar com os anunciantes é grátis, e não precisa de conta. A conta só serve para fixar imóveis e encontrá-los depois em qualquer aparelho.',
+      r: 'Não. Explorar o mapa, ver os imóveis e falar com os anunciantes é grátis, e não precisa de conta. A conta só serve para salvar favoritos e encontrá-los depois em qualquer aparelho.',
     },
     {
       p: 'Como eu falo com quem anuncia?',
@@ -262,13 +262,13 @@ export default async function HomePage() {
               </div>
             </article>
 
-            {/* 02 — Fixar */}
+            {/* 02 — Favoritos */}
             <article className={`${styles.recurso} ${styles.recursoInvertido}`}>
               <div className={styles.recursoTexto}>
                 <span className={styles.recursoNum}>02</span>
-                <h3>Fixe o que gostou. Compare com calma.</h3>
+                <h3>Salve nos favoritos. Compare com calma.</h3>
                 <p>
-                  Um toque no alfinete guarda o imóvel. Depois, veja todos os fixados juntos no mapa e descubra
+                  Um toque no coração salva o imóvel nos favoritos. Depois, veja todos juntos no mapa e descubra
                   qual combina mais com a sua rotina.
                 </p>
               </div>
@@ -286,7 +286,7 @@ export default async function HomePage() {
                     </div>
                   </div>
                   <p className={styles.demoDica}>
-                    <Icone nome="fixar" tamanho={16} /> Experimente: toque no alfinete da foto.
+                    <Icone nome="coracao" tamanho={16} /> Experimente: toque no coração da foto.
                   </p>
                 </div>
               </div>
@@ -380,7 +380,7 @@ export default async function HomePage() {
                 </div>
                 <div className={styles.painelNumeros}>
                   <div><strong>248</strong><span>visualizações</span></div>
-                  <div><strong>12</strong><span>fixados</span></div>
+                  <div><strong>12</strong><span>favoritos</span></div>
                   <div><strong>5</strong><span>contatos</span></div>
                 </div>
                 <div className={styles.painelGrafico}>

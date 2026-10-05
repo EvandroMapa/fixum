@@ -18,6 +18,8 @@ interface Props {
   imovelHover?: string | null
   imovelSelecionado?: string | null
   onSelecionarImovel?: (id: string) => void
+  /** Pedido para levar o mapa até um imóvel e abrir a prévia; `vez` repete o pedido para o mesmo imóvel */
+  focarImovel?: { id: string; vez: number } | null
   onMapaMoveu?: (bounds: mapboxgl.LngLatBounds) => void
   onPesquisarNaArea?: (bounds: mapboxgl.LngLatBounds, isInteracaoUsuario?: boolean) => void
   centroInicial?: [number, number]
@@ -93,6 +95,7 @@ export default function MapaExplorar({
   imovelHover,
   imovelSelecionado,
   onSelecionarImovel,
+  focarImovel,
   onMapaMoveu,
   onPesquisarNaArea,
   centroInicial,
@@ -346,11 +349,22 @@ export default function MapaExplorar({
     }
   }, [centroInicial, imoveis, mapaPronto, carregando])
 
-  // Quando o modo de favoritos estiver ativo ou a lista de favoritos mudar: enquadrar todos os favoritos no mapa
+  // Ao entrar no modo de favoritos (ou quando um favorito entra/sai): enquadrar todos no mapa.
+  // Cada zoom/arrasto refaz a busca e devolve a mesma lista num array novo; sem comparar os IDs,
+  // o mapa reenquadrava a cada movimento e não deixava a pessoa dar zoom.
+  const favoritosEnquadradosRef = useRef<string | null>(null)
   useEffect(() => {
-    if (!mapaPronto || !mapaRef.current || !isFavoritos) return
+    if (!isFavoritos) {
+      favoritosEnquadradosRef.current = null
+      return
+    }
+    if (!mapaPronto || !mapaRef.current) return
     const imoveisValidos = imoveis.filter((i) => i.latitude && i.longitude)
     if (imoveisValidos.length === 0) return
+
+    const chave = imoveisValidos.map((i) => i.id).sort().join(',')
+    if (favoritosEnquadradosRef.current === chave) return
+    favoritosEnquadradosRef.current = chave
 
     const bounds = new mapboxgl.LngLatBounds()
     imoveisValidos.forEach((i) => bounds.extend([i.longitude!, i.latitude!]))
@@ -455,7 +469,7 @@ export default function MapaExplorar({
     return () => window.removeEventListener('fixum:favoritoAtualizado', handleFavoritoAtualizado)
   }, [])
 
-  // Ícone "fixar": o alfinete do logotipo, desenhado de forma síncrona para não piscar
+  // Coração dos favoritos, desenhado de forma síncrona para não piscar
   function criarSvgHeart(cheio: boolean): SVGSVGElement {
     const ns = 'http://www.w3.org/2000/svg'
     const svg = document.createElementNS(ns, 'svg')
@@ -464,18 +478,14 @@ export default function MapaExplorar({
     svg.setAttribute('viewBox', '0 0 24 24')
     svg.setAttribute('fill', 'none')
     svg.setAttribute('stroke', 'currentColor')
-    svg.setAttribute('stroke-linecap', 'round')
-    const cabeca = document.createElementNS(ns, 'circle')
-    cabeca.setAttribute('cx', '12'); cabeca.setAttribute('cy', '7.6'); cabeca.setAttribute('r', '4.8')
-    cabeca.setAttribute('stroke-width', '2')
-    cabeca.setAttribute('fill', cheio ? '#D4401F' : '#ffffff')
-    if (cheio) cabeca.setAttribute('stroke', '#D4401F')
-    const haste = document.createElementNS(ns, 'path')
-    haste.setAttribute('d', 'M12 12.4v6.2'); haste.setAttribute('stroke-width', '2.2'); haste.setAttribute('stroke-linecap', 'butt')
-    const agulha = document.createElementNS(ns, 'path')
-    agulha.setAttribute('d', 'M12 18.6v3.6'); agulha.setAttribute('stroke-width', '1.2')
-    svg.append(agulha, haste, cabeca)
-    if (cheio) svg.classList.add(styles.pinoCravando)
+    svg.setAttribute('stroke-linejoin', 'round')
+    const coracao = document.createElementNS(ns, 'path')
+    coracao.setAttribute('d', 'M12 19.6s-7.5-4.7-7.5-10.2A4.2 4.2 0 0 1 12 6.8a4.2 4.2 0 0 1 7.5 2.6c0 5.5-7.5 10.2-7.5 10.2z')
+    coracao.setAttribute('stroke-width', '2')
+    coracao.setAttribute('fill', cheio ? 'var(--marco)' : '#ffffff')
+    if (cheio) coracao.setAttribute('stroke', 'var(--marco)')
+    svg.append(coracao)
+    if (cheio) svg.classList.add(styles.coracaoPulsando)
     return svg
   }
 
@@ -512,8 +522,8 @@ export default function MapaExplorar({
         // Coração no marcador — já nasce perfeitamente preenchido e visível se for favorito (sem piscar!)
         const btnHeart = document.createElement('button')
         btnHeart.type = 'button'
-        btnHeart.title = isFavoritado ? 'Desafixar' : 'Fixar'
-        btnHeart.setAttribute('aria-label', isFavoritado ? 'Desafixar imóvel' : 'Fixar imóvel')
+        btnHeart.title = isFavoritado ? 'Remover dos favoritos' : 'Salvar nos favoritos'
+        btnHeart.setAttribute('aria-label', isFavoritado ? 'Remover dos favoritos' : 'Salvar nos favoritos')
         btnHeart.dataset.favoritado = String(isFavoritado)
         btnHeart.className = styles.marcadorFixar
         btnHeart.style.opacity = isFavoritado ? '1' : '0'
@@ -537,7 +547,7 @@ export default function MapaExplorar({
             const { data: { session } } = await sb.auth.getSession()
             if (!session?.user) {
               window.dispatchEvent(new CustomEvent('fixum:abrirModalLogin', {
-                detail: { mensagem: 'Entre para fixar imóveis e comparar depois.' }
+                detail: { mensagem: 'Entre para salvar favoritos e comparar depois.' }
               }))
               return
             }
@@ -706,6 +716,40 @@ export default function MapaExplorar({
       reagruparRef.current()
     }
   }, [imovelHover, imovelSelecionado])
+
+  // Clique no card da lista: leva o mapa até o imóvel e abre a prévia dele.
+  // Não refaz a busca (a lista continua a mesma); o próximo arrasto do usuário busca normalmente.
+  const focoAtualRef = useRef(focarImovel)
+  useEffect(() => {
+    focoAtualRef.current = focarImovel
+    const mapa = mapaRef.current
+    if (!mapaPronto || !mapa || !focarImovel) return
+    const item = marcadoresMapRef.current.get(focarImovel.id)
+    if (!item) return
+
+    marcadoresMapRef.current.forEach(({ popup, marcador }, id) => {
+      if (id !== focarImovel.id && popup.isOpen()) marcador.togglePopup()
+    })
+
+    isAnimandoProgramaticoRef.current = true
+    mapa.easeTo({
+      center: item.marcador.getLngLat(),
+      zoom: Math.max(mapa.getZoom(), 15),
+      offset: [0, 140], // pin abaixo do centro, para a prévia caber acima dele
+      duration: 700,
+      essential: true,
+    })
+    mapa.once('moveend', () => {
+      // Outro card clicado no meio do caminho: quem abre a prévia é o pedido mais novo
+      if (focoAtualRef.current !== focarImovel) return
+      isAnimandoProgramaticoRef.current = false
+      marcadoresMapRef.current.forEach(({ popup, marcador }, id) => {
+        if (id !== focarImovel.id && popup.isOpen()) marcador.togglePopup()
+      })
+      const atual = marcadoresMapRef.current.get(focarImovel.id)
+      if (atual && !atual.popup.isOpen()) atual.marcador.togglePopup()
+    })
+  }, [focarImovel, mapaPronto])
 
   // Sincronizar seleção externa no mobile
   useEffect(() => {

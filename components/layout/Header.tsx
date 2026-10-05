@@ -189,7 +189,7 @@ function HeaderConteudo() {
             </Link>
           )}
 
-          {/* Fixados (favoritos) — só para usuário logado e fora da página do imóvel */}
+          {/* Favoritos — só para usuário logado e fora da página do imóvel */}
           {usuario && !naPaginaImovel && (() => {
             const hrefFavoritos = isFavoritosAtivo
               ? (negociacaoAtual ? `/explorar?negociacao=${negociacaoAtual}` : '/explorar')
@@ -201,14 +201,14 @@ function HeaderConteudo() {
                 className={`${styles.btnFavoritos} ${isFavoritosAtivo ? styles.btnFavoritosAtivo : ''}`}
                 title={
                   isFavoritosAtivo
-                    ? 'Mostrando só os fixados. Clique para ver todos.'
+                    ? 'Mostrando só os favoritos. Clique para ver todos.'
                     : totalFavoritos > 0
-                    ? `${totalFavoritos} ${totalFavoritos === 1 ? 'imóvel fixado' : 'imóveis fixados'}`
-                    : 'Seus imóveis fixados aparecem aqui'
+                    ? `${totalFavoritos} ${totalFavoritos === 1 ? 'imóvel favorito' : 'imóveis favoritos'}`
+                    : 'Seus favoritos aparecem aqui'
                 }
-                aria-label="Imóveis fixados"
+                aria-label="Favoritos"
               >
-                <Icone nome="fixar" tamanho={20} preenchido={isFavoritosAtivo} />
+                <Icone nome="coracao" tamanho={20} preenchido={isFavoritosAtivo} />
                 {totalFavoritos > 0 && <span className={styles.badgeFavoritos}>{totalFavoritos}</span>}
               </Link>
             )
@@ -246,7 +246,7 @@ function HeaderConteudo() {
                         <Icone nome="painel" tamanho={18} /> Meu painel
                       </Link>
                       <Link href="/explorar?favoritos=true" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
-                        <Icone nome="fixar" tamanho={18} /> Fixados
+                        <Icone nome="coracao" tamanho={18} /> Favoritos
                       </Link>
                       <Link href="/painel?aba=plano" className={styles.dropdownItem} onClick={() => setDropdownAberto(false)}>
                         <Icone nome="cartao" tamanho={18} /> Meu plano
@@ -286,7 +286,7 @@ function HeaderConteudo() {
             <Link href="/explorar?negociacao=aluguel" onClick={() => setMenuAberto(false)}><Icone nome="chave" /> Alugar</Link>
             <Link href="/explorar" onClick={() => setMenuAberto(false)}><Icone nome="mapa" /> Explorar o mapa</Link>
             {usuario && !isAdmin && (
-              <Link href="/explorar?favoritos=true" onClick={() => setMenuAberto(false)}><Icone nome="fixar" /> Fixados</Link>
+              <Link href="/explorar?favoritos=true" onClick={() => setMenuAberto(false)}><Icone nome="coracao" /> Favoritos</Link>
             )}
           </nav>
           <div className={styles.menuMobileGrupo}>

@@ -52,7 +52,7 @@ export function useFavorito(imovelId: string) {
       const { data: { session } } = await supabase.auth.getSession()
 
       if (!session?.user) {
-        abrirModalLogin('Entre para fixar imóveis e comparar depois.')
+        abrirModalLogin('Entre para salvar favoritos e comparar depois.')
         return
       }
 
