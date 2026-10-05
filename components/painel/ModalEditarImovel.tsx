@@ -572,6 +572,11 @@ export default function ModalEditarImovel({
 
       if (erroImovel) throw erroImovel
 
+      // Recalcula os lugares próximos em segundo plano (o endereço pode ter mudado)
+      if (latNum && lngNum) {
+        fetch(`/api/imoveis/entorno?lat=${latNum}&lng=${lngNum}&categoria=todas`).catch(() => {})
+      }
+
       // 1. Deletar fotos removidas
       if (fotosRemovidas.length > 0) {
         await supabase.from('fotos_imovel').delete().in('id', fotosRemovidas)

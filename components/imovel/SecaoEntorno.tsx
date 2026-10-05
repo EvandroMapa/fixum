@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { type PontoInteresse } from '@/lib/types'
 import styles from './SecaoEntorno.module.css'
 import Icone, { ehNomeIcone } from '@/components/ui/Icone'
@@ -33,7 +33,8 @@ export default function SecaoEntorno({
 }: Props) {
   const [categoriaAtiva, setCategoriaAtiva] = useState('supermercados')
   const [poisPorCategoria, setPoisPorCategoria] = useState<Record<string, PontoInteresse[]>>({})
-  const [carregando, setCarregando] = useState(false)
+  // 'todas': uma requisição traz as 8 categorias. 'categoria': reserva, uma por vez.
+  const [modo, setModo] = useState<'todas' | 'categoria'>('todas')
 
   const numLat = typeof lat === 'string' ? parseFloat(lat) : Number(lat)
   const numLng = typeof lng === 'string' ? parseFloat(lng) : Number(lng)
@@ -47,53 +48,61 @@ export default function SecaoEntorno({
     numLng >= -180 &&
     numLng <= 180
 
-  const carregarPoisCategoria = useCallback(
-    async (cat: string) => {
-      if (!coordenadasValidas) return
-
-      // Se já temos em cache local no estado, apenas atualizamos o mapa
-      if (poisPorCategoria[cat]) {
-        onPoisCarregados?.(poisPorCategoria[cat])
-        return
-      }
-
-      try {
-        setCarregando(true)
-        const res = await fetch(
-          `/api/imoveis/entorno?lat=${numLat}&lng=${numLng}&categoria=${cat}`
-        )
-        if (res.ok) {
-          const json = await res.json()
-          const lista = json.pois || []
-          setPoisPorCategoria((prev) => ({ ...prev, [cat]: lista }))
-          onPoisCarregados?.(lista)
-        }
-      } catch (err) {
-        console.error('Erro ao buscar POIs da categoria:', cat, err)
-      } finally {
-        setCarregando(false)
-      }
-    },
-    [numLat, numLng, coordenadasValidas, poisPorCategoria, onPoisCarregados]
-  )
-
-  // Carregar categoria inicial na montagem
+  // Uma requisição traz todas as categorias; trocar de categoria fica instantâneo
   useEffect(() => {
-    if (coordenadasValidas) {
-      carregarPoisCategoria(categoriaAtiva)
+    if (!coordenadasValidas) return
+    let cancelado = false
+    fetch(`/api/imoveis/entorno?lat=${numLat}&lng=${numLng}&categoria=todas`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (cancelado) return
+        if (json?.categorias) {
+          setPoisPorCategoria(json.categorias)
+        } else {
+          setModo('categoria')
+        }
+      })
+      .catch(() => {
+        if (!cancelado) setModo('categoria')
+      })
+    return () => {
+      cancelado = true
     }
-  }, [coordenadasValidas, categoriaAtiva])
+  }, [coordenadasValidas, numLat, numLng])
+
+  // Reserva: se a consulta única falhar, busca só a categoria aberta
+  useEffect(() => {
+    if (modo !== 'categoria' || poisPorCategoria[categoriaAtiva]) return
+    let cancelado = false
+    fetch(`/api/imoveis/entorno?lat=${numLat}&lng=${numLng}&categoria=${categoriaAtiva}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (!cancelado) setPoisPorCategoria((prev) => ({ ...prev, [categoriaAtiva]: json?.pois ?? [] }))
+      })
+      .catch((err) => {
+        console.error('Erro ao buscar POIs da categoria:', categoriaAtiva, err)
+        if (!cancelado) setPoisPorCategoria((prev) => ({ ...prev, [categoriaAtiva]: [] }))
+      })
+    return () => {
+      cancelado = true
+    }
+  }, [modo, categoriaAtiva, poisPorCategoria, numLat, numLng])
+
+  // Mantém os pontos do mapa em sincronia com a categoria aberta
+  const listaAtiva = poisPorCategoria[categoriaAtiva]
+  useEffect(() => {
+    if (listaAtiva) onPoisCarregados?.(listaAtiva)
+  }, [listaAtiva, onPoisCarregados])
 
   function handleTrocarCategoria(catId: string) {
     setCategoriaAtiva(catId)
-    carregarPoisCategoria(catId)
   }
 
   if (!coordenadasValidas) {
     return null
   }
 
-  const poisAtuais = poisPorCategoria[categoriaAtiva] || []
+  const poisAtuais = listaAtiva || []
   const catConfig = CATEGORIAS.find((c) => c.id === categoriaAtiva) || CATEGORIAS[0]
 
   return (
@@ -102,7 +111,7 @@ export default function SecaoEntorno({
         <div>
           <h2 className={styles.tituloSecao}>O que tem no entorno?</h2>
           <p className={styles.subtituloSecao}>
-            Conveniências reais calculadas a partir deste endereço (distância e tempo a pé)
+            Lugares reais por perto deste endereço, com a distância e o tempo a pé
           </p>
         </div>
       </div>
@@ -130,7 +139,8 @@ export default function SecaoEntorno({
       </div>
 
       {/* ── LISTA DE POIs DA CATEGORIA ATIVA ── */}
-      {carregando ? (
+      {/* Sem a lista desta categoria ainda = carregando */}
+      {!listaAtiva ? (
         <div className={styles.skeletonGrid}>
           {[1, 2, 3, 4].map((n) => (
             <div key={n} className={styles.skeletonCard} />
@@ -165,7 +175,7 @@ export default function SecaoEntorno({
         </div>
       ) : (
         <div className={styles.vazioPois}>
-          <span>Nenhum ponto de {catConfig.label.toLowerCase()} encontrado num raio de 2.5 km.</span>
+          <span>Nada de {catConfig.label.toLowerCase()} encontrado por perto deste endereço.</span>
         </div>
       )}
     </div>

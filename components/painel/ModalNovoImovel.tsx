@@ -617,6 +617,11 @@ export default function ModalNovoImovel({ isOpen, onClose, onImovelCriado }: Mod
         throw new Error(erroImovel.message || "Não foi possível cadastrar o imóvel no banco de dados.")
       }
 
+      // Calcula os lugares próximos em segundo plano: a página do imóvel já abre com eles
+      if (latNumerica && lngNumerica) {
+        fetch(`/api/imoveis/entorno?lat=${latNumerica}&lng=${lngNumerica}&categoria=todas`).catch(() => {})
+      }
+
       // Upload das fotos (em paralelo; o progresso aparece no botão)
       if (fotos.length > 0 && imovel?.id) {
         const imovelId = imovel.id
